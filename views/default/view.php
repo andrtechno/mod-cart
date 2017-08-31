@@ -1,21 +1,20 @@
 <div id="cart-left" class="shopping-cart">
 
     <div class="col-md-12 col-sm-12">
-        <h1><?= $this->pageName; ?></h1>
+        <h1><?= $this->context->pageName; ?></h1>
         
             <?php
             
             
-           echo User::encodePassword('CVekvV');
                     
             
-    $config = Yii::app()->settings->get('shop');
-    if (Yii::app()->user->hasFlash('success')) {
-        Yii::app()->tpl->alert('success', Yii::app()->user->getFlash('success'));
+    $config = Yii::$app->settings->get('shop');
+   /* if (Yii::$app->user->hasFlash('success')) {
+        Yii::$app->tpl->alert('success', Yii::$app->user->getFlash('success'));
     }
-    if (Yii::app()->user->hasFlash('success_register')) {
-        Yii::app()->tpl->alert('success', Yii::app()->user->getFlash('success_register'));
-    }
+    if (Yii::$app->user->hasFlash('success_register')) {
+        Yii::$app->tpl->alert('success', Yii::$app->user->getFlash('success_register'));
+    }*/
     ?>
         
         <div class="table-responsive">
@@ -35,15 +34,7 @@
                     <?php foreach ($model->getOrderedProducts()->getData() as $product) { //$model->getOrderedProducts()->getData()  ?> 
                         <tr>
                             <td width="110px" align="center">
-                                <?php
-                                if ($product->prd->mainImage) {
-                                    $imgSource = $product->prd->mainImage->getUrl($config['img_view_thumbs_size']);
-                                    echo Html::link(Html::image($imgSource, $product->prd->mainImageTitle), $product->prd->mainImage->getUrl($config['maximum_image_size']), array('class' => 'thumbnail'));
-                                } else {
-                                    $imgSource = 'http://placehold.it/' . $config['img_view_thumbs_size'];
-                                    echo Html::image($imgSource, '', array('class' => 'thumbnail img-responsive'));
-                                }
-                                ?>
+                                IMG
                             </td>
                             <td>
                                 <?= Html::beginTag('h3') ?>
@@ -65,12 +56,12 @@
                             <td align="center">
                                 <?php
                                 if ($config['wholesale']) {
-                                    echo ShopProduct::formatPrice(Yii::app()->currency->convert($product->price * $product->quantity * $product->prd->pcs));
+                                    echo ShopProduct::formatPrice(Yii::$app->currency->convert($product->price * $product->quantity * $product->prd->pcs));
                                 } else {
-                                    echo ShopProduct::formatPrice(Yii::app()->currency->convert($product->price * $product->quantity));
+                                    echo ShopProduct::formatPrice(Yii::$app->currency->convert($product->price * $product->quantity));
                                 }
                                 ?>
-                                <?= Yii::app()->currency->active->symbol; ?>
+                                <?= Yii::$app->currency->active->symbol; ?>
                             </td>
                         </tr>
                     <?php } ?>
@@ -99,8 +90,8 @@
                     <?php if ($model->delivery_price > 0) { ?>
                         <div class="col-md-6"><?= Yii::t('CartModule.default', 'COST_DELIVERY') ?></div>
                         <div class="col-md-6 text-right">
-                            <?= ShopProduct::formatPrice(Yii::app()->currency->convert($model->delivery_price)) ?>
-                            <?= Yii::app()->currency->active->symbol ?>
+                            <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->delivery_price)) ?>
+                            <?= Yii::$app->currency->active->symbol ?>
                         </div>
                     <?php } ?>
                     <div class="col-md-6"><?= Yii::t('CartModule.default', 'DELIVERY') ?></div>
@@ -144,12 +135,12 @@
                 <?php } ?>
                     <br/>
                 Цена доставки:
-                <?= ShopProduct::formatPrice(Yii::app()->currency->convert($model->delivery_price)) ?>
-                <?= Yii::app()->currency->active->symbol ?>
+                <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->delivery_price)) ?>
+                <?= Yii::$app->currency->active->symbol ?>
                 <br/>
                 <?= Yii::t('app', 'TOTAL_PAY') ?>:
-                <span class="label label-success"><?= ShopProduct::formatPrice(Yii::app()->currency->convert($model->full_price)) ?></span> 
-                <?= Yii::app()->currency->active->symbol ?>
+                <span class="label label-success"><?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->full_price)) ?></span> 
+                <?= Yii::$app->currency->active->symbol ?>
             </div>
         </div>
     </div>

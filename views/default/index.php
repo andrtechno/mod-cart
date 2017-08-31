@@ -1,6 +1,6 @@
 <?php
 use panix\engine\Html;
-use panix\shop\models\ShopProduct;
+use panix\mod\shop\models\ShopProduct;
 
 ?>
 <script>
@@ -56,7 +56,7 @@ if (empty($items)) {
 
 
 
-<?php echo Html::beginForm(array('/cart'), 'post', array('id' => 'cart-form', 'name' => 'cartform')) ?>
+<?php echo Html::beginForm(['/cart'], 'post', array('id' => 'cart-form', 'name' => 'cartform')) ?>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 shopping-cart-table">
 
     <div class="table-responsive">
@@ -77,17 +77,9 @@ if (empty($items)) {
                     ?>
                     <tr id="product-<?= $index ?>">
                         <td width="110px" align="center">
-                            <?php
-                            // Display image
-                            //    $config = Yii::$app->settings->get('shop', 'img_view_thumbs_size'); //img_view_thumbs_size
-                            if (isset($product['model']->mainImage)) {
-                                $imgSource = $product['model']->mainImage->getUrl($config['img_view_thumbs_size']);
-                                echo Html::a(Html::img($imgSource, 'шшш'), $product['model']->mainImage->getUrl($config['maximum_image_size']), array('class' => 'thumbnail222'));
-                            } else {
-                                $imgSource = 'http://placehold.it/' . $config['img_view_thumbs_size'];
-                                echo Html::img($imgSource, '', array('class' => 'thumbnail img-responsive'));
-                            }
-                            ?>
+                        
+                            IMG
+                    
                         </td>
                         <td>
                             <?php
@@ -157,6 +149,14 @@ if (empty($items)) {
 
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <?php
+      echo  yii\bootstrap\Alert::widget([
+          'closeButton'=>false,
+            'options' => ['class' => 'alert-danger'],
+            'body'=>Html::errorSummary($this->context->form,['showAllErrors'=>true])
+            ]);
+
+
+
     // Yii::$app->tpl->alert('info', Yii::t('cart/default', 'ALERT_CART'))
   //  echo Html::errorSummary($this->form, '', null, array('class' => 'errorSummary alert alert-danger'));
     ?>
@@ -168,7 +168,7 @@ if (empty($items)) {
         <div class="panel-heading"><?= Yii::t('cart/default', 'USER_DATA'); ?></div>
         <div class="panel-body">
             <p class="hint">Поля отмеченные <span class="required">*</span> обязательны для заполнения</p>
-            <?php $this->render('_fields_user', array('form' => $this->context->form)); ?>
+            <?php echo $this->render('_fields_user', array('form' => $this->context->form)); ?>
         </div>
     </div>
 </div>
@@ -180,11 +180,11 @@ if (empty($items)) {
         <div class="panel-body">
             <p class="hint">Поля отмеченные <span class="required">*</span> обязательны для заполнения</p>
             <?php
-            $this->render('_fields_delivery', array(
+            echo $this->render('_fields_delivery', array(
                 'form' => $this->context->form,
                 'deliveryMethods' => $deliveryMethods)
             );
-            $this->render('_fields_payment', array(
+            echo $this->render('_fields_payment', array(
                 'form' => $this->context->form,
                 'paymenyMethods' => $paymenyMethods)
             );

@@ -3,12 +3,12 @@
 namespace panix\mod\cart\controllers;
 
 use Yii;
-use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use panix\engine\controllers\WebController;
 use panix\mod\cart\models\OrderCreateForm;
 use panix\mod\cart\models\ShopDeliveryMethod;
 use panix\mod\cart\models\ShopPaymentMethod;
+use panix\mod\cart\models\Order;
+use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\ShopProduct;
 
 class DefaultController extends WebController {
@@ -23,13 +23,13 @@ class DefaultController extends WebController {
      */
     protected $_errors = false;
 
-    /*public function getForm() {
-        return $this->_form;
-    }
+    /* public function getForm() {
+      return $this->_form;
+      }
 
-    public function setForm($value) {
-        $this->_form = $value;
-    }*/
+      public function setForm($value) {
+      $this->_form = $value;
+      } */
 
     public function actionRecount() {
         //Yii::$app->cart->clear();
@@ -56,39 +56,41 @@ class DefaultController extends WebController {
         $this->form = new OrderCreateForm;
 
         // Make order
-        if (Yii::$app->request->isPost && Yii::$app->request->post('create')) {
+        $post = Yii::$app->request->post();
 
-            if (isset($_POST['OrderCreateForm'])) {
-                $this->form->attributes = $_POST['OrderCreateForm'];
-                if ($this->form->validate()) {
-                    $this->form->registerGuest();
-                    $order = $this->createOrder();
-                    Yii::$app->cart->clear();
-                    Yii::$app->user->setFlash('success', Yii::t('default', 'SUCCESS_ORDER'));
-                    Yii::$app->request->redirect($this->createUrl('view', array('secret_key' => $order->secret_key)));
-                }
+        if ($post) {
+
+            if ($this->form->load($post) && $this->form->validate()) {
+                $this->form->registerGuest();
+                $order = $this->createOrder();
+                Yii::$app->cart->clear();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'SUCCESS_ORDER'));
+              //  Yii::$app->response->redirect(array('view','secret_key'=>$order->secret_key));
+
+                return $this->redirect(['view', 'secret_key' => $order->secret_key]);
             }
         }
 
-        /* $deliveryMethods = ShopDeliveryMethod::model()
-          ->applyTranslateCriteria()
-          ->active()
-          ->orderByName()
-          ->findAll();
-         */
+
+        $deliveryMethods = ShopDeliveryMethod::find()
+                // ->applyTranslateCriteria()
+                //->active()
+                // ->orderByName()
+                ->all();
+
         $paymenyMethods = ShopPaymentMethod::find()->all();
 
         return $this->render('index', array(
                     'items' => Yii::$app->cart->getDataWithModels(),
                     'totalPrice' => Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice()),
-                    //  'deliveryMethods' => $deliveryMethods,
+                    'deliveryMethods' => $deliveryMethods,
                     'paymenyMethods' => $paymenyMethods,
-                ));
+        ));
     }
 
     public function actionPayment() {
         if (isset($_POST)) {
-            $this->form = ShopPaymentMethod::model()->cache($this->cacheTime)->findAll();
+            $this->form = ShopPaymentMethod::find()->all();
             $this->render('_payment', array('model' => $this->form));
         }
     }
@@ -99,16 +101,16 @@ class DefaultController extends WebController {
      */
     public function actionView() {
 
-        $secret_key = Yii::$app->request->getParam('secret_key');
-        $model = Order::model()->cache($this->cacheTime)->find('secret_key=:key', array(':key' => $secret_key));
-        $this->pageName = Yii::t('CartModule.default', 'VIEW_ORDER', array('{id}' => $model->id));
-        $this->pageTitle = $this->pageName;
-        $this->breadcrumbs = array(
-            Yii::t('ShopModule.default', 'BC_SHOP') => array('/shop'),
-            Yii::t('CartModule.default', 'MODULE_NAME') => array('/cart'),
-            $this->pageName);
+        $secret_key = Yii::$app->request->get('secret_key');
+        $model = Order::find()->where('secret_key=:key', array(':key' => $secret_key))->one();
+        $this->pageName = Yii::t('cart/default', 'VIEW_ORDER', array('{id}' => $model->id));
+
+       /* $this->breadcrumbs = array(
+            Yii::t('shop/default', 'BC_SHOP') => array('/shop'),
+            Yii::t('cart/default', 'MODULE_NAME') => array('/cart'),
+            $this->pageName);*/
         if (!$model)
-            throw new CHttpException(404, Yii::t('CartModule.default', 'ERROR_ORDER_NO_FIND'));
+            throw new CHttpException(404, Yii::t('cart/default', 'ERROR_ORDER_NO_FIND'));
 
         $this->render('view', array(
             'model' => $model,
@@ -129,7 +131,7 @@ class DefaultController extends WebController {
             $this->_addError(Yii::t('CartModule.default', 'ERROR_PRODUCT_NO_FIND'), true);
 
         // Update counter
-        $model->updateCounters(array('added_to_cart_count' => 1));
+        $model->updateCounters(['added_to_cart_count' => 1]);
 
         // Process variants
         if (!empty($_POST['eav'])) {
@@ -151,7 +153,7 @@ class DefaultController extends WebController {
 
             if (!$configurable_id || !in_array($configurable_id, $model->configurations))
                 $this->_addError(Yii::t('CartModule.default', 'ERROR_SELECT_VARIANT'), true);
-        }else
+        } else
             $configurable_id = 0;
 
 
@@ -205,8 +207,7 @@ class DefaultController extends WebController {
     public function createOrder() {
         if (Yii::$app->cart->countItems() == 0)
             return false;
-        Yii::import('mod.cart.models.Order');
-        Yii::import('mod.cart.models.OrderProduct');
+
         $order = new Order;
 
         // Set main data
@@ -216,15 +217,15 @@ class DefaultController extends WebController {
         $order->user_phone = $this->form->phone;
         $order->user_address = $this->form->address;
         $order->user_comment = $this->form->comment;
-        $order->delivery_id = $this->form->delivery_id;
-        $order->payment_id = $this->form->payment_id;
+       // $order->delivery_id = $this->form->delivery_id;
+      //  $order->payment_id = $this->form->payment_id;
 
         if ($order->validate()) {
             if ($order->save()) {
                 
             }
         } else {
-            throw new CHttpException(503, Yii::t('CartModule.default', 'ERROR_CREATE_ORDER'));
+            throw new CHttpException(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
         }
 
         // Process products
@@ -284,16 +285,7 @@ class DefaultController extends WebController {
         // $this->sendClientEmail($order);
         // Send email to admin.
         // $this->sendAdminEmail($order);
-        if (Yii::$app->hasModule('sms')) {
-            /* $this->widget('mod.sms.widgets.SMSWidget', array(
-              'key' => 'ADMIN_ORDER_BEFORE',
-              'model' => $order
-              )); */
-            $this->widget('mod.sms.widgets.SMSWidget', array(
-                'key' => 'CLIENT_ORDER_BEFORE',
-                'model' => $order
-            ));
-        }
+
         return $order;
     }
 
@@ -309,7 +301,7 @@ class DefaultController extends WebController {
                     'id' => $variant_id,
                     'product_id' => $product_id,
                     'attribute_id' => $attribute_id
-                ));
+        ));
     }
 
     /**
