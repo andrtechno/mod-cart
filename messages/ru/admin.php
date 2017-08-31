@@ -10,6 +10,7 @@ return array(
     'ORDER' => '0#Заказы|1#Заказ',
     'DELIVERY' => 'Доставка',
     'CREATE_DELIVERY'=>'Добавить доставку',
+    'CREATE_PAYMENT'=>'Добавить оплату',
     'PAYMENTS' => 'Оплата',
     'NOTIFIER' => 'Уведомление',
     'STATS' => 'Статистика',

@@ -3,11 +3,11 @@
 namespace panix\mod\cart\controllers\admin;
 
 use Yii;
-use panix\mod\cart\models\search\DeliveryMethodSearch;
-use panix\mod\cart\models\DeliveryMethod;
+use panix\mod\cart\models\search\PaymentMethodSearch;
+use panix\mod\cart\models\PaymentMethod;
 use panix\engine\grid\sortable\SortableGridAction;
 
-class PaymentMethodController extends \panix\engine\controllers\AdminController {
+class PaymentController extends \panix\engine\controllers\AdminController {
 
     public function actions() {
         return [
@@ -40,11 +40,11 @@ class PaymentMethodController extends \panix\engine\controllers\AdminController 
      */
 
     public function actionIndex() {
-        $this->pageName = Yii::t('cart/admin', 'DELIVERY');
+        $this->pageName = Yii::t('cart/admin', 'PAYMENTS');
         $this->buttons = [
             [
                 'icon' => 'icon-add',
-                'label' => Yii::t('cart/admin', 'CREATE_DELIVERY'),
+                'label' => Yii::t('cart/admin', 'CREATE_PAYMENT'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']
             ]
@@ -78,7 +78,7 @@ class PaymentMethodController extends \panix\engine\controllers\AdminController 
         $this->buttons = [
             [
                 'icon' => 'icon-add',
-                'label' => Yii::t('cart/admin', 'CREATE_DELIVERY'),
+                'label' => Yii::t('cart/admin', 'CREATE_PAYMENT'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']
             ]
@@ -88,7 +88,7 @@ class PaymentMethodController extends \panix\engine\controllers\AdminController 
             'url' => ['index']
         ];
         $this->breadcrumbs[] = [
-            'label' => Yii::t('cart/admin', 'DELIVERY'),
+            'label' => Yii::t('cart/admin', 'PAYMENTS'),
             'url' => ['index']
         ];
         $this->breadcrumbs[] = Yii::t('app', 'UPDATE');
