@@ -2,7 +2,7 @@
 
 namespace panix\mod\cart\models;
 use panix\mod\cart\models\Order;
-
+use panix\mod\shop\models\ShopProduct;
 class OrderProduct extends \panix\engine\WebModel {
 
     const MODULE_ID = 'cart';
@@ -21,6 +21,12 @@ class OrderProduct extends \panix\engine\WebModel {
     public function getOrder() {
         return $this->hasOne(Order::className(), ['id' => 'order_id']);
     }
+    //prd
+    public function getOriginalProduct() {
+        return $this->hasOne(ShopProduct::className(), ['id' => 'product_id']);
+    }
+    
+
     /**
      * @return boolean
      */
@@ -29,7 +35,7 @@ class OrderProduct extends \panix\engine\WebModel {
         $this->order->updateDeliveryPrice();
 
         if ($this->isNewRecord) {
-            $product = ShopProduct::model()->findByPk($this->product_id);
+            $product = ShopProduct::findOne($this->product_id);
             $product->decreaseQuantity();
         }
 
@@ -52,7 +58,10 @@ class OrderProduct extends \panix\engine\WebModel {
      * @return string
      */
     public function getRenderFullName($appendConfigurableName = true) {
-        $result = Html::link($this->name, $this->prd->absoluteUrl, array('target' => '_blank'));
+        
+
+        
+        $result = \yii\helpers\Html::a($this->name, $this->originalProduct->getUrl(), array('target' => '_blank'));
 
         if (!empty($this->configurable_name) && $appendConfigurableName)
             $result .= '<br/>' . $this->configurable_name;

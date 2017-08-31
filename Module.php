@@ -17,9 +17,9 @@ class Module extends WebModule { // implements BootstrapInterface/
 
     public $routes = [
         'cart' => 'cart/default/index',
-         'cart/view/<secret_key>' => 'cart/default/view',
-            'cart/<action:[.\w]+>' => 'cart/default/<action>',
-            'cart/<action:[.\w]>/*' => 'cart/default/<action>',
+        'cart/view/<secret_key>' => 'cart/default/view',
+        'cart/<action:[.\w]+>' => 'cart/default/<action>',
+        'cart/<action:[.\w]>/*' => 'cart/default/<action>',
     ];
 
     public function getInfo() {

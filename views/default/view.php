@@ -1,3 +1,8 @@
+<?php
+
+use yii\helpers\Html;
+use panix\mod\shop\models\ShopProduct;
+?>
 <div id="cart-left" class="shopping-cart">
 
     <div class="col-md-12 col-sm-12">
@@ -31,7 +36,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($model->getOrderedProducts()->getData() as $product) { //$model->getOrderedProducts()->getData()  ?> 
+                    <?php foreach ($model->getOrderedProducts()->getModels() as $product) { //$model->getOrderedProducts()->getData()  ?> 
                         <tr>
                             <td width="110px" align="center">
                                 IMG
@@ -76,7 +81,7 @@
 
     <div class="col-md-4">
         <div class="panel panel-default">
-            <div class="panel-heading"><?= Yii::t('CartModule.default', 'USER_DATA') ?></div>
+            <div class="panel-heading"><?= Yii::t('cart/default', 'USER_DATA') ?></div>
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-6"><?= $model->getAttributeLabel('user_name') ?></div>
@@ -88,13 +93,13 @@
                     <div class="col-md-6"><?= $model->getAttributeLabel('user_address') ?></div>
                     <div class="col-md-6 text-right"><?= Html::encode($model->user_address); ?></div>
                     <?php if ($model->delivery_price > 0) { ?>
-                        <div class="col-md-6"><?= Yii::t('CartModule.default', 'COST_DELIVERY') ?></div>
+                        <div class="col-md-6"><?= Yii::t('cart/default', 'COST_DELIVERY') ?></div>
                         <div class="col-md-6 text-right">
                             <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->delivery_price)) ?>
                             <?= Yii::$app->currency->active->symbol ?>
                         </div>
                     <?php } ?>
-                    <div class="col-md-6"><?= Yii::t('CartModule.default', 'DELIVERY') ?></div>
+                    <div class="col-md-6"><?= Yii::t('cart/default', 'DELIVERY') ?></div>
                     <div class="col-md-6 text-right"><?= Html::encode($model->delivery_name); ?></div>
                     <?php if (!empty($model->user_comment)) { ?>
                         <div class="col-md-6"><?= $model->getAttributeLabel('user_comment') ?></div>
@@ -126,7 +131,7 @@
 
     <div class="col-md-4">
         <div class="panel panel-default">
-            <div class="panel-heading"><?= Yii::t('CartModule.default', 'Состояние заказа') ?> <span class="label label-success pull-right" style=""><?= $model->status_name ?></span></div>
+            <div class="panel-heading"><?= Yii::t('cart/default', 'Состояние заказа') ?> <span class="label label-success pull-right" style=""><?= $model->status_name ?></span></div>
             <div class="panel-body">
                 <?php if ($model->paid) { ?>
                     <?= Yii::t('CartModule.Order', 'PAID') ?>: <span class="label label-success"><?= Yii::t('app', 'YES') ?></span>

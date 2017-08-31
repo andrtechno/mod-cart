@@ -149,11 +149,13 @@ if (empty($items)) {
 
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <?php
+    if($this->context->form->hasErrors()){
       echo  yii\bootstrap\Alert::widget([
           'closeButton'=>false,
             'options' => ['class' => 'alert-danger'],
-            'body'=>Html::errorSummary($this->context->form,['showAllErrors'=>true])
+            'body'=>Html::errorSummary($this->context->form)
             ]);
+    }
 
 
 

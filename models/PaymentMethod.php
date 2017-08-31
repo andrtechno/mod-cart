@@ -2,10 +2,7 @@
 
 namespace panix\mod\cart\models;
 
-use Yii;
-use panix\engine\WebModel;
-
-class ShopPaymentMethod extends WebModel {
+class PaymentMethod extends \panix\engine\WebModel {
 
     const MODULE_ID = 'cart';
 

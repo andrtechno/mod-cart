@@ -15,6 +15,15 @@ class Order extends \panix\engine\WebModel {
         return '{{%order}}';
     }
 
+
+    public function getDeliveryMethod() {
+        return $this->hasOne(ShopDeliveryMethod::className(), ['id' => 'delivery_id']);
+    }
+    public function getPaymentMethod() {
+        return $this->hasOne(ShopPaymentMethod::className(), ['id' => 'payment_id']);
+    }
+    
+    
     public function rules() {
         return [
             [['user_name', 'user_email'], 'required'],
@@ -171,13 +180,13 @@ if($this->delivery_id){
      * @return mixed
      */
     public function getDelivery_name() {
-        $model = ShopDeliveryMethod::model()->findByPk($this->delivery_id);
+        $model = ShopDeliveryMethod::findOne($this->delivery_id);
         if ($model)
             return $model->name;
     }
 
     public function getPayment_name() {
-        $model = ShopPaymentMethod::model()->findByPk($this->payment_id);
+        $model = ShopPaymentMethod::findOne($this->payment_id);
         if ($model)
             return $model->name;
     }
@@ -253,10 +262,10 @@ if($this->delivery_id){
      */
     public function getOrderedProducts() {
 
-        $products = new OrderProduct;
+        $products = new search\OrderProductSearch();
         $products->order_id = $this->id;
 
-        return $products->search();
+        return $products->search([]);
     }
 
     /**
