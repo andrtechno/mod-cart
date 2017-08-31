@@ -1,12 +1,16 @@
 <?php
+
 namespace panix\mod\cart\controllers\admin;
 
 use Yii;
 use panix\mod\cart\models\search\DeliveryMethodSearch;
 use panix\mod\cart\models\DeliveryMethod;
 use panix\engine\grid\sortable\SortableGridAction;
+
 class DeliveryController extends \panix\engine\controllers\AdminController {
-    
+
+    public $icon = 'icon-delivery';
+
     public function actions() {
         return [
             'dnd_sort' => [
@@ -19,22 +23,24 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
             ],
         ];
     }
-/*
-    public function actions() {
-        return array(
-            'order' => array(
-                'class' => 'ext.adminList.actions.SortingAction',
-            ),
-            'switch' => array(
-                'class' => 'ext.adminList.actions.SwitchAction',
-            ),
-            'sortable' => array(
-                'class' => 'ext.sortable.SortableAction',
-                'model' => ShopDeliveryMethod::model(),
-            )
-        );
-    }
-*/
+
+    /*
+      public function actions() {
+      return array(
+      'order' => array(
+      'class' => 'ext.adminList.actions.SortingAction',
+      ),
+      'switch' => array(
+      'class' => 'ext.adminList.actions.SwitchAction',
+      ),
+      'sortable' => array(
+      'class' => 'ext.sortable.SortableAction',
+      'model' => ShopDeliveryMethod::model(),
+      )
+      );
+      }
+     */
+
     public function actionIndex() {
         $this->pageName = Yii::t('cart/admin', 'DELIVERY');
         $this->buttons = [
@@ -46,11 +52,11 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
             ]
         ];
         $this->breadcrumbs[] = [
-            'label'=>Yii::t('cart/default', 'MODULE_NAME'),
-            'url'=>['/admin/cart']
+            'label' => Yii::t('cart/default', 'MODULE_NAME'),
+            'url' => ['/admin/cart']
         ];
-        $this->breadcrumbs[]=$this->pageName;
-            
+        $this->breadcrumbs[] = $this->pageName;
+
         $searchModel = new DeliveryMethodSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
@@ -60,10 +66,7 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
         ]);
     }
 
-
     public function actionUpdate($id = false) {
-
-
         if ($id === true) {
             $model = new DeliveryMethod();
         } else {
@@ -78,7 +81,8 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
                 'label' => Yii::t('cart/admin', 'CREATE_DELIVERY'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']
-            ]
+            ],
+
         ];
         $this->breadcrumbs[] = [
             'label' => $this->pageName,
@@ -132,6 +136,7 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
                 $this->redirect('index');
         }
     }
+
     protected function findModel($id) {
         $model = new DeliveryMethod();
         if (($model = $model::findOne($id)) !== null) {
@@ -140,4 +145,5 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
             throw new \yii\web\NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

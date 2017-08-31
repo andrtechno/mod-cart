@@ -9,6 +9,7 @@ use panix\engine\grid\sortable\SortableGridAction;
 
 class PaymentController extends \panix\engine\controllers\AdminController {
 
+    public $icon = 'icon-creditcard';
     public function actions() {
         return [
             'dnd_sort' => [
