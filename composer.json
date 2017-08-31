@@ -1,0 +1,22 @@
+{
+    "name": "panix/cart",
+    "description": "Коризина",
+    "homepage": "https://github.com/andrtechno/mod-cart",
+    "type": "module",
+    "license": "BSD 3-Clause",
+    "authors": [
+        {
+            "name": "CORNER CMS",
+            "email": "dev@corner-cms.com",
+            "homepage": "http://www.corner-cms.com/"
+        }
+    ],
+    "require": {
+        "panix/engine": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "panix\\mod\\cart\\": ""
+        }
+    }
+}
