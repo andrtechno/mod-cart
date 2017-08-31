@@ -5,7 +5,7 @@ namespace panix\mod\cart\models;
 use panix\engine\behaviors\TranslateBehavior;
 use yii\helpers\ArrayHelper;
 use panix\mod\cart\models\translate\PaymentMethodTranslate;
-
+use panix\mod\cart\components\payment\PaymentSystemManager;
 class PaymentMethod extends \panix\engine\WebModel {
 
     const MODULE_ID = 'cart';
@@ -45,12 +45,43 @@ class PaymentMethod extends \panix\engine\WebModel {
         return [
             [['name', 'currency_id'], 'required'],
             [['name'], 'trim'],
-            [['is_main', 'is_default'], 'boolean'],
             [['name'], 'string', 'max' => 255],
-            [['ordern'], 'integer'],
-            [['rate'], 'number'],
             [['id, name, description, switch', 'safe'], 'safe'],
         ];
+    }
+
+    public function getPaymentSystemsArray() {
+        // Yii::import('application.modules.shop.components.payment.PaymentSystemManager');
+        $result = array();
+
+        $systems = new PaymentSystemManager();
+
+        foreach ($systems->getSystems() as $system) {
+            $result[(string) $system->id] = $system->name;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Renders form display on the order view page
+     */
+    public function renderPaymentForm(Order $order) {
+        if ($this->payment_system) {
+            $manager = new PaymentSystemManager;
+            $system = $manager->getSystemClass($this->payment_system);
+            return $system->renderPaymentForm($this, $order);
+        }
+    }
+
+    /**
+     * @return null|BasePaymentSystem
+     */
+    public function getPaymentSystemClass() {
+        if ($this->payment_system) {
+            $manager = new PaymentSystemManager;
+            return $manager->getSystemClass($this->payment_system);
+        }
     }
 
 }

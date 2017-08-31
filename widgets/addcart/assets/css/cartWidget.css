@@ -1,0 +1,138 @@
+
+
+#cart{
+    position: absolute;
+    right:0;
+    top:40px;
+}
+
+#cart .cart-full:before,
+#cart .cart-empty:before{
+    content: "\e037";
+    font-family: 'icomoon';
+    font-size:26px;
+    left: -35px;
+    position: absolute;
+    top: 0;
+}
+#cart .cart-info{
+    position: relative;
+    text-align: left;
+    font-size:13px;
+}
+#cart .cart-info span{
+    color:#ffb408;
+}
+
+#cart a{
+    text-decoration: none;
+
+}
+#cart .cart-full a,
+#cart .cart-full{
+    color:#fff;
+}
+#cart .cart-empty{
+    color:#5E5E5E;
+}
+#cart .cart-empty .cart-content{
+    line-height: 30px;
+}
+
+
+
+
+#cart:hover #cart-products{
+    display: block;
+}
+
+
+.button-container{
+    text-align: center;
+    padding: 10px 0;
+    background: #ebebeb;
+    border-top: 1px solid #fff;
+}
+#cart-products{
+    background: #F2F2F2;
+    -webkit-transition: all .3s .1s;
+    -moz-transition: all .3s .1s;
+    -o-transition: all .3s .1s;
+    transition: all .3s .1s;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    position: absolute;
+    right: 0;
+    display: none;
+    z-index: 10;
+    width: 250px;
+}
+
+#cart-products:before {
+    content: '';
+    display: block;
+    border-color: transparent transparent #F2F2F2 transparent;
+    border-style: solid;
+    border-width: 8px;
+    position: absolute;
+    top: -16px;
+    right: 10%;
+    margin-left: -10px;
+}
+#cart-products .product-row:first-child{
+    border-top: 0;
+}
+#cart-products .product-row:last-child{
+    border-bottom: 0;
+}
+#cart-products .product-row{
+    padding:5px;
+    border-bottom: 1px solid #ebebeb;
+    border-top: 1px solid #fff;
+    position: relative;
+}
+#cart-products .product-row .thumbnail{
+    width: 50px;
+    height:50px;
+    border:1px solid #7e7e7e;
+    float:left;
+    display: block;
+}
+#cart-products .product-row .info{
+    float:left;
+    margin-left: 5px;
+}#cart-products .price{
+    margin-top: 10px;
+    display: block;
+}
+#cart-products .price .pn{
+    color:#4b7c0e;
+    font-size: 20px;
+}
+#cart-products .remove{
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    background: #606060;
+    color: #fff;
+    display: block;
+    font-weight: bold;
+    height: 19px;
+    line-height: 15px;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    width: 19px;
+    position: absolute;
+    right:10px;
+    top: 50%;
+    margin-top: -10px;
+}
+#cart-products .remove:hover{
+    background: #ED1D24;
+
+}

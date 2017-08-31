@@ -1,6 +1,9 @@
 <?php
+namespace panix\mod\cart\components\payment;
 
-class BasePaymentSystem extends CComponent {
+use Yii;
+
+class BasePaymentSystem extends \yii\base\Component {
 
     /**
      * @return string
@@ -14,7 +17,7 @@ class BasePaymentSystem extends CComponent {
      * @param $data
      */
     public function setSettings($paymentMethodId, $data) {
-        Yii::app()->settings->set($this->getSettingsKey($paymentMethodId), $data);
+        Yii::$app->settings->set($this->getSettingsKey($paymentMethodId), $data);
     }
 
     /**
@@ -22,11 +25,9 @@ class BasePaymentSystem extends CComponent {
      */
     public function getSettings($paymentMethodId) {
         // die($this->getSettingsKey($paymentMethodId));
-        return Yii::app()->settings->get($this->getSettingsKey($paymentMethodId));
+        return Yii::$app->settings->get($this->getSettingsKey($paymentMethodId));
     }
 
-    public static function log($message) {
-        return Yii::log($message, 'info', 'payment');
-    }
+
 
 }

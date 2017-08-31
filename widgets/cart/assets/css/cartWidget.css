@@ -1,0 +1,55 @@
+
+/*
+#cart{
+    position: absolute;
+    right:0;
+    top:40px;
+}
+
+#cart .cart-full:before,
+#cart .cart-empty:before{
+    content: "\e037";
+    font-family: 'icomoon';
+    font-size:26px;
+    left: -35px;
+    position: absolute;
+    top: 0;
+}
+#cart .cart-info{
+    position: relative;
+    text-align: left;
+    font-size:13px;
+}
+#cart .cart-info span{
+    color:#ffb408;
+}
+
+#cart a{
+    text-decoration: none;
+
+}
+#cart .cart-full a,
+#cart .cart-full{
+    color:#fff;
+}
+#cart .cart-empty{
+    color:#5E5E5E;
+}
+#cart .cart-empty .cart-content{
+    line-height: 30px;
+}
+
+*/
+
+#cart{
+    color:#000;
+}
+
+
+
+.button-container{
+    text-align: center;
+    padding: 10px;
+    height: auto;
+    border-top: 1px solid #ddd;
+}

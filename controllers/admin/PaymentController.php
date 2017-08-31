@@ -6,6 +6,7 @@ use Yii;
 use panix\mod\cart\models\search\PaymentMethodSearch;
 use panix\mod\cart\models\PaymentMethod;
 use panix\engine\grid\sortable\SortableGridAction;
+use panix\mod\cart\components\payment\PaymentSystemManager;
 
 class PaymentController extends \panix\engine\controllers\AdminController {
 
@@ -93,7 +94,7 @@ class PaymentController extends \panix\engine\controllers\AdminController {
             'url' => ['index']
         ];
         $this->breadcrumbs[] = Yii::t('app', 'UPDATE');
-
+        \panix\mod\cart\assets\admin\CartAdminAsset::register($this->view);
 
 
         //$model->setScenario("admin");
@@ -102,11 +103,18 @@ class PaymentController extends \panix\engine\controllers\AdminController {
 
         if ($model->load($post) && $model->validate()) {
             $model->save();
+            
+                        /*    if ($model->payment_system) {
+                    $manager = new PaymentSystemManager;
+                    $system = $manager->getSystemClass($model->payment_system);
+                    $system->saveAdminSettings($model->id, $_POST);
+                }*/
+                
             Yii::$app->session->addFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
             if ($model->isNewRecord) {
-                return Yii::$app->getResponse()->redirect(['/admin/cart/delivery']);
+                return Yii::$app->getResponse()->redirect(['/admin/cart/payment']);
             } else {
-                return Yii::$app->getResponse()->redirect(['/admin/cart/delivery/update', 'id' => $model->id]);
+                return Yii::$app->getResponse()->redirect(['/admin/cart/payment/update', 'id' => $model->id]);
             }
         }
 
@@ -128,9 +136,9 @@ class PaymentController extends \panix\engine\controllers\AdminController {
      * Renders payment system configuration form
      */
     public function actionRenderConfigurationForm() {
-        Yii::import('mod.cart.CartModule');
-        $systemId = Yii::app()->request->getQuery('system');
-        $paymentMethodId = Yii::app()->request->getQuery('payment_method_id');
+
+        $systemId = Yii::$app->request->get('system');
+        $paymentMethodId = Yii::$app->request->get('payment_method_id');
         if (empty($systemId))
             exit;
         $manager = new PaymentSystemManager;

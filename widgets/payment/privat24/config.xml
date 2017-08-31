@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system>
+    <!-- Current directory name -->
+    <id>privat24</id>
+    <!-- Name to display in admin panel-->
+    <name>Privat24</name>
+    <!-- Main class -->
+    <class>Privat24PaymentSystem</class>
+    <version>1.0</version>
+</system>

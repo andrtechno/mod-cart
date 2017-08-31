@@ -10,37 +10,37 @@ use panix\mod\cart\models\DeliveryPayment;
 class DeliveryMethod extends \panix\engine\WebModel {
 
     const MODULE_ID = 'cart';
+
     public $_payment_methods;
 
     public static function tableName() {
         return '{{%shop_delivery_method}}';
     }
-    public function getPaymentMethods() {
-        return $this->hasMany(PaymentMethod::className(), ['payment_id' => 'id']);
-    }
+
     public function getTranslations() {
         return $this->hasMany(DeliveryMethodTranslate::className(), ['object_id' => 'id']);
     }
+
     public function getCategorization() {
         return $this->hasMany(DeliveryPayment::className(), ['delivery_id' => 'id']);
     }
-    
 
-             
-    
+    public function getPaymentMethods() {
+        return $this->hasMany(PaymentMethod::className(), ['payment_id' => 'id'])->via('categorization');
+    }
+
     /**
      * @return array validation rules for model attributes.
      */
     public function rules() {
         return [
             ['name', 'required'],
-          //  ['ordern', 'numerical', 'integerOnly' => true],
-          //  ['price, free_from', 'numerical'],
-          //  ['switch', 'boolean'],
+
+           // ['price, free_from', 'number'],
+
             ['payment_methods', 'validatePaymentMethods'],
             ['name', 'string', 'max' => 255],
-            ['description', 'string'],
-
+            [['description','price','free_from'], 'string'],
         ];
     }
 
@@ -55,7 +55,6 @@ class DeliveryMethod extends \panix\engine\WebModel {
                     ],
                         ], parent::behaviors());
     }
-
 
     /**
      * Validate payment method exists
@@ -76,7 +75,7 @@ class DeliveryMethod extends \panix\engine\WebModel {
      * After save event
      */
     public function afterSave($insert, $changedAttributes) {
-        
+
 
         // Clear payment relations
         DeliveryPayment::deleteAll(['delivery_id' => $this->id]);
@@ -85,7 +84,7 @@ class DeliveryMethod extends \panix\engine\WebModel {
             $model = new DeliveryPayment;
             $model->delivery_id = $this->id;
             $model->payment_id = $pid;
-            $model->save();
+            $model->save(false);
         }
 
         return parent::afterSave($insert, $changedAttributes);
@@ -117,6 +116,5 @@ class DeliveryMethod extends \panix\engine\WebModel {
     public function countOrders() {
         return Order::find()->where(array('delivery_id' => $this->id))->count();
     }
-
 
 }

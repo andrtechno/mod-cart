@@ -7,7 +7,7 @@ use panix\engine\Html;
     <?php
     foreach ($paymenyMethods as $pay) {
         echo '<div style="margin-left:15px;">';
-        echo Html::activeRadioButton($form, 'payment_id', array(
+        echo Html::activeRadio($form, 'payment_id', array(
             'checked' => ($form->payment_id == $pay->id),
             'uncheckValue' => null,
             'value' => $pay->id,

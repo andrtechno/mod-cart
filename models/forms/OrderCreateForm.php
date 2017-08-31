@@ -3,6 +3,8 @@
 namespace panix\mod\cart\models\forms;
 
 use Yii;
+use panix\mod\cart\models\DeliveryMethod;
+use panix\mod\cart\models\PaymentMethod;
 
 class OrderCreateForm extends \panix\engine\base\Model {
 
@@ -32,12 +34,12 @@ class OrderCreateForm extends \panix\engine\base\Model {
     }
 
     public function validateDelivery() {
-        if (DeliveryMethod::find()->count(['id' => $this->delivery_id]) == 0)
+        if (DeliveryMethod::find()->where(['id' => $this->delivery_id])->count() == 0)
             $this->addError('delivery_id', 'VALID_DELIVERY');
     }
 
     public function validatePayment() {
-        if (PaymentMethod::find()->count(['id' => $this->payment_id]) == 0)
+        if (PaymentMethod::find()->where(['id' => $this->payment_id])->count() == 0)
             $this->addError('payment_id', 'VALID_PAYMENT');
     }
 

@@ -1,6 +1,12 @@
 <?php
 
-class PaymentSystemManager extends CComponent {
+namespace panix\mod\cart\components\payment;
+
+
+
+
+
+class PaymentSystemManager extends \yii\base\Component {
 
     /**
      * @var array
@@ -12,7 +18,7 @@ class PaymentSystemManager extends CComponent {
      * @return array
      */
     public function getSystems() {
-        $pattern = Yii::getPathOfAlias('mod.cart.widgets.payment') . DS . '*' . DS . 'config.xml';
+        $pattern = \Yii::getAlias('@cart/widgets/payment') . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . 'config.xml';
 
         foreach (glob($pattern, GLOB_BRACE) as $file) {
             $config = simplexml_load_file($file);
@@ -36,8 +42,16 @@ class PaymentSystemManager extends CComponent {
     public function getSystemClass($id) {
         $systemInfo = $this->getSystemInfo($id);
         $className = (string) $systemInfo->class;
-        Yii::import("mod.cart.widgets.payment.{$systemInfo->id}.{$className}");
-        return new $className;
+        
+        $systemArray = $this->getDefaultModelClasses();
+        
+        //Yii::import("mod.cart.widgets.payment.{$systemInfo->id}.{$className}");
+        return new $systemArray[$className];
     }
-
+    
+    protected function getDefaultModelClasses() {
+        return [
+            'QiwiPaymentSystem' => 'panix\mod\cart\widgets\payment\qiwi\QiwiPaymentSystem',
+        ];
+    }
 }

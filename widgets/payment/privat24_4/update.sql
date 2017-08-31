@@ -1,0 +1,3 @@
+insert into `#__jshopping_payment_method` (`name_en-GB`, `description_en-GB`, `name_de-DE`, `description_de-DE`, `payment_code`, `payment_class`, `payment_publish`, `payment_ordering`, `payment_params`, `payment_type`, `price`, `price_type`, `tax_id`, `show_descr_in_email`) values ('Privat24', '', 'Privat24', '', 'privat24', 'pm_privat24', 0, 0, 'testmode=1\ntransaction_end_status=6\ntransaction_pending_status=1\ntransaction_failed_status=3\ncheckdatareturn=1\n', 2, 0.00, 1, 1, 0);
+update `#__jshopping_payment_method` set `name_ru-RU` = 'Privat24' where `payment_code` = 'privat24';
+update `#__jshopping_payment_method` set `name_uk-UA` = 'Privat24' where `payment_code` = 'privat24';

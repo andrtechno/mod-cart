@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system>
+    <id>yandexmoney</id>
+    <name>Yandex.Money</name>
+    <class>YandexMoneyPaymentSystem</class>
+    <version>1.0</version>
+</system>
