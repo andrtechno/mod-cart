@@ -1,11 +1,11 @@
 <?php
 
-namespace panix\cart\components;
+namespace panix\mod\cart\components;
 
 use Yii;
 use yii\base\Component;
-use panix\shop\models\ShopProduct;
-use panix\shop\models\ShopCurrency;
+use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\ShopCurrency;
 
 class Cart extends Component {
 

@@ -1,5 +1,5 @@
 <?php
-namespace panix\cart\models;
+namespace panix\mod\cart\models;
 
 use Yii;
 use panix\engine\SettingsModel;
@@ -48,12 +48,12 @@ class OrderCreateForm extends SettingsModel {
             array('address', 'length', 'max' => '255'),
             array('email', 'length', 'max' => '100'),
             array('phone', 'length', 'max' => '30'),
-            array('delivery_id', 'validateDelivery'),
-            array('payment_id', 'validatePayment'),
+          //  array('delivery_id', 'validateDelivery'),
+          //  array('payment_id', 'validatePayment'),
             array('registerGuest', 'boolean'),
         );
     }
-
+/*
     public function validateDelivery() {
         if (ShopDeliveryMethod::model()->countByAttributes(array('id' => $this->delivery_id)) == 0)
             $this->addError('delivery_id', $this->t('VALID_DELIVERY'));
@@ -63,7 +63,7 @@ class OrderCreateForm extends SettingsModel {
         if (ShopPaymentMethod::model()->countByAttributes(array('id' => $this->payment_id)) == 0)
             $this->addError('payment_id', $this->t('VALID_PAYMENT'));
     }
-
+*/
     public function registerGuest() {
         if (Yii::$app->user->isGuest && $this->registerGuest) {
             $user = new User('registerFast');

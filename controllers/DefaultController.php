@@ -1,15 +1,15 @@
 <?php
 
-namespace panix\cart\controllers;
+namespace panix\mod\cart\controllers;
 
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use panix\engine\controllers\WebController;
-use panix\cart\models\OrderCreateForm;
-use panix\cart\models\ShopDeliveryMethod;
-use panix\cart\models\ShopPaymentMethod;
-use panix\shop\models\ShopProduct;
+use panix\mod\cart\models\OrderCreateForm;
+use panix\mod\cart\models\ShopDeliveryMethod;
+use panix\mod\cart\models\ShopPaymentMethod;
+use panix\mod\shop\models\ShopProduct;
 
 class DefaultController extends WebController {
 

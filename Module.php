@@ -5,7 +5,7 @@
  * @version 0.1
  */
 
-namespace panix\cart;
+namespace panix\mod\cart;
 
 use Yii;
 use panix\engine\WebModule;
