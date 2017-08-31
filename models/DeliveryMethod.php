@@ -67,7 +67,7 @@ class DeliveryMethod extends \panix\engine\WebModel {
             return;
 
         foreach ($this->$attr as $id) {
-            if (ShopPaymentMethod::find()->where(array('id' => $id))->count() == 0)
+            if (PaymentMethod::find()->where(array('id' => $id))->count() == 0)
                 $this->addError($attr, $this->t('ERROR_PAYMENT'));
         }
     }

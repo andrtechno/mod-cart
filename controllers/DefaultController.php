@@ -5,8 +5,8 @@ namespace panix\mod\cart\controllers;
 use Yii;
 use panix\engine\controllers\WebController;
 use panix\mod\cart\models\forms\OrderCreateForm;
-use panix\mod\cart\models\ShopDeliveryMethod;
-use panix\mod\cart\models\ShopPaymentMethod;
+use panix\mod\cart\models\DeliveryMethod;
+use panix\mod\cart\models\PaymentMethod;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\ShopProduct;
@@ -72,13 +72,13 @@ class DefaultController extends WebController {
         }
 
 
-        $deliveryMethods = ShopDeliveryMethod::find()
+        $deliveryMethods = DeliveryMethod::find()
                 // ->applyTranslateCriteria()
                 //->active()
                 // ->orderByName()
                 ->all();
 
-        $paymenyMethods = ShopPaymentMethod::find()->all();
+        $paymenyMethods = PaymentMethod::find()->all();
 
         return $this->render('index', array(
                     'items' => Yii::$app->cart->getDataWithModels(),
@@ -90,7 +90,7 @@ class DefaultController extends WebController {
 
     public function actionPayment() {
         if (isset($_POST)) {
-            $this->form = ShopPaymentMethod::find()->all();
+            $this->form = PaymentMethod::find()->all();
             $this->render('_payment', array('model' => $this->form));
         }
     }

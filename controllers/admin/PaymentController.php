@@ -34,7 +34,7 @@ class PaymentController extends \panix\engine\controllers\AdminController {
       ),
       'sortable' => array(
       'class' => 'ext.sortable.SortableAction',
-      'model' => ShopDeliveryMethod::model(),
+      'model' => DeliveryMethod::model(),
       )
       );
       }

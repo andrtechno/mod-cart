@@ -4,8 +4,8 @@ use yii\helpers\Html;
 use panix\engine\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use panix\mod\cart\models\OrderStatus;
-use panix\mod\cart\models\ShopPaymentMethod;
-use panix\mod\cart\models\ShopDeliveryMethod;
+use panix\mod\cart\models\PaymentMethod;
+use panix\mod\cart\models\DeliveryMethod;
 ?>
 <div class="row">
     <div class="col-sm-6">
@@ -23,12 +23,12 @@ use panix\mod\cart\models\ShopDeliveryMethod;
                 ]);
                 ?>
                 <?=
-                $form->field($model, 'payment_id')->dropDownList(ArrayHelper::map(ShopPaymentMethod::find()->all(), 'id', 'name'), [
+                $form->field($model, 'payment_id')->dropDownList(ArrayHelper::map(PaymentMethod::find()->all(), 'id', 'name'), [
                     'prompt' => '-- оплата --'
                 ]);
                 ?>
                 <?=
-                $form->field($model, 'delivery_id')->dropDownList(ArrayHelper::map(ShopDeliveryMethod::find()->all(), 'id', 'name'), [
+                $form->field($model, 'delivery_id')->dropDownList(ArrayHelper::map(DeliveryMethod::find()->all(), 'id', 'name'), [
                     'prompt' => '-- доставка --'
                 ]);
                 ?>

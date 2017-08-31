@@ -32,12 +32,12 @@ class OrderCreateForm extends \panix\engine\base\Model {
     }
 
     public function validateDelivery() {
-        if (ShopDeliveryMethod::find()->count(['id' => $this->delivery_id]) == 0)
+        if (DeliveryMethod::find()->count(['id' => $this->delivery_id]) == 0)
             $this->addError('delivery_id', 'VALID_DELIVERY');
     }
 
     public function validatePayment() {
-        if (ShopPaymentMethod::find()->count(['id' => $this->payment_id]) == 0)
+        if (PaymentMethod::find()->count(['id' => $this->payment_id]) == 0)
             $this->addError('payment_id', 'VALID_PAYMENT');
     }
 
