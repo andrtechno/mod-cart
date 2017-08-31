@@ -4,7 +4,7 @@ namespace panix\mod\cart\controllers;
 
 use Yii;
 use panix\engine\controllers\WebController;
-use panix\mod\cart\models\OrderCreateForm;
+use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\models\ShopDeliveryMethod;
 use panix\mod\cart\models\ShopPaymentMethod;
 use panix\mod\cart\models\Order;

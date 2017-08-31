@@ -23,7 +23,7 @@ yii\grid\GridView::widget([
     'layout' => $this->render('@app/web/themes/admin/views/layouts/_grid_layout', ['title' => $this->context->pageName]), //'{items}{pager}{summary}'
     'columns' => [
         'name',
-        'description',
+        'description:html',
         [
             'class' => 'panix\engine\grid\columns\ActionColumn',
             'template' => '{update} {switch} {delete}',

@@ -1,6 +1,6 @@
 <?php
 
-namespace panix\mod\cart\models;
+namespace panix\mod\cart\models\translate;
 
 class DeliveryMethodTranslate extends \yii\db\ActiveRecord {
 

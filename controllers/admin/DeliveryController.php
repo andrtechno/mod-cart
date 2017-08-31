@@ -4,7 +4,21 @@ namespace panix\mod\cart\controllers\admin;
 use Yii;
 use panix\mod\cart\models\search\DeliveryMethodSearch;
 use panix\mod\cart\models\DeliveryMethod;
+use panix\engine\grid\sortable\SortableGridAction;
 class DeliveryController extends \panix\engine\controllers\AdminController {
+    
+    public function actions() {
+        return [
+            'dnd_sort' => [
+                'class' => SortableGridAction::className(),
+                'modelName' => DeliveryMethod::className(),
+            ],
+            'delete' => [
+                'class' => 'panix\engine\grid\actions\DeleteAction',
+                'modelClass' => DeliveryMethod::className(),
+            ],
+        ];
+    }
 /*
     public function actions() {
         return array(

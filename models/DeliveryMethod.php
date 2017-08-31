@@ -4,7 +4,7 @@ namespace panix\mod\cart\models;
 
 use yii\helpers\ArrayHelper;
 use panix\engine\behaviors\TranslateBehavior;
-use panix\mod\cart\models\DeliveryMethodTranslate;
+use panix\mod\cart\models\translate\DeliveryMethodTranslate;
 use panix\mod\cart\models\DeliveryPayment;
 
 class DeliveryMethod extends \panix\engine\WebModel {

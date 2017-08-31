@@ -1,106 +1,128 @@
 <?php
+
 namespace panix\mod\cart\controllers\admin;
 
-
+use Yii;
+use panix\mod\cart\models\search\DeliveryMethodSearch;
+use panix\mod\cart\models\DeliveryMethod;
+use panix\engine\grid\sortable\SortableGridAction;
 
 class PaymentMethodController extends \panix\engine\controllers\AdminController {
 
     public function actions() {
-        return array(
-            'order' => array(
-                'class' => 'ext.adminList.actions.SortingAction',
-            ),
-            'switch' => array(
-                'class' => 'ext.adminList.actions.SwitchAction',
-            ),
-            'delete' => array(
-                'class' => 'ext.adminList.actions.DeleteAction',
-            ),
-            'sortable' => array(
-                'class' => 'ext.sortable.SortableAction',
-                'model' => ShopPaymentMethod::model(),
-            )
-        );
+        return [
+            'dnd_sort' => [
+                'class' => SortableGridAction::className(),
+                'modelName' => PaymentMethod::className(),
+            ],
+            'delete' => [
+                'class' => 'panix\engine\grid\actions\DeleteAction',
+                'modelClass' => PaymentMethod::className(),
+            ],
+        ];
     }
 
-    public function allowedActions() {
-        return 'renderConfigurationForm';
-    }
+    /*
+      public function actions() {
+      return array(
+      'order' => array(
+      'class' => 'ext.adminList.actions.SortingAction',
+      ),
+      'switch' => array(
+      'class' => 'ext.adminList.actions.SwitchAction',
+      ),
+      'sortable' => array(
+      'class' => 'ext.sortable.SortableAction',
+      'model' => ShopDeliveryMethod::model(),
+      )
+      );
+      }
+     */
 
     public function actionIndex() {
-        $model = new ShopPaymentMethod('search');
-        $this->icon = $this->module->adminMenu['orders']['items'][5]['icon'];
-        if (!empty($_GET['ShopDeliveryMethod']))
-            $model->attributes = $_GET['ShopPaymentMethod'];
+        $this->pageName = Yii::t('cart/admin', 'DELIVERY');
+        $this->buttons = [
+            [
+                'icon' => 'icon-add',
+                'label' => Yii::t('cart/admin', 'CREATE_DELIVERY'),
+                'url' => ['create'],
+                'options' => ['class' => 'btn btn-success']
+            ]
+        ];
+        $this->breadcrumbs[] = [
+            'label' => Yii::t('cart/default', 'MODULE_NAME'),
+            'url' => ['/admin/cart']
+        ];
+        $this->breadcrumbs[] = $this->pageName;
 
-        $dataProvider = $model->search();
-        $this->pageName = Yii::t('CartModule.admin', 'PAYMENTS');
+        $searchModel = new PaymentMethodSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
-        $this->breadcrumbs = array(
-            Yii::t('CartModule.default', 'MODULE_NAME') => array('/admin/cart'),
-            $this->pageName
-        );
-
-        $this->topButtons = array(array('label' => Yii::t('CartModule.admin', 'Создать способ оплаты'), 'url' => $this->createUrl('create'), 'htmlOptions' => array('class' => 'btn btn-success')));
-
-        $this->render('index', array(
-            'model' => $model,
-            'dataProvider' => $dataProvider,
-        ));
+        return $this->render('index', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+        ]);
     }
 
-    /**
-     * Update payment method
-     * @param bool $new
-     * @throws CHttpException
-     */
-    public function actionUpdate($new = false) {
+    public function actionUpdate($id = false) {
 
 
-        if ($new === true) {
-            $model = new ShopPaymentMethod;
-            $model->unsetAttributes();
-        } else
-            $model = ShopPaymentMethod::model()->language(Yii::app()->language->active)->findByPk($_GET['id']);
-
-        if (!$model)
-            throw new CHttpException(404, Yii::t('CartModule.admin', 'Способ оплаты не найден.'));
-
-        $this->icon = $this->module->adminMenu['orders']['items'][5]['icon'];
-        Yii::app()->clientScript->registerScriptFile($this->module->assetsUrl . '/admin/payment.js');
-
-        $this->pageName = ($model->isNewRecord) ? $model::t('IS_CREATE', 0) : $model::t('IS_CREATE', 1);
-
-        $this->breadcrumbs = array(
-            Yii::t('CartModule.default', 'MODULE_NAME') => array('/admin/shop'),
-            Yii::t('CartModule.admin', 'PAYMENTS') => $this->createUrl('index'),
-            $this->pageName
-        );
+        if ($id === true) {
+            $model = new PaymentMethod();
+        } else {
+            $model = $this->findModel($id);
+        }
 
 
+        $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
+        $this->buttons = [
+            [
+                'icon' => 'icon-add',
+                'label' => Yii::t('cart/admin', 'CREATE_DELIVERY'),
+                'url' => ['create'],
+                'options' => ['class' => 'btn btn-success']
+            ]
+        ];
+        $this->breadcrumbs[] = [
+            'label' => $this->pageName,
+            'url' => ['index']
+        ];
+        $this->breadcrumbs[] = [
+            'label' => Yii::t('cart/admin', 'DELIVERY'),
+            'url' => ['index']
+        ];
+        $this->breadcrumbs[] = Yii::t('app', 'UPDATE');
 
-        // $form = new CMSForm($model->config, $model);
 
-        if (Yii::app()->request->isPostRequest) {
-            $model->attributes = $_POST['ShopPaymentMethod'];
 
-            if ($model->validate()) {
-                $model->save();
+        //$model->setScenario("admin");
+        $post = Yii::$app->request->post();
 
-                if ($model->payment_system) {
-                    $manager = new PaymentSystemManager;
-                    $system = $manager->getSystemClass($model->payment_system);
-                    $system->saveAdminSettings($model->id, $_POST);
-                }
-                $this->redirect('index');
+
+        if ($model->load($post) && $model->validate()) {
+            $model->save();
+            Yii::$app->session->addFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
+            if ($model->isNewRecord) {
+                return Yii::$app->getResponse()->redirect(['/admin/cart/delivery']);
+            } else {
+                return Yii::$app->getResponse()->redirect(['/admin/cart/delivery/update', 'id' => $model->id]);
             }
         }
 
-        $this->render('update', array(
+        echo $this->render('update', [
             'model' => $model,
-        ));
+        ]);
     }
 
+
+    protected function findModel($id) {
+        $model = new PaymentMethod();
+        if (($model = $model::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new \yii\web\NotFoundHttpException('The requested page does not exist.');
+        }
+    }
     /**
      * Renders payment system configuration form
      */
@@ -114,5 +136,4 @@ class PaymentMethodController extends \panix\engine\controllers\AdminController 
         $system = $manager->getSystemClass($systemId);
         echo $system->getConfigurationFormHtml($paymentMethodId);
     }
-
 }

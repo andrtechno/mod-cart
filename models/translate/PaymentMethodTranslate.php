@@ -1,12 +1,7 @@
 <?php
 
-/**
- * Class to access payment method translations
- *
- * @property int $id
- * @property int $object_id
- * @property int $language_id
- */
+namespace panix\mod\cart\models\translate;
+
 class PaymentMethodTranslate extends yii\db\ActiveRecord {
 
 
