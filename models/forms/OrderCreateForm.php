@@ -10,23 +10,36 @@ class OrderCreateForm extends \panix\engine\base\Model {
 
     protected $category = 'cart';
     protected $module = 'cart';
-    public $name;
-    public $email;
-    public $phone;
-    public $address;
-    public $comment;
+    public $user_name;
+    public $user_email;
+    public $user_phone;
+    public $user_address;
+    public $user_comment;
     public $delivery_id;
     public $payment_id;
     public $registerGuest = false;
-
+    public function init() {
+        $user = Yii::$app->user;
+        if (!$user->isGuest && Yii::$app->controller instanceof \panix\engine\controllers\WebController) {
+            // NEED CONFINGURE
+            $this->user_name = $user->getDisplayName();
+            $this->user_phone = $user->phone;
+            //$this->user_address = Yii::app()->user->address; //comment for april
+            $this->user_email = $user->getEmail();
+ 
+        } else {
+          //  $this->_password = User::encodePassword(CMS::gen((int) Yii::$app->settings->get('users', 'min_password') + 2));
+        }
+        parent::init();
+    }
     public function rules() {
         return [
-            [['name', 'email'], 'required'],
+            [['user_name', 'user_email'], 'required'],
            // [['delivery_id','payment_id'], 'required'],
-            ['email', 'email'],
-            [['comment'], 'string', 'max' => 500],
-            [['address'], 'string', 'max' => 255],
-            [['phone'], 'string', 'max' => 30],
+            ['user_email', 'email'],
+            [['user_comment'], 'string', 'max' => 500],
+            [['user_address'], 'string', 'max' => 255],
+            [['user_phone'], 'string', 'max' => 30],
             ['registerGuest', 'boolean'],
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
@@ -35,23 +48,23 @@ class OrderCreateForm extends \panix\engine\base\Model {
 
     public function validateDelivery() {
         if (DeliveryMethod::find()->where(['id' => $this->delivery_id])->count() == 0)
-            $this->addError('delivery_id', 'VALID_DELIVERY');
+            $this->addError('delivery_id', Yii::t('cart/OrderCreateForm','VALID_DELIVERY'));
     }
 
     public function validatePayment() {
         if (PaymentMethod::find()->where(['id' => $this->payment_id])->count() == 0)
-            $this->addError('payment_id', 'VALID_PAYMENT');
+            $this->addError('payment_id', Yii::t('cart/OrderCreateForm','VALID_PAYMENT'));
     }
 
     public function registerGuest() {
         if (Yii::$app->user->isGuest && $this->registerGuest) {
             $user = new User('registerFast');
             $user->password = $this->_password;
-            $user->username = $this->name;
-            $user->email = $this->email;
-            $user->login = $this->email;
-            $user->address = $this->address;
-            $user->phone = $this->phone;
+            $user->username = $this->user_name;
+            $user->email = $this->user_email;
+            $user->login = $this->user_email;
+            $user->address = $this->user_address;
+            $user->phone = $this->user_phone;
             $user->group_id = 2;
             if ($user->validate()) {
                 $user->save();

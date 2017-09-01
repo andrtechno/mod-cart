@@ -23,7 +23,7 @@ use panix\mod\shop\models\ShopProduct;
     ?>
         
         <div class="table-responsive">
-            <table width="100%" border="0" id="cart-table" class="table table-striped">
+            <table width="100%" border="0" id="cart-table" class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th align="center" style="width:10%"><?= Yii::t('cart/default', 'TABLE_IMG') ?></th>
@@ -117,14 +117,18 @@ use panix\mod\shop\models\ShopProduct;
         <div class="panel panel-default">
             <div class="panel-heading">Способ оплаты и доставки</div>
             <div class="panel-body">
-                <?php foreach ($model->deliveryMethod->paymentMethods as $payment) { ?>
+     
+                <?php
+                if($model->deliveryMethod){
+                foreach ($model->deliveryMethod->paymentMethods as $payment) { ?>
                     <?php
                     $activePay = ($payment->id == $model->payment_id) ? '<span class="icon-checkmark " style="font-size:20px;color:green"></span>' : '';
                     ?>
                     <h3><?= $activePay; ?> <?= $payment->name ?></h3>
                     <p><?= $payment->description ?></p>
                     <p><?= $payment->renderPaymentForm($model) ?></p>
-                <?php } ?>
+                <?php }
+                } ?>
             </div>
         </div>
     </div>
@@ -134,16 +138,16 @@ use panix\mod\shop\models\ShopProduct;
             <div class="panel-heading"><?= Yii::t('cart/default', 'Состояние заказа') ?> <span class="label label-success pull-right" style=""><?= $model->status_name ?></span></div>
             <div class="panel-body">
                 <?php if ($model->paid) { ?>
-                    <?= Yii::t('CartModule.Order', 'PAID') ?>: <span class="label label-success"><?= Yii::t('app', 'YES') ?></span>
+                    <?= Yii::t('cart/Order', 'PAID') ?>: <span class="label label-success"><?= Yii::t('app', 'YES') ?></span>
                 <?php } else { ?>
-                    <?= Yii::t('CartModule.Order', 'PAID') ?>: <span class="label label-default"><?= Yii::t('app', 'NO') ?></span>
+                    <?= Yii::t('cart/Order', 'PAID') ?>: <span class="label label-default"><?= Yii::t('app', 'NO') ?></span>
                 <?php } ?>
                     <br/>
                 Цена доставки:
                 <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->delivery_price)) ?>
                 <?= Yii::$app->currency->active->symbol ?>
                 <br/>
-                <?= Yii::t('app', 'TOTAL_PAY') ?>:
+                <?= Yii::t('cart/default', 'TOTAL_PAY') ?>:
                 <span class="label label-success"><?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->full_price)) ?></span> 
                 <?= Yii::$app->currency->active->symbol ?>
             </div>

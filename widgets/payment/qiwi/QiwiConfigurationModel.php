@@ -15,7 +15,7 @@ class QiwiConfigurationModel extends \yii\base\Model {
      */
     public function rules() {
         return array(
-            array('shop_id, password', 'type')
+            array('shop_id, password', 'string')
         );
     }
 
@@ -39,9 +39,9 @@ class QiwiConfigurationModel extends \yii\base\Model {
         else
             $successUrl = Url::to('/payment/process', array('payment_id' => $id)) . '?redirect=СCЫЛКА_СТРАНИЦЫ_УСПЕШНОЙ_ОПЛАТЫ';
 
-        return array(
-            'type' => 'form',
-            'elements' => array(
+        //return array(
+            //'type' => 'form',
+           return array(
                 'shop_id' => array(
                     'label' => Yii::t('cart/payments', 'QIWI_ID'),
                     'type' => 'text',
@@ -56,7 +56,8 @@ class QiwiConfigurationModel extends \yii\base\Model {
 					' . $successUrl . '
 				</div>
 				'
-                ));
+              //  )
+                );
     }
 
 }

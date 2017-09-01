@@ -1,4 +1,7 @@
 <?php
+
+use yii\helpers\Url;
+use yii\jui\Spinner;
 use panix\engine\Html;
 use panix\mod\shop\models\ShopProduct;
 
@@ -78,7 +81,13 @@ if (empty($items)) {
                     <tr id="product-<?= $index ?>">
                         <td width="110px" align="center">
                         
-                            IMG
+                <?php
+                if ($product['model']->getImage()) {
+                    echo Html::img(Url::to($product['model']->getImage()->getUrl('100x')), ['alt' => $product['model']->name]);
+                } else {
+                    echo 'no img';
+                }
+                ?>
                     
                         </td>
                         <td>
@@ -117,8 +126,15 @@ if (empty($items)) {
                             ?>
                         </td>
                         <td>
-
-                            <?php echo Html::textInput("quantities[$index]", $product['quantity'], array('class' => 'spinner btn-group form-control', 'product_id' => $index)) ?>
+<?php
+echo Spinner::widget([
+    'name'  => "quantities[$index]",
+    'value'=>$product['quantity'],
+    'clientOptions' => ['max' => 999],
+    'options'=>['product_id' => $index,'class'=>'cart-spinner']
+]);
+?>
+                            <?php //echo Html::textInput("quantities[$index]", $product['quantity'], array('class' => 'spinner btn-group form-control', 'product_id' => $index)) ?>
 
                         </td>
                         <td id="price-<?= $index ?>" class="cart-product-sub-total">
@@ -211,7 +227,7 @@ if (empty($items)) {
                 <div id="payment" style="font-size:14px;margin-bottom:20px;font-weight:bold">---</div>
                 <div style="font-size:14px"><?= Yii::t('cart/default', 'DELIVERY'); ?>:</div>
                 <div id="delivery" style="font-size:14px;margin-bottom:20px;font-weight:bold">---</div>
-                <a href="javascript:submitform();" class="btn btn-primary btn-lg"><?= Yii::t('app', 'BUTTON_CHECKOUT'); ?></a>
+                <a href="javascript:submitform();" class="btn btn-primary btn-lg"><?= Yii::t('cart/default', 'BUTTON_CHECKOUT'); ?></a>
             </div>
             <input type="hidden" name="create" value="1">
         </div>

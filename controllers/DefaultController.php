@@ -3,6 +3,8 @@
 namespace panix\mod\cart\controllers;
 
 use Yii;
+use yii\helpers\Url;
+use panix\engine\Html;
 use panix\engine\controllers\WebController;
 use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\models\DeliveryMethod;
@@ -31,11 +33,16 @@ class DefaultController extends WebController {
       $this->_form = $value;
       } */
 
+    public function beforeAction($action) {
+        \panix\mod\cart\assets\CartAsset::register($this->view);
+        return parent::beforeAction($action);
+    }
+
     public function actionRecount() {
         //Yii::$app->cart->clear();
-        Yii::$app->request->enableCsrfValidation = false;
-        if (Yii::$app->request->isAjaxRequest) {
-            if (Yii::$app->request->isPostRequest && !empty($_POST['quantities'])) {
+       // Yii::$app->request->enableCsrfValidation = false;
+        if (Yii::$app->request->isAjax) {
+            if (Yii::$app->request->isPost && !empty($_POST['quantities'])) {
                 $test = array();
                 $test[Yii::$app->request->post('product_id')] = Yii::$app->request->post('quantities');
                 Yii::$app->cart->ajaxRecount($test);
@@ -47,10 +54,7 @@ class DefaultController extends WebController {
      * Display list of product added to cart
      */
     public function actionIndex() {
-
-
         if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
-
             $this->processRecount();
         }
         $this->form = new OrderCreateForm;
@@ -59,14 +63,11 @@ class DefaultController extends WebController {
         $post = Yii::$app->request->post();
 
         if ($post) {
-
             if ($this->form->load($post) && $this->form->validate()) {
                 $this->form->registerGuest();
                 $order = $this->createOrder();
                 Yii::$app->cart->clear();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'SUCCESS_ORDER'));
-              //  Yii::$app->response->redirect(array('view','secret_key'=>$order->secret_key));
-
                 return $this->redirect(['view', 'secret_key' => $order->secret_key]);
             }
         }
@@ -91,7 +92,7 @@ class DefaultController extends WebController {
     public function actionPayment() {
         if (isset($_POST)) {
             $this->form = PaymentMethod::find()->all();
-            $this->render('_payment', array('model' => $this->form));
+            echo $this->render('_payment', array('model' => $this->form));
         }
     }
 
@@ -100,20 +101,15 @@ class DefaultController extends WebController {
      * @throws CHttpException
      */
     public function actionView() {
-
         $secret_key = Yii::$app->request->get('secret_key');
         $model = Order::find()->where('secret_key=:key', array(':key' => $secret_key))->one();
-        $this->pageName = Yii::t('cart/default', 'VIEW_ORDER', array('{id}' => $model->id));
-
-       /* $this->breadcrumbs = array(
-            Yii::t('shop/default', 'BC_SHOP') => array('/shop'),
-            Yii::t('cart/default', 'MODULE_NAME') => array('/cart'),
-            $this->pageName);*/
         if (!$model)
-            throw new CHttpException(404, Yii::t('cart/default', 'ERROR_ORDER_NO_FIND'));
+            throw new \yii\web\NotFoundHttpException(Yii::t('cart/default', 'ERROR_ORDER_NO_FIND'));
 
-        $this->render('view', array(
-            'model' => $model,
+        $this->pageName = Yii::t('cart/default', 'VIEW_ORDER', ['id' => $model->id]);
+        $this->breadcrumbs[] = $this->pageName;
+        return $this->render('view', array(
+                    'model' => $model,
         ));
     }
 
@@ -128,7 +124,7 @@ class DefaultController extends WebController {
 
         // Check product
         if (!isset($model))
-            $this->_addError(Yii::t('CartModule.default', 'ERROR_PRODUCT_NO_FIND'), true);
+            $this->_addError(Yii::t('cart/default', 'ERROR_PRODUCT_NO_FIND'), true);
 
         // Update counter
         $model->updateCounters(['added_to_cart_count' => 1]);
@@ -139,7 +135,7 @@ class DefaultController extends WebController {
                 if (!empty($variant_id)) {
                     // Check if attribute/option exists
                     if (!$this->_checkVariantExists($_POST['product_id'], $attribute_id, $variant_id))
-                        $this->_addError(Yii::t('CartModule.default', 'ERROR_VARIANT_NO_FIND'));
+                        $this->_addError(Yii::t('cart/default', 'ERROR_VARIANT_NO_FIND'));
                     else
                         array_push($variants, $variant_id);
                 }
@@ -152,7 +148,7 @@ class DefaultController extends WebController {
             $configurable_id = Yii::$app->request->post('configurable_id', 0);
 
             if (!$configurable_id || !in_array($configurable_id, $model->configurations))
-                $this->_addError(Yii::t('CartModule.default', 'ERROR_SELECT_VARIANT'), true);
+                $this->_addError(Yii::t('cart/default', 'ERROR_SELECT_VARIANT'), true);
         } else
             $configurable_id = 0;
 
@@ -212,13 +208,13 @@ class DefaultController extends WebController {
 
         // Set main data
         $order->user_id = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
-        $order->user_name = $this->form->name;
-        $order->user_email = $this->form->email;
-        $order->user_phone = $this->form->phone;
-        $order->user_address = $this->form->address;
-        $order->user_comment = $this->form->comment;
-       // $order->delivery_id = $this->form->delivery_id;
-      //  $order->payment_id = $this->form->payment_id;
+        $order->user_name = $this->form->user_name;
+        $order->user_email = $this->form->user_email;
+        $order->user_phone = $this->form->user_phone;
+        $order->user_address = $this->form->user_address;
+        $order->user_comment = $this->form->user_comment;
+        $order->delivery_id = $this->form->delivery_id;
+        $order->payment_id = $this->form->payment_id;
 
         if ($order->validate()) {
             if ($order->save()) {
@@ -282,9 +278,9 @@ class DefaultController extends WebController {
         $order->updateDeliveryPrice();
 
         // Send email to user.
-        // $this->sendClientEmail($order);
+        $this->sendClientEmail($order);
         // Send email to admin.
-        // $this->sendAdminEmail($order);
+        $this->sendAdminEmail($order);
 
         return $order;
     }
@@ -297,11 +293,11 @@ class DefaultController extends WebController {
      * @return string
      */
     protected function _checkVariantExists($product_id, $attribute_id, $variant_id) {
-        return ShopProductVariant::model()->cache($this->cacheTime)->countByAttributes(array(
+        return ShopProductVariant::find()->where([
                     'id' => $variant_id,
                     'product_id' => $product_id,
                     'attribute_id' => $attribute_id
-        ));
+                ])->count();
     }
 
     /**
@@ -346,133 +342,70 @@ class DefaultController extends WebController {
         exit;
     }
 
-    /**
-     * Sends email to user after create new order.
-     */
-    private function sendClientEmail(Order $order) {
-        $config = Yii::$app->settings->get('cart');
-        $productList = '<ul>';
-        foreach ($order->products as $product) {
-            $productList .= '<li>' . $product->getRenderFullName() . '</li>';
-        }
-        $productList .= '</ul>';
-        $mailer = Yii::$app->mail;
-        $mailer->From = 'noreply@' . Yii::$app->request->serverName;
-        $mailer->FromName = Yii::$app->settings->get('core', 'site_name');
-        $mailer->Subject = $this->replace($order, '', $config['tpl_subject_user']);
-        $mailer->Body = $this->replace($order, $productList, $config['tpl_body_user']);
-        $mailer->AddAddress($order->user_email);
-        $mailer->AddReplyTo('noreply@' . Yii::$app->request->serverName);
-        $mailer->isHtml(true);
-        $mailer->Send();
-        $mailer->ClearAddresses();
-    }
-
-    private function getProductImage($p) {
-        if (isset($p->mainImage)) {
-            return Html::image($this->createAbsoluteUrl($p->mainImage->getUrl("200x200")), $p->name);
+    public function getProductImage($p) {
+        if ($p->getImage()) {
+            return Html::img(Url::to($p->getImage()->getUrl("200"), true), ['alt' => $p->name]);
         } else {
             return 'пусто';
         }
     }
 
     private function sendAdminEmail(Order $order) {
-        $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
-        $tdStyle = $thStyle;
-        $currency = Yii::$app->currency->active->symbol;
-        $configShop = Yii::$app->settings->get('cart');
-        $config = Yii::$app->settings->get('core');
-        $tables = '<table border="0" width="600px" cellspacing="1" cellpadding="5" style="border-spacing: 0;border-collapse: collapse;">'; //border-collapse:collapse;
-        $tables .= '<tr>';
-        if ($configShop['wholesale']) { // Продажа оптом
-            $tables .= '<th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_IMG') . '</th>
-            <th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_NAME') . '</th>
-            <th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_WHOLESALE', (int) $configShop['wholesale']) . '</th>
-            <th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_PCS') . '</th>
-            <th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_PRICE_FOR', (int) $configShop['wholesale']) . '</th>
-            <th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_PRICE') . '</th>';
-        } else { // Продажа розничная
-            $tables .= '<th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_WHOLESALE', (int) $configShop['wholesale']) . '</th>
-            <th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_NAME') . '</th>
-            <th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_IMG') . '</th>
-            <th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_PRICE_FOR', (int) $configShop['wholesale']) . '</th>
-            <th style="' . $thStyle . '">' . Yii::t('CartModule.default', 'TABLE_TH_MAIL_TOTALPRICE') . '</th>';
-        }
-        $tables .= '</tr>';
-        if ($configShop['wholesale']) {
-            foreach ($order->products as $row) { // Продажа оптом
-                $tables .= '<tr>
-            <td style="' . $tdStyle . '" align="center"><a href="' . $row->prd->absoluteUrl . '"  target="_blank">' . $this->getProductImage($row->prd) . '</a></td>
-            <td style="' . $tdStyle . '"><a href="' . $row->prd->absoluteUrl . '"  target="_blank">' . $row->prd->name . '</a></td>
-            <td style="' . $tdStyle . '" align="center">' . $row->quantity . '</td>
-            <td style="' . $tdStyle . '" align="center">' . $row->prd->pcs . '</td>
-            <td style="' . $tdStyle . '" align="center">' . Yii::$app->currency->convert($row->prd->price) . '</td>
-            <td style="' . $tdStyle . '" align="center">' . Yii::$app->currency->convert($row->prd->price * $row->prd->pcs * $row->quantity) . ' ' . $currency . '</td>
-            </tr>';
-            }
-        } else {
-            foreach ($order->products as $row) { // Продажа розничная
-                $tables .= '<tr>
-            <td style="' . $tdStyle . '" align="center"><a href="' . $row->prd->absoluteUrl . '"  target="_blank">' . $this->getProductImage($row->prd) . '</a></td>
-            <td style="' . $tdStyle . '"><a href="' . $row->prd->absoluteUrl . '"  target="_blank">' . $row->prd->name . '</a></td>
-            <td style="' . $tdStyle . '" align="center">' . $row->quantity . '</td>
-            <td style="' . $tdStyle . '" align="center">' . Yii::$app->currency->convert($row->prd->price) . '</td>
-            <td style="' . $tdStyle . '" align="center">' . Yii::$app->currency->convert($row->prd->price * $row->quantity) . ' ' . $currency . '</td>
-            </tr>';
-            }
-        }
-
-        $tables .= '</table>';
-
-        $mailer = Yii::$app->mail;
-        $mailer->From = 'noreply@' . Yii::$app->request->serverName;
-        $mailer->FromName = $config['site_name'];
-        $mailer->Subject = $this->replace($order, '', $configShop['tpl_subject_admin']);
-        $mailer->Body = $this->replace($order, $tables, $configShop['tpl_body_admin']);
-
-        foreach (explode(',', $configShop['order_emails']) as $mail) {
-            $mailer->AddAddress($mail);
-        }
-        $mailer->AddReplyTo('noreply@' . Yii::$app->request->serverName);
-        $mailer->isHtml(true);
-        $mailer->Send();
-        $mailer->ClearAddresses();
+        Yii::$app->mailer->htmlLayout = "layouts/admin";
+        Yii::$app->mailer
+                ->compose('@cart/mail/admin', ['order' => $order])
+                ->setFrom('noreply@' . Yii::$app->request->serverName)
+                ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
+                //->setCc(Yii::$app->settings->get('app','email')) //copy
+                //->setBcc(Yii::$app->settings->get('app','email')) //hidden copy
+                ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
+                ->send();
     }
 
-    protected function replace($order, $list, $content) {
-        $replace = array(
-            '%ORDER_ID%',
-            '%ORDER_KEY%',
-            '%ORDER_DELIVERY_NAME%',
-            '%ORDER_PAYMENT_NAME%',
-            '%TOTAL_PRICE%',
-            '%USER_NAME%',
-            '%USER_PHONE%',
-            '%USER_EMAIL%',
-            '%USER_ADDRESS%',
-            '%USER_COMMENT%',
-            '%CURRENT_CURRENCY%',
-            '%FOR_PAYMENY%',
-            '%LIST%',
-            '%LINK_TO_ORDER%',
-        );
-        $to = array(
-            $order->id,
-            $order->secret_key,
-            $order->deliveryMethod->name,
-            $order->paymentMethod->name,
-            $order->total_price,
-            $order->user_name,
-            $order->user_phone,
-            $order->user_email,
-            $order->user_address,
-            (isset($order->user_comment)) ? $order->user_comment : '',
-            Yii::$app->currency->active->symbol,
-            ShopProduct::formatPrice($order->total_price + $order->delivery_price),
-            $list,
-            Html::link($this->createAbsoluteUrl('view', array('secret_key' => $order->secret_key)), $this->createAbsoluteUrl('view', array('secret_key' => $order->secret_key)))
-        );
-        return CMS::textReplace($content, $replace, $to);
+    private function sendClientEmail(Order $order) {
+        Yii::$app->mailer
+                ->compose('@cart/mail/admin', ['order' => $order])
+                ->setFrom('noreply@' . Yii::$app->request->serverName)
+                ->setTo($order->user_email)
+                ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $order->id]))
+                ->send();
     }
 
+    /*
+      protected function replace($order, $list, $content) {
+      $replace = array(
+      '%ORDER_ID%',
+      '%ORDER_KEY%',
+      '%ORDER_DELIVERY_NAME%',
+      '%ORDER_PAYMENT_NAME%',
+      '%TOTAL_PRICE%',
+      '%USER_NAME%',
+      '%USER_PHONE%',
+      '%USER_EMAIL%',
+      '%USER_ADDRESS%',
+      '%USER_COMMENT%',
+      '%CURRENT_CURRENCY%',
+      '%FOR_PAYMENY%',
+      '%LIST%',
+      '%LINK_TO_ORDER%',
+      );
+      $to = array(
+      $order->id,
+      $order->secret_key,
+      $order->deliveryMethod->name,
+      $order->paymentMethod->name,
+      $order->total_price,
+      $order->user_name,
+      $order->user_phone,
+      $order->user_email,
+      $order->user_address,
+      (isset($order->user_comment)) ? $order->user_comment : '',
+      Yii::$app->currency->active->symbol,
+      ShopProduct::formatPrice($order->total_price + $order->delivery_price),
+      $list,
+      Html::link($this->createAbsoluteUrl('view', array('secret_key' => $order->secret_key)), $this->createAbsoluteUrl('view', array('secret_key' => $order->secret_key)))
+      );
+      return CMS::textReplace($content, $replace, $to);
+      }
+     */
 }

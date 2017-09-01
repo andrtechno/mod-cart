@@ -1,5 +1,6 @@
 <?php
 
+namespace panix\mod\cart\models;
 /**
  * This is the model class for table "notifications".
  *
@@ -8,44 +9,33 @@
  * @property integer $product_id
  * @property string $email
  */
-class ProductNotifications extends ActiveRecord {
+class ProductNotifications extends \yii\db\ActiveRecord {
 
-    /**
-     * Returns the static model of the specified AR class.
-     * @param string $className active record class name.
-     * @return ProductNotifications the static model class
-     */
-    public static function model($className = __CLASS__) {
-        return parent::model($className);
-    }
 
     /**
      * @return string the associated database table name
      */
-    public function tableName() {
-        return '{{shop_notifications}}';
+    public static function tableName() {
+        return '{{%shop_notifications}}';
     }
 
     /**
      * @return array validation rules for model attributes.
      */
     public function rules() {
-        return array(
-            array('email', 'required'),
-            array('email', 'length', 'max' => 255),
-            array('email', 'email'),
-        );
+        return [
+            ['email', 'required'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'email'],
+        ];
     }
 
     /**
      * @return array relational rules.
      */
-    public function relations() {
-        return array(
-            'product' => array(self::BELONGS_TO, 'ShopProduct', 'product_id')
-        );
+    public function getProduct() {
+        return $this->hasOne(ShopProduct::className(), ['id' => 'product_id']);
     }
-
     /**
      * @return array customized attribute labels (name=>label)
      */
@@ -63,9 +53,7 @@ class ProductNotifications extends ActiveRecord {
     }
 
     public function getTotalEmails() {
-        return ProductNotifications::model()->countByAttributes(array(
-                    'product_id' => $this->product_id
-                ));
+        return ProductNotifications::find()->where(['product_id' => $this->product_id])->count();
     }
 
     /**

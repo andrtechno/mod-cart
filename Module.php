@@ -5,7 +5,7 @@ namespace panix\mod\cart;
 
 use Yii;
 use panix\engine\WebModule;
-
+use panix\mod\cart\assets\CartAsset;
 //use yii\base\BootstrapInterface;
 
 
@@ -17,6 +17,7 @@ class Module extends WebModule { // implements BootstrapInterface/
         'cart/<action:[.\w]+>' => 'cart/default/<action>',
         'cart/<action:[.\w]>/*' => 'cart/default/<action>',
     ];
+    
 
     public function getInfo() {
         return [

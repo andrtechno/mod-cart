@@ -2,10 +2,6 @@
 
 namespace panix\mod\cart\components\payment;
 
-
-
-
-
 class PaymentSystemManager extends \yii\base\Component {
 
     /**
@@ -42,16 +38,20 @@ class PaymentSystemManager extends \yii\base\Component {
     public function getSystemClass($id) {
         $systemInfo = $this->getSystemInfo($id);
         $className = (string) $systemInfo->class;
-        
+
         $systemArray = $this->getDefaultModelClasses();
-        
-        //Yii::import("mod.cart.widgets.payment.{$systemInfo->id}.{$className}");
+
         return new $systemArray[$className];
     }
-    
+
     protected function getDefaultModelClasses() {
         return [
             'QiwiPaymentSystem' => 'panix\mod\cart\widgets\payment\qiwi\QiwiPaymentSystem',
+            'Privat24PaymentSystem' => 'panix\mod\cart\widgets\payment\privat24\Privat24PaymentSystem',
+            'RobokassaPaymentSystem' => 'panix\mod\cart\widgets\payment\robokassa\RobokassaPaymentSystem',
+            'WebMoneyPaymentSystem' => 'panix\mod\cart\widgets\payment\webmoney\WebMoneyPaymentSystem',
+            'YandexMoneyPaymentSystem' => 'panix\mod\cart\widgets\payment\yandexmoney\YandexMoneyPaymentSystem',
         ];
     }
+
 }

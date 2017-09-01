@@ -7,10 +7,11 @@ use panix\mod\cart\models\search\PaymentMethodSearch;
 use panix\mod\cart\models\PaymentMethod;
 use panix\engine\grid\sortable\SortableGridAction;
 use panix\mod\cart\components\payment\PaymentSystemManager;
-
+use panix\engine\Html;
 class PaymentController extends \panix\engine\controllers\AdminController {
 
     public $icon = 'icon-creditcard';
+
     public function actions() {
         return [
             'dnd_sort' => [
@@ -103,13 +104,13 @@ class PaymentController extends \panix\engine\controllers\AdminController {
 
         if ($model->load($post) && $model->validate()) {
             $model->save();
-            
-                        /*    if ($model->payment_system) {
-                    $manager = new PaymentSystemManager;
-                    $system = $manager->getSystemClass($model->payment_system);
-                    $system->saveAdminSettings($model->id, $_POST);
-                }*/
-                
+
+            /*    if ($model->payment_system) {
+              $manager = new PaymentSystemManager;
+              $system = $manager->getSystemClass($model->payment_system);
+              $system->saveAdminSettings($model->id, $_POST);
+              } */
+
             Yii::$app->session->addFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
             if ($model->isNewRecord) {
                 return Yii::$app->getResponse()->redirect(['/admin/cart/payment']);
@@ -123,7 +124,6 @@ class PaymentController extends \panix\engine\controllers\AdminController {
         ]);
     }
 
-
     protected function findModel($id) {
         $model = new PaymentMethod();
         if (($model = $model::findOne($id)) !== null) {
@@ -132,6 +132,7 @@ class PaymentController extends \panix\engine\controllers\AdminController {
             throw new \yii\web\NotFoundHttpException('The requested page does not exist.');
         }
     }
+
     /**
      * Renders payment system configuration form
      */
@@ -143,6 +144,36 @@ class PaymentController extends \panix\engine\controllers\AdminController {
             exit;
         $manager = new PaymentSystemManager;
         $system = $manager->getSystemClass($systemId);
+
         echo $system->getConfigurationFormHtml($paymentMethodId);
     }
+
+    /**
+     * Дополнительное меню Контроллера.
+     * @return array
+     */
+    public function getAddonsMenu() {
+        return array(
+            array(
+                'label' => Yii::t('cart/admin', 'STATUSES'),
+                'url' => array('/admin/cart/statuses'),
+            ),
+            array(
+                'label' => Yii::t('cart/admin', 'STATS'),
+                'url' => array('/admin/cart/statistics'),
+                'icon' => Html::icon('stats'),
+            ),
+            array(
+                'label' => Yii::t('cart/admin', 'HISTORY'),
+                'url' => array('/admin/cart/history'),
+                'icon' => Html::icon('history'),
+            ),
+            array(
+                'label' => Yii::t('app', 'SETTINGS'),
+                'url' => array('/admin/cart/settings'),
+                'icon' => Html::icon('settings'),
+            ),
+        );
+    }
+
 }

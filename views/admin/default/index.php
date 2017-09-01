@@ -37,9 +37,18 @@ yii\grid\GridView::widget([
         ],
         [
             'class' => 'panix\engine\grid\columns\ActionColumn',
-            'template' => '{update} {switch} {delete}',
-        ]
-    ]
-]);
-?>
-<?php Pjax::end(); ?>
+            'template' => '{view} {update} {switch} {delete}',
+            'buttons' => [
+                'view' => function ($url, $model, $key) {
+                    return Html::a('<i class="icon-search"></i>', $model->getUrl(), [
+                                'title' => Yii::t('yii', 'VIEW'),
+                                'class' => 'btn btn-sm btn-info',
+                                'target' => '_blank'
+                    ]);
+                }
+                    ]
+                ]
+            ]
+        ]);
+        ?>
+        <?php Pjax::end(); ?>

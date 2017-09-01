@@ -3,6 +3,8 @@
 namespace panix\mod\cart\models;
 
 use Yii;
+use panix\mod\cart\models\OrderStatus;
+use panix\mod\cart\models\OrderProduct;
 
 class Order extends \panix\engine\WebModel {
 
@@ -15,33 +17,41 @@ class Order extends \panix\engine\WebModel {
         return '{{%order}}';
     }
 
-
     public function getDeliveryMethod() {
         return $this->hasOne(DeliveryMethod::className(), ['id' => 'delivery_id']);
     }
+
     public function getPaymentMethod() {
         return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_id']);
     }
+
+    public function getStatus() {
+        return $this->hasOne(OrderStatus::className(), ['id' => 'status_id']);
+    }
     
-    
+    public function getProducts() {
+        return $this->hasMany(OrderProduct::className(), ['order_id' => 'id']);
+    }
+
+    public function getUrl() {
+        return ['/cart/default/view', 'secret_key' => $this->secret_key];
+    }
+
     public function rules() {
         return [
             [['user_name', 'user_email'], 'required'],
             //[['delivery_id','payment_id'], 'required'],
             ['user_email', 'email'],
-            [['user_comment','admin_comment'], 'string', 'max' => 500],
+            [['user_comment', 'admin_comment'], 'string', 'max' => 500],
             [['user_address'], 'string', 'max' => 255],
             [['user_phone'], 'string', 'max' => 30],
-            [['user_name','user_email','discount'], 'string', 'max' => 100],
+            [['user_name', 'user_email', 'discount'], 'string', 'max' => 100],
             ['paid', 'boolean'],
-         //   ['delivery_id', 'validateDelivery'],
-        //    ['payment_id', 'validatePayment'],
+            //   ['delivery_id', 'validateDelivery'],
+            //    ['payment_id', 'validatePayment'],
             ['status_id', 'validateStatus'],
         ];
     }
-    
-
-
 
     /**
      * Check if delivery method exists
@@ -145,22 +155,22 @@ class Order extends \panix\engine\WebModel {
      * @return int
      */
     public function updateDeliveryPrice() {
-if($this->delivery_id){
-        $result = 0;
-        $deliveryMethod = DeliveryMethod::findOne($this->delivery_id);
+        if ($this->delivery_id) {
+            $result = 0;
+            $deliveryMethod = DeliveryMethod::findOne($this->delivery_id);
 
-        if ($deliveryMethod) {
-            if ($deliveryMethod->price > 0) {
-                if ($deliveryMethod->free_from > 0 && $this->total_price > $deliveryMethod->free_from)
-                    $result = 0;
-                else
-                    $result = $deliveryMethod->price;
+            if ($deliveryMethod) {
+                if ($deliveryMethod->price > 0) {
+                    if ($deliveryMethod->free_from > 0 && $this->total_price > $deliveryMethod->free_from)
+                        $result = 0;
+                    else
+                        $result = $deliveryMethod->price;
+                }
             }
-        }
 
-        $this->delivery_price = $result;
-        $this->save(false);
-}
+            $this->delivery_price = $result;
+            $this->save(false);
+        }
     }
 
     /**
@@ -229,10 +239,10 @@ if($this->delivery_id){
 
             // Raise event
             $event = new CModelEvent($this, array(
-                        'product_model' => $product,
-                        'ordered_product' => $ordered_product,
-                        'quantity' => $quantity
-                    ));
+                'product_model' => $product,
+                'ordered_product' => $ordered_product,
+                'quantity' => $quantity
+            ));
             $this->onProductAdded($event);
         }
     }
@@ -250,12 +260,11 @@ if($this->delivery_id){
             $model->delete();
 
             $event = new CModelEvent($this, array(
-                        'ordered_product' => $model
-                    ));
+                'ordered_product' => $model
+            ));
             $this->onProductDeleted($event);
         }
     }
-
 
     /**
      * @return ActiveDataProvider
@@ -276,9 +285,9 @@ if($this->delivery_id){
             if (isset($data[$product->id])) {
                 if ((int) $product->quantity !== (int) $data[$product->id]) {
                     $event = new CModelEvent($this, array(
-                                'ordered_product' => $product,
-                                'new_quantity' => (int) $data[$product->id]
-                            ));
+                        'ordered_product' => $product,
+                        'new_quantity' => (int) $data[$product->id]
+                    ));
                     $this->onProductQuantityChanged($event);
                 }
 
@@ -287,8 +296,6 @@ if($this->delivery_id){
             }
         }
     }
-
-   
 
     public function getRelativeUrl() {
         return Yii::$app->createUrl('/cart/default/view', array('secret_key' => $this->secret_key));

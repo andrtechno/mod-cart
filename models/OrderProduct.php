@@ -21,11 +21,11 @@ class OrderProduct extends \panix\engine\WebModel {
     public function getOrder() {
         return $this->hasOne(Order::className(), ['id' => 'order_id']);
     }
-    //prd
+
     public function getOriginalProduct() {
         return $this->hasOne(ShopProduct::className(), ['id' => 'product_id']);
     }
-    
+
 
     /**
      * @return boolean

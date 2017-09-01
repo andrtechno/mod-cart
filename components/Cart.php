@@ -200,7 +200,7 @@ class Cart extends Component {
             }
         }
         $this->session['cart_data'] = $currentData;
-        echo CJSON::encode(array(
+        echo \yii\helpers\Json::encode(array(
             'rowTotal' => ShopProduct::formatPrice(Yii::$app->currency->convert($rowTotal)),
             'totalPrice' => ShopProduct::formatPrice(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
         ));

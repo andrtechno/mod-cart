@@ -9,7 +9,7 @@ class BasePaymentSystem extends \yii\base\Component {
      * @return string
      */
     public function renderSubmit() {
-        return '<input type="submit" class="btn btn-success" value="' . Yii::t('core', 'Оплатить') . '">';
+        return '<input type="submit" class="btn btn-success" value="' . Yii::t('app', 'Оплатить') . '">';
     }
 
     /**

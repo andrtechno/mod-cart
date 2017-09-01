@@ -8,7 +8,7 @@ use yii\web\AssetBundle;
 
 class CartAdminAsset extends AssetBundle {
 
-    public $sourcePath = '@vendor/panix/mod-cart/assets/admin';
+    public $sourcePath = '@cart/assets/admin';
 
     public $js = [
          'js/payment.js',

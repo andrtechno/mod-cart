@@ -100,9 +100,12 @@ class QiwiPaymentSystem extends BasePaymentSystem {
      */
     public function getConfigurationFormHtml($paymentMethodId) {
         $model = new QiwiConfigurationModel();
-        $model->attributes = $this->getSettings($paymentMethodId);
+        //var_dump($this->getSettings($paymentMethodId));die;
+       // $model->attributes = $this->getSettings($paymentMethodId);
+        $model->load($this->getSettings($paymentMethodId));
         $form = new \panix\mod\cart\components\payment\BasePaymentForm($model->getForm(), $model);
         return $form;
+
     }
 
     /**
