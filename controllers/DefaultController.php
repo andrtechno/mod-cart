@@ -197,9 +197,11 @@ class DefaultController extends WebController {
      * Render data to display in theme header.
      */
     public function actionRenderSmallCart() {
-        $this->widget('cart.widgets.cart.CartWidget', array(
-            'skin' => 'currentTheme.views.layouts.partials.widgets.CartWidget'
-        ));
+        if (!Yii::$app->request->isAjax) {
+            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'ACCESS_DENIED'));
+        }
+        echo \panix\mod\cart\widgets\cart\CartWidget::widget([]);
+        die;
     }
 
     /**
@@ -315,7 +317,7 @@ class DefaultController extends WebController {
         echo yii\helpers\Json::encode(array(
             'errors' => $this->_errors,
             'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
-                'cart' => \yii\helpers\BaseHtml::a(Yii::t('app', 'CART'), '/cart'),
+                'cart' => \yii\helpers\BaseHtml::a(Yii::t('cart/default', 'IN_CART'), '/cart'),
                 'product_name' => $product
             ]),
         ));

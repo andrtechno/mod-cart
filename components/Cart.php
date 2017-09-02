@@ -230,8 +230,7 @@ class Cart extends Component {
                 $currentData[$index]['quantity'] = (int) $quantity;
         }
         $this->session['cart_data'] = $currentData;
-        print_r($this->session['cart_data']);
-        die;
+
     }
 
     /**
@@ -239,6 +238,7 @@ class Cart extends Component {
      */
     public function countItems() {
         $result = 0;
+
         foreach ($this->session['cart_data'] as $row)
             $result += $row['quantity'];
 

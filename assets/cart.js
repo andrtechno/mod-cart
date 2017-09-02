@@ -40,7 +40,7 @@ cart = {
         $(cart.selectorTotal).html(total.toFixed(2));
     },
     renderBlockCart: function () {
-        $("#cart").load('/cart/renderSmallCart', {skin: cart.skin});
+        $("#cart").load('/cart/render-small-cart', {skin: cart.skin});
     },
     /**
      * @param product_id ИД обэекта
