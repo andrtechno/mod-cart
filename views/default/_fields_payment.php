@@ -1,4 +1,5 @@
 <?php
+
 use panix\engine\Html;
 ?>
 <div class="form-group">
@@ -8,6 +9,7 @@ use panix\engine\Html;
     foreach ($paymenyMethods as $pay) {
         echo '<div style="margin-left:15px;">';
         echo Html::activeRadio($form, 'payment_id', array(
+            'label' => false,
             'checked' => ($form->payment_id == $pay->id),
             'uncheckValue' => null,
             'value' => $pay->id,

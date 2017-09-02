@@ -1,27 +1,46 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use panix\mod\shop\models\ShopProduct;
+use yii\bootstrap\Alert;
 ?>
 <div id="cart-left" class="shopping-cart">
 
     <div class="col-md-12 col-sm-12">
         <h1><?= $this->context->pageName; ?></h1>
-        
+        <?php if (Yii::$app->session->hasFlash('success')) { ?>
+
+
             <?php
-            
-            
-                    
-            
-    $config = Yii::$app->settings->get('shop');
-   /* if (Yii::$app->user->hasFlash('success')) {
-        Yii::$app->tpl->alert('success', Yii::$app->user->getFlash('success'));
-    }
-    if (Yii::$app->user->hasFlash('success_register')) {
-        Yii::$app->tpl->alert('success', Yii::$app->user->getFlash('success_register'));
-    }*/
-    ?>
-        
+            echo Alert::widget([
+                'options' => ['class' => 'alert-success fadeOut-time'],
+                'body' => Yii::$app->session->getFlash('success'),
+            ]);
+            ?>
+
+
+        <?php } ?>
+        <?php if (Yii::$app->session->hasFlash('error')) { ?>
+            <div class="alert alert-danger fadeOut-time" role="alert">
+                <i class="fa fa-times-circle fa-2x"></i>
+                <?php
+                foreach (Yii::$app->session->getFlash('error') as $flash) {
+                    echo $flash;
+                }
+                ?>
+            </div>
+        <?php } ?>
+        <?php
+        $config = Yii::$app->settings->get('shop');
+        /* if (Yii::$app->user->hasFlash('success')) {
+          Yii::$app->tpl->alert('success', Yii::$app->user->getFlash('success'));
+          }
+          if (Yii::$app->user->hasFlash('success_register')) {
+          Yii::$app->tpl->alert('success', Yii::$app->user->getFlash('success_register'));
+          } */
+        ?>
+
         <div class="table-responsive">
             <table width="100%" border="0" id="cart-table" class="table table-striped table-bordered">
                 <thead>
@@ -36,10 +55,15 @@ use panix\mod\shop\models\ShopProduct;
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($model->getOrderedProducts()->getModels() as $product) { //$model->getOrderedProducts()->getData()  ?> 
+                    <?php foreach ($model->getOrderedProducts()->getModels() as $product) { //$model->getOrderedProducts()->getData()   ?> 
                         <tr>
                             <td width="110px" align="center">
-                                IMG
+                        
+                <?php
+
+                    echo Html::img(Url::to($product->originalProduct->getMainImageUrl('100x')), ['alt' => $product->originalProduct->name]);
+      
+                ?>
                             </td>
                             <td>
                                 <?= Html::beginTag('h3') ?>
@@ -117,18 +141,21 @@ use panix\mod\shop\models\ShopProduct;
         <div class="panel panel-default">
             <div class="panel-heading">Способ оплаты и доставки</div>
             <div class="panel-body">
-     
+
                 <?php
-                if($model->deliveryMethod){
-                foreach ($model->deliveryMethod->paymentMethods as $payment) { ?>
-                    <?php
-                    $activePay = ($payment->id == $model->payment_id) ? '<span class="icon-checkmark " style="font-size:20px;color:green"></span>' : '';
-                    ?>
-                    <h3><?= $activePay; ?> <?= $payment->name ?></h3>
-                    <p><?= $payment->description ?></p>
-                    <p><?= $payment->renderPaymentForm($model) ?></p>
-                <?php }
-                } ?>
+                if ($model->deliveryMethod) {
+                    foreach ($model->deliveryMethod->paymentMethods as $payment) {
+                        ?>
+                        <?php
+                        $activePay = ($payment->id == $model->payment_id) ? '<span class="icon-checkmark " style="font-size:20px;color:green"></span>' : '';
+                        ?>
+                        <h3><?= $activePay; ?> <?= $payment->name ?></h3>
+                        <p><?= $payment->description ?></p>
+                        <p><?= $payment->renderPaymentForm($model) ?></p>
+                        <?php
+                    }
+                }
+                ?>
             </div>
         </div>
     </div>
@@ -142,7 +169,7 @@ use panix\mod\shop\models\ShopProduct;
                 <?php } else { ?>
                     <?= Yii::t('cart/Order', 'PAID') ?>: <span class="label label-default"><?= Yii::t('app', 'NO') ?></span>
                 <?php } ?>
-                    <br/>
+                <br/>
                 Цена доставки:
                 <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->delivery_price)) ?>
                 <?= Yii::$app->currency->active->symbol ?>

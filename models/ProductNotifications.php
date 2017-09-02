@@ -1,6 +1,7 @@
 <?php
 
 namespace panix\mod\cart\models;
+
 /**
  * This is the model class for table "notifications".
  *
@@ -11,6 +12,7 @@ namespace panix\mod\cart\models;
  */
 class ProductNotifications extends \yii\db\ActiveRecord {
 
+    const MODULE_ID = 'cart';
 
     /**
      * @return string the associated database table name
@@ -36,6 +38,7 @@ class ProductNotifications extends \yii\db\ActiveRecord {
     public function getProduct() {
         return $this->hasOne(ShopProduct::className(), ['id' => 'product_id']);
     }
+
     /**
      * @return array customized attribute labels (name=>label)
      */
@@ -70,18 +73,18 @@ class ProductNotifications extends \yii\db\ActiveRecord {
         $criteria->compare('email', $this->email, true);
 
         return new ActiveDataProvider($this, array(
-                    'criteria' => $criteria,
-                ));
+            'criteria' => $criteria,
+        ));
     }
 
     /**
      * Check if email exists in list for current product
      */
     public function hasEmail() {
-        return ProductNotifications::model()->countByAttributes(array(
+        return ProductNotifications::find([
                     'email' => $this->email,
-                    'product_id' => $this->product_id
-                )) > 0;
+                    'product_id' => $this->product_id])
+                ->where()->count() > 0;
     }
 
 }

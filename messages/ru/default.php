@@ -5,6 +5,7 @@ return [
     'CART_EMPTY' => 'Корзина пуста',
     'SUCCESS_ORDER' => 'Спасибо. Ваш заказ принят.',
     'SUCCESS_ADDCART' => 'Товар "{product_name}" успешно добавлен в {cart}.',
+        'ERROR_PRODUCT_NO_FIND' => 'Ошибка. Продукт не найден.',
     'CART' => 'корзину',
     'VIEW_ORDER' => 'Просмотр заказа №{id}',
     'ERROR_ORDER_NO_FIND' => 'Ошибка. Заказ не найден.',
@@ -20,4 +21,5 @@ return [
     'MAIL_TABLE_TH_PRICE' => 'Цена',
     'MAIL_ADMIN_SUBJECT'=>'Оформлен новый заказ №{id}',
     'MAIL_CLIENT_SUBJECT'=>'Вы оформили заказ №{id}',
+
 ];

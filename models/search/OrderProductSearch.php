@@ -12,7 +12,7 @@ class OrderProductSearch extends OrderProduct {
      */
     public function rules() {
         return [
-            [['id'], 'integer'],
+            [['id', 'order_id'], 'integer'],
             [['name', 'seo_alias'], 'safe'],
         ];
     }
@@ -35,11 +35,13 @@ class OrderProductSearch extends OrderProduct {
     public function search($params) {
         $query = OrderProduct::find();
         $query->joinWith(['originalProduct']);
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $this->load($params);
+
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to any records when validation fails
@@ -49,7 +51,9 @@ class OrderProductSearch extends OrderProduct {
 
         $query->andFilterWhere([
             'id' => $this->id,
+            'order_id' => $this->order_id,
         ]);
+
 
 
         $query->andFilterWhere(['like', 'name', $this->name]);

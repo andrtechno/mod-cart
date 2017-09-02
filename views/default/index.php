@@ -6,6 +6,12 @@ use panix\engine\Html;
 use panix\mod\shop\models\ShopProduct;
 
 ?>
+<?php
+$this->registerJs("
+//cart.selectorTotal = '#total';
+var orderTotalPrice = '$totalPrice';
+", yii\web\View::POS_HEAD,'cart');
+?>
 <script>
     $(function(){
  
@@ -82,11 +88,9 @@ if (empty($items)) {
                         <td width="110px" align="center">
                         
                 <?php
-                if ($product['model']->getImage()) {
-                    echo Html::img(Url::to($product['model']->getImage()->getUrl('100x')), ['alt' => $product['model']->name]);
-                } else {
-                    echo 'no img';
-                }
+
+                    echo Html::img(Url::to($product['model']->getMainImageUrl('100x')), ['alt' => $product['model']->name]);
+      
                 ?>
                     
                         </td>
@@ -147,8 +151,8 @@ echo Spinner::widget([
                             //echo ' '.($product['currency_id'])? Yii::$app->currency->getSymbol($product['currency_id']): Yii::$app->currency->active->symbol;
                             ?>
                         </td>
-                        <td width="20px" class="romove-item">
-                            <?= Html::a('<i class="fa close"></i>', array('/cart/default/remove', 'id' => $index), array('class' => 'remove icon')) ?>
+                        <td width="20px" class="remove-item">
+                            <?= Html::a('<i class="icon-delete"></i>', ['/cart/default/remove', 'id' => $index], array('class' => 'remove icon')) ?>
                         </td>
                     </tr>
                 <?php } ?>

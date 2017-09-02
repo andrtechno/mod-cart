@@ -33,14 +33,14 @@ class DefaultController extends WebController {
       $this->_form = $value;
       } */
 
-    public function beforeAction($action) {
-        \panix\mod\cart\assets\CartAsset::register($this->view);
-        return parent::beforeAction($action);
-    }
+    // public function beforeAction($action) {
+    //\panix\mod\cart\assets\CartAsset::register($this->view);
+    //     return parent::beforeAction($action);
+    // }
 
     public function actionRecount() {
         //Yii::$app->cart->clear();
-       // Yii::$app->request->enableCsrfValidation = false;
+        // Yii::$app->request->enableCsrfValidation = false;
         if (Yii::$app->request->isAjax) {
             if (Yii::$app->request->isPost && !empty($_POST['quantities'])) {
                 $test = array();
@@ -54,6 +54,7 @@ class DefaultController extends WebController {
      * Display list of product added to cart
      */
     public function actionIndex() {
+//Yii::$app->cart->clear();
         if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
             $this->processRecount();
         }
@@ -67,7 +68,7 @@ class DefaultController extends WebController {
                 $this->form->registerGuest();
                 $order = $this->createOrder();
                 Yii::$app->cart->clear();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'SUCCESS_ORDER'));
+                Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                 return $this->redirect(['view', 'secret_key' => $order->secret_key]);
             }
         }
@@ -117,6 +118,11 @@ class DefaultController extends WebController {
      * Validate POST data and add product to cart
      */
     public function actionAdd() {
+        if (!Yii::$app->request->isAjax) {
+            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'ACCESS_DENIED'));
+        }
+
+
         $variants = array();
 
         // Load product model
@@ -158,7 +164,6 @@ class DefaultController extends WebController {
             'variants' => $variants,
             'currency_id' => $model->currency_id,
             'supplier_id' => $model->supplier_id,
-            'pcs' => $model->pcs,
             'configurable_id' => $configurable_id,
             'quantity' => (int) Yii::$app->request->post('quantity', 1),
             'price' => $model->price,
@@ -173,8 +178,9 @@ class DefaultController extends WebController {
     public function actionRemove($id) {
         Yii::$app->cart->remove($id);
 
-        if (!Yii::$app->request->isAjaxRequest)
-            Yii::$app->request->redirect($this->createUrl('index'));
+        if (!Yii::$app->request->isAjax) {
+            return $this->redirect(['index']);
+        }
     }
 
     /**
@@ -183,8 +189,8 @@ class DefaultController extends WebController {
     public function actionClear() {
         Yii::$app->cart->clear();
 
-        if (!Yii::$app->request->isAjaxRequest)
-            Yii::$app->request->redirect($this->createUrl('index'));
+        if (!Yii::$app->request->isAjax)
+            return $this->redirect(['index']);
     }
 
     /**
@@ -242,32 +248,6 @@ class DefaultController extends WebController {
             // }else{
             $ordered_product->price = ShopProduct::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
             // }
-            // Process configurable product
-            if (isset($item['configurable_model']) && $item['configurable_model'] instanceof ShopProduct) {
-                $configurable_data = array();
-
-                $ordered_product->configurable_name = $item['configurable_model']->name;
-                // Use configurable product sku
-                $ordered_product->sku = $item['configurable_model']->sku;
-                // Save configurable data
-
-                $attributeModels = ShopAttribute::model()
-                        ->cache($this->cacheTime)
-                        ->findAllByPk($item['model']->configurable_attributes);
-                foreach ($attributeModels as $attribute) {
-                    $method = 'eav_' . $attribute->name;
-                    $configurable_data[$attribute->title] = $item['configurable_model']->$method;
-                }
-                $ordered_product->configurable_data = serialize($configurable_data);
-            }
-
-            // Save selected variants as key/value array
-            if (!empty($item['variant_models'])) {
-                $variants = array();
-                foreach ($item['variant_models'] as $variant)
-                    $variants[$variant->attribute->title] = $variant->option->value;
-                $ordered_product->variants = serialize($variants);
-            }
 
             $ordered_product->save();
         }

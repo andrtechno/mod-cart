@@ -270,11 +270,8 @@ class Order extends \panix\engine\WebModel {
      * @return ActiveDataProvider
      */
     public function getOrderedProducts() {
-
         $products = new search\OrderProductSearch();
-        $products->order_id = $this->id;
-
-        return $products->search([]);
+        return $products->search([$products->formName()=>['order_id'=>$this->id]]);
     }
 
     /**

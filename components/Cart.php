@@ -42,7 +42,7 @@ class Cart extends Component {
      *         'product_id'      => $model->id,
      *         'variants'        => $variants,// e.g: array(1,2,3,...)
      *         'configurable_id' => $configurable_id,
-     *         'quantity'        => (int) Yii::$app->request->getPost('quantity', 1),
+     *         'quantity'        => (int) Yii::$app->request->post('quantity', 1),
      *         'price'           => $model->price,
      *      ));
      * </pre>
@@ -53,10 +53,18 @@ class Cart extends Component {
 
         $currentData = $this->getData();
 
-        if (isset($currentData[$itemIndex]))
-            $currentData[$itemIndex]['quantity'] += (int) $data['quantity'];
-        else
+        if (isset($currentData[$itemIndex])) {
+            //echo $currentData[$itemIndex]['quantity'];
+            //die();
+            if ($currentData[$itemIndex]['quantity']) {
+                $currentData[$itemIndex]['quantity'] += (int) $data['quantity'];
+                if ($currentData[$itemIndex]['quantity'] > 999) {
+                    $currentData[$itemIndex]['quantity'] = 999;
+                }
+            }
+        } else {
             $currentData[$itemIndex] = $data;
+        }
 
         $this->session['cart_data'] = $currentData;
     }
@@ -67,7 +75,6 @@ class Cart extends Component {
      */
     public function remove($index) {
         $currentData = $this->getData();
-
         if (isset($currentData[$index])) {
             unset($currentData[$index]);
             $this->session['cart_data'] = $currentData;

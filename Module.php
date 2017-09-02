@@ -5,19 +5,20 @@ namespace panix\mod\cart;
 
 use Yii;
 use panix\engine\WebModule;
-use panix\mod\cart\assets\CartAsset;
+
 //use yii\base\BootstrapInterface;
 
 
 class Module extends WebModule { // implements BootstrapInterface/
-
+// public $controllerNamespace = '@cart\controllers';
     public $routes = [
         'cart' => 'cart/default/index',
         'cart/view/<secret_key>' => 'cart/default/view',
+        'cart/remove/<id:(\d+)>' => 'cart/default/remove',
         'cart/<action:[.\w]+>' => 'cart/default/<action>',
         'cart/<action:[.\w]>/*' => 'cart/default/<action>',
     ];
-    
+
 
     public function getInfo() {
         return [
