@@ -25,22 +25,7 @@ class DefaultController extends WebController {
      */
     protected $_errors = false;
 
-    /* public function getForm() {
-      return $this->_form;
-      }
-
-      public function setForm($value) {
-      $this->_form = $value;
-      } */
-
-    // public function beforeAction($action) {
-    //\panix\mod\cart\assets\CartAsset::register($this->view);
-    //     return parent::beforeAction($action);
-    // }
-
     public function actionRecount() {
-        //Yii::$app->cart->clear();
-        // Yii::$app->request->enableCsrfValidation = false;
         if (Yii::$app->request->isAjax) {
             if (Yii::$app->request->isPost && !empty($_POST['quantities'])) {
                 $test = array();
@@ -54,7 +39,7 @@ class DefaultController extends WebController {
      * Display list of product added to cart
      */
     public function actionIndex() {
-//Yii::$app->cart->clear();
+
         if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
             $this->processRecount();
         }
@@ -75,10 +60,12 @@ class DefaultController extends WebController {
 
 
         $deliveryMethods = DeliveryMethod::find()
-                // ->applyTranslateCriteria()
-                //->active()
-                // ->orderByName()
+                ->published()
+                ->orderByName()
                 ->all();
+   // echo($deliveryMethods->prepare(Yii::$app->db->queryBuilder)->createCommand()->rawSql);die;
+
+
 
         $paymenyMethods = PaymentMethod::find()->all();
 
@@ -177,7 +164,6 @@ class DefaultController extends WebController {
      */
     public function actionRemove($id) {
         Yii::$app->cart->remove($id);
-
         if (!Yii::$app->request->isAjax) {
             return $this->redirect(['index']);
         }
@@ -188,7 +174,6 @@ class DefaultController extends WebController {
      */
     public function actionClear() {
         Yii::$app->cart->clear();
-
         if (!Yii::$app->request->isAjax)
             return $this->redirect(['index']);
     }
@@ -258,7 +243,6 @@ class DefaultController extends WebController {
         $order->refresh(); //@todo panix text email tpl
         // All products added. Update delivery price.
         $order->updateDeliveryPrice();
-
         // Send email to user.
         $this->sendClientEmail($order);
         // Send email to admin.
@@ -286,11 +270,9 @@ class DefaultController extends WebController {
      * Recount product quantity and redirect
      */
     public function processRecount() {
-        print_r(Yii::$app->request->post('quantities'));
-        die;
         Yii::$app->cart->recount(Yii::$app->request->post('quantities'));
 
-        if (!Yii::$app->request->isAjaxRequest)
+        if (!Yii::$app->request->isAjax)
             Yii::$app->request->redirect($this->createUrl('index'));
     }
 
@@ -324,19 +306,11 @@ class DefaultController extends WebController {
         exit;
     }
 
-    public function getProductImage($p) {
-        if ($p->getImage()) {
-            return Html::img(Url::to($p->getImage()->getUrl("200"), true), ['alt' => $p->name]);
-        } else {
-            return 'пусто';
-        }
-    }
-
     private function sendAdminEmail(Order $order) {
         Yii::$app->mailer->htmlLayout = "layouts/admin";
         Yii::$app->mailer
                 ->compose('@cart/mail/admin', ['order' => $order])
-                ->setFrom('noreply@' . Yii::$app->request->serverName)
+                ->setFrom(['noreply@' . Yii::$app->request->serverName=>Yii::$app->name . ' robot'])
                 ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
                 //->setCc(Yii::$app->settings->get('app','email')) //copy
                 //->setBcc(Yii::$app->settings->get('app','email')) //hidden copy
@@ -352,42 +326,4 @@ class DefaultController extends WebController {
                 ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $order->id]))
                 ->send();
     }
-
-    /*
-      protected function replace($order, $list, $content) {
-      $replace = array(
-      '%ORDER_ID%',
-      '%ORDER_KEY%',
-      '%ORDER_DELIVERY_NAME%',
-      '%ORDER_PAYMENT_NAME%',
-      '%TOTAL_PRICE%',
-      '%USER_NAME%',
-      '%USER_PHONE%',
-      '%USER_EMAIL%',
-      '%USER_ADDRESS%',
-      '%USER_COMMENT%',
-      '%CURRENT_CURRENCY%',
-      '%FOR_PAYMENY%',
-      '%LIST%',
-      '%LINK_TO_ORDER%',
-      );
-      $to = array(
-      $order->id,
-      $order->secret_key,
-      $order->deliveryMethod->name,
-      $order->paymentMethod->name,
-      $order->total_price,
-      $order->user_name,
-      $order->user_phone,
-      $order->user_email,
-      $order->user_address,
-      (isset($order->user_comment)) ? $order->user_comment : '',
-      Yii::$app->currency->active->symbol,
-      ShopProduct::formatPrice($order->total_price + $order->delivery_price),
-      $list,
-      Html::link($this->createAbsoluteUrl('view', array('secret_key' => $order->secret_key)), $this->createAbsoluteUrl('view', array('secret_key' => $order->secret_key)))
-      );
-      return CMS::textReplace($content, $replace, $to);
-      }
-     */
 }

@@ -16,10 +16,14 @@ class DeliveryMethod extends \panix\engine\WebModel {
     public static function tableName() {
         return '{{%shop_delivery_method}}';
     }
-
+    public static function find() {
+        return new query\DeliveryMethodQuery(get_called_class());
+    }
+    
     public function getTranslations() {
         return $this->hasMany(DeliveryMethodTranslate::className(), ['object_id' => 'id']);
     }
+
 
     public function getCategorization() {
         return $this->hasMany(DeliveryPayment::className(), ['delivery_id' => 'id']);

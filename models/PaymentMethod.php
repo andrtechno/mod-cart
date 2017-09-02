@@ -6,12 +6,17 @@ use panix\engine\behaviors\TranslateBehavior;
 use yii\helpers\ArrayHelper;
 use panix\mod\cart\models\translate\PaymentMethodTranslate;
 use panix\mod\cart\components\payment\PaymentSystemManager;
+
 class PaymentMethod extends \panix\engine\WebModel {
 
     const MODULE_ID = 'cart';
 
     public static function tableName() {
         return '{{%shop_payment_method}}';
+    }
+
+    public static function find() {
+        return new query\DeliveryPaymentQuery(get_called_class());
     }
 
     /**

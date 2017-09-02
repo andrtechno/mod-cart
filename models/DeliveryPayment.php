@@ -2,7 +2,6 @@
 
 namespace panix\mod\cart\models;
 
-
 class DeliveryPayment extends \yii\db\ActiveRecord {
 
 

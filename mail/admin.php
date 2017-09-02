@@ -47,11 +47,8 @@ $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
         <tr>
             <td style="<?= $thStyle; ?>" align="center">
                 <?php
-                if ($row->originalProduct->getImage()) {
-                    echo Html::img($message->embed(Url::to($row->originalProduct->getImage()->getUrl('100x'), true)), ['alt' => $row->originalProduct->name]);
-                } else {
-                    echo 'no img';
-                }
+                    echo Html::img($message->embed(Url::to($row->originalProduct->getMainImageUrl('100x'), true)), ['alt' => $row->originalProduct->name]);
+
                 ?>
             </td>
             <td style="<?= $thStyle; ?>"><?= Html::a($row->originalProduct->name, Url::toRoute($row->originalProduct->getUrl(), true), ['target' => '_blank']); ?></td>
