@@ -6,7 +6,7 @@ return [
     'SUCCESS_ORDER' => 'Спасибо. Ваш заказ принят.',
     'SUCCESS_ADDCART' => 'Товар "{product_name}" успешно добавлен в {cart}.',
         'ERROR_PRODUCT_NO_FIND' => 'Ошибка. Продукт не найден.',
-
+'BUY'=>'Купить',
     'IN_CART' => 'корзину',
     'VIEW_ORDER' => 'Просмотр заказа №{id}',
     'ERROR_ORDER_NO_FIND' => 'Ошибка. Заказ не найден.',

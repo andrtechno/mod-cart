@@ -97,7 +97,7 @@ if (empty($items)) {
                         <td>
                             <?php
                             // Display product name with its variants and configurations
-                            echo Html::a(Html::encode($product['model']->name), ['/shop/product/view', 'url' => $product['model']->seo_alias]);
+                            echo Html::a(Html::encode($product['model']->name), $product['model']->getUrl());
                             ?>
                             <br/>
                             <?php
