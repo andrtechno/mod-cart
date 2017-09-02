@@ -58,7 +58,32 @@ cart = {
      */
     add: function (formid) {
         var form = $(formid);
-        common.ajax(form.attr('action'), form.serialize(), function (data, textStatus, xhr) {
+        $.ajax({
+            url:form.attr('action'),
+            type:'POST',
+            dataType:'json',
+            data:form.serialize(),
+            success:function(data, textStatus, xhr){
+          if (data.errors) {
+                common.notify(data.errors, 'error');
+            } else {
+                cart.renderBlockCart();
+                common.notify(data.message, 'success');
+                common.removeLoader();
+                $('body,html').animate({
+                    // scrollTop: 0
+                }, 500, function () {
+                    $("#cart").fadeOut().fadeIn();
+                });
+
+            }
+            },
+            complete:function(){
+
+//common.notify_list[0].close();
+            }
+        });
+       /* common.ajax(form.attr('action'), form.serialize(), function (data, textStatus, xhr) {
             console.log(xhr);
             if (data.errors) {
                 common.notify(data.errors, 'error');
@@ -73,7 +98,7 @@ cart = {
                 });
 
             }
-        }, 'json');
+        }, 'json');*/
     },
     /**
      * @param product_id ИД обэекта
