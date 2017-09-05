@@ -16,7 +16,9 @@ class Order extends \panix\engine\WebModel {
     public static function tableName() {
         return '{{%order}}';
     }
-
+    public static function find() {
+        return new query\OrderQuery(get_called_class());
+    }
     public function getDeliveryMethod() {
         return $this->hasOne(DeliveryMethod::className(), ['id' => 'delivery_id']);
     }
@@ -238,12 +240,12 @@ class Order extends \panix\engine\WebModel {
             $ordered_product->save();
 
             // Raise event
-            $event = new CModelEvent($this, array(
+            /*$event = new CModelEvent($this, array(
                 'product_model' => $product,
                 'ordered_product' => $ordered_product,
                 'quantity' => $quantity
             ));
-            $this->onProductAdded($event);
+            $this->onProductAdded($event);*/
         }
     }
 
@@ -254,15 +256,15 @@ class Order extends \panix\engine\WebModel {
      */
     public function deleteProduct($id) {
 
-        $model = OrderProduct::model()->findByPk($id);
+        $model = OrderProduct::findOne($id);
 
         if ($model) {
             $model->delete();
 
-            $event = new CModelEvent($this, array(
-                'ordered_product' => $model
-            ));
-            $this->onProductDeleted($event);
+           // $event = new CModelEvent($this, array(
+           //     'ordered_product' => $model
+           // ));
+            //$this->onProductDeleted($event);
         }
     }
 

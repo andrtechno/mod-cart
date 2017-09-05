@@ -7,13 +7,6 @@ use panix\mod\cart\models\OrderStatus;
 use panix\mod\cart\models\PaymentMethod;
 use panix\mod\cart\models\DeliveryMethod;
 ?>
-<div class="row">
-    <div class="col-sm-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><?= Html::encode($this->context->pageName) ?></h3>
-            </div>
-            <div class="panel-body">
                 <?php
                 $form = ActiveForm::begin();
                 ?>
@@ -46,11 +39,3 @@ use panix\mod\cart\models\DeliveryMethod;
                 </div>
 
                 <?php ActiveForm::end(); ?>
-
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6">
-        products
-    </div>
-</div>

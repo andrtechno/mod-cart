@@ -33,12 +33,13 @@ function openAddProductDialog(order_id) {
  * @param el TR
  */
 function addProductToOrder(el, order_id) {
-    var product_id = $(el).children('a').attr('href');
+    var product_id = $(el).attr('href');
+
     var quantity = $('#count_' + product_id).val();
     var price = $('#price_' + product_id).val();
 
     $.ajax({
-        url: "/admin/cart/default/addProduct",
+        url: "/admin/cart/default/add-product",
         type: "POST",
         data: {
             token: common.token,
@@ -75,7 +76,7 @@ function addProductToOrder(el, order_id) {
 function deleteOrderedProduct(id, order_id) {
     if (confirm(deleteQuestion)) {
         $.ajax({
-            url: "/admin/cart/default/deleteProduct",
+            url: "/admin/cart/default/delete-product",
             type: "POST",
             data: {
                 token: common.token,
@@ -95,7 +96,7 @@ function deleteOrderedProduct(id, order_id) {
  */
 function reloadOrderedProducts(order_id)
 {
-    $('#orderedProducts').load('/admin/cart/default/renderOrderedProducts/order_id/' + order_id);
+    $('#orderedProducts').load('/admin/cart/default/render-ordered-products?order_id=' + order_id);
 }
 
 /**

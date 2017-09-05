@@ -13,7 +13,9 @@ class OrderProduct extends \panix\engine\WebModel {
     public static function tableName() {
         return '{{%order_product}}';
     }
-
+    public static function find() {
+        return new query\OrderProductQuery(get_called_class());
+    }
     public function rules() {
         return [
         ];

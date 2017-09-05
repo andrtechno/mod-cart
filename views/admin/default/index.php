@@ -11,7 +11,9 @@ use yii\widgets\Pjax;
 <?php
 
 Pjax::begin([
-    'id' => 'pjax-container', 'enablePushState' => false,
+    'id' => 'pjax-container',
+    'enablePushState' => false,
+    'linkSelector' => 'a:not(.linkTarget)'
 ]);
 ?>
 <?=
@@ -37,12 +39,12 @@ yii\grid\GridView::widget([
         ],
         [
             'class' => 'panix\engine\grid\columns\ActionColumn',
-            'template' => '{view} {update} {switch} {delete}',
+            'template' => '{print} {update} {switch} {delete}',
             'buttons' => [
-                'view' => function ($url, $model, $key) {
-                    return Html::a('<i class="icon-search"></i>', $model->getUrl(), [
+                'print' => function ($url, $model, $key) {
+                    return Html::a('<i class="icon-print"></i>', ['/admin/cart/default/print','id'=>$model->id], [
                                 'title' => Yii::t('yii', 'VIEW'),
-                                'class' => 'btn btn-sm btn-info',
+                                'class' => 'btn btn-sm btn-info linkTarget',
                                 'target' => '_blank'
                     ]);
                 }
