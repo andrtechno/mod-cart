@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
 use panix\mod\shop\models\search\ShopProductSearch;
-
 ?>
 
 
@@ -17,17 +16,7 @@ use panix\mod\shop\models\search\ShopProductSearch;
 $searchModel = new ShopProductSearch();
 $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
- $dataProvider->pagination->pageSize=1;
- 
-/**
- * Add new product to order.
- * Display products list.
- */
-//if (!isset($dataProvider))
-//  $dataProvider = new ShopProduct('search');
-// Fix sort url
-// $dataProvider = $dataProvider->search();
-// $dataProvider->sort->route = 'addProductList';
+$dataProvider->pagination->pageSize = 1;
 $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
 
 
@@ -77,20 +66,21 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
   ),
   );
  */
-$orderId = $model->id;
+
 
 Pjax::begin([
     'id' => 'pjax-container-productlist',
-    //'enablePushState' => false,
-    //'linkSelector' => 'a:not(.linkTarget)'
+    'clientOptions' => ['method' => 'POST']
+        //'enablePushState' => false,
+        //'linkSelector' => 'a:not(.linkTarget)'
 ]);
 
 echo GridView::widget([
-    'filterUrl'=>['/admin/cart/test'],
-   // 'id' => 'orderedProducts',
+    'filterUrl' => ['/cart/admin/default/add-product-list', 'id' => $model->id],
+    // 'id' => 'orderedProducts',
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
-     'filterModel' => $searchModel,
+    'filterModel' => $searchModel,
     // 'layout' => $this->render('@app/web/themes/admin/views/layouts/_grid_layout', ['title' => $this->context->pageName]), //'{items}{pager}{summary}'
     'columns' => [
         [
@@ -101,13 +91,13 @@ echo GridView::widget([
     },
         ],
         'name',
-            'sku',
+        'sku',
         [
             'attribute' => 'price',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
             'value' => function($data) {
-        return Html::textInput("price_{$data->id}", $data->price,['id'=>"price_{$data->id}"]);
+        return Html::textInput("price_{$data->id}", $data->price, ['id' => "price_{$data->id}"]);
     }
         ],
         [
@@ -116,7 +106,7 @@ echo GridView::widget([
             'contentOptions' => ['class' => 'text-center'],
             'value' => function($data) {
         return \yii\jui\Spinner::widget([
-            'id'=>"count_{$data->id}",
+                    'id' => "count_{$data->id}",
                     'name' => "count_{$data->id}",
                     'value' => 1,
                     'clientOptions' => ['max' => 999],
@@ -127,31 +117,31 @@ echo GridView::widget([
         [
             'class' => 'panix\engine\grid\columns\ActionColumn',
             'template' => '{add}',
-                        'buttons' => [
+            'buttons' => [
                 'add' => function ($url, $data, $key) {
                     return Html::a('<i class="icon-add"></i>', $data->id, [
                                 'title' => Yii::t('yii', 'VIEW'),
                                 'class' => 'btn btn-sm btn-info addProductToOrder',
-                        'onClick' => 'return addProductToOrder(this, ' . Yii::$app->request->get('id') . ');'
+                                'onClick' => 'return addProductToOrder(this, ' . Yii::$app->request->get('id') . ');'
                     ]);
                 }
                     ]
-        ]
-    ]
-]);
-Pjax::end();
+                ]
+            ]
+        ]);
+  Pjax::end();
 
 
-/*  $this->widget('ext.adminList.GridView', array(
-  'filter' => $dataProvider->model,
-  'enableHeader' => false,
-  'autoColumns' => false,
-  'dataProvider' => $dataProvider,
-  //'ajaxType'=>'POST',
-  'ajaxUrl' => Yii::app()->createUrl('/cart/admin/default/addProductList', array('id' => $model->id)),
-  'selectableRows' => 0,
-  'columns' => $columns,
-  'template' => '{items}',
-  )); */
-?>
+        /*  $this->widget('ext.adminList.GridView', array(
+          'filter' => $dataProvider->model,
+          'enableHeader' => false,
+          'autoColumns' => false,
+          'dataProvider' => $dataProvider,
+          //'ajaxType'=>'POST',
+          'ajaxUrl' => Yii::app()->createUrl('/cart/admin/default/addProductList', array('id' => $model->id)),
+          'selectableRows' => 0,
+          'columns' => $columns,
+          'template' => '{items}',
+          )); */
+        ?>
 

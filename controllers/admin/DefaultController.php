@@ -9,6 +9,7 @@ use yii\web\NotFoundHttpException;
 use panix\engine\pdf\Pdf;
 use panix\mod\shop\models\ShopProduct;
 use panix\mod\cart\models\OrderProduct;
+use panix\mod\shop\models\search\ShopProductSearch;
 
 class DefaultController extends AdminController {
 
@@ -70,29 +71,28 @@ class DefaultController extends AdminController {
     }
 
     public function actionAddProductList() {
-
-        $order_id = Yii::$app->request->get('id');
+        $request = Yii::$app->request;
+        $order_id = $request > get('id');
         $model = $this->findModel($order_id);
         if ($order_id) {
-            if (!Yii::$app->request->isAjax) {
+            if (!$request->isAjax) {
                 return $this->redirect(array('/admin/cart/default/update', 'id' => $order_id));
             }
         }
-        if (!Yii::app()->request->isAjax) {
+        if (!$request->isAjax) {
             return $this->redirect(array('/admin/cart/default/index'));
         }
 
 
-        $searchModel = new ShopProduct();
-        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        $searchModel = new ShopProductSearch();
+        $dataProvider = $searchModel->search($request->getQueryParams());
 
 
-        echo $this->renderPartial('_addProduct', array(
-            'dataProvider' => $dataProvider,
-            'order_id' => $order_id,
-            'model' => $model,
-        ));
-        die;
+        return $this->renderAjax('_addProduct', [
+                    'dataProvider' => $dataProvider,
+                    'order_id' => $order_id,
+                    'model' => $model,
+        ]);
     }
 
     /**
@@ -100,15 +100,16 @@ class DefaultController extends AdminController {
      * @throws CHttpException
      */
     public function actionAddProduct() {
-        if (Yii::$app->request->isPost) {
-            if (Yii::$app->request->isAjax) {
-                $order = $this->findModel($_POST['order_id']);
-                $product = ShopProduct::findOne($_POST['product_id']);
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            if ($request->isAjax) {
+                $order = $this->findModel($request->post('order_id'));
+                $product = ShopProduct::findOne($request->post('product_id'));
 
                 $find = OrderProduct::find()->where(array('order_id' => $order->id, 'product_id' => $product->id))->one();
 
                 if ($find) {
-                    if (Yii::$app->request->isAjax) {
+                    if ($request->isAjax) {
                         echo \yii\helpers\Json::encode(array(
                             'success' => false,
                             'message' => Yii::t('cart/admin', 'ERR_ORDER_PRODUCT_EXISTS'),
@@ -119,7 +120,7 @@ class DefaultController extends AdminController {
                     }
                 }
                 if (!$product) {
-                    if (Yii::$app->request->isAjax) {
+                    if ($request->isAjax) {
                         echo \yii\helpers\Json::encode(array(
                             'success' => false,
                             'message' => Yii::t('cart/default', 'ERROR_PRODUCT_NO_FIND'),
@@ -130,7 +131,7 @@ class DefaultController extends AdminController {
                     }
                 }
 
-                $order->addProduct($product, Yii::$app->request->post('quantity'), Yii::$app->request->post('price'));
+                $order->addProduct($product, $request->post('quantity'), $request->post('price'));
                 echo \yii\helpers\Json::encode(array(
                     'success' => true,
                     'message' => Yii::t('cart/admin', 'SUCCESS_ADD_PRODUCT_ORDER'),
@@ -162,11 +163,13 @@ class DefaultController extends AdminController {
 
         $order->deleteProduct(Yii::$app->request->post('id'));
     }
+
     public function actionRenderOrderedProducts($order_id) {
-       echo $this->renderPartial('_orderedProducts', array(
-            'model' => $this->findModel($order_id)
+        return $this->renderAjax('_orderedProducts', array(
+                    'model' => $this->findModel($order_id)
         ));
     }
+
     protected function findModel($id) {
         $model = new \panix\mod\cart\models\Order;
         if (($model = $model::findOne($id)) !== null) {

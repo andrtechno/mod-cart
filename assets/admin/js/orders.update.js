@@ -5,7 +5,7 @@
  */
 function openAddProductDialog(order_id) {
     $("#dialog-modal").dialog({
-        width: '100%',
+        width: '80%',
         modal: true,
         responsive: true,
         resizable: false,
