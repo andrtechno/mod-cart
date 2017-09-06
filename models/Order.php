@@ -59,21 +59,21 @@ class Order extends \panix\engine\WebModel {
      * Check if delivery method exists
      */
     public function validateDelivery() {
-        if (DeliveryMethod::model()->countByAttributes(array('id' => $this->delivery_id)) == 0)
-            $this->addError('delivery_id', Yii::t('CartModule.core', 'Необходимо выбрать способ доставки.'));
+        if (DeliveryMethod::model()->where(['id' => $this->delivery_id])->count() == 0)
+            $this->addError('delivery_id', Yii::t('cart/admin', 'Необходимо выбрать способ доставки.'));
     }
 
     public function validatePayment() {
-        if (PaymentMethod::model()->countByAttributes(array('id' => $this->payment_id)) == 0)
-            $this->addError('payment_id', Yii::t('CartModule.core', 'Необходимо выбрать способ оплаты.'));
+        if (PaymentMethod::model()->where(['id' => $this->payment_id])->count() == 0)
+            $this->addError('payment_id', Yii::t('cart/admin', 'Необходимо выбрать способ оплаты.'));
     }
 
     /**
      * Check if status exists
      */
     public function validateStatus() {
-        if ($this->status_id && OrderStatus::model()->countByAttributes(array('id' => $this->status_id)) == 0)
-            $this->addError('status_id', Yii::t('CartModule.core', 'Ошибка проверки статуса.'));
+        if ($this->status_id && OrderStatus::find()->where(['id' => $this->status_id])->count() == 0)
+            $this->addError('status_id', Yii::t('cart/admin', 'Ошибка проверки статуса.'));
     }
 
     /**

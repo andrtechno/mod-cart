@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\Pjax;
+use panix\engine\grid\GridView;
 ?>
 
 
@@ -16,9 +17,7 @@ Pjax::begin([
     'linkSelector' => 'a:not(.linkTarget)'
 ]);
 ?>
-<?=
-
-yii\grid\GridView::widget([
+<?= GridView::widget([
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,

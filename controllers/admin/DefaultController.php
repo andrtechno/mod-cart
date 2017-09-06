@@ -49,9 +49,11 @@ class DefaultController extends AdminController {
 
     public function actionUpdate($id) {
 
-
         $model = $this->findModel($id);
-
+        $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
+        $this->breadcrumbs = [
+            $this->pageName
+        ];
         \panix\mod\cart\assets\admin\OrderAsset::register($this->view);
         $this->view->registerJs('
              var deleteQuestion = "' . Yii::t('cart/admin', 'Вы действительно удалить запись?') . '";
@@ -71,16 +73,17 @@ class DefaultController extends AdminController {
     }
 
     public function actionAddProductList() {
+
         $request = Yii::$app->request;
-        $order_id = $request > get('id');
+        $order_id = $request->post('id');
         $model = $this->findModel($order_id);
         if ($order_id) {
             if (!$request->isAjax) {
-                return $this->redirect(array('/admin/cart/default/update', 'id' => $order_id));
+                return $this->redirect(['/admin/cart/default/update', 'id' => $order_id]);
             }
         }
         if (!$request->isAjax) {
-            return $this->redirect(array('/admin/cart/default/index'));
+            return $this->redirect(['/admin/cart/default/index']);
         }
 
 
@@ -165,6 +168,7 @@ class DefaultController extends AdminController {
     }
 
     public function actionRenderOrderedProducts($order_id) {
+                $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
         return $this->renderAjax('_orderedProducts', array(
                     'model' => $this->findModel($order_id)
         ));
