@@ -50,12 +50,12 @@ class OrderCreateForm extends \panix\engine\base\Model {
 
     public function validateDelivery() {
         if (Delivery::find()->where(['id' => $this->delivery_id])->count() == 0)
-            $this->addError('delivery_id', Yii::t('cart/OrderCreateForm','VALID_DELIVERY'.$this->delivery_id));
+            $this->addError('delivery_id', Yii::t('cart/OrderCreateForm','VALID_DELIVERY'));
     }
 
     public function validatePayment() {
         if (Payment::find()->where(['id' => $this->payment_id])->count() == 0)
-            $this->addError('payment_id', Yii::t('cart/OrderCreateForm','VALID_PAYMENT'.$this->payment_id));
+            $this->addError('payment_id', Yii::t('cart/OrderCreateForm','VALID_PAYMENT'));
     }
 
     public function registerGuest() {

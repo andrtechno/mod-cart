@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use panix\mod\shop\models\ShopProduct;
 use yii\bootstrap\Alert;
 ?>
-<div id="cart-left" class="shopping-cart">
+<div id="cart-left" class="shopping-cart row">
 
     <div class="col-md-12 col-sm-12">
         <h1><?= $this->context->pageName; ?></h1>
@@ -21,49 +21,28 @@ use yii\bootstrap\Alert;
 
 
         <?php } ?>
-        <?php if (Yii::$app->session->hasFlash('error')) { ?>
-            <div class="alert alert-danger fadeOut-time" role="alert">
-                <i class="fa fa-times-circle fa-2x"></i>
-                <?php
-                foreach (Yii::$app->session->getFlash('error') as $flash) {
-                    echo $flash;
-                }
-                ?>
-            </div>
-        <?php } ?>
+
         <?php
         $config = Yii::$app->settings->get('shop');
-        /* if (Yii::$app->user->hasFlash('success')) {
-          Yii::$app->tpl->alert('success', Yii::$app->user->getFlash('success'));
-          }
-          if (Yii::$app->user->hasFlash('success_register')) {
-          Yii::$app->tpl->alert('success', Yii::$app->user->getFlash('success_register'));
-          } */
         ?>
 
         <div class="table-responsive">
-            <table width="100%" border="0" id="cart-table" class="table table-striped table-bordered">
+            <table id="cart-table" class="table table-striped">
                 <thead>
                     <tr>
-                        <th align="center" style="width:10%"><?= Yii::t('cart/default', 'TABLE_IMG') ?></th>
-                        <th align="center" style="width:30%"><?= Yii::t('cart/default', 'TABLE_NAME') ?></th>
-                        <?php if ($config['wholesale']) { ?>
-                            <th align="center" style="width:30%"><?= Yii::t('cart/default', 'TABLE_PCS') ?></th>
-                        <?php } ?>
+                        <th align="center" style="width:40%" colspan="2"><?= Yii::t('cart/default', 'TABLE_PRODUCT') ?></th>
                         <th align="center" style="width:30%"><?= Yii::t('cart/default', 'TABLE_NUM') ?></th>
                         <th align="center" style="width:30%"><?= Yii::t('cart/default', 'TABLE_SUM') ?></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($model->getOrderedProducts()->getModels() as $product) { //$model->getOrderedProducts()->getData()   ?> 
+                    <?php foreach ($model->getOrderedProducts()->getModels() as $product) { //$model->getOrderedProducts()->getData()    ?> 
                         <tr>
-                            <td width="110px" align="center">
-                        
-                <?php
+                            <td align="center" style="width:10%">
 
-                    echo Html::img(Url::to($product->originalProduct->getMainImageUrl('100x')), ['alt' => $product->originalProduct->name]);
-      
-                ?>
+                                <?php
+                                echo Html::img(Url::to($product->originalProduct->getMainImageUrl('100x')), ['alt' => $product->originalProduct->name]);
+                                ?>
                             </td>
                             <td>
                                 <?= Html::beginTag('h3') ?>
@@ -74,11 +53,6 @@ use yii\bootstrap\Alert;
                                 <?= Yii::$app->currency->active->symbol; ?>
                                 <?= Html::endTag('span') ?> 
                             </td>
-                            <?php if ($config['wholesale']) { ?>
-                                <td align="center">
-                                    <?= $product->prd->pcs ?>
-                                </td>
-                            <?php } ?>
                             <td align="center">
                                 <?= $product->quantity ?>
                             </td>
@@ -107,29 +81,20 @@ use yii\bootstrap\Alert;
         <div class="panel panel-default">
             <div class="panel-heading"><?= Yii::t('cart/default', 'USER_DATA') ?></div>
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-6"><?= $model->getAttributeLabel('user_name') ?></div>
-                    <div class="col-md-6 text-right"><?= Html::encode($model->user_name); ?></div>
-                    <div class="col-md-6"><?= $model->getAttributeLabel('user_email') ?></div>
-                    <div class="col-md-6 text-right"><?= Html::encode($model->user_email); ?></div>
-                    <div class="col-md-6"><?= $model->getAttributeLabel('user_phone') ?></div>
-                    <div class="col-md-6 text-right"><?= Html::encode($model->user_phone); ?></div>
-                    <div class="col-md-6"><?= $model->getAttributeLabel('user_address') ?></div>
-                    <div class="col-md-6 text-right"><?= Html::encode($model->user_address); ?></div>
-                    <?php if ($model->delivery_price > 0) { ?>
-                        <div class="col-md-6"><?= Yii::t('cart/default', 'COST_DELIVERY') ?></div>
-                        <div class="col-md-6 text-right">
-                            <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->delivery_price)) ?>
-                            <?= Yii::$app->currency->active->symbol ?>
-                        </div>
-                    <?php } ?>
-                    <div class="col-md-6"><?= Yii::t('cart/default', 'DELIVERY') ?></div>
-                    <div class="col-md-6 text-right"><?= Html::encode($model->delivery_name); ?></div>
+
+                
+          
+                    <div><?= $model->getAttributeLabel('user_name') ?>: <b><?= Html::encode($model->user_name); ?></b></div>
+                    <div><?= $model->getAttributeLabel('user_email') ?>: <b><?= Html::encode($model->user_email); ?></b></div>
+                    <div><?= $model->getAttributeLabel('user_phone') ?>: <b><?= Html::encode($model->user_phone); ?></b></div>
+                    
+
+
                     <?php if (!empty($model->user_comment)) { ?>
-                        <div class="col-md-6"><?= $model->getAttributeLabel('user_comment') ?></div>
-                        <div class="col-md-6 text-right"><?= Html::encode($model->user_comment); ?></div>
+                    <div><?= $model->getAttributeLabel('user_comment') ?>:<br/>
+                            <?= Html::encode($model->user_comment); ?></div>
                     <?php } ?>
-                </div>
+            
             </div>
         </div>
     </div>
@@ -139,9 +104,19 @@ use yii\bootstrap\Alert;
 
     <div class="col-md-4">
         <div class="panel panel-default">
-            <div class="panel-heading">Способ оплаты и доставки</div>
+            <div class="panel-heading">Доставки и оплаты</div>
             <div class="panel-body">
 
+                    <?php if ($model->delivery_price > 0) { ?>
+                        <div><?= Yii::t('cart/default', 'COST_DELIVERY') ?>:
+                        <b>
+                            <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->delivery_price)) ?>
+                            <?= Yii::$app->currency->active->symbol ?>
+                        </b>
+                    <?php } ?>
+                    <div><?= $model->getAttributeLabel('delivery_id') ?> <b><?= Html::encode($model->delivery_name); ?></b></div>
+                    <div><?= $model->getAttributeLabel('user_address') ?>: <b><?= Html::encode($model->user_address); ?></b></div>
+                    <div><?= $model->getAttributeLabel('payment_id') ?> <b><?= Html::encode($model->payment_name); ?></b></div>
                 <?php
                 if ($model->deliveryMethod) {
                     foreach ($model->deliveryMethod->paymentMethods as $payment) {
@@ -167,16 +142,14 @@ use yii\bootstrap\Alert;
                 <?php if ($model->paid) { ?>
                     <?= Yii::t('cart/Order', 'PAID') ?>: <span class="label label-success"><?= Yii::t('app', 'YES') ?></span>
                 <?php } else { ?>
-                    <?= Yii::t('cart/Order', 'PAID') ?>: <span class="label label-default"><?= Yii::t('app', 'NO') ?></span>
+                    <?= Yii::t('cart/Order', 'PAID') ?>: <span class="label label-danger"><?= Yii::t('app', 'NO') ?></span>
                 <?php } ?>
-                <br/>
-                Цена доставки:
-                <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->delivery_price)) ?>
-                <?= Yii::$app->currency->active->symbol ?>
-                <br/>
-                <?= Yii::t('cart/default', 'TOTAL_PAY') ?>:
-                <span class="label label-success"><?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->full_price)) ?></span> 
-                <?= Yii::$app->currency->active->symbol ?>
+
+                <div>
+                    <?= Yii::t('cart/default', 'TOTAL_PAY') ?>:
+                    <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->full_price)) ?>
+                    <?= Yii::$app->currency->active->symbol ?>
+                </div>
             </div>
         </div>
     </div>
