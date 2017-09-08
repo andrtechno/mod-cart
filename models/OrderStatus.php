@@ -14,8 +14,8 @@ class OrderStatus extends \panix\engine\WebModel {
         return [
             ['name', 'required'],
             ['ordern', 'number'],
-            ['name', 'string', 'max' => 255],
-            ['color', 'string', 'min' => 6, 'max' => 6],
+            ['name', 'string', 'max' => 100],
+            ['color', 'string', 'min' => 7, 'max' => 7],
         ];
     }
 

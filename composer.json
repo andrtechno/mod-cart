@@ -13,7 +13,9 @@
     ],
     "require": {
         "panix/engine": "*",
+        "panix/wgt-colorpicker": "~7.0",
         "mpdf/mpdf": "~7.0"
+
     },
     "autoload": {
         "psr-4": {

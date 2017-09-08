@@ -1,6 +1,6 @@
 <?php
 
-namespace app\system\modules\shop\controllers\admin;
+namespace panix\mod\cart\controllers\admin;
 
 use Yii;
 use panix\engine\controllers\AdminController;
