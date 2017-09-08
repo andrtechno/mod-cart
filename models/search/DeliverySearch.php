@@ -3,9 +3,9 @@
 namespace panix\mod\cart\models\search;
 
 use panix\engine\data\ActiveDataProvider;
-use panix\mod\cart\models\DeliveryMethod;
+use panix\mod\cart\models\Delivery;
 
-class DeliveryMethodSearch extends DeliveryMethod {
+class DeliverySearch extends Delivery {
 
     /**
      * @inheritdoc
@@ -33,7 +33,7 @@ class DeliveryMethodSearch extends DeliveryMethod {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = DeliveryMethod::find();
+        $query = Delivery::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

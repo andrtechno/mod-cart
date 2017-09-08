@@ -3,9 +3,9 @@
 namespace panix\mod\cart\models\search;
 
 use panix\engine\data\ActiveDataProvider;
-use panix\mod\cart\models\PaymentMethod;
+use panix\mod\cart\models\Payment;
 
-class PaymentMethodSearch extends PaymentMethod {
+class PaymentSearch extends Payment {
 
     /**
      * @inheritdoc
@@ -33,7 +33,7 @@ class PaymentMethodSearch extends PaymentMethod {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = PaymentMethod::find();
+        $query = Payment::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

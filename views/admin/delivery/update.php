@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use panix\engine\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
-use panix\mod\cart\models\PaymentMethod;
+use panix\mod\cart\models\Payment;
 use panix\ext\tinymce\TinyMce;
 ?>
 
@@ -30,7 +30,7 @@ use panix\ext\tinymce\TinyMce;
         <?= $form->field($model, 'price')->textInput(['maxlength' => 255]) ?>
         <?= $form->field($model, 'free_from')->textInput(['maxlength' => 255]) ?>
                                 <?=
-                $form->field($model, 'payment_methods')->dropDownList(ArrayHelper::map(PaymentMethod::find()->all(), 'id', 'name'), [
+                $form->field($model, 'payment_methods')->dropDownList(ArrayHelper::map(Payment::find()->all(), 'id', 'name'), [
                     'prompt' => '-- payment --'
                 ]);
                 ?>

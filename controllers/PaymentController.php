@@ -7,7 +7,7 @@ class PaymentController extends Controller {
             $_GET['payment_id'] = $_GET['Shp_pmId'];
 
         $payment_id = (int) Yii::app()->request->getParam('payment_id');
-        $model = ShopPaymentMethod::model()->findByPk($payment_id);
+        $model = Payment::findOne($payment_id);
 
         if (!$model)
             throw new CHttpException(404, 'Ошибка');

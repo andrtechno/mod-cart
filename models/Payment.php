@@ -4,15 +4,15 @@ namespace panix\mod\cart\models;
 
 use panix\engine\behaviors\TranslateBehavior;
 use yii\helpers\ArrayHelper;
-use panix\mod\cart\models\translate\PaymentMethodTranslate;
+use panix\mod\cart\models\translate\PaymentTranslate;
 use panix\mod\cart\components\payment\PaymentSystemManager;
 
-class PaymentMethod extends \panix\engine\WebModel {
+class Payment extends \panix\engine\WebModel {
 
     const MODULE_ID = 'cart';
 
     public static function tableName() {
-        return '{{%shop_payment_method}}';
+        return '{{%order_payment}}';
     }
 
     public static function find() {
@@ -31,7 +31,7 @@ class PaymentMethod extends \panix\engine\WebModel {
     }
 
     public function getTranslations() {
-        return $this->hasMany(PaymentMethodTranslate::className(), ['object_id' => 'id']);
+        return $this->hasMany(PaymentTranslate::className(), ['object_id' => 'id']);
     }
 
     public function behaviors() {

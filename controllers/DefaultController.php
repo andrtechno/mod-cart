@@ -7,8 +7,8 @@ use yii\helpers\Url;
 use panix\engine\Html;
 use panix\engine\controllers\WebController;
 use panix\mod\cart\models\forms\OrderCreateForm;
-use panix\mod\cart\models\DeliveryMethod;
-use panix\mod\cart\models\PaymentMethod;
+use panix\mod\cart\models\Delivery;
+use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\ShopProduct;
@@ -59,7 +59,7 @@ class DefaultController extends WebController {
         }
 
 
-        $deliveryMethods = DeliveryMethod::find()
+        $deliveryMethods = Delivery::find()
                 ->published()
                 ->orderByName()
                 ->all();
@@ -67,7 +67,7 @@ class DefaultController extends WebController {
 
 
 
-        $paymenyMethods = PaymentMethod::find()->all();
+        $paymenyMethods = Payment::find()->all();
 
         return $this->render('index', array(
                     'items' => Yii::$app->cart->getDataWithModels(),
@@ -79,7 +79,7 @@ class DefaultController extends WebController {
 
     public function actionPayment() {
         if (isset($_POST)) {
-            $this->form = PaymentMethod::find()->all();
+            $this->form = Payment::find()->all();
             echo $this->render('_payment', array('model' => $this->form));
         }
     }
@@ -228,7 +228,6 @@ class DefaultController extends WebController {
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
-            $ordered_product->date_create = $order->date_create;
             // if($item['currency_id']){
             //     $currency = ShopCurrency::model()->findByPk($item['currency_id']);
             //$ordered_product->price = ShopProduct::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;

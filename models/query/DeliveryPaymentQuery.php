@@ -12,7 +12,7 @@ class DeliveryPaymentQuery extends ActiveQuery {
 
     public function orderByName($sort = SORT_ASC) {
         return $this->joinWith('translations')
-                        ->addOrderBy(['{{%shop_payment_method_translate}}.name' => $sort]);
+                        ->addOrderBy(['{{%order_payment_translate}}.name' => $sort]);
     }
 
     public function orderByPosition($sort = SORT_ASC) {

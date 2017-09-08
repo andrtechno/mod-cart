@@ -20,11 +20,11 @@ class Order extends \panix\engine\WebModel {
         return new query\OrderQuery(get_called_class());
     }
     public function getDeliveryMethod() {
-        return $this->hasOne(DeliveryMethod::className(), ['id' => 'delivery_id']);
+        return $this->hasOne(Delivery::className(), ['id' => 'delivery_id']);
     }
 
     public function getPaymentMethod() {
-        return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_id']);
+        return $this->hasOne(Payment::className(), ['id' => 'payment_id']);
     }
 
     public function getStatus() {
@@ -59,12 +59,12 @@ class Order extends \panix\engine\WebModel {
      * Check if delivery method exists
      */
     public function validateDelivery() {
-        if (DeliveryMethod::model()->where(['id' => $this->delivery_id])->count() == 0)
+        if (Delivery::model()->where(['id' => $this->delivery_id])->count() == 0)
             $this->addError('delivery_id', Yii::t('cart/admin', 'Необходимо выбрать способ доставки.'));
     }
 
     public function validatePayment() {
-        if (PaymentMethod::model()->where(['id' => $this->payment_id])->count() == 0)
+        if (Payment::model()->where(['id' => $this->payment_id])->count() == 0)
             $this->addError('payment_id', Yii::t('cart/admin', 'Необходимо выбрать способ оплаты.'));
     }
 
@@ -159,7 +159,7 @@ class Order extends \panix\engine\WebModel {
     public function updateDeliveryPrice() {
         if ($this->delivery_id) {
             $result = 0;
-            $deliveryMethod = DeliveryMethod::findOne($this->delivery_id);
+            $deliveryMethod = Delivery::findOne($this->delivery_id);
 
             if ($deliveryMethod) {
                 if ($deliveryMethod->price > 0) {
@@ -192,13 +192,13 @@ class Order extends \panix\engine\WebModel {
      * @return mixed
      */
     public function getDelivery_name() {
-        $model = DeliveryMethod::findOne($this->delivery_id);
+        $model = Delivery::findOne($this->delivery_id);
         if ($model)
             return $model->name;
     }
 
     public function getPayment_name() {
-        $model = PaymentMethod::findOne($this->payment_id);
+        $model = Payment::findOne($this->payment_id);
         if ($model)
             return $model->name;
     }

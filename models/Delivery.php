@@ -4,24 +4,24 @@ namespace panix\mod\cart\models;
 
 use yii\helpers\ArrayHelper;
 use panix\engine\behaviors\TranslateBehavior;
-use panix\mod\cart\models\translate\DeliveryMethodTranslate;
+use panix\mod\cart\models\translate\DeliveryTranslate;
 use panix\mod\cart\models\DeliveryPayment;
 
-class DeliveryMethod extends \panix\engine\WebModel {
+class Delivery extends \panix\engine\WebModel {
 
     const MODULE_ID = 'cart';
 
     public $_payment_methods;
 
     public static function tableName() {
-        return '{{%shop_delivery_method}}';
+        return '{{%order_delivery}}';
     }
     public static function find() {
-        return new query\DeliveryMethodQuery(get_called_class());
+        return new query\DeliveryQuery(get_called_class());
     }
     
     public function getTranslations() {
-        return $this->hasMany(DeliveryMethodTranslate::className(), ['object_id' => 'id']);
+        return $this->hasMany(DeliveryTranslate::className(), ['object_id' => 'id']);
     }
 
 
@@ -30,7 +30,7 @@ class DeliveryMethod extends \panix\engine\WebModel {
     }
 
     public function getPaymentMethods() {
-        return $this->hasMany(PaymentMethod::className(), ['payment_id' => 'id'])->via('categorization');
+        return $this->hasMany(Payment::className(), ['payment_id' => 'id'])->via('categorization');
     }
 
     /**
@@ -70,7 +70,7 @@ class DeliveryMethod extends \panix\engine\WebModel {
             return;
 
         foreach ($this->$attr as $id) {
-            if (PaymentMethod::find()->where(array('id' => $id))->count() == 0)
+            if (Payment::find()->where(array('id' => $id))->count() == 0)
                 $this->addError($attr, $this->t('ERROR_PAYMENT'));
         }
     }

@@ -6,7 +6,7 @@ class DeliveryPayment extends \yii\db\ActiveRecord {
 
 
     public static function tableName() {
-        return '{{%shop_delivery_payment}}';
+        return '{{%order_delivery_payment}}';
     }
 
 }

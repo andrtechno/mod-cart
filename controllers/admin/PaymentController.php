@@ -3,8 +3,8 @@
 namespace panix\mod\cart\controllers\admin;
 
 use Yii;
-use panix\mod\cart\models\search\PaymentMethodSearch;
-use panix\mod\cart\models\PaymentMethod;
+use panix\mod\cart\models\search\PaymentSearch;
+use panix\mod\cart\models\Payment;
 use panix\engine\grid\sortable\SortableGridAction;
 use panix\mod\cart\components\payment\PaymentSystemManager;
 use panix\engine\Html;
@@ -16,11 +16,11 @@ class PaymentController extends \panix\engine\controllers\AdminController {
         return [
             'dnd_sort' => [
                 'class' => SortableGridAction::className(),
-                'modelName' => PaymentMethod::className(),
+                'modelName' => Payment::className(),
             ],
             'delete' => [
                 'class' => 'panix\engine\grid\actions\DeleteAction',
-                'modelClass' => PaymentMethod::className(),
+                'modelClass' => Payment::className(),
             ],
         ];
     }
@@ -36,7 +36,7 @@ class PaymentController extends \panix\engine\controllers\AdminController {
       ),
       'sortable' => array(
       'class' => 'ext.sortable.SortableAction',
-      'model' => DeliveryMethod::model(),
+      'model' => Delivery::model(),
       )
       );
       }
@@ -58,7 +58,7 @@ class PaymentController extends \panix\engine\controllers\AdminController {
         ];
         $this->breadcrumbs[] = $this->pageName;
 
-        $searchModel = new PaymentMethodSearch();
+        $searchModel = new PaymentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
@@ -71,7 +71,7 @@ class PaymentController extends \panix\engine\controllers\AdminController {
 
 
         if ($id === true) {
-            $model = new PaymentMethod();
+            $model = new Payment();
         } else {
             $model = $this->findModel($id);
         }
@@ -125,7 +125,7 @@ class PaymentController extends \panix\engine\controllers\AdminController {
     }
 
     protected function findModel($id) {
-        $model = new PaymentMethod();
+        $model = new Payment();
         if (($model = $model::findOne($id)) !== null) {
             return $model;
         } else {

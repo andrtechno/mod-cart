@@ -3,8 +3,8 @@
 namespace panix\mod\cart\controllers\admin;
 
 use Yii;
-use panix\mod\cart\models\search\DeliveryMethodSearch;
-use panix\mod\cart\models\DeliveryMethod;
+use panix\mod\cart\models\search\DeliverySearch;
+use panix\mod\cart\models\Delivery;
 use panix\engine\grid\sortable\SortableGridAction;
 
 class DeliveryController extends \panix\engine\controllers\AdminController {
@@ -15,11 +15,11 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
         return [
             'dnd_sort' => [
                 'class' => SortableGridAction::className(),
-                'modelName' => DeliveryMethod::className(),
+                'modelName' => Delivery::className(),
             ],
             'delete' => [
                 'class' => 'panix\engine\grid\actions\DeleteAction',
-                'modelClass' => DeliveryMethod::className(),
+                'modelClass' => Delivery::className(),
             ],
         ];
     }
@@ -35,7 +35,7 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
       ),
       'sortable' => array(
       'class' => 'ext.sortable.SortableAction',
-      'model' => DeliveryMethod::model(),
+      'model' => Delivery::model(),
       )
       );
       }
@@ -57,7 +57,7 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
         ];
         $this->breadcrumbs[] = $this->pageName;
 
-        $searchModel = new DeliveryMethodSearch();
+        $searchModel = new DeliverySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
@@ -68,7 +68,7 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
 
     public function actionUpdate($id = false) {
         if ($id === true) {
-            $model = new DeliveryMethod();
+            $model = new Delivery();
         } else {
             $model = $this->findModel($id);
         }
@@ -121,7 +121,7 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
      */
     public function actionDelete($id = array()) {
         if (Yii::app()->request->isPostRequest) {
-            $model = DeliveryMethod::model()->findAllByPk($_REQUEST['id']);
+            $model = Delivery::model()->findAllByPk($_REQUEST['id']);
 
             if (!empty($model)) {
                 foreach ($model as $m) {
@@ -138,11 +138,11 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
     }
 
     protected function findModel($id) {
-        $model = new DeliveryMethod();
+        $model = new Delivery();
         if (($model = $model::findOne($id)) !== null) {
             return $model;
         } else {
-            throw new \yii\web\NotFoundHttpException('The requested page does not exist.');
+            $this->error404();
         }
     }
 

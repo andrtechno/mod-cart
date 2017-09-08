@@ -148,10 +148,6 @@ class DefaultController extends AdminController {
         }
     }
 
-    public function error404() {
-        throw new NotFoundHttpException(Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
-    }
-
     /**
      * Delete product from order
      */
@@ -179,7 +175,7 @@ class DefaultController extends AdminController {
         if (($model = $model::findOne($id)) !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException(Yii::t('app', '404'));
+            $this->error404(Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
         }
     }
 
