@@ -100,7 +100,7 @@ class m170908_134034_cart extends Migration {
             'payment_system' => $this->string(100),
             'ordern' => $this->integer(),
                 ], $tableOptions);
-        
+
         $this->createTable('{{%order_payment_translate}}', [
             'id' => $this->primaryKey(),
             'object_id' => $this->integer(),
@@ -109,10 +109,10 @@ class m170908_134034_cart extends Migration {
             'description' => $this->text(),
                 ], $tableOptions);
 
-        
-        
-        
-        
+
+
+
+
 
         $this->createTable('{{%order_delivery}}', [
             'id' => $this->primaryKey(),
@@ -121,7 +121,7 @@ class m170908_134034_cart extends Migration {
             'switch' => $this->boolean()->defaultValue(1),
             'ordern' => $this->integer(),
                 ], $tableOptions);
-        
+
         $this->createTable('{{%order_delivery_translate}}', [
             'id' => $this->primaryKey(),
             'object_id' => $this->integer(),
@@ -129,20 +129,20 @@ class m170908_134034_cart extends Migration {
             'name' => $this->string(255),
             'description' => $this->text(),
                 ], $tableOptions);
-        
+
         $this->createTable('{{%order_delivery_payment}}', [
             'id' => $this->primaryKey(),
             'delivery_id' => $this->integer(),
             'payment_id' => $this->integer(),
                 ], $tableOptions);
-        
-        
-        
+
+
+
 
         $this->addIndexes();
 
-        $columns = ['name', 'color', 'ordern'];
-        $this->batchInsert('{{%order_status}}', $columns, [
+
+        $this->batchInsert('{{%order_status}}', ['name', 'color', 'ordern'], [
             ['Новый', '#c0c0c0', 1],
             ['Отправлен', '#cссссс', 2],
         ]);
@@ -164,7 +164,7 @@ class m170908_134034_cart extends Migration {
 
 
 
-        
+
         $this->batchInsert('{{%order_delivery}}', ['ordern'], [
             [1],
             [2],
@@ -176,15 +176,14 @@ class m170908_134034_cart extends Migration {
             [1, Yii::$app->language, 'Самовывоз', ''],
             [2, Yii::$app->language, 'Новая почта', ''],
         ]);
-        
-        
-        
+
+
+
 
         if ($this->db->driverName != "sqlite") {
             $this->addForeignKey('{{%fk_order_status}}', '{{%order}}', 'status_id', '{{%order_status}}', 'id', "NO ACTION", "NO ACTION");
-            //$this->addForeignKey('{{%fk_order_payment}}', '{{%order}}', 'payment_id', '{{%order_payment}}', 'id', "NO ACTION", "NO ACTION");
-           // $this->addForeignKey('{{%fk_order_delivery}}', '{{%order}}', 'delivery_id', '{{%order_delivery}}', 'id', "NO ACTION", "NO ACTION");
-            
+            $this->addForeignKey('{{%fk_order_payment}}', '{{%order}}', 'payment_id', '{{%order_payment}}', 'id', "NO ACTION", "NO ACTION");
+            $this->addForeignKey('{{%fk_order_delivery}}', '{{%order}}', 'delivery_id', '{{%order_delivery}}', 'id', "NO ACTION", "NO ACTION");
             $this->addForeignKey('{{%fk_product_order}}', '{{%order_product}}', 'order_id', '{{%order}}', 'id', "NO ACTION", "NO ACTION");
         }
     }
@@ -192,9 +191,8 @@ class m170908_134034_cart extends Migration {
     public function down() {
         if ($this->db->driverName != "sqlite") {
             $this->dropForeignKey('{{%fk_order_status}}', '{{%order}}');
-            //$this->dropForeignKey('{{%fk_order_payment}}', '{{%order}}');
-           // $this->dropForeignKey('{{%fk_order_delivery}}', '{{%order_delivery}}');
-            
+            $this->dropForeignKey('{{%fk_order_payment}}', '{{%order}}');
+            $this->dropForeignKey('{{%fk_order_delivery}}', '{{%order}}');
             $this->dropForeignKey('{{%fk_product_order}}', '{{%order_product}}');
         }
         $this->dropTable('{{%order}}');
@@ -202,18 +200,15 @@ class m170908_134034_cart extends Migration {
         $this->dropTable('{{%order_product}}');
         $this->dropTable('{{%order_history}}');
         $this->dropTable('{{%order_history_product}}');
-        
         $this->dropTable('{{%order_payment}}');
         $this->dropTable('{{%order_payment_translate}}');
-        
         $this->dropTable('{{%order_delivery}}');
         $this->dropTable('{{%order_delivery_translate}}');
         $this->dropTable('{{%order_delivery_payment}}');
     }
-    
-    
-    private function addIndexes(){
-                // order indexes
+
+    private function addIndexes() {
+        // order indexes
         $this->createIndex('user_id', '{{%order}}', 'user_id', 0);
         $this->createIndex('secret_key', '{{%order}}', 'secret_key', 0);
         $this->createIndex('delivery_id', '{{%order}}', 'delivery_id', 0);
@@ -239,17 +234,17 @@ class m170908_134034_cart extends Migration {
         // order history product indexes
         $this->createIndex('order_id', '{{%order_history_product}}', 'order_id', 0);
         $this->createIndex('product_id', '{{%order_history_product}}', 'product_id', 0);
-        
+
         // order_payment_method indexes
         $this->createIndex('ordern', '{{%order_payment}}', 'ordern', 0);
         $this->createIndex('switch', '{{%order_payment}}', 'switch', 0);
 
         $this->createIndex('object_id', '{{%order_payment_translate}}', 'object_id', 0);
         $this->createIndex('language_id', '{{%order_payment_translate}}', 'language_id', 0);
-        
+
         $this->createIndex('object_id', '{{%order_delivery_translate}}', 'object_id', 0);
         $this->createIndex('language_id', '{{%order_delivery_translate}}', 'language_id', 0);
-        
+
         $this->createIndex('delivery_id', '{{%order_delivery_payment}}', 'delivery_id', 0);
         $this->createIndex('payment_id', '{{%order_delivery_payment}}', 'payment_id', 0);
     }

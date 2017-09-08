@@ -30,12 +30,14 @@ class OrderCreateForm extends \panix\engine\base\Model {
         } else {
           //  $this->_password = User::encodePassword(CMS::gen((int) Yii::$app->settings->get('users', 'min_password') + 2));
         }
+
         parent::init();
     }
     public function rules() {
         return [
             [['user_name', 'user_email'], 'required'],
-           // [['delivery_id','payment_id'], 'required'],
+            [['delivery_id','payment_id'], 'required'],
+            [['delivery_id','payment_id'], 'integer'],
             ['user_email', 'email'],
             [['user_comment'], 'string', 'max' => 500],
             [['user_address'], 'string', 'max' => 255],
@@ -48,12 +50,12 @@ class OrderCreateForm extends \panix\engine\base\Model {
 
     public function validateDelivery() {
         if (Delivery::find()->where(['id' => $this->delivery_id])->count() == 0)
-            $this->addError('delivery_id', Yii::t('cart/OrderCreateForm','VALID_DELIVERY'));
+            $this->addError('delivery_id', Yii::t('cart/OrderCreateForm','VALID_DELIVERY'.$this->delivery_id));
     }
 
     public function validatePayment() {
         if (Payment::find()->where(['id' => $this->payment_id])->count() == 0)
-            $this->addError('payment_id', Yii::t('cart/OrderCreateForm','VALID_PAYMENT'));
+            $this->addError('payment_id', Yii::t('cart/OrderCreateForm','VALID_PAYMENT'.$this->payment_id));
     }
 
     public function registerGuest() {
