@@ -2,7 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\Pjax;
+//use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
+//\panix\engine\assets\ShowLoadingAsset::register($this);
 ?>
 
 
