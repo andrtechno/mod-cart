@@ -13,7 +13,7 @@
     ],
     "require": {
         "panix/engine": "*",
-        "panix/wgt-colorpicker": "~7.0",
+        "panix/wgt-colorpicker": "*",
         "mpdf/mpdf": "~7.0"
 
     },
