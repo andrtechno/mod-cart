@@ -3,7 +3,7 @@
 namespace panix\mod\cart\models;
 use panix\mod\cart\models\Order;
 use panix\mod\shop\models\ShopProduct;
-class OrderProduct extends \panix\engine\WebModel {
+class OrderProduct extends \panix\engine\db\ActiveRecord {
 
     const MODULE_ID = 'cart';
 

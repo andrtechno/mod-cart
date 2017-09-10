@@ -7,7 +7,7 @@ use panix\engine\behaviors\TranslateBehavior;
 use panix\mod\cart\models\translate\DeliveryTranslate;
 use panix\mod\cart\models\DeliveryPayment;
 
-class Delivery extends \panix\engine\WebModel {
+class Delivery extends \panix\engine\db\ActiveRecord {
 
     const MODULE_ID = 'cart';
 

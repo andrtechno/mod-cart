@@ -6,7 +6,7 @@ use Yii;
 use panix\mod\cart\models\OrderStatus;
 use panix\mod\cart\models\OrderProduct;
 
-class Order extends \panix\engine\WebModel {
+class Order extends \panix\engine\db\ActiveRecord {
 
     const MODULE_ID = 'cart';
 

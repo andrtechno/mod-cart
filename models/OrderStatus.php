@@ -2,7 +2,7 @@
 
 namespace panix\mod\cart\models;
 
-class OrderStatus extends \panix\engine\WebModel {
+class OrderStatus extends \panix\engine\db\ActiveRecord {
 
     const MODULE_ID = 'cart';
 

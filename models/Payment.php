@@ -7,7 +7,7 @@ use yii\helpers\ArrayHelper;
 use panix\mod\cart\models\translate\PaymentTranslate;
 use panix\mod\cart\components\payment\PaymentSystemManager;
 
-class Payment extends \panix\engine\WebModel {
+class Payment extends \panix\engine\db\ActiveRecord {
 
     const MODULE_ID = 'cart';
 
