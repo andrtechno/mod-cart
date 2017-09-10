@@ -52,9 +52,10 @@ class DefaultController extends WebController {
             if ($this->form->load($post) && $this->form->validate()) {
                 $this->form->registerGuest();
                 $order = $this->createOrder();
-                Yii::$app->cart->clear();
-                Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
-                return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+                //die;
+                //Yii::$app->cart->clear();
+                //Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                //return $this->redirect(['view', 'secret_key' => $order->secret_key]);
             }
         }
 
@@ -63,7 +64,7 @@ class DefaultController extends WebController {
                 ->published()
                 ->orderByName()
                 ->all();
-   // echo($deliveryMethods->prepare(Yii::$app->db->queryBuilder)->createCommand()->rawSql);die;
+        // echo($deliveryMethods->prepare(Yii::$app->db->queryBuilder)->createCommand()->rawSql);die;
 
 
 
@@ -210,15 +211,15 @@ class DefaultController extends WebController {
         $order->payment_id = $this->form->payment_id;
 
         if ($order->validate()) {
-            if ($order->save()) {
-                
-            }
+            $order->save();
         } else {
             throw new CHttpException(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
         }
 
         // Process products
+        $productsCount = 0;
         foreach (Yii::$app->cart->getDataWithModels() as $item) {
+                        
             $ordered_product = new OrderProduct;
             $ordered_product->order_id = $order->id;
             $ordered_product->product_id = $item['model']->id;
@@ -236,17 +237,35 @@ class DefaultController extends WebController {
             // }
 
             $ordered_product->save();
+$productsCount++;
         }
 
         // Reload order data.
         $order->refresh(); //@todo panix text email tpl
         // All products added. Update delivery price.
         $order->updateDeliveryPrice();
+
+                $order->attachBehavior('notifaction', [
+            'class' => \panix\engine\behaviors\NotifactionBehavior::className(),
+            'type' => 'success',
+            'text' => Yii::t('cart/default', 'NOTIFACTION_TEXT', [
+                'num' => $productsCount,
+                'total' => $order->total_price,
+                'currency' => Yii::$app->currency->active->symbol,
+                'username' => Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->getDisplayName()
+            ])
+        ]);
+                
+        
         // Send email to user.
         $this->sendClientEmail($order);
         // Send email to admin.
         $this->sendAdminEmail($order);
 
+
+
+
+        // $order->detachBehavior('notifaction');
         return $order;
     }
 
@@ -309,7 +328,7 @@ class DefaultController extends WebController {
         Yii::$app->mailer->htmlLayout = "layouts/admin";
         Yii::$app->mailer
                 ->compose('@cart/mail/admin', ['order' => $order])
-                ->setFrom(['noreply@' . Yii::$app->request->serverName=>Yii::$app->name . ' robot'])
+                ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
                 ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
                 //->setCc(Yii::$app->settings->get('app','email')) //copy
                 //->setBcc(Yii::$app->settings->get('app','email')) //hidden copy
@@ -325,4 +344,5 @@ class DefaultController extends WebController {
                 ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $order->id]))
                 ->send();
     }
+
 }

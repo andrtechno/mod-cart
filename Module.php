@@ -4,12 +4,24 @@ namespace panix\mod\cart;
 
 use Yii;
 use panix\engine\WebModule;
+use panix\mod\cart\models\Order;
 
 //use yii\base\BootstrapInterface;
 
 
 class Module extends WebModule { // implements BootstrapInterface/
 // public $controllerNamespace = '@cart\controllers';
+    public $icon = 'icon-cart';
+    public function init() {
+        $count = Order::find()->where(['status_id' => 1])->count();
+        $this->count['num'] = $count;
+        $this->count['label'] = Yii::t('cart/default', 'WP_COUNT', ['num' => $this->count['num']]);
+        $this->count['url'] = ['/admin/cart', 'OrderSearch[status_id]' => 1];
+
+
+
+        parent::init();
+    }
 
     public $routes = [
         'cart' => 'cart/default/index',
@@ -27,7 +39,7 @@ class Module extends WebModule { // implements BootstrapInterface/
             'name' => Yii::t('cart/default', 'MODULE_NAME'),
             'author' => 'andrew.panix@gmail.com',
             'version' => '1.0',
-            'icon' => 'icon-cart',
+            'icon' => $this->icon,
             'description' => Yii::t('cart/default', 'MODULE_DESC'),
             'url' => ['/admin/cart'],
         ];

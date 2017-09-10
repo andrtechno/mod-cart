@@ -16,9 +16,12 @@ class Order extends \panix\engine\WebModel {
     public static function tableName() {
         return '{{%order}}';
     }
+
+
     public static function find() {
         return new query\OrderQuery(get_called_class());
     }
+
     public function getDeliveryMethod() {
         return $this->hasOne(Delivery::className(), ['id' => 'delivery_id']);
     }
@@ -30,9 +33,12 @@ class Order extends \panix\engine\WebModel {
     public function getStatus() {
         return $this->hasOne(OrderStatus::className(), ['id' => 'status_id']);
     }
-    
+
     public function getProducts() {
         return $this->hasMany(OrderProduct::className(), ['order_id' => 'id']);
+    }
+    public function getProductsCount() {
+        return $this->hasMany(OrderProduct::className(), ['order_id' => 'id'])->count();
     }
 
     public function getUrl() {
@@ -240,12 +246,12 @@ class Order extends \panix\engine\WebModel {
             $ordered_product->save();
 
             // Raise event
-            /*$event = new CModelEvent($this, array(
-                'product_model' => $product,
-                'ordered_product' => $ordered_product,
-                'quantity' => $quantity
-            ));
-            $this->onProductAdded($event);*/
+            /* $event = new CModelEvent($this, array(
+              'product_model' => $product,
+              'ordered_product' => $ordered_product,
+              'quantity' => $quantity
+              ));
+              $this->onProductAdded($event); */
         }
     }
 
@@ -261,9 +267,9 @@ class Order extends \panix\engine\WebModel {
         if ($model) {
             $model->delete();
 
-           // $event = new CModelEvent($this, array(
-           //     'ordered_product' => $model
-           // ));
+            // $event = new CModelEvent($this, array(
+            //     'ordered_product' => $model
+            // ));
             //$this->onProductDeleted($event);
         }
     }
@@ -273,7 +279,7 @@ class Order extends \panix\engine\WebModel {
      */
     public function getOrderedProducts() {
         $products = new search\OrderProductSearch();
-        return $products->search([$products->formName()=>['order_id'=>$this->id]]);
+        return $products->search([$products->formName() => ['order_id' => $this->id]]);
     }
 
     /**
@@ -297,11 +303,11 @@ class Order extends \panix\engine\WebModel {
     }
 
     public function getRelativeUrl() {
-        return Yii::$app->createUrl('/cart/default/view', array('secret_key' => $this->secret_key));
+        return Yii::$app->urlManager->createUrl(['/cart/default/view', 'secret_key' => $this->secret_key]);
     }
 
     public function getAbsoluteUrl() {
-        return Yii::$app->createAbsoluteUrl('/cart/default/view', array('secret_key' => $this->secret_key));
+        return Yii::$app->urlManager->createAbsoluteUrl(['/cart/default/view', 'secret_key' => $this->secret_key]);
     }
 
     /**

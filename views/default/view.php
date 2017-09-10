@@ -147,7 +147,7 @@ use yii\bootstrap\Alert;
 
                 <div>
                     <?= Yii::t('cart/default', 'TOTAL_PAY') ?>:
-                    <?= ShopProduct::formatPrice(Yii::$app->currency->convert($model->full_price)) ?>
+                    <?= ShopProduct::formatPrice($model->full_price) ?>
                     <?= Yii::$app->currency->active->symbol ?>
                 </div>
             </div>

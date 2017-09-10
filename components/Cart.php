@@ -23,6 +23,7 @@ class Cart extends Component {
      */
     private $_items = array();
 
+    protected $_total_price = 0;
     /**
      * @var CHttpSession
      */
@@ -30,7 +31,8 @@ class Cart extends Component {
 
     public function init() {
         $this->session = Yii::$app->session;
-
+        //$this->session->id = 'cart';
+        $this->session->timeout = 10;
         if (!isset($this->session['cart_data']) || !is_array($this->session['cart_data']))
             $this->session['cart_data'] = array();
     }
@@ -111,6 +113,8 @@ class Cart extends Component {
             // Load configurable product
             if ($item['configurable_id'])
                 $item['configurable_model'] = ShopProduct::findOne($item['configurable_id']);
+            
+            $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
 
             // Process variants
             if (!empty($item['variants']))
@@ -121,12 +125,22 @@ class Cart extends Component {
             // If product was deleted during user session!.
             if (!$item['model'])
                 unset($data[$index]);
+            
+            $this->_total_price += ShopProduct::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
         }
         unset($item);
 
         return $data;
     }
 
+
+
+    /**
+     * Count total price
+     */
+    public function getTotalPrice() {
+        return $this->_total_price;
+    }
     /**
      * Count total price
      */
@@ -145,40 +159,6 @@ class Cart extends Component {
         }
         return $total;
     }
-
-    /**
-     * Count total price
-     */
-    public function getTotalPrice() {
-        $result = 0;
-        $data = $this->getDataWithModels();
-        $config = Yii::$app->settings->get('shop');
-        foreach ($data as $item) {
-            $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
-            //  if($item['currency_id']){
-            //     $currency = ShopCurrency::model()->cache(Yii::$app->controller->cacheTime)->findByPk($item['currency_id']);
-            //     $result += ShopProduct::calculatePrices($item['model'], $item['variants'], $configurable) * $item['pcs'] * $item['quantity'];
-            // }else{
-            if ($config['wholesale']) { //продажа оптом
-                $result += ShopProduct::calculatePrices($item['model'], $item['variants'], $configurable) * $item['pcs'] * $item['quantity'];
-            } else {
-                $result += ShopProduct::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
-            }
-
-            // }
-
-            /*
-              if($item['currency_id']){
-              $currency = ShopCurrency::model()->findByPk($item['currency_id']);
-              $result += ShopProduct::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'] * $currency->rate;
-              }else{
-              $result += ShopProduct::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
-              } */
-        }
-
-        return $result;
-    }
-
     public function ajaxRecount($data) {
         if (!is_array($data) || empty($data))
             return;
