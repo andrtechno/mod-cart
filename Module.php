@@ -36,7 +36,7 @@ class Module extends WebModule { // implements BootstrapInterface/
 
     public function getInfo() {
         return [
-            'name' => Yii::t('cart/default', 'MODULE_NAME'),
+            'label' => Yii::t('cart/default', 'MODULE_NAME'),
             'author' => 'andrew.panix@gmail.com',
             'version' => '1.0',
             'icon' => $this->icon,

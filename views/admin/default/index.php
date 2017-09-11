@@ -26,7 +26,7 @@ Pjax::begin([
      'rowOptions' => function ($model, $index, $widget, $grid){
       return ['style'=>'background-color:'.$model->status->color.';'];
     },
-    'layout' => $this->render('@app/web/themes/admin/views/layouts/_grid_layout', ['title' => $this->context->pageName]), //'{items}{pager}{summary}'
+    'layout' => $this->render('@admin/views/layouts/_grid_layout', ['title' => $this->context->pageName]), //'{items}{pager}{summary}'
     'columns' => [
         [
             'class' => 'yii\grid\SerialColumn',

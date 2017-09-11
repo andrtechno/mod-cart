@@ -16,7 +16,7 @@ echo GridView::widget([
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $model->getOrderedProducts(),
     // 'filterModel' => $searchModel,
-    'layout' => $this->render('@app/web/themes/admin/views/layouts/_grid_layout', [
+    'layout' => $this->render('@admin/views/layouts/_grid_layout', [
         'title' => $this->context->pageName,
         'buttons'=>[
             [
