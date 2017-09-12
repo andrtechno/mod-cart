@@ -1,6 +1,8 @@
+
 <div class="cart">
+
+    
     <a href="/cart" class="cart-info">
-        <?php echo $count?>
         <?php if ($count > 0) { ?>
             (<span  class="hidden-xs"><?=$count?></span>) / <span><?= $total; ?></span> <small><?= $currency->symbol; ?></small>
         <?php } else { ?>
