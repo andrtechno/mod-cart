@@ -30,3 +30,8 @@ Add to web config.
     'cart' => ['class' => 'panix\mod\cart\Module'],
 ],
 ```
+
+#### Migrate
+```
+php yii migrate --migrationPath=vendor/panix/mod-cart/migrations
+```
