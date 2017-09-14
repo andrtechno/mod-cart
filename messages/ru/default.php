@@ -23,5 +23,6 @@ return [
     'MAIL_TABLE_TH_PRICE' => 'Цена',
     'MAIL_ADMIN_SUBJECT' => 'Оформлен новый заказ №{id}',
     'MAIL_CLIENT_SUBJECT' => 'Вы оформили заказ №{id}',
-    'NOTIFACTION_TEXT' => 'Пользователь <b>{username}</b> оформил заказ.<br/> <b>{num, plural, =0{тусто} =1{Один товар} one{# товар} few{# товара} many{# товаров} other{# товар}}</b> на сумму <b>{total} {currency}</b>',
+    'NOTIFACTION_USER_TEXT' => 'Пользователь <b>{username}</b> оформил заказ.<br/> <b>{num, plural, =0{тусто} =1{Один товар} one{# товар} few{# товара} many{# товаров} other{# товар}}</b> на сумму <b>{total} {currency}</b>',
+    'NOTIFACTION_GUEST_TEXT' => 'Посетитель <b>{username}</b> оформил заказ.<br/> <b>{num, plural, =0{тусто} =1{Один товар} one{# товар} few{# товара} many{# товаров} other{# товар}}</b> на сумму <b>{total} {currency}</b>',
 ];

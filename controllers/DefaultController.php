@@ -52,9 +52,9 @@ class DefaultController extends WebController {
             if ($this->form->load($post) && $this->form->validate()) {
                 $this->form->registerGuest();
                 $order = $this->createOrder();
-                Yii::$app->cart->clear();
-                Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
-                return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+                //Yii::$app->cart->clear();
+              // Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                //return $this->redirect(['view', 'secret_key' => $order->secret_key]);
             }
         }
 
@@ -242,15 +242,15 @@ $productsCount++;
         $order->refresh(); //@todo panix text email tpl
         // All products added. Update delivery price.
         $order->updateDeliveryPrice();
-
+        $text = (Yii::$app->user->isGuest) ? 'NOTIFACTION_GUEST_TEXT':'NOTIFACTION_USER_TEXT';
                 $order->attachBehavior('notifaction', [
             'class' => \panix\engine\behaviors\NotifactionBehavior::className(),
             'type' => 'success',
-            'text' => Yii::t('cart/default', 'NOTIFACTION_TEXT', [
+            'text' => Yii::t('cart/default', $text, [
                 'num' => $productsCount,
                 'total' => $order->total_price,
                 'currency' => Yii::$app->currency->active->symbol,
-                'username' => Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->getDisplayName()
+                'username' => Yii::$app->user->isGuest ? $order->user_name : Yii::$app->user->getDisplayName()
             ])
         ]);
                 
