@@ -8,7 +8,7 @@ use panix\mod\cart\models\Order;
 
 class Module extends WebModule {
 
-    public $icon = 'icon-cart';
+    public $icon = 'cart';
 
     public function init() {
         $count = Order::find()->where(['status_id' => 1])->count();
@@ -38,6 +38,47 @@ class Module extends WebModule {
             'icon' => $this->icon,
             'description' => Yii::t('cart/default', 'MODULE_DESC'),
             'url' => ['/admin/cart'],
+        ];
+    }
+
+    public function getAdminMenu() {
+        return [
+            'cart' => [
+                'label' => Yii::t('cart/default', 'MODULE_NAME'),
+                'icon' => $this->icon,
+                'items' => [
+                    [
+                        'label' => Yii::t('cart/default', 'MODULE_NAME'),
+                        'url' => ['/admin/cart'],
+                        'icon' => $this->icon,
+                    ],
+                    [
+                        'label' => Yii::t('cart/admin', 'STATUSES'),
+                        "url" => ['/admin/cart/statuses'],
+                        'icon' => 'stats'
+                    ],
+                    [
+                        'label' => Yii::t('cart/admin', 'DELIVERY'),
+                        "url" => ['/admin/cart/delivery'],
+                        'icon' => 'delivery'
+                    ],
+                    [
+                        'label' => Yii::t('cart/admin', 'PAYMENTS'),
+                        "url" => ['/admin/cart/payment'],
+                        'icon' => 'creditcard'
+                    ],
+                    [
+                        'label' => Yii::t('cart/admin', 'NOTIFIER'),
+                        "url" => ['/admin/cart/notify'],
+                        'icon' => 'envelope'
+                    ],
+                    [
+                        'label' => Yii::t('app', 'SETTINGS'),
+                        "url" => ['/admin/cart/settings'],
+                        'icon' => 'settings'
+                    ]
+                ],
+            ],
         ];
     }
 

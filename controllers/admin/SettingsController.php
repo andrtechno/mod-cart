@@ -4,21 +4,24 @@ namespace panix\mod\cart\controllers\admin;
 
 use Yii;
 use panix\engine\controllers\AdminController;
-use app\system\modules\shop\models\SettingsForm;
+use panix\mod\cart\models\forms\SettingsForm;
 
 class SettingsController extends AdminController {
 
     public function actionIndex() {
         $this->pageName = Yii::t('app', 'SETTINGS');
-        $this->breadcrumbs = [
+        $this->breadcrumbs[] = 
             [
-                'label' => $this->module->info['name'],
+                'label' => $this->module->info['label'],
                 'url' => $this->module->info['url'],
-            ],
-            $this->pageName
+            
         ];
+        
+
+        $this->breadcrumbs[]=$this->pageName;
+        
         $model = new SettingsForm();
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->save();
         }
         return $this->render('index', [

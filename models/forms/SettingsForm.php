@@ -1,8 +1,12 @@
 <?php
+namespace panix\mod\cart\models\forms;
 
-class SettingsCartForm extends FormModel {
+use Yii;
 
-    const MODULE_ID = 'cart';
+class SettingsForm extends \panix\engine\SettingsModel {
+
+    public $category = 'cart';
+    public $module = 'cart';
     public $order_emails;
     public $tpl_body_user;
     public $tpl_subject_user;
@@ -11,7 +15,7 @@ class SettingsCartForm extends FormModel {
 
     public static function defaultSettings() {
         return array(
-            'order_emails' => Yii::app()->settings->get('core', 'admin_email'),
+            'order_emails' => Yii::$app->settings->get('core', 'admin_email'),
             'tpl_body_admin' => '<p><strong>Номер заказ:</strong> #%ORDER_ID%</p>
 <p><strong>Способ доставки: </strong>%ORDER_DELIVERY_NAME%</p>
 <p><strong>Способ оплаты: </strong>%ORDER_PAYMENT_NAME%</p>
@@ -95,20 +99,14 @@ class SettingsCartForm extends FormModel {
                         ), $this);
     }
 
-    public function init() {
-        $this->attributes = Yii::app()->settings->get('cart');
-    }
+
 
     public function rules() {
-        return array(
-            array('order_emails', 'required'),
-            array('tpl_body_user, tpl_body_admin, tpl_subject_user, tpl_subject_admin', 'type', 'type' => 'string'),
-        );
+        return [
+            ['order_emails', 'required'],
+            [['tpl_body_user', 'tpl_body_admin', 'tpl_subject_user', 'tpl_subject_admin'], 'string'],
+        ];
     }
 
-    public function save($message = true) {
-        Yii::app()->settings->set('cart', $this->attributes);
-        parent::save($message);
-    }
 
 }
