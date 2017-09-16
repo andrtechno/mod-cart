@@ -7,9 +7,9 @@ use panix\engine\controllers\AdminController;
 use panix\mod\cart\models\search\OrderSearch;
 use yii\web\NotFoundHttpException;
 use panix\engine\pdf\Pdf;
-use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\Product;
 use panix\mod\cart\models\OrderProduct;
-use panix\mod\shop\models\search\ShopProductSearch;
+use panix\mod\shop\models\search\ProductSearch;
 
 class DefaultController extends AdminController {
 
@@ -87,7 +87,7 @@ class DefaultController extends AdminController {
         }
 
 
-        $searchModel = new ShopProductSearch();
+        $searchModel = new ProductSearch();
         $dataProvider = $searchModel->search($request->getQueryParams());
 
 
@@ -107,7 +107,7 @@ class DefaultController extends AdminController {
         if ($request->isPost) {
             if ($request->isAjax) {
                 $order = $this->findModel($request->post('order_id'));
-                $product = ShopProduct::findOne($request->post('product_id'));
+                $product = Product::findOne($request->post('product_id'));
 
                 $find = OrderProduct::find()->where(array('order_id' => $order->id, 'product_id' => $product->id))->one();
 

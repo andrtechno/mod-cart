@@ -228,7 +228,7 @@ class Order extends \panix\engine\db\ActiveRecord {
     /**
      * Add product to existing order
      *
-     * @param ShopProduct $product
+     * @param Product $product
      * @param integer $quantity
      * @param float $price
      */

@@ -4,8 +4,8 @@ namespace panix\mod\cart\components;
 
 use Yii;
 use yii\base\Component;
-use panix\mod\shop\models\ShopProduct;
-use panix\mod\shop\models\ShopCurrency;
+use panix\mod\shop\models\Product;
+use panix\mod\shop\models\Currency;
 
 class Cart extends Component {
 
@@ -14,7 +14,7 @@ class Cart extends Component {
      * E.g:
      * array(
      *      'product_id'      => 1,
-     *      'variants'        => array(ShopProductVariant_id),
+     *      'variants'        => array(ProductVariant_id),
      *      'configurable_id' => 2, // Id of configurable product or false.
      *      'quantity'        => 3,
      *      'price'           => 123 // Price of one item
@@ -109,16 +109,16 @@ class Cart extends Component {
 
         foreach ($data as $index => &$item) {
             $item['variant_models'] = array();
-            $item['model'] = ShopProduct::findOne($item['product_id']);
+            $item['model'] = Product::findOne($item['product_id']);
             // Load configurable product
             if ($item['configurable_id'])
-                $item['configurable_model'] = ShopProduct::findOne($item['configurable_id']);
+                $item['configurable_model'] = Product::findOne($item['configurable_id']);
             
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
 
             // Process variants
             if (!empty($item['variants']))
-                $item['variant_models'] = ShopProductVariant::model()
+                $item['variant_models'] = ProductVariant::model()
                         ->with(array('attribute', 'option'))
                         ->findAllByPk($item['variants']);
 
@@ -126,7 +126,7 @@ class Cart extends Component {
             if (!$item['model'])
                 unset($data[$index]);
             
-            $this->_total_price += ShopProduct::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
+            $this->_total_price += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
         }
         unset($item);
 
@@ -150,11 +150,11 @@ class Cart extends Component {
         foreach ($data as $item) {
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
             if ($item['currency_id']) {
-                $currency = ShopCurrency::findOne($item['currency_id']);
+                $currency = Currency::findOne($item['currency_id']);
                 // print_r($currency);
-                $total[$currency->iso] += (ShopProduct::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity']);
+                $total[$currency->iso] += (Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity']);
             } else {
-                $total[Yii::$app->currency->main->iso] += ShopProduct::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
+                $total[Yii::$app->currency->main->iso] += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
             }
         }
         return $total;
@@ -175,8 +175,8 @@ class Cart extends Component {
                 $data = $currentData[$index];
                 //print_r($currentData[$index]);die;
                 if ($data['configurable_id']) {
-                    $productModel = ShopProduct::findOne($index);
-                    $rowTotal = $data['quantity'] * ShopProduct::calculatePrices($productModel, $data['variants'], $data['configurable_id']);
+                    $productModel = Product::findOne($index);
+                    $rowTotal = $data['quantity'] * Product::calculatePrices($productModel, $data['variants'], $data['configurable_id']);
                 } else {
                     if (Yii::$app->settings->get('shop', 'wholesale')) {
                         $rowTotal = $data['quantity'] * $data['pcs'] * $data['price'];
@@ -188,8 +188,8 @@ class Cart extends Component {
         }
         $this->session['cart_data'] = $currentData;
         echo \yii\helpers\Json::encode(array(
-            'rowTotal' => ShopProduct::formatPrice(Yii::$app->currency->convert($rowTotal)),
-            'totalPrice' => ShopProduct::formatPrice(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
+            'rowTotal' => Product::formatPrice(Yii::$app->currency->convert($rowTotal)),
+            'totalPrice' => Product::formatPrice(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
         ));
     }
 

@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\Product;
 
 $currency = Yii::$app->currency->active->symbol;
 $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
@@ -62,5 +62,5 @@ $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
     <p><b>Детали заказа вы можете просмотреть на странице:</b><br/> <?= Html::a(Url::to($order->getUrl(),true),Url::to($order->getUrl(),true),['target'=>'_blank']);?></p>
 <br/><br/><br/>
 <?= Yii::t('cart/default', 'TOTAL_PAY') ?>:
-<h1 style="display:inline"><?= ShopProduct::formatPrice($order->total_price + $order->delivery_price); ?></h1>
+<h1 style="display:inline"><?= Product::formatPrice($order->total_price + $order->delivery_price); ?></h1>
 <?= $currency; ?>

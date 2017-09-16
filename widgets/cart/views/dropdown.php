@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\Product;
 ?>
 <div class="cart">
 
@@ -27,7 +27,7 @@ use panix\mod\shop\models\ShopProduct;
                 ?>
             
                 <?php
-                $price = ShopProduct::calculatePrices($product['model'], $product['variant_models'], $product['configurable_id']);
+                $price = Product::calculatePrices($product['model'], $product['variant_models'], $product['configurable_id']);
                 ?>
                 <div class="cart-product-item">
                     <div class="cart-product-item-image">
@@ -37,7 +37,7 @@ use panix\mod\shop\models\ShopProduct;
                         <?php echo Html::a($product['model']->name, $product['model']->getUrl()) ?>
                         <br/>
                         (<?php echo $product['quantity'] ?>)
-                        <?= ShopProduct::formatPrice(Yii::$app->currency->convert($price)) ?> <?= $currency->symbol; ?>
+                        <?= Product::formatPrice(Yii::$app->currency->convert($price)) ?> <?= $currency->symbol; ?>
                     </div>
                 </div>
 

@@ -36,7 +36,7 @@ class ProductNotifications extends \yii\db\ActiveRecord {
      * @return array relational rules.
      */
     public function getProduct() {
-        return $this->hasOne(ShopProduct::className(), ['id' => 'product_id']);
+        return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 
     /**

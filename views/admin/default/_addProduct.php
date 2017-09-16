@@ -3,17 +3,17 @@
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use panix\engine\grid\GridView;
-use panix\mod\shop\models\search\ShopProductSearch;
+use panix\mod\shop\models\search\ProductSearch;
 ?>
 
 
 <?php
 
 //   if (!isset($dataProvider))
-//    $dataProvider = new ShopProduct('search');
+//    $dataProvider = new Product('search');
 // Fix sort url
 //   $dataProvider = $dataProvider->search();
-$searchModel = new ShopProductSearch();
+$searchModel = new ProductSearch();
 $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
 $dataProvider->pagination->pageSize = 1;

@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\Product;
  
  ?>
 <table border="0" cellspacing="0" cellpadding="2" style="width:100%;" class="table table-bordered table-striped">
@@ -67,8 +67,8 @@ use panix\mod\shop\models\ShopProduct;
 
                     <td width="10%" align="center"><?= $product->quantity ?></td>
 
-                    <td width="10%" align="center"><?= ShopProduct::formatPrice($newprice) ?> <?= Yii::$app->currency->active->symbol ?></td>
-                    <td width="10%" align="center"><?= ShopProduct::formatPrice($newprice * $product->quantity) ?> <?= Yii::$app->currency->active->symbol ?></td>
+                    <td width="10%" align="center"><?= Product::formatPrice($newprice) ?> <?= Yii::$app->currency->active->symbol ?></td>
+                    <td width="10%" align="center"><?= Product::formatPrice($newprice * $product->quantity) ?> <?= Yii::$app->currency->active->symbol ?></td>
                 </tr>
             <?php } ?>
 

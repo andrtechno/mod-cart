@@ -117,14 +117,5 @@ class Module extends WebModule {
         ];
     }
 
-    protected function getDefaultModelClasses() {
-        return [
-            //  'Pages' => 'panix\shop\models\Pages',
-            'ShopProductSearch' => 'app\system\modules\shop\models\ShopProductSearch',
-            'ShopManufacturer' => 'app\system\modules\shop\models\ShopManufacturer',
-            'ShopProduct' => 'app\system\modules\shop\models\ShopProduct',
-            'ShopCategory' => 'panix\shop\models\ShopCategory',
-        ];
-    }
 
 }

@@ -38,7 +38,7 @@ Pjax::begin([
             'format' => 'html',
             'contentOptions' => ['class' => 'text-center'],
             'value' => function($model) {
-        return panix\mod\shop\models\ShopProduct::formatPrice($model->total_price) . ' ' . Yii::$app->currency->main->symbol;
+        return panix\mod\shop\models\Product::formatPrice($model->total_price) . ' ' . Yii::$app->currency->main->symbol;
     }
         ],
         [

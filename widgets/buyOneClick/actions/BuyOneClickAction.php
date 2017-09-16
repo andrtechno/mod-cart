@@ -23,8 +23,8 @@ class BuyOneClickAction extends CAction {
     public function run() {
 
         $quantity = Yii::app()->request->getParam('quantity');
-        if (Yii::app()->request->isAjaxRequest) {
-            $productModel = ShopProduct::model()->findByPk(Yii::app()->request->getParam('id'));
+        if (Yii::app()->request->isAjax) {
+            $productModel = Product::model()->findByPk(Yii::app()->request->getParam('id'));
             if (!$productModel) {
                 throw new CHttpException(404);
             }
@@ -92,7 +92,7 @@ class BuyOneClickAction extends CAction {
         $ordered_product->sku = $productModel->sku;
         $ordered_product->date_create = $order->date_create;
         // if($item['currency_id']){
-        //     $currency = ShopCurrency::model()->findByPk($item['currency_id']);
+        //     $currency = Currency::model()->findByPk($item['currency_id']);
         //$ordered_product->price = ShopProduct::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
         // }else{
         // 
@@ -138,7 +138,7 @@ class BuyOneClickAction extends CAction {
         $params['price'] = $productModel->priceRange();
         $params['currency'] = $currency;
         if (isset($productModel->originalPrice)) {
-            $params['originalPrice'] = ShopProduct::formatPrice($productModel->toCurrentCurrency('originalPrice'));
+            $params['originalPrice'] = Product::formatPrice($productModel->toCurrentCurrency('originalPrice'));
         } else {
             $params['originalPrice'] = false;
         }

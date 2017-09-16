@@ -2,7 +2,7 @@
 
 namespace panix\mod\cart\models;
 use panix\mod\cart\models\Order;
-use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\Product;
 class OrderProduct extends \panix\engine\db\ActiveRecord {
 
     const MODULE_ID = 'cart';
@@ -25,7 +25,7 @@ class OrderProduct extends \panix\engine\db\ActiveRecord {
     }
 
     public function getOriginalProduct() {
-        return $this->hasOne(ShopProduct::className(), ['id' => 'product_id']);
+        return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 
 
@@ -37,7 +37,7 @@ class OrderProduct extends \panix\engine\db\ActiveRecord {
         $this->order->updateDeliveryPrice();
 
         if ($this->isNewRecord) {
-            $product = ShopProduct::findOne($this->product_id);
+            $product = Product::findOne($this->product_id);
             $product->decreaseQuantity();
         }
 

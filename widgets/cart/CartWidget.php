@@ -4,7 +4,7 @@ namespace panix\mod\cart\widgets\cart;
 
 use Yii;
 use yii\helpers\Html;
-use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\Product;
 
 class CartWidget extends \panix\engine\data\Widget {
 
@@ -13,7 +13,7 @@ class CartWidget extends \panix\engine\data\Widget {
         $cart = Yii::$app->cart;
         $currency = Yii::$app->currency->active;
         $items = $cart->getDataWithModels();
-        $total = ShopProduct::formatPrice(Yii::$app->currency->convert($cart->getTotalPrice()));
+        $total = Product::formatPrice(Yii::$app->currency->convert($cart->getTotalPrice()));
         $dataRender = [
             'count' => $cart->countItems(),
             'currency' => $currency,

@@ -2,7 +2,7 @@
 namespace panix\mod\cart\controllers;
 
 use panix\engine\controllers\WebController;
-use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\Product;
 
 class NotifyController extends WebController {
 
@@ -14,7 +14,7 @@ class NotifyController extends WebController {
     public function actionIndex() {
         header('Content-Type: application/json');
         $json=array();
-        $product = ShopProduct::model()->findByPk(Yii::$app->request->post('product_id'));
+        $product = Product::model()->findByPk(Yii::$app->request->post('product_id'));
 
         if (!$product)
             throw new CHttpException(404);

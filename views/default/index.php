@@ -3,7 +3,7 @@
 use yii\helpers\Url;
 use yii\jui\Spinner;
 use panix\engine\Html;
-use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\Product;
 
 ?>
 <?php
@@ -82,7 +82,7 @@ if (empty($items)) {
             <tbody>
                 <?php foreach ($items as $index => $product) { ?>
                     <?php
-                    $price = ShopProduct::calculatePrices($product['model'], $product['variant_models'], $product['configurable_id']);
+                    $price = Product::calculatePrices($product['model'], $product['variant_models'], $product['configurable_id']);
                     ?>
                     <tr id="product-<?= $index ?>">
                         <td width="110px" align="center">
@@ -104,7 +104,7 @@ if (empty($items)) {
                             // Price
 
                             echo Html::beginTag('span', array('class' => 'price'));
-                            echo ShopProduct::formatPrice(Yii::$app->currency->convert($price));
+                            echo Product::formatPrice(Yii::$app->currency->convert($price));
                             echo ' ' . Yii::$app->currency->active->symbol;
                             //echo ' '.($product['currency_id']) ? Yii::$app->currency->getSymbol($product['currency_id']) : Yii::$app->currency->active->symbol;
                             echo Html::endTag('span');
@@ -144,9 +144,9 @@ echo Spinner::widget([
                         <td id="price-<?= $index ?>" class="cart-product-sub-total">
                             <?php
                             echo Html::beginTag('span', array('class' => 'cart-sub-total-price', 'id' => 'row-total-price' . $index));
-                            echo (Yii::$app->settings->get('shop', 'wholesale')) ? ShopProduct::formatPrice(ShopProduct::formatPrice(Yii::$app->currency->convert($price * $product['model']->pcs * $product['quantity']))) : ShopProduct::formatPrice(Yii::$app->currency->convert($price * $product['quantity']));
+                            echo (Yii::$app->settings->get('shop', 'wholesale')) ? Product::formatPrice(Product::formatPrice(Yii::$app->currency->convert($price * $product['model']->pcs * $product['quantity']))) : Product::formatPrice(Yii::$app->currency->convert($price * $product['quantity']));
                             echo Html::endTag('span');
-                            //echo $convertTotalPrice;// echo ShopProduct::formatPrice(Yii::$app->currency->convert($convertPrice, $product['currency_id']));
+                            //echo $convertTotalPrice;// echo Product::formatPrice(Yii::$app->currency->convert($convertPrice, $product['currency_id']));
                             echo ' ' . Yii::$app->currency->active->symbol;
                             //echo ' '.($product['currency_id'])? Yii::$app->currency->getSymbol($product['currency_id']): Yii::$app->currency->active->symbol;
                             ?>
@@ -224,7 +224,7 @@ echo Spinner::widget([
         <div class="panel-heading">dsadsadsa</div>
         <div class="panel-body">
             <div class="cart-grand-total">
-                Сумма заказа <span id="total"><?= ShopProduct::formatPrice($totalPrice) ?></span> <?php echo Yii::$app->currency->active->symbol; ?>
+                Сумма заказа <span id="total"><?= Product::formatPrice($totalPrice) ?></span> <?php echo Yii::$app->currency->active->symbol; ?>
             </div>
             <div id="cart-check" class="text-center padding-tb">
                 <div style="font-size:14px"><?= Yii::t('cart/default', 'PAYMENT'); ?>:</div>

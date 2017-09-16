@@ -11,7 +11,7 @@ use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderProduct;
-use panix\mod\shop\models\ShopProduct;
+use panix\mod\shop\models\Product;
 
 class DefaultController extends WebController {
 
@@ -113,7 +113,7 @@ class DefaultController extends WebController {
         $variants = array();
 
         // Load product model
-        $model = ShopProduct::findOne(Yii::$app->request->post('product_id', 0));
+        $model = Product::findOne(Yii::$app->request->post('product_id', 0));
 
         // Check product
         if (!isset($model))
@@ -228,10 +228,10 @@ class DefaultController extends WebController {
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
             // if($item['currency_id']){
-            //     $currency = ShopCurrency::model()->findByPk($item['currency_id']);
-            //$ordered_product->price = ShopProduct::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
+            //     $currency = Currency::model()->findByPk($item['currency_id']);
+            //$ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
             // }else{
-            $ordered_product->price = ShopProduct::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
+            $ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
             // }
 
             $ordered_product->save();
@@ -275,7 +275,7 @@ $productsCount++;
      * @return string
      */
     protected function _checkVariantExists($product_id, $attribute_id, $variant_id) {
-        return ShopProductVariant::find()->where([
+        return ProductVariant::find()->where([
                     'id' => $variant_id,
                     'product_id' => $product_id,
                     'attribute_id' => $attribute_id
