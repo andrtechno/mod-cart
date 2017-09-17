@@ -1,9 +1,9 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\Pjax;
-//use panix\engine\widgets\Pjax;
+use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
+
 //\panix\engine\assets\ShowLoadingAsset::register($this);
 ?>
 
@@ -19,13 +19,17 @@ Pjax::begin([
     'linkSelector' => 'a:not(.linkTarget)'
 ]);
 ?>
-<?= GridView::widget([
+<?=
+
+GridView::widget([
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-     'rowOptions' => function ($model, $index, $widget, $grid){
-      return ['style'=>'background-color:'.$model->status->color.';'];
-    },
+    'showFooter' => true,
+    'footerRowOptions' => ['style' => 'font-weight:bold;', 'class' => 'text-center'],
+    'rowOptions' => function ($model, $index, $widget, $grid) {
+return ['style' => 'background-color:' . $model->status->color . ';'];
+},
     'layout' => $this->render('@admin/views/layouts/_grid_layout', ['title' => $this->context->pageName]), //'{items}{pager}{summary}'
     'columns' => [
         [
@@ -37,6 +41,7 @@ Pjax::begin([
             'attribute' => 'total_price',
             'format' => 'html',
             'contentOptions' => ['class' => 'text-center'],
+            'footer' => \panix\mod\cart\models\Order::getTotal($dataProvider->models, 'total_price'),
             'value' => function($model) {
         return panix\mod\shop\models\Product::formatPrice($model->total_price) . ' ' . Yii::$app->currency->main->symbol;
     }
@@ -46,7 +51,7 @@ Pjax::begin([
             'template' => '{print} {update} {switch} {delete}',
             'buttons' => [
                 'print' => function ($url, $model, $key) {
-                    return Html::a('<i class="icon-print"></i>', ['/admin/cart/default/print','id'=>$model->id], [
+                    return Html::a('<i class="icon-print"></i>', ['/admin/cart/default/print', 'id' => $model->id], [
                                 'title' => Yii::t('yii', 'VIEW'),
                                 'class' => 'btn btn-sm btn-info linkTarget',
                                 'target' => '_blank'

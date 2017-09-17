@@ -17,7 +17,16 @@ class Order extends \panix\engine\db\ActiveRecord {
         return '{{%order}}';
     }
 
+public static function getTotal($provider, $fieldName)
+{
+    $total = 0;
 
+    foreach ($provider as $item) {
+        $total += $item[$fieldName];
+    }
+
+    return \panix\mod\shop\models\Product::formatPrice($total) . ' ' . Yii::$app->currency->main->symbol;
+}
     public static function find() {
         return new query\OrderQuery(get_called_class());
     }

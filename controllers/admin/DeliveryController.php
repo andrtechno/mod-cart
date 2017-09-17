@@ -5,7 +5,6 @@ namespace panix\mod\cart\controllers\admin;
 use Yii;
 use panix\mod\cart\models\search\DeliverySearch;
 use panix\mod\cart\models\Delivery;
-use panix\engine\grid\sortable\SortableGridAction;
 
 class DeliveryController extends \panix\engine\controllers\AdminController {
 
@@ -13,9 +12,9 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
 
     public function actions() {
         return [
-            'dnd_sort' => [
-                'class' => SortableGridAction::className(),
-                'modelName' => Delivery::className(),
+            'sortable' => [
+                'class' => \panix\engine\grid\sortable\Action::className(),
+                'modelClass' => Delivery::className(),
             ],
             'delete' => [
                 'class' => 'panix\engine\grid\actions\DeleteAction',

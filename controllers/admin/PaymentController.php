@@ -5,7 +5,6 @@ namespace panix\mod\cart\controllers\admin;
 use Yii;
 use panix\mod\cart\models\search\PaymentSearch;
 use panix\mod\cart\models\Payment;
-use panix\engine\grid\sortable\SortableGridAction;
 use panix\mod\cart\components\payment\PaymentSystemManager;
 use panix\engine\Html;
 class PaymentController extends \panix\engine\controllers\AdminController {
@@ -14,9 +13,9 @@ class PaymentController extends \panix\engine\controllers\AdminController {
 
     public function actions() {
         return [
-            'dnd_sort' => [
-                'class' => SortableGridAction::className(),
-                'modelName' => Payment::className(),
+            'sortable' => [
+                'class' => \panix\engine\grid\sortable\Action::className(),
+                'modelClass' => Payment::className(),
             ],
             'delete' => [
                 'class' => 'panix\engine\grid\actions\DeleteAction',
