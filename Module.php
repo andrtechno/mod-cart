@@ -82,40 +82,5 @@ class Module extends WebModule {
         ];
     }
 
-    public function getNav() {
-        return [
-            [
-                'label' => 'Заказы',
-                "url" => ['/admin/cart'],
-                'icon' => 'icon-cart'
-            ],
-            [
-                'label' => Yii::t('cart/admin', 'STATUSES'),
-                "url" => ['/admin/cart/statuses'],
-                'icon' => 'icon-s'
-            ],
-            [
-                'label' => Yii::t('cart/admin', 'DELIVERY'),
-                "url" => ['/admin/cart/delivery'],
-                'icon' => 'icon-delivery'
-            ],
-            [
-                'label' => Yii::t('cart/admin', 'PAYMENTS'),
-                "url" => ['/admin/cart/payment'],
-                'icon' => 'icon-creditcard'
-            ],
-            [
-                'label' => Yii::t('cart/admin', 'NOTIFIER'),
-                "url" => ['/admin/cart/notify'],
-                'icon' => 'icon-envelope'
-            ],
-            [
-                'label' => Yii::t('app', 'SETTINGS'),
-                "url" => ['/admin/cart/settings'],
-                'icon' => 'icon-settings'
-            ]
-        ];
-    }
-
 
 }

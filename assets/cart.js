@@ -216,8 +216,8 @@ cart = {
                     }
                 }
             });
-           // $('.spinner-down').html('-');
-           // $('.spinner-up').html('+');
+            $('.ui-spinner-down').html('-');
+            $('.ui-spinner-up').html('+');
         });
     }
 }

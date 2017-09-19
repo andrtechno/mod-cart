@@ -5,6 +5,7 @@ namespace panix\mod\cart\controllers;
 use Yii;
 use yii\helpers\Url;
 use panix\engine\Html;
+use yii\helpers\Json;
 use panix\engine\controllers\WebController;
 use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\models\Delivery;
@@ -256,7 +257,7 @@ $productsCount++;
                 
         
         // Send email to user.
-        $this->sendClientEmail($order);
+        //$this->sendClientEmail($order);
         // Send email to admin.
         $this->sendAdminEmail($order);
 
@@ -312,7 +313,7 @@ $productsCount++;
      */
     protected function _finish($product = null) {
 
-        echo yii\helpers\Json::encode(array(
+        echo Json::encode(array(
             'errors' => $this->_errors,
             'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
                 'cart' => \yii\helpers\BaseHtml::a(Yii::t('cart/default', 'IN_CART'), '/cart'),
@@ -325,11 +326,12 @@ $productsCount++;
     private function sendAdminEmail(Order $order) {
         Yii::$app->mailer->htmlLayout = "layouts/admin";
         Yii::$app->mailer
-                ->compose('@cart/mail/admin', ['order' => $order])
+                ->compose()
                 ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
                 ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
                 //->setCc(Yii::$app->settings->get('app','email')) //copy
                 //->setBcc(Yii::$app->settings->get('app','email')) //hidden copy
+                 ->setHtmlBody($this->renderPartial('@cart/mail/admin.tpl', ['order' => $order,'test'=>'1111']))
                 ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
                 ->send();
     }

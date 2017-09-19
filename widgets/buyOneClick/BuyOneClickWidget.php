@@ -1,5 +1,7 @@
 <?php
 
+namespace panix\mod\cart\widgets\buyOneClick;
+
 /**
  * Виджет купить в один клик.
  * 
@@ -19,34 +21,22 @@
  * @subpackage commerce.cart.widgets.buyOneClick
  * @uses CWidget
  */
-class BuyOneClickWidget extends CWidget {
+class BuyOneClickWidget extends \panix\engine\data\Widget {
 
-    protected $assetsPath;
-    protected $assetsUrl;
     public $pk;
 
-    public static function actions() {
-        return array(
-            'action' => 'mod.cart.widgets.buyOneClick.actions.BuyOneClickAction'
-        );
-    }
+ 
 
     public function init() {
 
+
+        //$this->registerClientScript();
         parent::init();
-        if ($this->assetsPath === null) {
-            $this->assetsPath = dirname(__FILE__) . DS . 'assets';
-        }
-        if ($this->assetsUrl === null) {
-            $this->assetsUrl = Yii::app()->assetManager->publish($this->assetsPath, false, -1, YII_DEBUG);
-        }
-        $this->registerClientScript();
     }
 
     public function run() {
-        if (Yii::app()->hasModule('cart')) {
-            $this->render($this->skin);
-        }
+
+        return $this->render($this->skin);
     }
 
     protected function registerClientScript() {

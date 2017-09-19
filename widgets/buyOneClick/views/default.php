@@ -1,8 +1,10 @@
 
 <?php
+use panix\engine\Html;
+
 
 //index.php?r=main/ajax/widget.actionCallback
-echo CHtml::ajaxLink(Yii::t('BuyOneClickWidget.default', 'BUTTON'), array('/cart/buyOneClick.action'), array(
+/*echo Html::ajaxLink(Yii::t('BuyOneClickWidget.default', 'BUTTON'), array('/cart/buyOneClick.action'), array(
     'type' => 'GET',
     'beforeSend' => "function(){
         $('.buyOneClick-button').attr('disabled',true);
@@ -69,4 +71,4 @@ echo CHtml::ajaxLink(Yii::t('BuyOneClickWidget.default', 'BUTTON'), array('/cart
     // 'href' => Yii::app()->createUrl('ajax/new_link222'), // подменяет ссылку на другую
     'class' => "buyOneClick-button btn btn-default" // добавляем какой-нить класс для оформления
         )
-);
+);*/
