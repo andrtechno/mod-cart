@@ -1,16 +1,14 @@
 <?php
+namespace panix\mod\cart\models;
+class OrderProductHistroy extends \panix\engine\db\ActiveRecord {
 
-class OrderProductHistroy extends ActiveRecord {
 
-    public static function model($className = __CLASS__) {
-        return parent::model($className);
-    }
 
     /**
      * @return string the associated database table name
      */
-    public function tableName() {
-        return '{{order_product_history}}';
+    public static function tableName() {
+        return '{{%order_history_product}}';
     }
 
     public function relations() {

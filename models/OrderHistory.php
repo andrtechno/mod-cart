@@ -1,5 +1,5 @@
 <?php
-
+namespace panix\mod\cart\models;
 /**
  * This is the model class for table "OrderHistory".
  *
@@ -13,22 +13,15 @@
  * @property string $data_after
  * @property string $date_create
  */
-class OrderHistory extends ActiveRecord {
+class OrderHistory extends \panix\engine\db\ActiveRecord {
 
-    /**
-     * Returns the static model of the specified AR class.
-     * @param string $className active record class name.
-     * @return OrderHistory the static model class
-     */
-    public static function model($className = __CLASS__) {
-        return parent::model($className);
-    }
+
 
     /**
      * @return string the associated database table name
      */
-    public function tableName() {
-        return '{{order_history}}';
+    public static function tableName() {
+        return '{{%order_history}}';
     }
 
     /**
