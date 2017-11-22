@@ -103,7 +103,7 @@ class SettingsForm extends \panix\engine\SettingsModel {
 
     public function rules() {
         return [
-            ['order_emails', 'required'],
+            [['order_emails','tpl_body_user','tpl_body_admin','tpl_subject_user','tpl_subject_admin'], 'required'],
             [['tpl_body_user', 'tpl_body_admin', 'tpl_subject_user', 'tpl_subject_admin'], 'string'],
         ];
     }

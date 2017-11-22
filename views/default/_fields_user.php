@@ -1,6 +1,7 @@
 <?php
 
 use panix\engine\Html;
+use panix\engine\widgets\inputmask\InputMask;
 ?>
 <div class="form-group">
     <?= Html::activeLabel($form, 'user_name', array('required' => true, 'class' => 'control-label')); ?>
@@ -9,10 +10,21 @@ use panix\engine\Html;
 </div>
 <div class="form-group">
     <?= Html::activeLabel($form, 'user_phone', array('required' => true, 'class' => 'control-label')); ?>
-    <?= Html::activeTextInput($form, 'user_phone', array('class' => 'form-control')); ?>
 
-<?= Html::error($form, 'user_phone'); ?>
+        <?php echo InputMask::widget([
+            'model'=>$form,
+            'attribute'=>'user_phone'
+        ]);
+        ?>
 </div>
+
+
+
+
+
+
+
+
 
 <div class="form-group">
     <?= Html::activeLabel($form, 'user_email', array('required' => true, 'class' => 'control-label')); ?>

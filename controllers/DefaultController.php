@@ -35,12 +35,15 @@ class DefaultController extends WebController {
             }
         }
     }
-
+    public $pageTitle;
     /**
      * Display list of product added to cart
      */
     public function actionIndex() {
-
+        $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
+        $this->title = $this->pageName;
+        $this->breadcrumbs = [$this->pageName];
+        
         if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
             $this->processRecount();
         }
