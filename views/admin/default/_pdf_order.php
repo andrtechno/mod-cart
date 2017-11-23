@@ -54,11 +54,11 @@ use panix\mod\shop\models\Product;
                 $totalCountQuantity += $product->quantity;
                 $totalCountPrice += $product->price;
                 $totalCountPriceAll += $product->price * $product->quantity;
-                if ($product->originalProduct) {
+                //if ($product->originalProduct) {
                     $image = $product->originalProduct->getMainImageUrl('50x50');
-                } else {
-                    $image = '/uploads/no-image.png';
-                }
+                //} else {
+                //    $image = '/uploads/no-image.png';
+               // }
 
                 $newprice = Yii::$app->currency->convert($product->price);
                 ?>
