@@ -3,15 +3,12 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use panix\mod\shop\models\Product;
- 
- ?>
-<table border="0" cellspacing="0" cellpadding="2" style="width:100%;" class="table table-bordered table-striped">
-    
+?>
+<img src="https://corner-cms.com/logo.php?size=100x50&color=333&type=logo_cms" />
+<table border="0" cellspacing="0" cellpadding="2" style="width:100%;" class="">
+
     <thead>
-                        <tr>
-                <th colspan="2" align="center" class="text-center"><?= Yii::$app->settings->get('app', 'site_name') ?><br/><?= Yii::$app->user->getDisplayName()?><br/><?php //echo $date;  ?> </th>
-            </tr> 
-        <tr><th colspan="2" align="center"><h1>№ заказа <?= $model->id ?></h1></th></tr>
+        <tr><th colspan="2" align="center"><h2>№ заказа <?= $model->id ?></h2></th></tr>
         <tr>
             <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('user_name'); ?>:</td>
             <td width="30%" align="right" class="text-center"><?= $model->user_name; ?></td>
@@ -39,44 +36,55 @@ use panix\mod\shop\models\Product;
 </table>
 <br/><br/>
 <?php if ($model->products) { ?>
-    <table border="1" cellspacing="0" cellpadding="2" style="width:100%;" class="table table-bordered table-striped">
+    <table border="1" cellspacing="0" cellpadding="2" style="width:100%;" class="table table-bordered">
         <thead>
             <tr>
-                <th width="50%" colspan="2" align="center" class="text-center">Товар</th>
-
-                <th width="10%" align="center" class="text-center">Кол.</th>
-
-                <th width="10%" align="center" class="text-center">Цена за шт.</th>
-                <th width="10%" align="center" class="text-center">Общая цена</th>
+                <th width="35%" colspan="2" class="text-center">Товар</th>
+                <th width="10%" class="text-center">Кол.</th>
+                <th width="15%" class="text-center">Цена за шт.</th>
+                <th width="20%" class="text-center">Общая стоимость</th>
             </tr>
         </thead>
         <tbody>
             <?php
+            $totalCountQuantity = 0;
+            $totalCountPrice = 0;
+            $totalCountPriceAll = 0;
             foreach ($model->products as $product) {
-                if ($product->originalProduct->image) {
+                $totalCountQuantity += $product->quantity;
+                $totalCountPrice += $product->price;
+                $totalCountPriceAll += $product->price * $product->quantity;
+                if ($product->originalProduct) {
                     $image = $product->originalProduct->getMainImageUrl('50x50');
                 } else {
                     $image = '/uploads/no-image.png';
                 }
 
-                $newprice = $product->price;
+                $newprice = Yii::$app->currency->convert($product->price);
                 ?>
                 <tr>
-                    <td width="10%" align="center"><?= Html::img(Url::to($image,true), ['alt'=>$product->originalProduct->name,'width' => 50, 'height' => 50]); ?></td>
+                    <td width="10%" align="center"><?= Html::img(Url::to($image, true), ['alt' => $product->originalProduct->name, 'width' => 50, 'height' => 50]); ?></td>
                     <td width="40%"><?= $product->originalProduct->name ?></td>
-
-                    <td width="10%" align="center"><?= $product->quantity ?></td>
-
-                    <td width="10%" align="center"><?= Product::formatPrice($newprice) ?> <?= Yii::$app->currency->active->symbol ?></td>
-                    <td width="10%" align="center"><?= Product::formatPrice($newprice * $product->quantity) ?> <?= Yii::$app->currency->active->symbol ?></td>
+                    <td align="center"><?= $product->quantity ?></td>
+                    <td align="center"><?= Product::formatPrice($newprice) ?> <sup><?= Yii::$app->currency->active->symbol ?></sup></td>
+                    <td align="center"><?= Product::formatPrice($newprice * $product->quantity) ?> <sup><?= Yii::$app->currency->active->symbol ?></sup></td>
                 </tr>
             <?php } ?>
 
         </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="2" class="text-right">Всего</th>
+                <th class="text-center"><?= $totalCountQuantity; ?></th>
+                <th class="text-center"><?= Product::formatPrice(Yii::$app->currency->convert($totalCountPrice)); ?> <sup><?= Yii::$app->currency->active->symbol ?></sup></th>
+                <th class="text-center"><?= Product::formatPrice(Yii::$app->currency->convert($totalCountPriceAll)); ?> <sup><?= Yii::$app->currency->active->symbol ?></sup></th>
+            </tr>
+        </tfoot>
     </table>
-<br/><br/>
-Всего к оплате: <h1><?= $model->total_price; ?> <?= Yii::$app->currency->active->symbol ?></h1>
+    <br/><br/>
+    <div class="text-right">
+        Всего к оплате: <h1><?= Product::formatPrice($model->total_price); ?> <sup><?= Yii::$app->currency->active->symbol ?></sup></h1>
+    </div>
 <?php } ?>         
 
 
-<div class="alert alert-info">dsadsadsa</div>

@@ -3,13 +3,13 @@
 namespace panix\mod\cart\controllers\admin;
 
 use Yii;
-use panix\engine\controllers\AdminController;
-use panix\mod\cart\models\search\OrderSearch;
 use yii\web\NotFoundHttpException;
 use panix\engine\pdf\Pdf;
 use panix\mod\shop\models\Product;
 use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\search\ProductSearch;
+use panix\engine\controllers\AdminController;
+use panix\mod\cart\models\search\OrderSearch;
 
 class DefaultController extends AdminController {
 
@@ -23,7 +23,7 @@ class DefaultController extends AdminController {
             'content' => $content,
             'methods' => [
                 'SetHeader' => ['CORNER CMS'],
-                'SetFooter' => ['{PAGENO}'],
+                'SetFooter' => ['Страница: {PAGENO}'],
             ]
         ]);
 
@@ -164,7 +164,7 @@ class DefaultController extends AdminController {
     }
 
     public function actionRenderOrderedProducts($order_id) {
-                $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
+        $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
         return $this->renderAjax('_orderedProducts', array(
                     'model' => $this->findModel($order_id)
         ));
