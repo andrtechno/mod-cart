@@ -6,6 +6,7 @@ use yii\helpers\ArrayHelper;
 use panix\mod\cart\models\OrderStatus;
 use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\Delivery;
+use panix\engine\widgets\inputmask\InputMask;
 ?>
 <?php
 $form = ActiveForm::begin();
@@ -25,13 +26,14 @@ $form->field($model, 'delivery_id')->dropDownList(ArrayHelper::map(Delivery::fin
     'prompt' => '-- доставка --'
 ]);
 ?>
-<?= $form->field($model, 'discount')->textInput() ?>
-<?= $form->field($model, 'user_name')->textInput() ?>
-<?= $form->field($model, 'user_address')->textInput() ?>
-<?= $form->field($model, 'user_phone')->textInput() ?>
-<?= $form->field($model, 'user_comment')->textArea() ?>
-<?= $form->field($model, 'admin_comment')->textArea() ?>
-<?= $form->field($model, 'paid')->checkbox() ?>
+<?= $form->field($model, 'discount')->textInput(); ?>
+<?= $form->field($model, 'user_name')->textInput(); ?>
+<?= $form->field($model, 'user_address')->textInput(); ?>
+<?= $form->field($model, 'user_phone')->widget(InputMask::className()); ?>
+
+<?= $form->field($model, 'user_comment')->textArea(); ?>
+<?= $form->field($model, 'admin_comment')->textArea(); ?>
+<?= $form->field($model, 'paid')->checkbox(); ?>
 
 
 <div class="form-group text-center">
