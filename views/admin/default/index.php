@@ -30,7 +30,7 @@ GridView::widget([
     'rowOptions' => function ($model, $index, $widget, $grid) {
 return ['style' => 'background-color:' . $model->status->color . ';'];
 },
-    'layout' => $this->render('@admin/views/layouts/_grid_layout', ['title' => $this->context->pageName]), //'{items}{pager}{summary}'
+    'layoutOptions' => ['title' => $this->context->pageName], //'{items}{pager}{summary}'
     'columns' => [
         [
             'class' => 'yii\grid\SerialColumn',

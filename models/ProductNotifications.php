@@ -2,6 +2,8 @@
 
 namespace panix\mod\cart\models;
 
+use Yii;
+use panix\mod\shop\models\Product;
 /**
  * This is the model class for table "notifications".
  *
@@ -10,7 +12,7 @@ namespace panix\mod\cart\models;
  * @property integer $product_id
  * @property string $email
  */
-class ProductNotifications extends \yii\db\ActiveRecord {
+class ProductNotifications extends \panix\engine\db\ActiveRecord {
 
     const MODULE_ID = 'cart';
 
@@ -18,7 +20,11 @@ class ProductNotifications extends \yii\db\ActiveRecord {
      * @return string the associated database table name
      */
     public static function tableName() {
-        return '{{%shop_notifications}}';
+        return '{{%order_product_notify}}';
+    }
+
+    public static function find() {
+        return new query\ProductNotificationsQuery(get_called_class());
     }
 
     /**
@@ -38,20 +44,34 @@ class ProductNotifications extends \yii\db\ActiveRecord {
     public function getProduct() {
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
+    public static function getSort() {
+        return new \yii\data\Sort([
+            'attributes' => [
+                //'totalEmails',
+                'product.quantity' => [
+                    'asc' => ['quantity' => SORT_ASC],
+                    'desc' => ['quantity' => SORT_DESC],
+                ],
+                'product.availability' => [
+                    'asc' => ['availability' => SORT_ASC],
+                    'desc' => ['availability' => SORT_DESC],
+                ],
 
+            ],
+        ]);//
+    }
     /**
      * @return array customized attribute labels (name=>label)
      */
     public function attributeLabels() {
         return array(
             'id' => 'ID',
-            'product_id' => Yii::t('core', 'Продукт'),
-            'product' => Yii::t('core', 'Продукт'),
-            'product_quantity' => Yii::t('core', 'Количество'),
-            'product_availability' => Yii::t('core', 'Доступность'),
-            'name' => Yii::t('core', 'Название'),
-            'email' => Yii::t('core', 'Email'),
-            'totalEmails' => Yii::t('core', 'Количество подписчиков')
+            'product_id' => Yii::t('app', 'Продукт'),
+            'product' => Yii::t('app', 'Продукт'),
+
+            'name' => Yii::t('app', 'Название'),
+            'email' => Yii::t('app', 'Email'),
+            'totalEmails' => Yii::t('app', 'Количество подписчиков')
         );
     }
 
@@ -59,32 +79,16 @@ class ProductNotifications extends \yii\db\ActiveRecord {
         return ProductNotifications::find()->where(['product_id' => $this->product_id])->count();
     }
 
-    /**
-     * Retrieves a list of models based on the current search/filter conditions.
-     * @return ActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-     */
-    public function search() {
-        $criteria = new CDbCriteria;
-        $criteria->group = 'product_id';
-        $criteria->with = 'product';
 
-        $criteria->compare('id', $this->id);
-        $criteria->compare('product_id', $this->product_id);
-        $criteria->compare('email', $this->email, true);
-
-        return new ActiveDataProvider($this, array(
-            'criteria' => $criteria,
-        ));
-    }
 
     /**
      * Check if email exists in list for current product
      */
     public function hasEmail() {
         return ProductNotifications::find([
-                    'email' => $this->email,
-                    'product_id' => $this->product_id])
-                ->where()->count() > 0;
+                            'email' => $this->email,
+                            'product_id' => $this->product_id])
+                        ->where()->count() > 0;
     }
 
 }
