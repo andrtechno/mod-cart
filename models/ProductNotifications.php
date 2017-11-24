@@ -48,6 +48,10 @@ class ProductNotifications extends \panix\engine\db\ActiveRecord {
         return new \yii\data\Sort([
             'attributes' => [
                 //'totalEmails',
+                'name' => [
+                    'asc' => ['product.name' => SORT_ASC],
+                    'desc' => ['product.name' => SORT_DESC],
+                ],
                 'product.quantity' => [
                     'asc' => ['quantity' => SORT_ASC],
                     'desc' => ['quantity' => SORT_DESC],
@@ -68,7 +72,7 @@ class ProductNotifications extends \panix\engine\db\ActiveRecord {
             'id' => 'ID',
             'product_id' => Yii::t('app', 'Продукт'),
             'product' => Yii::t('app', 'Продукт'),
-
+'image' => Yii::t('app', 'Изображение'),
             'name' => Yii::t('app', 'Название'),
             'email' => Yii::t('app', 'Email'),
             'totalEmails' => Yii::t('app', 'Количество подписчиков')

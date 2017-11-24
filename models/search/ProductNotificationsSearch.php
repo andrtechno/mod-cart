@@ -49,13 +49,9 @@ class ProductNotificationsSearch extends ProductNotifications {
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'id' => $this->id,
-        ]);
-
-
-
+        $query->andFilterWhere(['id' => $this->id]);
         $query->andFilterWhere(['like', 'email', $this->email]);
+        //$query->andFilterWhere(['like', 'product.name', $this->name]);
         //$query->andFilterWhere(['like', 'product.quantity', $this->product->quantity]);
 
         return $dataProvider;

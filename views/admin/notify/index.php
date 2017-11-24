@@ -3,13 +3,8 @@
 use yii\helpers\Html;
 use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
-?>
 
-
-
-
-
-<?php
+echo \panix\ext\fancybox\Fancybox::widget(['target' => '.image a']);
 
 Pjax::begin([
     'id' => 'pjax-container', 'enablePushState' => false,
@@ -23,15 +18,23 @@ GridView::widget([
     'filterModel' => $searchModel,
     'layoutOptions' => ['title' => $this->context->pageName], //'{items}{pager}{summary}'
     'columns' => [
-        'email',
+        [
+            'attribute' => 'image',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center image'],
+            'value' => function($model) {
+                return $model->product->renderGridImage('50x50');
+            },
+        ],
         [
             'attribute' => 'name',
             'format' => 'raw',
-            'contentOptions' => ['class' => 'text-center image'],
+            'contentOptions' => ['class' => 'text-center'],
             'value' => function($model) {
                 return Html::a($model->product->name, $model->product->getUrl()); //$model->renderGridImage('50x50');
             },
         ],
+        'email',
         [
             'attribute' => 'product.availability',
             'format' => 'raw',
@@ -52,7 +55,7 @@ GridView::widget([
             'contentOptions' => ['class' => 'text-center'],
         ],
         [
-           // 'attribute' => 'test',
+            // 'attribute' => 'test',
             'format' => 'html',
             'contentOptions' => ['class' => 'text-center', 'data-confirm' => Yii::t('cart/default', 'Вы уверены?')],
             'value' => function($model) {
