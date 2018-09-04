@@ -14,12 +14,12 @@ class PaymentController extends \panix\engine\controllers\AdminController {
     public function actions() {
         return [
             'sortable' => [
-                'class' => \panix\engine\grid\sortable\Action::className(),
-                'modelClass' => Payment::className(),
+                'class' => \panix\engine\grid\sortable\Action::class,
+                'modelClass' => Payment::class,
             ],
             'delete' => [
                 'class' => 'panix\engine\grid\actions\DeleteAction',
-                'modelClass' => Payment::className(),
+                'modelClass' => Payment::class,
             ],
         ];
     }

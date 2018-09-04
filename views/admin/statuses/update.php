@@ -20,7 +20,7 @@ use panix\ext\colorpicker\Colorpicker;
         <?= $form->field($model, 'name')->textInput(['maxlength' => 100]) ?>
         <?php //echo $form->field($model, 'color')->textInput(['maxlength' => 7]) ?>
         <?php
-        echo $form->field($model, 'color')->widget(Colorpicker::className(), [
+        echo $form->field($model, 'color')->widget(Colorpicker::class, [
         ])->textInput(['maxlength' => 7]);
         ?>
 

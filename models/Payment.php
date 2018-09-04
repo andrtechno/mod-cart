@@ -31,13 +31,13 @@ class Payment extends \panix\engine\db\ActiveRecord {
     }
 
     public function getTranslations() {
-        return $this->hasMany(PaymentTranslate::className(), ['object_id' => 'id']);
+        return $this->hasMany(PaymentTranslate::class, ['object_id' => 'id']);
     }
 
     public function behaviors() {
         return ArrayHelper::merge([
                     'translate' => [
-                        'class' => TranslateBehavior::className(),
+                        'class' => TranslateBehavior::class,
                         'translationAttributes' => [
                             'name',
                             'description'

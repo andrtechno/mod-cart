@@ -248,7 +248,7 @@ $productsCount++;
         $order->updateDeliveryPrice();
         $text = (Yii::$app->user->isGuest) ? 'NOTIFACTION_GUEST_TEXT':'NOTIFACTION_USER_TEXT';
                 $order->attachBehavior('notifaction', [
-            'class' => \panix\engine\behaviors\NotifactionBehavior::className(),
+            'class' => \panix\engine\behaviors\NotifactionBehavior::class,
             'type' => 'success',
             'text' => Yii::t('cart/default', $text, [
                 'num' => $productsCount,

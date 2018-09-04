@@ -35,7 +35,7 @@ use panix\ext\tinymce\TinyMce;
                 ]);
                 ?>
         <div id="payment_configuration"></div>
-<?= $form->field($model, 'description')->widget(TinyMce::className(), [
+<?= $form->field($model, 'description')->widget(TinyMce::class, [
     'options' => ['rows' => 6]
 ]);
 ?>

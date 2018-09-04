@@ -13,12 +13,12 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
     public function actions() {
         return [
             'sortable' => [
-                'class' => \panix\engine\grid\sortable\Action::className(),
-                'modelClass' => Delivery::className(),
+                'class' => \panix\engine\grid\sortable\Action::class,
+                'modelClass' => Delivery::class,
             ],
             'delete' => [
                 'class' => 'panix\engine\grid\actions\DeleteAction',
-                'modelClass' => Delivery::className(),
+                'modelClass' => Delivery::class,
             ],
         ];
     }

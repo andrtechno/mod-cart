@@ -21,11 +21,11 @@ class OrderProduct extends \panix\engine\db\ActiveRecord {
         ];
     }
     public function getOrder() {
-        return $this->hasOne(Order::className(), ['id' => 'order_id']);
+        return $this->hasOne(Order::class, ['id' => 'order_id']);
     }
 
     public function getOriginalProduct() {
-        return $this->hasOne(Product::className(), ['id' => 'product_id']);
+        return $this->hasOne(Product::class, ['id' => 'product_id']);
     }
 
 

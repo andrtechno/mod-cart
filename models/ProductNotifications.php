@@ -42,7 +42,7 @@ class ProductNotifications extends \panix\engine\db\ActiveRecord {
      * @return array relational rules.
      */
     public function getProduct() {
-        return $this->hasOne(Product::className(), ['id' => 'product_id']);
+        return $this->hasOne(Product::class, ['id' => 'product_id']);
     }
     public static function getSort() {
         return new \yii\data\Sort([

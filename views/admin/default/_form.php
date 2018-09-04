@@ -29,7 +29,7 @@ $form->field($model, 'delivery_id')->dropDownList(ArrayHelper::map(Delivery::fin
 <?= $form->field($model, 'discount')->textInput(); ?>
 <?= $form->field($model, 'user_name')->textInput(); ?>
 <?= $form->field($model, 'user_address')->textInput(); ?>
-<?= $form->field($model, 'user_phone')->widget(InputMask::className()); ?>
+<?= $form->field($model, 'user_phone')->widget(InputMask::class); ?>
 
 <?= $form->field($model, 'user_comment')->textArea(); ?>
 <?= $form->field($model, 'admin_comment')->textArea(); ?>

@@ -21,16 +21,16 @@ class Delivery extends \panix\engine\db\ActiveRecord {
     }
     
     public function getTranslations() {
-        return $this->hasMany(DeliveryTranslate::className(), ['object_id' => 'id']);
+        return $this->hasMany(DeliveryTranslate::class, ['object_id' => 'id']);
     }
 
 
     public function getCategorization() {
-        return $this->hasMany(DeliveryPayment::className(), ['delivery_id' => 'id']);
+        return $this->hasMany(DeliveryPayment::class, ['delivery_id' => 'id']);
     }
 
     public function getPaymentMethods() {
-        return $this->hasMany(Payment::className(), ['payment_id' => 'id'])->via('categorization');
+        return $this->hasMany(Payment::class, ['payment_id' => 'id'])->via('categorization');
     }
 
     /**
@@ -51,7 +51,7 @@ class Delivery extends \panix\engine\db\ActiveRecord {
     public function behaviors() {
         return ArrayHelper::merge([
                     'translate' => [
-                        'class' => TranslateBehavior::className(),
+                        'class' => TranslateBehavior::class,
                         'translationAttributes' => [
                             'name',
                             'description'

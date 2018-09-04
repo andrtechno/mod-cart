@@ -14,7 +14,7 @@ class NotifyController extends \panix\engine\controllers\AdminController {
         return [
             'delete' => [
                 'class' => 'panix\engine\grid\actions\DeleteAction',
-                'modelClass' => ProductNotifications::className(),
+                'modelClass' => ProductNotifications::class,
             ],
         ];
     }

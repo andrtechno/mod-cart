@@ -32,22 +32,22 @@ public static function getTotal($provider, $fieldName)
     }
 
     public function getDeliveryMethod() {
-        return $this->hasOne(Delivery::className(), ['id' => 'delivery_id']);
+        return $this->hasOne(Delivery::class, ['id' => 'delivery_id']);
     }
 
     public function getPaymentMethod() {
-        return $this->hasOne(Payment::className(), ['id' => 'payment_id']);
+        return $this->hasOne(Payment::class, ['id' => 'payment_id']);
     }
 
     public function getStatus() {
-        return $this->hasOne(OrderStatus::className(), ['id' => 'status_id']);
+        return $this->hasOne(OrderStatus::class, ['id' => 'status_id']);
     }
 
     public function getProducts() {
-        return $this->hasMany(OrderProduct::className(), ['order_id' => 'id']);
+        return $this->hasMany(OrderProduct::class, ['order_id' => 'id']);
     }
     public function getProductsCount() {
-        return $this->hasMany(OrderProduct::className(), ['order_id' => 'id'])->count();
+        return $this->hasMany(OrderProduct::class, ['order_id' => 'id'])->count();
     }
 
     public function getUrl() {

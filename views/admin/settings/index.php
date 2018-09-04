@@ -15,7 +15,7 @@ $form = ActiveForm::begin([
     <div class="panel-body">
         <?=
                 $form->field($model, 'order_emails')
-                ->widget(TagInput::className(), ['placeholder' => 'E-mail'])
+                ->widget(TagInput::class, ['placeholder' => 'E-mail'])
                 ->hint('Введите E-mail и нажмите Enter');
         ?>
 
@@ -23,12 +23,12 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'tpl_subject_admin'); ?>
 
 
-<?= $form->field($model, 'tpl_body_user')->widget(TinyMce::className(), [
+<?= $form->field($model, 'tpl_body_user')->widget(TinyMce::class, [
     'options' => ['rows' => 6],
 
 ]);
 ?>
-<?= $form->field($model, 'tpl_body_admin')->widget(TinyMce::className(), [
+<?= $form->field($model, 'tpl_body_admin')->widget(TinyMce::class, [
     'options' => ['rows' => 6],
 
 ]);
