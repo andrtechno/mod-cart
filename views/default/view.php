@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use panix\mod\shop\models\Product;
-use yii\bootstrap\Alert;
+use panix\engine\bootstrap\Alert;
 ?>
 <div id="cart-left" class="shopping-cart row">
 

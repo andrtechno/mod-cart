@@ -170,7 +170,7 @@ echo Spinner::widget([
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <?php
     if($this->context->form->hasErrors()){
-      echo  yii\bootstrap\Alert::widget([
+      echo  yii\bootstrap4\Alert::widget([
           'closeButton'=>false,
             'options' => ['class' => 'alert-danger'],
             'body'=>Html::errorSummary($this->context->form)
