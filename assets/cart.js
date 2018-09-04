@@ -1,8 +1,8 @@
 /**
  * Requires compatibility with common.js
  *
- * @author CORNER CMS development team <dev@corner-cms.com>
- * @copyright (c) CORNER CMS
+ * @author PIXELION CMS development team <dev@pixelion.com.ua>
+ * @copyright (c) PIXELION CMS
  * 
  * 
  * @param boolean cart.spinnerRecount Статичный пересчет и/или с ajax
@@ -57,7 +57,7 @@ cart = {
      * @param formid Id формиы
      */
     add: function (formid) {
-        var form = $(formid);
+        var form = $("#form-add-cart-"+formid);
         $.ajax({
             url:form.attr('action'),
             type:'POST',

@@ -22,7 +22,7 @@ class DefaultController extends AdminController {
         $pdf = new Pdf([
             'content' => $content,
             'methods' => [
-                'SetHeader' => ['CORNER CMS'],
+                'SetHeader' => ['PIXELION CMS'],
                 'SetFooter' => ['Страница: {PAGENO}'],
             ]
         ]);

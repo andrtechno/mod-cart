@@ -14,9 +14,8 @@ namespace panix\mod\cart\widgets\buyOneClick;
  * }
  * </code>
  * 
- * @author CORNER CMS development team <dev@corner-cms.com>
- * @license http://corner-cms.com/license.txt CORNER CMS License
- * @link http://corner-cms.com CORNER CMS
+ * @author PIXELION CMS development team <dev@pixelion.com.ua>
+ * @link http://pixelion.com.ua PIXELION CMS
  * @package modules
  * @subpackage commerce.cart.widgets.buyOneClick
  * @uses CWidget
