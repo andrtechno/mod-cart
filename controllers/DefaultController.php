@@ -189,7 +189,7 @@ class DefaultController extends WebController {
         if (!Yii::$app->request->isAjax) {
             throw new \yii\web\BadRequestHttpException(Yii::t('app', 'ACCESS_DENIED'));
         }
-        echo \panix\mod\cart\widgets\cart\CartWidget::widget(['skin'=>Yii::$app->request->post('skin')]);
+        return \panix\mod\cart\widgets\cart\CartWidget::widget(['skin'=>Yii::$app->request->post('skin')]);
     }
 
     /**
