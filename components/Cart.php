@@ -188,8 +188,8 @@ class Cart extends Component {
         }
         $this->session['cart_data'] = $currentData;
         echo \yii\helpers\Json::encode(array(
-            'rowTotal' => Product::formatPrice(Yii::$app->currency->convert($rowTotal)),
-            'totalPrice' => Product::formatPrice(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
+            'rowTotal' => Yii::$app->currency->number_format(Yii::$app->currency->convert($rowTotal)),
+            'totalPrice' => Yii::$app->currency->number_format(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
         ));
     }
 

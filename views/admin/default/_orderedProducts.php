@@ -44,7 +44,7 @@ echo GridView::widget([
             'format' => 'html',
             'contentOptions' => ['class' => 'text-center'],
             'value' => function($model) {
-        return Product::formatPrice($model->price) . ' ' . Yii::$app->currency->main->symbol;
+        return Yii::$app->currency->number_format($model->price) . ' ' . Yii::$app->currency->main->symbol;
     }
         ],
         [

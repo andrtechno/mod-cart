@@ -25,7 +25,7 @@ public static function getTotal($provider, $fieldName)
         $total += $item[$fieldName];
     }
 
-    return \panix\mod\shop\models\Product::formatPrice($total) . ' ' . Yii::$app->currency->main->symbol;
+    return Yii::$app->currency->number_format($total) . ' ' . Yii::$app->currency->main->symbol;
 }
     public static function find() {
         return new query\OrderQuery(get_called_class());

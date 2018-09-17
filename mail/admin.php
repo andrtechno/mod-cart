@@ -62,5 +62,5 @@ $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
     <p><b>Детали заказа вы можете просмотреть на странице:</b><br/> <?= Html::a(Url::to($order->getUrl(),true),Url::to($order->getUrl(),true),['target'=>'_blank']);?></p>
 <br/><br/><br/>
 <?= Yii::t('cart/default', 'TOTAL_PAY') ?>:
-<h1 style="display:inline"><?= Product::formatPrice($order->total_price + $order->delivery_price); ?></h1>
+<h1 style="display:inline"><?= Yii::$app->currency->number_format($order->total_price + $order->delivery_price); ?></h1>
 <?= $currency; ?>

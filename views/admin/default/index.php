@@ -43,7 +43,7 @@ return ['style' => 'background-color:' . $model->status->color . ';'];
             'contentOptions' => ['class' => 'text-center'],
             'footer' => \panix\mod\cart\models\Order::getTotal($dataProvider->models, 'total_price'),
             'value' => function($model) {
-        return panix\mod\shop\models\Product::formatPrice($model->total_price) . ' ' . Yii::$app->currency->main->symbol;
+        return Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main->symbol;
     }
         ],
         [

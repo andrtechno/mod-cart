@@ -104,7 +104,7 @@ if (empty($items)) {
                             // Price
 
                             echo Html::beginTag('span', array('class' => 'price'));
-                            echo Product::formatPrice(Yii::$app->currency->convert($price));
+                            echo Yii::$app->currency->number_format(Yii::$app->currency->convert($price));
                             echo ' ' . Yii::$app->currency->active->symbol;
                             //echo ' '.($product['currency_id']) ? Yii::$app->currency->getSymbol($product['currency_id']) : Yii::$app->currency->active->symbol;
                             echo Html::endTag('span');
@@ -224,7 +224,7 @@ echo Spinner::widget([
         <div class="panel-heading">dsadsadsa</div>
         <div class="panel-body">
             <div class="cart-grand-total">
-                Сумма заказа <span id="total"><?= Product::formatPrice($totalPrice) ?></span> <?php echo Yii::$app->currency->active->symbol; ?>
+                Сумма заказа <span id="total"><?= Yii::$app->currency->number_format($totalPrice) ?></span> <?php echo Yii::$app->currency->active->symbol; ?>
             </div>
             <div id="cart-check" class="text-center padding-tb">
                 <div style="font-size:14px"><?= Yii::t('cart/default', 'PAYMENT'); ?>:</div>

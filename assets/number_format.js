@@ -78,5 +78,5 @@ function removeFloat(str){
 }
 
 function price_format(price){
-    return number_format(price, price_penny, price_thousand, price_decimal);
+    return number_format(price,penny,separator_thousandth,separator_hundredth)
 }

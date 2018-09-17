@@ -137,7 +137,7 @@ class BuyOneClickAction extends CAction {
         $params['price'] = $productModel->priceRange();
         $params['currency'] = $currency;
         if (isset($productModel->originalPrice)) {
-            $params['originalPrice'] = Product::formatPrice($productModel->toCurrentCurrency('originalPrice'));
+            $params['originalPrice'] = Yii::$app->currency->number_format($productModel->toCurrentCurrency('originalPrice'));
         } else {
             $params['originalPrice'] = false;
         }

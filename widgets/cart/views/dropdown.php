@@ -37,7 +37,7 @@ use panix\mod\shop\models\Product;
                         <?php echo Html::a($product['model']->name, $product['model']->getUrl()) ?>
                         <br/>
                         (<?php echo $product['quantity'] ?>)
-                        <?= Product::formatPrice(Yii::$app->currency->convert($price)) ?> <?= $currency->symbol; ?>
+                        <?= Yii::$app->currency->number_format(Yii::$app->currency->convert($price)) ?> <?= $currency->symbol; ?>
                     </div>
                 </div>
 

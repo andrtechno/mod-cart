@@ -49,7 +49,7 @@ use panix\engine\bootstrap\Alert;
                                 <?= $product->getRenderFullName(false); ?>
                                 <?= Html::endTag('h3') ?>
                                 <?= Html::beginTag('span', array('class' => 'price')) ?>
-                                <?= Product::formatPrice(Yii::$app->currency->convert($product->price)) ?>
+                                <?= Yii::$app->currency->number_format(Yii::$app->currency->convert($product->price)) ?>
                                 <?= Yii::$app->currency->active->symbol; ?>
                                 <?= Html::endTag('span') ?> 
                             </td>
@@ -59,9 +59,9 @@ use panix\engine\bootstrap\Alert;
                             <td align="center">
                                 <?php
                                 if ($config['wholesale']) {
-                                    echo Product::formatPrice(Yii::$app->currency->convert($product->price * $product->quantity * $product->prd->pcs));
+                                    echo Yii::$app->currency->number_format(Yii::$app->currency->convert($product->price * $product->quantity * $product->prd->pcs));
                                 } else {
-                                    echo Product::formatPrice(Yii::$app->currency->convert($product->price * $product->quantity));
+                                    echo Yii::$app->currency->number_format(Yii::$app->currency->convert($product->price * $product->quantity));
                                 }
                                 ?>
                                 <?= Yii::$app->currency->active->symbol; ?>
@@ -110,7 +110,7 @@ use panix\engine\bootstrap\Alert;
                     <?php if ($model->delivery_price > 0) { ?>
                         <div><?= Yii::t('cart/default', 'COST_DELIVERY') ?>:
                         <b>
-                            <?= Product::formatPrice(Yii::$app->currency->convert($model->delivery_price)) ?>
+                            <?= Yii::$app->currency->number_format(Yii::$app->currency->convert($model->delivery_price)) ?>
                             <?= Yii::$app->currency->active->symbol ?>
                         </b>
                     <?php } ?>
@@ -147,7 +147,7 @@ use panix\engine\bootstrap\Alert;
 
                 <div>
                     <?= Yii::t('cart/default', 'TOTAL_PAY') ?>:
-                    <?= Product::formatPrice($model->full_price) ?>
+                    <?= Yii::$app->currency->number_format($model->full_price) ?>
                     <?= Yii::$app->currency->active->symbol ?>
                 </div>
             </div>
