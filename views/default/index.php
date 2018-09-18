@@ -144,9 +144,9 @@ echo Spinner::widget([
                         <td id="price-<?= $index ?>" class="cart-product-sub-total">
                             <?php
                             echo Html::beginTag('span', array('class' => 'cart-sub-total-price', 'id' => 'row-total-price' . $index));
-                            echo (Yii::$app->settings->get('shop', 'wholesale')) ? Product::formatPrice(Product::formatPrice(Yii::$app->currency->convert($price * $product['model']->pcs * $product['quantity']))) : Product::formatPrice(Yii::$app->currency->convert($price * $product['quantity']));
+                            echo (Yii::$app->settings->get('shop', 'wholesale')) ? Yii::$app->currency->number_format(Yii::$app->currency->convert($price * $product['model']->pcs * $product['quantity'])) : Yii::$app->currency->number_format(Yii::$app->currency->convert($price * $product['quantity']));
                             echo Html::endTag('span');
-                            //echo $convertTotalPrice;// echo Product::formatPrice(Yii::$app->currency->convert($convertPrice, $product['currency_id']));
+                            //echo $convertTotalPrice;// echo Yii::$app->currency->number_format(Yii::$app->currency->convert($convertPrice, $product['currency_id']));
                             echo ' ' . Yii::$app->currency->active->symbol;
                             //echo ' '.($product['currency_id'])? Yii::$app->currency->getSymbol($product['currency_id']): Yii::$app->currency->active->symbol;
                             ?>

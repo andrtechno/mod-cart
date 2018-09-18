@@ -86,11 +86,11 @@ echo GridView::widget([
             <div class="panel-body">
                 <div class="panel-container">
                     <ul class="list-group">
-                        <li class="list-group-item"><?php echo Yii::t('cart/admin', 'FOR_PAYMENT') ?> <span class="badge pull-right"><?= Product::formatPrice($model->full_price) ?> <?= $symbol ?></span></li>
+                        <li class="list-group-item"><?php echo Yii::t('cart/admin', 'FOR_PAYMENT') ?> <span class="badge pull-right"><?= Yii::$app->currency->number_format($model->full_price) ?> <?= $symbol ?></span></li>
                         <li class="list-group-item"><?php echo Yii::t('cart/admin', 'QUANTITY') ?> <span class="badge pull-right" id="total_pcs"></span></li>
                         <?php if ($model->delivery_price > 0) { ?>
-                            <li class="list-group-item"><?php echo Yii::t('cart/Order', 'DELIVERY_PRICE') ?> <span class="badge pull-right"><?= Product::formatPrice($model->delivery_price); ?> <?= $symbol; ?></span></li>
-                            <li class="list-group-item"><?php echo Yii::t('cart/admin', 'Сумма товаров') ?> <span class="badge pull-right"><?= Product::formatPrice($model->total_price) ?> <?= $symbol ?></span></li>
+                            <li class="list-group-item"><?php echo Yii::t('cart/Order', 'DELIVERY_PRICE') ?> <span class="badge pull-right"><?= Yii::$app->currency->number_format($model->delivery_price); ?> <?= $symbol; ?></span></li>
+                            <li class="list-group-item"><?php echo Yii::t('cart/admin', 'Сумма товаров') ?> <span class="badge pull-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <?= $symbol ?></span></li>
                             <?php } ?>
             </ul>
         </div>

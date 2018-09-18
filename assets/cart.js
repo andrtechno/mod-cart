@@ -3,8 +3,8 @@
  *
  * @author PIXELION CMS development team <dev@pixelion.com.ua>
  * @copyright (c) PIXELION CMS
- * 
- * 
+ *
+ *
  * @param boolean cart.spinnerRecount Статичный пересчет и/или с ajax
  * @function recountTotalPrice Пересчет общей стоимости
  * @function renderBlockCart Перезагрузка блока корзины (ajax response)
@@ -57,48 +57,47 @@ cart = {
      * @param formid Id формиы
      */
     add: function (formid) {
-        var form = $("#form-add-cart-"+formid);
+        var form = $("#form-add-cart-" + formid);
         $.ajax({
-            url:form.attr('action'),
-            type:'POST',
-            dataType:'json',
-            data:form.serialize(),
-            success:function(data, textStatus, xhr){
-          if (data.errors) {
-                common.notify(data.errors, 'error');
-            } else {
-                cart.renderBlockCart();
-                common.notify(data.message, 'success');
-                common.removeLoader();
-                $('body,html').animate({
-                    // scrollTop: 0
-                }, 500, function () {
-                    $("#cart").fadeOut().fadeIn();
-                });
-
-            }
+            url: form.attr('action'),
+            type: 'POST',
+            dataType: 'json',
+            data: form.serialize(),
+            success: function (data, textStatus, xhr) {
+                if (data.errors) {
+                    common.notify(data.errors, 'error');
+                } else {
+                    cart.renderBlockCart();
+                    common.notify(data.message, 'success');
+                    common.removeLoader();
+                    $('body,html').animate({
+                        // scrollTop: 0
+                    }, 500, function () {
+                        $("#cart").fadeOut().fadeIn();
+                    });
+                }
             },
-            complete:function(){
+            complete: function () {
 
 //common.notify_list[0].close();
             }
         });
-       /* common.ajax(form.attr('action'), form.serialize(), function (data, textStatus, xhr) {
-            console.log(xhr);
-            if (data.errors) {
-                common.notify(data.errors, 'error');
-            } else {
-                cart.renderBlockCart();
-                common.notify(data.message, 'success');
-                common.removeLoader();
-                $('body,html').animate({
-                    // scrollTop: 0
-                }, 500, function () {
-                    $("#cart").fadeOut().fadeIn();
-                });
+        /* common.ajax(form.attr('action'), form.serialize(), function (data, textStatus, xhr) {
+         console.log(xhr);
+         if (data.errors) {
+         common.notify(data.errors, 'error');
+         } else {
+         cart.renderBlockCart();
+         common.notify(data.message, 'success');
+         common.removeLoader();
+         $('body,html').animate({
+         // scrollTop: 0
+         }, 500, function () {
+         $("#cart").fadeOut().fadeIn();
+         });
 
-            }
-        }, 'json');*/
+         }
+         }, 'json');*/
     },
     /**
      * @param product_id ИД обэекта
@@ -118,10 +117,10 @@ cart = {
 
             }
             var test = data.totalPrice;
-            var total = parseInt(test.replace(price_thousand,'').replace(price_decimal,'')) + delprice;
+            var total = parseInt(test.replace(price_thousand, '').replace(price_decimal, '')) + delprice;
             // }
-    
-          
+
+
             // $('#balance').text(data.balance);
             //console.log(Number(data.totalPrice));
             // console.log(disum);
@@ -144,7 +143,7 @@ cart = {
             title: 'Сообщить о появлении',
             modal: true,
             resizable: false,
-            draggable:false,
+            draggable: false,
             responsive: true,
             open: function () {
                 var that = this;
@@ -154,31 +153,31 @@ cart = {
                     $(that).html(data.data);
                 }, 'json');
             },
-            close:function(){
+            close: function () {
                 $('#dialog').remove();
-                $('a.btn-danger').removeClass(':focus');  
+                $('a.btn-danger').removeClass(':focus');
             },
             buttons: [{
-                    text: common.message.cancel,
-                    'class': 'btn btn-link',
-                    click: function () {
-                        $(this).remove();
-                    }
-                }, {
-                    text: common.message.send,
-                    'class': 'btn btn-primary',
-                    click: function () {
-                        common.ajax('/notify', $('#notify-form').serialize(), function (data, textStatus, xhr) {
-                            if (data.status == 'OK') {
-                                $('#dialog').remove();
-                                //common.report(data.message);
-                                common.notify(data.message,'success');
-                            } else {
-                                $('#dialog').html(data.data);
-                            }
-                        }, 'json');
-                    }
-                }]
+                text: common.message.cancel,
+                'class': 'btn btn-link',
+                click: function () {
+                    $(this).remove();
+                }
+            }, {
+                text: common.message.send,
+                'class': 'btn btn-primary',
+                click: function () {
+                    common.ajax('/notify', $('#notify-form').serialize(), function (data, textStatus, xhr) {
+                        if (data.status == 'OK') {
+                            $('#dialog').remove();
+                            //common.report(data.message);
+                            common.notify(data.message, 'success');
+                        } else {
+                            $('#dialog').html(data.data);
+                        }
+                    }, 'json');
+                }
+            }]
         });
     },
     init: function () {
@@ -188,10 +187,10 @@ cart = {
                 max: 999,
                 min: 1,
                 mouseWheel: false,
-               /*icons: {
-                    down: "btn btn-default",
-                    up: "btn btn-default"
-                },*/
+                /*icons: {
+                 down: "btn btn-default",
+                 up: "btn btn-default"
+                 },*/
                 //клик по стрелочкам spinner
                 spin: function (event, ui) {
                     var max = $(this).spinner('option', 'max');
