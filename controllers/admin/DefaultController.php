@@ -63,7 +63,7 @@ class DefaultController extends AdminController {
         $post = Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
             $model->save();
-            Yii::$app->session->addFlash('success', \Yii::t('app', 'SUCCESS_UPDATE'));
+            Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_UPDATE'));
             // return $this->redirect(['index']);
             return Yii::$app->getResponse()->redirect(['/admin/cart/default']);
         }

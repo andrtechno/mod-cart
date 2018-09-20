@@ -110,7 +110,7 @@ class PaymentController extends \panix\engine\controllers\AdminController {
               $system->saveAdminSettings($model->id, $_POST);
               } */
 
-            Yii::$app->session->addFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
+            Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
             if ($model->isNewRecord) {
                 return Yii::$app->getResponse()->redirect(['/admin/cart/payment']);
             } else {

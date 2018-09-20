@@ -101,7 +101,7 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
 
         if ($model->load($post) && $model->validate()) {
             $model->save();
-            Yii::$app->session->addFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
+            Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
             if ($model->isNewRecord) {
                 return Yii::$app->getResponse()->redirect(['/admin/cart/delivery']);
             } else {
