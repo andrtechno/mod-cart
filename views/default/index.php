@@ -61,10 +61,6 @@ var orderTotalPrice = '$totalPrice';
     ?>
 
 
-
-
-
-
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 shopping-cart-table">
 
         <div class="table-responsive">
@@ -221,19 +217,25 @@ var orderTotalPrice = '$totalPrice';
 
         <div class="card bg-light">
             <div class="card-header">dsadsadsa</div>
-            <div class="card-body">
-                <div class="cart-grand-total">
-                    Сумма заказа <span
-                            id="total"><?= Yii::$app->currency->number_format($totalPrice) ?></span> <?php echo Yii::$app->currency->active->symbol; ?>
+            <div class="card-body text-center">
+                <div class="mb-4">
+                <h5><?= Yii::t('cart/default', 'Сумма заказа'); ?>:</h5>
+
+                <span class="price price-lg text-success" id="total">
+                    <?= Yii::$app->currency->number_format($totalPrice) ?>
+                    <sub><?php echo Yii::$app->currency->active->symbol; ?></sub>
+                </span>
                 </div>
-                <div id="cart-check" class="text-center padding-tb">
-                    <div style="font-size:14px"><?= Yii::t('cart/default', 'PAYMENT'); ?>:</div>
-                    <div id="payment" style="font-size:14px;margin-bottom:20px;font-weight:bold">---</div>
-                    <div style="font-size:14px"><?= Yii::t('cart/default', 'DELIVERY'); ?>:</div>
-                    <div id="delivery" style="font-size:14px;margin-bottom:20px;font-weight:bold">---</div>
+
+                    <h4><?= Yii::t('cart/default', 'PAYMENT'); ?>:</h4>
+                    <div id="payment" style="">---</div>
+                    <h4><?= Yii::t('cart/default', 'DELIVERY'); ?>:</h4>
+                    <div>
+                        <h2 id="delivery" class="badge badge-secondary">---</h2>
+                    </div>
                     <a href="javascript:submitform();"
                        class="btn btn-primary btn-lg"><?= Yii::t('cart/default', 'BUTTON_CHECKOUT'); ?></a>
-                </div>
+
                 <input type="hidden" name="create" value="1">
             </div>
         </div>

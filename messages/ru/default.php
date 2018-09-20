@@ -16,6 +16,8 @@ return [
     'USER_DATA' => 'Личные данные',
     'TABLE_NUM' => 'Количество',
     'TABLE_SUM' => 'Итого (грн)',
+    'PAYMENT'=>'Оплата',
+    'DELIVERY'=>'Доставка',
     'MAIL_TABLE_TH_PRODUCT' => 'Товар',
     'MAIL_TABLE_TH_QUANTITY' => 'Кол.',
     'MAIL_TABLE_TH_PRICE_FOR' => 'Цена за шт.',
