@@ -13,7 +13,7 @@ class CartWidget extends \panix\engine\data\Widget {
         $cart = Yii::$app->cart;
         $currency = Yii::$app->currency->active;
         $items = $cart->getDataWithModels();
-        $total = Yii::$app->currency->number_format(Yii::$app->currency->convert($cart->getTotalPrice()));
+        $total = Yii::$app->currency->number_format($cart->getTotalPrice());
         $dataRender = [
             'count' => $cart->countItems(),
             'currency' => $currency,

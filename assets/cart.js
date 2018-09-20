@@ -117,7 +117,7 @@ cart = {
 
             }
             var test = data.totalPrice;
-            var total = parseInt(test.replace(price_thousand, '').replace(price_decimal, '')) + delprice;
+            var total = parseInt(test.replace(separator_thousandth, '').replace(separator_hundredth, '')) + delprice;
             // }
 
 
@@ -195,9 +195,10 @@ cart = {
                 spin: function (event, ui) {
                     var max = $(this).spinner('option', 'max');
                     var product_id = $(this).attr('product_id');
-                    if ((ui.value > 1 && max > ui.value) && cart.spinnerRecount) {
+                    if (ui.value >= 1 && cart.spinnerRecount) {
                         cart.recount(ui.value, product_id);
                     }
+                    // && max > ui.value
                 },
                 stop: function (event, ui) { //запрещаем ввод числа больше 999;
                     var max = $(this).spinner('option', 'max');
@@ -205,11 +206,10 @@ cart = {
                         $(this).val(max);
                 },
                 change: function (event, ui) {
-                    var product_id = $(this).attr('product_id');
+                     var product_id = $(this).attr('product_id');
                     if ($(this).val() < 1) {
                         $(this).val(1);
                     }
-
                     if (cart.spinnerRecount) {
                         cart.recount($(this).val(), product_id);
                     }

@@ -107,6 +107,7 @@ class Cart extends Component {
         if (empty($data))
             return array();
 
+
         foreach ($data as $index => &$item) {
             $item['variant_models'] = array();
             $item['model'] = Product::findOne($item['product_id']);
@@ -125,8 +126,8 @@ class Cart extends Component {
             // If product was deleted during user session!.
             if (!$item['model'])
                 unset($data[$index]);
-            
-            $this->_total_price += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
+
+           // $this->_total_price += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
         }
         unset($item);
 
@@ -138,8 +139,18 @@ class Cart extends Component {
     /**
      * Count total price
      */
-    public function getTotalPrice() {
-        return $this->_total_price;
+    public function getTotalPrice()
+    {
+        $result = 0;
+        $data = $this->getDataWithModels();
+
+        foreach ($data as $item) {
+            $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
+            $result += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
+
+        }
+
+        return $result;
     }
     /**
      * Count total price
@@ -178,19 +189,17 @@ class Cart extends Component {
                     $productModel = Product::findOne($index);
                     $rowTotal = $data['quantity'] * Product::calculatePrices($productModel, $data['variants'], $data['configurable_id']);
                 } else {
-                    if (Yii::$app->settings->get('shop', 'wholesale')) {
-                        $rowTotal = $data['quantity'] * $data['pcs'] * $data['price'];
-                    } else {
+
                         $rowTotal = $data['quantity'] * $data['price'];
-                    }
+
                 }
             }
         }
         $this->session['cart_data'] = $currentData;
-        echo \yii\helpers\Json::encode(array(
+        return [
             'rowTotal' => Yii::$app->currency->number_format(Yii::$app->currency->convert($rowTotal)),
             'totalPrice' => Yii::$app->currency->number_format(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
-        ));
+        ];
     }
 
     /**

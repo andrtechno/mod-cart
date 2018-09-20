@@ -31,7 +31,8 @@ class DefaultController extends WebController {
             if (Yii::$app->request->isPost && !empty($_POST['quantities'])) {
                 $test = array();
                 $test[Yii::$app->request->post('product_id')] = Yii::$app->request->post('quantities');
-                Yii::$app->cart->ajaxRecount($test);
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return Yii::$app->cart->ajaxRecount($test);
             }
         }
     }
@@ -72,10 +73,14 @@ class DefaultController extends WebController {
 
 
         $paymenyMethods = Payment::find()->all();
-
+        $this->view->registerJs("
+        var penny = '" . Yii::$app->currency->active->penny . "';
+        var separator_thousandth = '" . Yii::$app->currency->active->separator_thousandth . "';
+        var separator_hundredth = '" . Yii::$app->currency->active->separator_hundredth . "';
+     ", yii\web\View::POS_HEAD, 'numberformat');
         return $this->render('index', array(
                     'items' => Yii::$app->cart->getDataWithModels(),
-                    'totalPrice' => Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice()),
+                    'totalPrice' => Yii::$app->cart->getTotalPrice(),
                     'deliveryMethods' => $deliveryMethods,
                     'paymenyMethods' => $paymenyMethods,
         ));
