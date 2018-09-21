@@ -109,7 +109,7 @@ class DeliveryController extends \panix\engine\controllers\AdminController {
             }
         }
 
-        echo $this->render('update', [
+        return $this->render('update', [
             'model' => $model,
         ]);
     }

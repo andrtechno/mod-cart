@@ -10,11 +10,11 @@ use panix\mod\shop\models\ShopCurrency;
 
 
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title"><?= Html::encode($this->context->pageName) ?></h3>
+<div class="card bg-light">
+    <div class="card-header">
+        <h5><?= Html::encode($this->context->pageName) ?></h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
 
 
         <?php
@@ -29,7 +29,7 @@ use panix\mod\shop\models\ShopCurrency;
 ?>
 <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
                         <?=
-                $form->field($model, 'currency_id')->dropDownList(ArrayHelper::map(ShopCurrency::find()->all(), 'id', 'name'), [
+                $form->field($model, 'currency_id')->dropDownList(ArrayHelper::map(\panix\mod\shop\models\Currency::find()->all(), 'id', 'name'), [
                     'prompt' => '-- статус --'
                 ]);
                 ?>

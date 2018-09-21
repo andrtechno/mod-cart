@@ -67,14 +67,11 @@ class PaymentController extends \panix\engine\controllers\AdminController {
     }
 
     public function actionUpdate($id = false) {
-
-
         if ($id === true) {
             $model = new Payment();
         } else {
             $model = $this->findModel($id);
         }
-
 
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
         $this->buttons = [
@@ -118,7 +115,7 @@ class PaymentController extends \panix\engine\controllers\AdminController {
             }
         }
 
-        echo $this->render('update', [
+        return $this->render('update', [
             'model' => $model,
         ]);
     }
