@@ -5,6 +5,24 @@ use panix\engine\bootstrap\ActiveForm;
 use panix\ext\taginput\TagInput;
 use panix\ext\tinymce\TinyMce;
 
+
+echo \panix\ext\highcharts\Highcharts::widget([
+    'title' => [
+        'text' => 'Solar Employment Growth by Sector, 2010-2016'
+    ],
+
+    'subtitle' => [
+        'text' => 'Source: thesolarfoundation.com'
+    ],
+
+    'yAxis' => [
+        'title' => [
+            'text' => 'Number of Employees'
+        ]
+    ],
+]);
+
+
 $form = ActiveForm::begin([
     'options' => ['class' => 'form-horizontal'],
 ]);
