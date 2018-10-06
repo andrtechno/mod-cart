@@ -56,23 +56,18 @@ echo \panix\ext\highcharts\Highcharts::widget([
         ],
 
         'responsive' => [
-            'rules' =>
+            'rules' => [
                 [
-                    [
-                        'condition' => [
-                            'maxWidth' =>
-                                500
-                        ],
-                        'chartOptions' => [
-                            'legend' => [
-                                'layout' =>
-                                    'horizontal',
-                                'align' => 'center',
-                                'verticalAlign' => 'bottom'
-                            ]
+                    'condition' => ['maxWidth' => 500],
+                    'chartOptions' => [
+                        'legend' => [
+                            'layout' => 'horizontal',
+                            'align' => 'center',
+                            'verticalAlign' => 'bottom'
                         ]
                     ]
                 ]
+            ]
         ]
     ]
 ]);
