@@ -1,15 +1,16 @@
 <?php
 namespace panix\mod\cart\controllers;
 
+use Yii;
 use panix\engine\controllers\WebController;
 use panix\mod\shop\models\Product;
 
 class NotifyController extends WebController {
 
-    public function init() {
-        Yii::app()->request->enableCsrfValidation = false;
-        parent::init();
-    }
+   // public function init() {
+       /// Yii::app()->request->enableCsrfValidation = false;
+    //    parent::init();
+   // }
 
     public function actionIndex() {
         header('Content-Type: application/json');

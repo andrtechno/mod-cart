@@ -1,6 +1,8 @@
 <?php
 namespace panix\mod\cart\controllers;
-class PaymentController extends Controller {
+use panix\engine\controllers\WebController;
+
+class PaymentController extends WebController {
 
     public function actionProcess() {
         if (Yii::app()->request->getParam('Shp_pmId'))
