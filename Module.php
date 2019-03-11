@@ -5,8 +5,9 @@ namespace panix\mod\cart;
 use Yii;
 use panix\engine\WebModule;
 use panix\mod\cart\models\Order;
+use yii\base\BootstrapInterface;
 
-class Module extends WebModule {
+class Module extends WebModule implements BootstrapInterface {
 
     public $icon = 'cart';
 
@@ -19,17 +20,26 @@ class Module extends WebModule {
         parent::init();
     }
 
-    public $routes = [
-        'cart' => 'cart/default/index',
-        'cart/view/<secret_key>' => 'cart/default/view',
-        'cart/remove/<id:(\d+)>' => 'cart/default/remove',
-        'cart/clear' => 'cart/default/clear',
-        'cart/payment' => 'cart/default/payment',
-        'cart/recount' => 'cart/default/recount',
-        'cart/<action:[.\w]+>' => 'cart/default/<action>',
-        'cart/<action:[.\w]>/*' => 'cart/default/<action>',
-    ];
+    public function bootstrap($app)
+    {
+        $app->urlManager->addRules(
+            [
+                'cart' => 'cart/default/index',
+                'cart/view/<secret_key>' => 'cart/default/view',
+                'cart/remove/<id:(\d+)>' => 'cart/default/remove',
+                'cart/clear' => 'cart/default/clear',
+                'cart/payment' => 'cart/default/payment',
+                'cart/recount' => 'cart/default/recount',
+                'cart/<action:[.\w]+>' => 'cart/default/<action>',
+                'cart/<action:[.\w]>/*' => 'cart/default/<action>',
+            ],
+            false
+        );
 
+        /*$app->setComponents([
+            'cart' => ['class' => 'panix\mod\cart\components\Cart'],
+        ]);*/
+    }
     public function getInfo() {
         return [
             'label' => Yii::t('cart/default', 'MODULE_NAME'),
@@ -41,7 +51,7 @@ class Module extends WebModule {
         ];
     }
 
-    public function getAdminMenu() {
+    public function getAdminMenu2() {
         return [
             'cart' => [
                 'label' => Yii::t('cart/default', 'MODULE_NAME'),
