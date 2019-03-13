@@ -36,9 +36,9 @@ class Module extends WebModule implements BootstrapInterface {
             false
         );
 
-        /*$app->setComponents([
+        $app->setComponents([
             'cart' => ['class' => 'panix\mod\cart\components\Cart'],
-        ]);*/
+        ]);
     }
     public function getInfo() {
         return [
