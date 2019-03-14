@@ -29,8 +29,8 @@ class m170908_134034_cart extends Migration {
             'user_agent' => $this->string(255),
             'ip_create' => $this->string(50),
             'discount' => $this->string(10),
-            'date_create' => $this->timestamp()->defaultValue(null),
-            'date_update' => $this->timestamp(),
+            'created_at' => $this->integer(11)->null(),
+            'updated_at' => $this->integer(11)->null(),
             'paid' => $this->boolean()->defaultValue(0),
             'buyOneClick' => $this->boolean()->defaultValue(0),
                 ], $tableOptions);
@@ -216,47 +216,47 @@ class m170908_134034_cart extends Migration {
 
     private function addIndexes() {
         // order indexes
-        $this->createIndex('user_id', '{{%order}}', 'user_id', 0);
-        $this->createIndex('secret_key', '{{%order}}', 'secret_key', 0);
-        $this->createIndex('delivery_id', '{{%order}}', 'delivery_id', 0);
-        $this->createIndex('payment_id', '{{%order}}', 'payment_id', 0);
-        $this->createIndex('status_id', '{{%order}}', 'status_id', 0);
+        $this->createIndex('user_id', '{{%order}}', 'user_id');
+        $this->createIndex('secret_key', '{{%order}}', 'secret_key');
+        $this->createIndex('delivery_id', '{{%order}}', 'delivery_id');
+        $this->createIndex('payment_id', '{{%order}}', 'payment_id');
+        $this->createIndex('status_id', '{{%order}}', 'status_id');
 
         // order status indexes
-        $this->createIndex('ordern', '{{%order__status}}', 'ordern', 0);
+        $this->createIndex('ordern', '{{%order__status}}', 'ordern');
         
         // order product notify indexes
-        $this->createIndex('product_id', '{{%order__product_notify}}', 'product_id', 0);
+        $this->createIndex('product_id', '{{%order__product_notify}}', 'product_id');
 
         // order products indexes
-        $this->createIndex('order_id', '{{%order__product}}', 'order_id', 0);
-        $this->createIndex('product_id', '{{%order__product}}', 'product_id', 0);
-        $this->createIndex('currency_id', '{{%order__product}}', 'currency_id', 0);
-        $this->createIndex('supplier_id', '{{%order__product}}', 'supplier_id', 0);
-        $this->createIndex('configurable_id', '{{%order__product}}', 'configurable_id', 0);
+        $this->createIndex('order_id', '{{%order__product}}', 'order_id');
+        $this->createIndex('product_id', '{{%order__product}}', 'product_id');
+        $this->createIndex('currency_id', '{{%order__product}}', 'currency_id');
+        $this->createIndex('supplier_id', '{{%order__product}}', 'supplier_id');
+        $this->createIndex('configurable_id', '{{%order__product}}', 'configurable_id');
 
         // order history indexes
-        $this->createIndex('order_id', '{{%order__history}}', 'order_id', 0);
-        $this->createIndex('user_id', '{{%order__history}}', 'user_id', 0);
-        $this->createIndex('date_create', '{{%order__history}}', 'date_create', 0);
+        $this->createIndex('order_id', '{{%order__history}}', 'order_id');
+        $this->createIndex('user_id', '{{%order__history}}', 'user_id');
+        $this->createIndex('date_create', '{{%order__history}}', 'date_create');
 
 
         // order history product indexes
-        $this->createIndex('order_id', '{{%order__history_product}}', 'order_id', 0);
-        $this->createIndex('product_id', '{{%order__history_product}}', 'product_id', 0);
+        $this->createIndex('order_id', '{{%order__history_product}}', 'order_id');
+        $this->createIndex('product_id', '{{%order__history_product}}', 'product_id');
 
         // order_payment_method indexes
-        $this->createIndex('ordern', '{{%order__payment}}', 'ordern', 0);
-        $this->createIndex('switch', '{{%order__payment}}', 'switch', 0);
+        $this->createIndex('ordern', '{{%order__payment}}', 'ordern');
+        $this->createIndex('switch', '{{%order__payment}}', 'switch');
 
-        $this->createIndex('object_id', '{{%order__payment_translate}}', 'object_id', 0);
-        $this->createIndex('language_id', '{{%order__payment_translate}}', 'language_id', 0);
+        $this->createIndex('object_id', '{{%order__payment_translate}}', 'object_id');
+        $this->createIndex('language_id', '{{%order__payment_translate}}', 'language_id');
 
-        $this->createIndex('object_id', '{{%order__delivery_translate}}', 'object_id', 0);
-        $this->createIndex('language_id', '{{%order__delivery_translate}}', 'language_id', 0);
+        $this->createIndex('object_id', '{{%order__delivery_translate}}', 'object_id');
+        $this->createIndex('language_id', '{{%order__delivery_translate}}', 'language_id');
 
-        $this->createIndex('delivery_id', '{{%order__delivery_payment}}', 'delivery_id', 0);
-        $this->createIndex('payment_id', '{{%order__delivery_payment}}', 'payment_id', 0);
+        $this->createIndex('delivery_id', '{{%order__delivery_payment}}', 'delivery_id');
+        $this->createIndex('payment_id', '{{%order__delivery_payment}}', 'payment_id');
     }
 
 }
