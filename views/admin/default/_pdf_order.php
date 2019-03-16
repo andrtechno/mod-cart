@@ -27,11 +27,11 @@ use panix\mod\shop\models\Product;
     </tr>
     <tr>
         <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('delivery_id'); ?>:</td>
-        <td width="30%" align="right" class="text-center"><?= $model->deliveryMethod->name; ?></td>
+        <td width="30%" align="right" class="text-center"><?= Yii::$app->formatter->asHtml($model->deliveryMethod->name); ?></td>
     </tr>
     <tr>
         <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('payment_id'); ?>:</td>
-        <td width="30%" align="right" class="text-center"><?= $model->paymentMethod->name; ?></td>
+        <td width="30%" align="right" class="text-center"><?= Yii::$app->formatter->asHtml($model->paymentMethod->name); ?></td>
     </tr>
     </thead>
     <tbody>
@@ -72,9 +72,9 @@ use panix\mod\shop\models\Product;
                 <td width="40%"><?= $product->originalProduct->name ?></td>
                 <td align="center"><?= $product->quantity ?></td>
                 <td align="center"><?= Yii::$app->currency->number_format($newprice) ?>
-                    <sup><?= Yii::$app->currency->active->symbol ?></sup></td>
+                    <sub><?= Yii::$app->currency->active->symbol ?></sub></td>
                 <td align="center"><?= Yii::$app->currency->number_format($newprice * $product->quantity) ?>
-                    <sup><?= Yii::$app->currency->active->symbol ?></sup></td>
+                    <sub><?= Yii::$app->currency->active->symbol ?></sub></td>
             </tr>
         <?php } ?>
 
@@ -84,16 +84,16 @@ use panix\mod\shop\models\Product;
             <th colspan="2" class="text-right">Всего</th>
             <th class="text-center"><?= $totalCountQuantity; ?></th>
             <th class="text-center"><?= Yii::$app->currency->number_format(Yii::$app->currency->convert($totalCountPrice)); ?>
-                <sup><?= Yii::$app->currency->active->symbol ?></sup></th>
+                <sub><?= Yii::$app->currency->active->symbol ?></sub></th>
             <th class="text-center"><?= Yii::$app->currency->number_format(Yii::$app->currency->convert($totalCountPriceAll)); ?>
-                <sup><?= Yii::$app->currency->active->symbol ?></sup></th>
+                <sub><?= Yii::$app->currency->active->symbol ?></sub></th>
         </tr>
         </tfoot>
     </table>
     <br/><br/>
     <div class="text-right">
         Всего к оплате: <h1><?= Yii::$app->currency->number_format($model->total_price); ?>
-            <sup><?= Yii::$app->currency->active->symbol ?></sup></h1>
+            <sub><?= Yii::$app->currency->active->symbol ?></sub></h1>
     </div>
 <?php } ?>
 
