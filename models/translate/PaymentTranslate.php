@@ -2,11 +2,14 @@
 
 namespace panix\mod\cart\models\translate;
 
-class PaymentTranslate extends \yii\db\ActiveRecord {
+use yii\db\ActiveRecord;
 
+class PaymentTranslate extends ActiveRecord
+{
 
-    public static function tableName() {
-        return '{{%order_payment_translate}}';
+    public static function tableName()
+    {
+        return '{{%order__payment_translate}}';
     }
 
 }

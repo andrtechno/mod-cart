@@ -7,7 +7,7 @@ class OrderStatus extends \panix\engine\db\ActiveRecord {
     const MODULE_ID = 'cart';
 
     public static function tableName() {
-        return '{{%order_status}}';
+        return '{{%order__status}}';
     }
 
     public function rules() {

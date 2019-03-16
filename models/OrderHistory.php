@@ -21,7 +21,7 @@ class OrderHistory extends \panix\engine\db\ActiveRecord {
      * @return string the associated database table name
      */
     public static function tableName() {
-        return '{{%order_history}}';
+        return '{{%order__history}}';
     }
 
     /**

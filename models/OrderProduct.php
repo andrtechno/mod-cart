@@ -11,7 +11,7 @@ class OrderProduct extends \panix\engine\db\ActiveRecord {
      * @return string the associated database table name
      */
     public static function tableName() {
-        return '{{%order_product}}';
+        return '{{%order__product}}';
     }
     public static function find() {
         return new query\OrderProductQuery(get_called_class());

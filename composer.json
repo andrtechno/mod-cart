@@ -14,9 +14,7 @@
     "require": {
         "panix/engine": "*",
         "panix/wgt-colorpicker": "*",
-        "panix/wgt-highcharts": "*",
-        "mpdf/mpdf": "~7.0"
-
+        "panix/wgt-highcharts": "*"
     },
     "autoload": {
         "psr-4": {

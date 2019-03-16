@@ -20,7 +20,7 @@ class ProductNotifications extends \panix\engine\db\ActiveRecord {
      * @return string the associated database table name
      */
     public static function tableName() {
-        return '{{%order_product_notify}}';
+        return '{{%order__product_notify}}';
     }
 
     public static function find() {

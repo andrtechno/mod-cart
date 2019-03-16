@@ -74,12 +74,12 @@ public static function getTotal($provider, $fieldName)
      * Check if delivery method exists
      */
     public function validateDelivery() {
-        if (Delivery::model()->where(['id' => $this->delivery_id])->count() == 0)
+        if (Delivery::find()->where(['id' => $this->delivery_id])->count() == 0)
             $this->addError('delivery_id', Yii::t('cart/admin', 'Необходимо выбрать способ доставки.'));
     }
 
     public function validatePayment() {
-        if (Payment::model()->where(['id' => $this->payment_id])->count() == 0)
+        if (Payment::find()->where(['id' => $this->payment_id])->count() == 0)
             $this->addError('payment_id', Yii::t('cart/admin', 'Необходимо выбрать способ оплаты.'));
     }
 
@@ -306,7 +306,7 @@ public static function getTotal($provider, $fieldName)
                 }
 
                 $product->quantity = (int) $data[$product->id];
-                $product->save(false, false);
+                $product->save(false);
             }
         }
     }

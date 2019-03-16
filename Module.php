@@ -52,11 +52,11 @@ class Module extends WebModule implements BootstrapInterface
             'version' => '1.0',
             'icon' => $this->icon,
             'description' => Yii::t('cart/default', 'MODULE_DESC'),
-            'url' => ['/admin/cart'],
+            'url' => ['/cart'],
         ];
     }
 
-    public function getAdminMenu2()
+    public function getAdminMenu()
     {
         return [
             'cart' => [
@@ -65,32 +65,32 @@ class Module extends WebModule implements BootstrapInterface
                 'items' => [
                     [
                         'label' => Yii::t('cart/default', 'MODULE_NAME'),
-                        'url' => ['/admin/cart'],
+                        'url' => ['/cart'],
                         'icon' => $this->icon,
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'STATUSES'),
-                        "url" => ['/admin/cart/statuses'],
+                        "url" => ['/cart/statuses'],
                         'icon' => 'stats'
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'DELIVERY'),
-                        "url" => ['/admin/cart/delivery'],
+                        "url" => ['/cart/delivery'],
                         'icon' => 'delivery'
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'PAYMENTS'),
-                        "url" => ['/admin/cart/payment'],
+                        "url" => ['/cart/payment'],
                         'icon' => 'creditcard'
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'NOTIFIER'),
-                        "url" => ['/admin/cart/notify'],
+                        "url" => ['/cart/notify'],
                         'icon' => 'envelope'
                     ],
                     [
                         'label' => Yii::t('app', 'SETTINGS'),
-                        "url" => ['/admin/cart/settings'],
+                        "url" => ['/cart/settings'],
                         'icon' => 'settings'
                     ]
                 ],

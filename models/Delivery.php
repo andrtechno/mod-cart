@@ -14,7 +14,7 @@ class Delivery extends \panix\engine\db\ActiveRecord {
     public $_payment_methods;
 
     public static function tableName() {
-        return '{{%order_delivery}}';
+        return '{{%order__delivery}}';
     }
     public static function find() {
         return new query\DeliveryQuery(get_called_class());

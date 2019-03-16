@@ -8,7 +8,7 @@ class OrderProductHistroy extends \panix\engine\db\ActiveRecord {
      * @return string the associated database table name
      */
     public static function tableName() {
-        return '{{%order_history_product}}';
+        return '{{%order__history_product}}';
     }
 
     public function relations() {

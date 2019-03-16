@@ -2,10 +2,14 @@
 
 namespace panix\mod\cart\models\translate;
 
-class DeliveryTranslate extends \yii\db\ActiveRecord {
+use yii\db\ActiveRecord;
 
-    public static function tableName() {
-        return '{{%order_delivery_translate}}';
+class DeliveryTranslate extends ActiveRecord
+{
+
+    public static function tableName()
+    {
+        return '{{%order__delivery_translate}}';
     }
 
 }

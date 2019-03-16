@@ -12,7 +12,7 @@ class Payment extends \panix\engine\db\ActiveRecord {
     const MODULE_ID = 'cart';
 
     public static function tableName() {
-        return '{{%order_payment}}';
+        return '{{%order__payment}}';
     }
 
     public static function find() {

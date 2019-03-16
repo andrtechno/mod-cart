@@ -51,7 +51,7 @@ return ['style' => 'background-color:' . $model->status->color . ';'];
             'template' => '{print} {update} {switch} {delete}',
             'buttons' => [
                 'print' => function ($url, $model, $key) {
-                    return Html::a('<i class="icon-print"></i>', ['/admin/cart/default/print', 'id' => $model->id], [
+                    return Html::a('<i class="icon-print"></i>', ['/cart/default/print', 'id' => $model->id], [
                                 'title' => Yii::t('yii', 'VIEW'),
                                 'class' => 'btn btn-sm btn-info linkTarget',
                                 'target' => '_blank'
