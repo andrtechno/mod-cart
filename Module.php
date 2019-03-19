@@ -39,7 +39,7 @@ class Module extends WebModule implements BootstrapInterface
                 'cart/<action:[.\w]+>' => 'cart/default/<action>',
                 'cart/<action:[.\w]>/*' => 'cart/default/<action>',
             ],
-            false
+            true
         );
 
         $app->setComponents([
