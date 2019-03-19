@@ -42,7 +42,7 @@ class DefaultController extends WebController {
      */
     public function actionIndex() {
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
-        $this->title = $this->pageName;
+        $this->view->title = $this->pageName;
         $this->breadcrumbs = [$this->pageName];
         
         if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
