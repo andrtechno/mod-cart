@@ -33,7 +33,7 @@ use panix\mod\shop\models\Product;
                     ?>
                     <div class="cart-product-item">
                         <div class="cart-product-item-image">
-                            <?php echo Html::img($product['model']->getMainImageUrl('50x50'), array('class' => 'img-thumbnail')) ?>
+                            <?php echo Html::img($product['model']->getMainImage('50x50')->url, array('class' => 'img-thumbnail')) ?>
                         </div>
                         <div class="cart-product-item-detail">
                             <?php echo Html::a($product['model']->name, $product['model']->getUrl()) ?>

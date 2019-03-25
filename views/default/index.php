@@ -10,9 +10,7 @@ use panix\mod\shop\models\Product;
 $this->registerJs("
 //cart.selectorTotal = '#total';
 var orderTotalPrice = '$totalPrice';
-", yii\web\View::POS_HEAD, 'cart');
-?>
-<script>
+
     $(function () {
 
         $('.payment_checkbox').click(function () {
@@ -44,7 +42,11 @@ var orderTotalPrice = '$totalPrice';
         }
         document.cartform.submit();
     }
-</script>
+
+
+", yii\web\View::POS_HEAD, 'cart');
+?>
+
 <?php echo Html::beginForm(['/cart'], 'post', array('id' => 'cart-form', 'name' => 'cartform')) ?>
 <div class="row">
     <?php
@@ -84,7 +86,7 @@ var orderTotalPrice = '$totalPrice';
 
                             <?php
 
-                            echo Html::img(Url::to($product['model']->getMainImageUrl('100x')), ['alt' => $product['model']->name]);
+                            echo Html::img(Url::to($product['model']->getMainImage('100x')->url), ['alt' => $product['model']->name]);
 
                             ?>
 
@@ -114,7 +116,7 @@ var orderTotalPrice = '$totalPrice';
 
                             // Display configurable options
                             if (isset($product['configurable_model'])) {
-                                $attributeModels = ShopAttribute::model()->findAllByPk($product['model']->configurable_attributes);
+                                $attributeModels = \panix\mod\shop\models\Attribute::model()->findAllByPk($product['model']->configurable_attributes);
                                 echo Html::beginTag('span', array('class' => 'cartProductOptions'));
                                 foreach ($attributeModels as $attribute) {
                                     $method = 'eav_' . $attribute->name;

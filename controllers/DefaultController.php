@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\controllers;
 
+use panix\mod\shop\models\ProductVariant;
 use Yii;
 use yii\helpers\Url;
 use panix\engine\Html;
@@ -211,6 +212,7 @@ class DefaultController extends WebController
     /**
      * Create new order
      * @return Order|boolean
+     * @throws yii\web\HttpException
      */
     public function createOrder()
     {
@@ -232,7 +234,7 @@ class DefaultController extends WebController
         if ($order->validate()) {
             $order->save();
         } else {
-            throw new CHttpException(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
+            throw new yii\web\HttpException(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
         }
 
         // Process products
@@ -310,7 +312,7 @@ class DefaultController extends WebController
         Yii::$app->cart->recount(Yii::$app->request->post('quantities'));
 
         if (!Yii::$app->request->isAjax)
-            Yii::$app->request->redirect($this->createUrl('index'));
+            return Yii::$app->request->redirect($this->createUrl('index'));
     }
 
     /**
