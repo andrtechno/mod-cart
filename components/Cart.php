@@ -205,7 +205,6 @@ class Cart extends Component
                     $productModel = Product::findOne($index);
                     $rowTotal = $data['quantity'] * Product::calculatePrices($productModel, $data['variants'], $data['configurable_id']);
                 } else {
-
                     $rowTotal = $data['quantity'] * $data['price'];
 
                 }
