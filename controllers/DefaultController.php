@@ -6,6 +6,7 @@ use Yii;
 use yii\helpers\Url;
 use panix\engine\Html;
 use yii\helpers\Json;
+use yii\web\BadRequestHttpException;
 use panix\engine\controllers\WebController;
 use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\models\Delivery;
@@ -14,7 +15,8 @@ use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\Product;
 
-class DefaultController extends WebController {
+class DefaultController extends WebController
+{
 
     /**
      * @var OrderCreateForm
@@ -26,7 +28,8 @@ class DefaultController extends WebController {
      */
     protected $_errors = false;
 
-    public function actionRecount() {
+    public function actionRecount()
+    {
         if (Yii::$app->request->isAjax) {
             if (Yii::$app->request->isPost && !empty($_POST['quantities'])) {
                 $test = array();
@@ -36,15 +39,16 @@ class DefaultController extends WebController {
             }
         }
     }
-    public $pageTitle;
+
     /**
      * Display list of product added to cart
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
         $this->view->title = $this->pageName;
         $this->breadcrumbs = [$this->pageName];
-        
+
         if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
             $this->processRecount();
         }
@@ -58,18 +62,17 @@ class DefaultController extends WebController {
                 $this->form->registerGuest();
                 $order = $this->createOrder();
                 //Yii::$app->cart->clear();
-              // Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                // Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                 //return $this->redirect(['view', 'secret_key' => $order->secret_key]);
             }
         }
 
 
         $deliveryMethods = Delivery::find()
-                ->published()
-                ->orderByName()
-                ->all();
+            ->published()
+            ->orderByName()
+            ->all();
         // echo($deliveryMethods->prepare(Yii::$app->db->queryBuilder)->createCommand()->rawSql);die;
-
 
 
         $paymenyMethods = Payment::find()->all();
@@ -79,14 +82,15 @@ class DefaultController extends WebController {
         var separator_hundredth = '" . Yii::$app->currency->active->separator_hundredth . "';
      ", yii\web\View::POS_HEAD, 'numberformat');
         return $this->render('index', array(
-                    'items' => Yii::$app->cart->getDataWithModels(),
-                    'totalPrice' => Yii::$app->cart->getTotalPrice(),
-                    'deliveryMethods' => $deliveryMethods,
-                    'paymenyMethods' => $paymenyMethods,
+            'items' => Yii::$app->cart->getDataWithModels(),
+            'totalPrice' => Yii::$app->cart->getTotalPrice(),
+            'deliveryMethods' => $deliveryMethods,
+            'paymenyMethods' => $paymenyMethods,
         ));
     }
 
-    public function actionPayment() {
+    public function actionPayment()
+    {
         if (isset($_POST)) {
             $this->form = Payment::find()->all();
             echo $this->render('_payment', array('model' => $this->form));
@@ -95,27 +99,30 @@ class DefaultController extends WebController {
 
     /**
      * Find order by secret_key and display.
-     * @throws CHttpException
+     * @throws \yii\web\NotFoundHttpException
      */
-    public function actionView() {
+    public function actionView()
+    {
         $secret_key = Yii::$app->request->get('secret_key');
         $model = Order::find()->where('secret_key=:key', array(':key' => $secret_key))->one();
         if (!$model)
-            throw new \yii\web\NotFoundHttpException(Yii::t('cart/default', 'ERROR_ORDER_NO_FIND'));
+            $this->error404(Yii::t('cart/default', 'ERROR_ORDER_NO_FIND'));
 
         $this->pageName = Yii::t('cart/default', 'VIEW_ORDER', ['id' => $model->id]);
         $this->breadcrumbs[] = $this->pageName;
         return $this->render('view', array(
-                    'model' => $model,
+            'model' => $model,
         ));
     }
 
     /**
      * Validate POST data and add product to cart
+     * @throws BadRequestHttpException
      */
-    public function actionAdd() {
+    public function actionAdd()
+    {
         if (!Yii::$app->request->isAjax) {
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'ACCESS_DENIED'));
+            throw new BadRequestHttpException(Yii::t('app', 'ACCESS_DENIED'));
         }
 
 
@@ -161,7 +168,7 @@ class DefaultController extends WebController {
             'currency_id' => $model->currency_id,
             'supplier_id' => $model->supplier_id,
             'configurable_id' => $configurable_id,
-            'quantity' => (int) Yii::$app->request->post('quantity', 1),
+            'quantity' => (int)Yii::$app->request->post('quantity', 1),
             'price' => $model->price,
         ));
 
@@ -171,7 +178,8 @@ class DefaultController extends WebController {
     /**
      * Remove product from cart and redirect
      */
-    public function actionRemove($id) {
+    public function actionRemove($id)
+    {
         Yii::$app->cart->remove($id);
         if (!Yii::$app->request->isAjax) {
             return $this->redirect(['index']);
@@ -181,7 +189,8 @@ class DefaultController extends WebController {
     /**
      * Clear cart
      */
-    public function actionClear() {
+    public function actionClear()
+    {
         Yii::$app->cart->clear();
         if (!Yii::$app->request->isAjax)
             return $this->redirect(['index']);
@@ -189,19 +198,22 @@ class DefaultController extends WebController {
 
     /**
      * Render data to display in theme header.
+     * @throws BadRequestHttpException
      */
-    public function actionRenderSmallCart() {
+    public function actionRenderSmallCart()
+    {
         if (!Yii::$app->request->isAjax) {
-            throw new \yii\web\BadRequestHttpException(Yii::t('app', 'ACCESS_DENIED'));
+            throw new BadRequestHttpException(Yii::t('app', 'ACCESS_DENIED'));
         }
-        return \panix\mod\cart\widgets\cart\CartWidget::widget(['skin'=>Yii::$app->request->post('skin')]);
+        return \panix\mod\cart\widgets\cart\CartWidget::widget(['skin' => Yii::$app->request->post('skin')]);
     }
 
     /**
      * Create new order
-     * @return Order
+     * @return Order|boolean
      */
-    public function createOrder() {
+    public function createOrder()
+    {
         if (Yii::$app->cart->countItems() == 0)
             return false;
 
@@ -226,7 +238,7 @@ class DefaultController extends WebController {
         // Process products
         $productsCount = 0;
         foreach (Yii::$app->cart->getDataWithModels() as $item) {
-                        
+
             $ordered_product = new OrderProduct;
             $ordered_product->order_id = $order->id;
             $ordered_product->product_id = $item['model']->id;
@@ -244,15 +256,15 @@ class DefaultController extends WebController {
             // }
 
             $ordered_product->save();
-$productsCount++;
+            $productsCount++;
         }
 
         // Reload order data.
         $order->refresh(); //@todo panix text email tpl
         // All products added. Update delivery price.
         $order->updateDeliveryPrice();
-        $text = (Yii::$app->user->isGuest) ? 'NOTIFACTION_GUEST_TEXT':'NOTIFACTION_USER_TEXT';
-                $order->attachBehavior('notifaction', [
+        $text = (Yii::$app->user->isGuest) ? 'NOTIFACTION_GUEST_TEXT' : 'NOTIFACTION_USER_TEXT';
+        $order->attachBehavior('notifaction', [
             'class' => \panix\engine\behaviors\NotifactionBehavior::class,
             'type' => 'success',
             'text' => Yii::t('cart/default', $text, [
@@ -262,14 +274,12 @@ $productsCount++;
                 'username' => Yii::$app->user->isGuest ? $order->user_name : Yii::$app->user->getDisplayName()
             ])
         ]);
-                
-        
+
+
         // Send email to user.
         //$this->sendClientEmail($order);
         // Send email to admin.
         $this->sendAdminEmail($order);
-
-
 
 
         // $order->detachBehavior('notifaction');
@@ -283,18 +293,20 @@ $productsCount++;
      * @param $variant_id
      * @return string
      */
-    protected function _checkVariantExists($product_id, $attribute_id, $variant_id) {
+    protected function _checkVariantExists($product_id, $attribute_id, $variant_id)
+    {
         return ProductVariant::find()->where([
-                    'id' => $variant_id,
-                    'product_id' => $product_id,
-                    'attribute_id' => $attribute_id
-                ])->count();
+            'id' => $variant_id,
+            'product_id' => $product_id,
+            'attribute_id' => $attribute_id
+        ])->count();
     }
 
     /**
      * Recount product quantity and redirect
      */
-    public function processRecount() {
+    public function processRecount()
+    {
         Yii::$app->cart->recount(Yii::$app->request->post('quantities'));
 
         if (!Yii::$app->request->isAjax)
@@ -306,7 +318,8 @@ $productsCount++;
      * @param string $message
      * @param bool $fatal finish request
      */
-    protected function _addError($message, $fatal = false) {
+    protected function _addError($message, $fatal = false)
+    {
         if ($this->_errors === false)
             $this->_errors = array();
 
@@ -319,7 +332,8 @@ $productsCount++;
     /**
      * Process result and exit!
      */
-    protected function _finish($product = null) {
+    protected function _finish($product = null)
+    {
 
         echo Json::encode(array(
             'errors' => $this->_errors,
@@ -331,26 +345,28 @@ $productsCount++;
         exit;
     }
 
-    private function sendAdminEmail(Order $order) {
+    private function sendAdminEmail(Order $order)
+    {
         Yii::$app->mailer->htmlLayout = "layouts/admin";
         Yii::$app->mailer
-                ->compose()
-                ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
-                ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
-                //->setCc(Yii::$app->settings->get('app','email')) //copy
-                //->setBcc(Yii::$app->settings->get('app','email')) //hidden copy
-                 ->setHtmlBody($this->renderPartial('@cart/mail/admin.tpl', ['order' => $order,'test'=>'1111']))
-                ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
-                ->send();
+            ->compose()
+            ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
+            ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
+            //->setCc(Yii::$app->settings->get('app','email')) //copy
+            //->setBcc(Yii::$app->settings->get('app','email')) //hidden copy
+            ->setHtmlBody($this->renderPartial('@cart/mail/admin.tpl', ['order' => $order, 'test' => '1111']))
+            ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
+            ->send();
     }
 
-    private function sendClientEmail(Order $order) {
+    private function sendClientEmail(Order $order)
+    {
         Yii::$app->mailer
-                ->compose('@cart/mail/admin', ['order' => $order])
-                ->setFrom('noreply@' . Yii::$app->request->serverName)
-                ->setTo($order->user_email)
-                ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $order->id]))
-                ->send();
+            ->compose('@cart/mail/admin', ['order' => $order])
+            ->setFrom('noreply@' . Yii::$app->request->serverName)
+            ->setTo($order->user_email)
+            ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $order->id]))
+            ->send();
     }
 
 }

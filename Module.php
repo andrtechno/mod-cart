@@ -36,8 +36,9 @@ class Module extends WebModule implements BootstrapInterface
                 'cart/clear' => 'cart/default/clear',
                 'cart/payment' => 'cart/default/payment',
                 'cart/recount' => 'cart/default/recount',
-                'cart/<action:[.\w]+>' => 'cart/default/<action>',
-                'cart/<action:[.\w]>/*' => 'cart/default/<action>',
+                'cart/<action:[0-9a-zA-Z_\-]+>' => 'cart/default/<action>',
+                'cart/<action:[0-9a-zA-Z_\-]+>/*' => 'cart/default/<action>',
+
             ],
             true
         );
