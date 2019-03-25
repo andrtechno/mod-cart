@@ -14,7 +14,7 @@
  * @function notifier Сообщить о появление (ajax response)
  * @function init Инициализация jquery spinner
  */
-
+var cart_recount_xhr;
 var cart = window.cart || {};
 cart = {
     /**
@@ -106,31 +106,41 @@ cart = {
     recount: function (quantities, product_id) {
         var disum = Number($('#balance').attr('data-sum'));
 
-        common.ajax('/cart/recount', {
-            product_id: product_id,
-            quantities: quantities
-        }, function (data, textStatus, xhr) {
-            $('#row-total-price' + product_id).html(data.rowTotal);
-            var delprice = 0;
-            if ($('.delivery-choose').prop("checked")) { //for april
-                delprice = parseInt($('.delivery-choose:checked').attr("data-price"));
+        if (cart_recount_xhr !== undefined)
+            cart_recount_xhr.abort();
 
+        cart_recount_xhr = $.ajax({
+            type: 'POST',
+            url: '/cart/recount',
+            data: {
+                product_id: product_id,
+                quantities: quantities
+            },
+            dataType: 'json',
+            success: function (data) {
+                $('#row-total-price' + product_id).html(data.rowTotal);
+                $('#price-unit-' + product_id).html(data.unit_price);
+                var delprice = 0;
+                if ($('.delivery-choose').prop("checked")) { //for april
+                    delprice = parseInt($('.delivery-choose:checked').attr("data-price"));
+
+                }
+                var test = data.totalPrice;
+                var total = parseInt(test.replace(separator_thousandth, '').replace(separator_hundredth, '')) + delprice;
+                // }
+
+
+                // $('#balance').text(data.balance);
+                //console.log(Number(data.totalPrice));
+                // console.log(disum);
+                // console.log(data.totalPrice * 2);
+                //$('#balance').text((Number(data.totalPrice) * disum / 100));
+
+                common.removeLoader();
+                $(cart.selectorTotal).text(price_format(total));
+                cart.renderBlockCart();
             }
-            var test = data.totalPrice;
-            var total = parseInt(test.replace(separator_thousandth, '').replace(separator_hundredth, '')) + delprice;
-            // }
-
-
-            // $('#balance').text(data.balance);
-            //console.log(Number(data.totalPrice));
-            // console.log(disum);
-            // console.log(data.totalPrice * 2);
-            //$('#balance').text((Number(data.totalPrice) * disum / 100));
-
-            common.removeLoader();
-            $(cart.selectorTotal).text(price_format(total));
-            cart.renderBlockCart();
-        }, 'json');
+        });
     },
     /**
      * @param product_id ИД обэекта

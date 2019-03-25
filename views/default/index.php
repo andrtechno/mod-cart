@@ -44,7 +44,7 @@ var orderTotalPrice = '$totalPrice';
     }
 
 
-", yii\web\View::POS_HEAD, 'cart');
+", yii\web\View::POS_END, 'cart');
 ?>
 
 <?php echo Html::beginForm(['/cart'], 'post', array('id' => 'cart-form', 'name' => 'cartform')) ?>

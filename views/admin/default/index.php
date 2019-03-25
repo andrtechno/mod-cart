@@ -8,9 +8,6 @@ use panix\engine\grid\GridView;
 ?>
 
 
-
-
-
 <?php
 
 Pjax::begin([
@@ -28,8 +25,8 @@ GridView::widget([
     'showFooter' => true,
     'footerRowOptions' => ['style' => 'font-weight:bold;', 'class' => 'text-center'],
     'rowOptions' => function ($model, $index, $widget, $grid) {
-return ['style' => 'background-color:' . $model->status->color . ';'];
-},
+        return ['style' => 'background-color:' . $model->status->color . ';'];
+    },
     'layoutOptions' => ['title' => $this->context->pageName], //'{items}{pager}{summary}'
     'columns' => [
         [
@@ -42,9 +39,9 @@ return ['style' => 'background-color:' . $model->status->color . ';'];
             'format' => 'html',
             'contentOptions' => ['class' => 'text-center'],
             'footer' => \panix\mod\cart\models\Order::getTotal($dataProvider->models, 'total_price'),
-            'value' => function($model) {
-        return Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main->symbol;
-    }
+            'value' => function ($model) {
+                return Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main->symbol;
+            }
         ],
         [
             'class' => 'panix\engine\grid\columns\ActionColumn',
@@ -52,14 +49,14 @@ return ['style' => 'background-color:' . $model->status->color . ';'];
             'buttons' => [
                 'print' => function ($url, $model, $key) {
                     return Html::a('<i class="icon-print"></i>', ['/cart/default/print', 'id' => $model->id], [
-                                'title' => Yii::t('yii', 'VIEW'),
-                                'class' => 'btn btn-sm btn-info linkTarget',
-                                'target' => '_blank'
+                        'title' => Yii::t('yii', 'VIEW'),
+                        'class' => 'btn btn-sm btn-info linkTarget',
+                        'target' => '_blank'
                     ]);
                 }
-                    ]
-                ]
             ]
-        ]);
-        ?>
-        <?php Pjax::end(); ?>
+        ]
+    ]
+]);
+?>
+<?php Pjax::end(); ?>

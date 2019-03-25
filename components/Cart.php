@@ -7,6 +7,7 @@ use Yii;
 use yii\base\Component;
 use panix\mod\shop\models\Product;
 use panix\mod\shop\models\Currency;
+use yii\web\Response;
 
 class Cart extends Component
 {
@@ -30,7 +31,7 @@ class Cart extends Component
      * @var HttpSession
      */
     private $session;
-    public $data=[];
+    public $data = [];
 
     public function init()
     {
@@ -125,11 +126,11 @@ class Cart extends Component
                 $item['configurable_model'] = Product::findOne($item['configurable_id']);
 
 
-            // Process variants
-            //if (!empty($item['variants']))
-            //    $item['variant_models'] = ProductVariant::model()
-            //            ->with(array('attribute', 'option'))
-            //            ->findAllByPk($item['variants']);
+            // Process variants @todo PANIX need test
+            if (!empty($item['variants']))
+                $item['variant_models'] = ProductVariant::find()
+                        ->with(array('attribute', 'option'))
+                        ->findAllByPk($item['variants']);
 
             // If product was deleted during user session!.
             if (!$item['model'])
@@ -148,9 +149,10 @@ class Cart extends Component
     public function getTotalPrice()
     {
         $result = 0;
-        $data = $this->data;
-
+       // $data = $this->data;
+        $data = $this->getDataWithModels();
         foreach ($data as $item) {
+
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
             $result += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
 
@@ -179,6 +181,10 @@ class Cart extends Component
         return $total;
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function ajaxRecount($data)
     {
         if (!is_array($data) || empty($data))
@@ -206,6 +212,7 @@ class Cart extends Component
             }
         }
         $this->session['cart_data'] = $currentData;
+        Yii::$app->response->format = Response::FORMAT_JSON;
         return [
             'rowTotal' => Yii::$app->currency->number_format(Yii::$app->currency->convert($rowTotal)),
             'totalPrice' => Yii::$app->currency->number_format(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
