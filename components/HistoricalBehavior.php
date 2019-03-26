@@ -1,4 +1,5 @@
 <?php
+
 namespace panix\mod\cart\components;
 
 use Yii;
@@ -8,12 +9,14 @@ use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderHistory;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
+
 /**
  * Logs order changes
  *
  * Class HistoricalBehavior
  */
-class HistoricalBehavior extends Behavior {
+class HistoricalBehavior extends Behavior
+{
 
     /**
      * @var Order before save
@@ -25,7 +28,8 @@ class HistoricalBehavior extends Behavior {
 
     const EVENT_PRODUCT_ADDED = 'onProductAdded';
     const EVENT_PRODUCT_QUANTITY_CHANGED = 'onProductQuantityChanged';
-    const EVENT_PRODUCT_DELETED = 'onProductDeletedEvent';
+    const EVENT_PRODUCT_DELETED = 'onProductDeleted';
+    const EVENT_ORDER_STATUS_CHANGED = 'onOrderStatusChanged';
 
     public function events()
     {
@@ -33,86 +37,110 @@ class HistoricalBehavior extends Behavior {
             ActiveRecord::EVENT_AFTER_FIND => 'afterFind',
             ActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
             ActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
-            self::EVENT_PRODUCT_ADDED => [$this, 'productAddedEvent'],
-            self::EVENT_PRODUCT_QUANTITY_CHANGED => [$this, 'productQuantityChanged'],
-            self::EVENT_PRODUCT_DELETED => [$this, 'productDeletedEvent'],
+            self::EVENT_PRODUCT_ADDED => [$this, 'onProductAdded'],
+            self::EVENT_PRODUCT_QUANTITY_CHANGED => [$this, 'onProductQuantityChanged'],
+            self::EVENT_PRODUCT_DELETED => [$this, 'onProductDeleted'],
+            self::EVENT_ORDER_STATUS_CHANGED => [$this, 'onOrderStatusChanged'],
         ];
     }
 
-    public function orderStatusChanged($event) {
-        $this->log(array(
-            'handler' => self::PRODUCT_HANDLER,
-            'data_before' => serialize(array(
-                'deleted' => false,
-                'name' => $event->params['ordered_product']->getRenderFullName(),
-                'price' => $event->params['ordered_product']->price,
-                'quantity' => $event->params['ordered_product']->quantity
-            )),
-            'data_after' => '',
-        ));
+    public function onOrderStatusChanged($event)
+    {
+
+
+        //$test2 = array_intersect_assoc($event->sender['attributes'], $event->sender['oldAttributes']);
+        //print_r($test2);
+        //echo '<br><br>';
+        //print_r($event->sender['oldAttributes']);
+        //echo '<br><br>';
+        //print_r($event->sender['attributes']);
+        //echo '<br><br>';
+        $changedList = array_diff_assoc($event->sender['attributes'], $event->sender['oldAttributes']);
+
+        //print_r($changedList);
+        $oldList = [];
+        if ($changedList) {
+            foreach ($changedList as $key => $value) {
+                $oldList[$key] = $event->sender['oldAttributes'][$key];
+            }
+
+
+            $this->log([
+                'handler' => self::ATTRIBUTES_HANDLER,
+                'data_before' => serialize($oldList),
+                'data_after' => serialize($changedList),
+            ]);
+        }
     }
+
     /**
      * @param $event
      */
-    public function productAddedEvent($event) {
+    public function onProductAdded($event)
+    {
 
-        $this->log(array(
+        $this->log([
             'handler' => self::PRODUCT_HANDLER,
-            'data_before' => serialize(array(
+            'data_before' => serialize([
                 'deleted' => false,
                 'name' => $event->ordered_product->getRenderFullName(),
                 'price' => $event->ordered_product->price,
                 'quantity' => $event->ordered_product->quantity
-            )),
+            ]),
             'data_after' => '',
-        ));
+        ]);
     }
 
     /**
      * @param $event
      */
-    public function productDeletedEvent($event) {
-        $this->log(array(
+    public function onProductDeleted($event)
+    {
+        $this->log([
             'handler' => self::PRODUCT_HANDLER,
-            'data_before' => serialize(array(
+            'data_before' => serialize([
                 'deleted' => true,
                 'name' => $event->ordered_product->getRenderFullName(),
                 'price' => $event->ordered_product->price,
                 'quantity' => $event->ordered_product->quantity
-            )),
+            ]),
             'data_after' => '',
-        ));
+        ]);
     }
 
     /**
      * @param $event
      */
-    public function onProductQuantityChanged($event) {
-        $this->log(array(
+    public function onProductQuantityChanged($event)
+    {
+        $this->log([
             'handler' => self::PRODUCT_HANDLER,
-            'data_before' => serialize(array(
+            'data_before' => serialize([
                 'changed' => true,
                 'name' => $event->ordered_product->name,
                 'quantity' => $event->ordered_product->quantity
-            )),
-            'data_after' => serialize(array(
+            ]),
+            'data_after' => serialize([
                 'quantity' => $event->params['new_quantity']
-            )),
-        ));
+            ]),
+        ]);
     }
 
-    public function afterFind() {
+    public function afterFind()
+    {
         $this->_old_order = clone $this->owner;
     }
 
 
-    public function afterSave() {
+    public function afterSave()
+    {
         $this->saveHistory($this->_old_order, $this->owner);
         $this->_old_order = clone $this->owner;
     }
 
 
-    public function afterDelete($event) {
+    public function afterDelete($event)
+    {
         OrderHistory::deleteAll('order_id=:id', [':id' => $event->sender->id]);
     }
 
@@ -120,7 +148,8 @@ class HistoricalBehavior extends Behavior {
      * @param $old
      * @param Order $new
      */
-    protected function saveHistory($old, Order $new) {
+    protected function saveHistory($old, Order $new)
+    {
         if (!$old || $old->isNewRecord)
             return;
 
@@ -148,7 +177,8 @@ class HistoricalBehavior extends Behavior {
     /**
      * @param array $data
      */
-    public function log(array $data) {
+    public function log(array $data)
+    {
         $record = new OrderHistory;
         $record->handler = $data['handler'];
         $record->data_before = $data['data_before'];
@@ -171,7 +201,8 @@ class HistoricalBehavior extends Behavior {
      * @param array $attrs
      * @return string
      */
-    public function prepareAttributes(array $attrs) {
+    public function prepareAttributes(array $attrs)
+    {
         $result = array();
 
         foreach ($attrs as $key => $val)
@@ -185,15 +216,15 @@ class HistoricalBehavior extends Behavior {
      * @param $id
      * @return string
      */
-    public function idToText($key, $id) {
+    public function idToText($key, $id)
+    {
         $val = $id;
 
         if ('delivery_id' === $key) {
             $model = Delivery::findOne($id);
             if ($model)
                 $val = $model->name;
-        }
-        elseif ('status_id' === $key) {
+        } elseif ('status_id' === $key) {
             $model = OrderStatus::findOne($id);
             if ($model)
                 $val = $model->name;
@@ -205,7 +236,8 @@ class HistoricalBehavior extends Behavior {
     /**
      * @return array
      */
-    public function getTrackAttributes() {
+    public function getTrackAttributes()
+    {
         return array(
             'delivery_id',
             'status_id',

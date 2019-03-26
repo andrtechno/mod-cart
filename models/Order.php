@@ -91,8 +91,8 @@ class Order extends ActiveRecord
             [['user_name', 'user_email', 'discount'], 'string', 'max' => 100],
             [['invoice'], 'string', 'max' => 50],
             ['paid', 'boolean'],
-            //   ['delivery_id', 'validateDelivery'],
-            //    ['payment_id', 'validatePayment'],
+            ['delivery_id', 'validateDelivery'],
+            ['payment_id', 'validatePayment'],
             ['status_id', 'validateStatus'],
         ];
     }
@@ -127,6 +127,14 @@ class Order extends ActiveRecord
     public function beforeSave($insert)
     {
 
+
+        $event = new ModelEvent([
+            'sender' => [
+                'oldAttributes' => $this->oldAttributes,
+                'attributes' => $this->attributes
+            ]
+        ]);
+        $this->eventOrderStatusChanged($event);
 
         // print_r($this->oldAttributes);
         // print_r($this->attributes);die;
@@ -319,7 +327,7 @@ class Order extends ActiveRecord
                 'ordered_product' => $ordered_product,
                 'quantity' => $quantity
             ]);
-            $this->onProductAdded($event);
+            $this->eventProductAdded($event);
 
 
         }
@@ -341,7 +349,7 @@ class Order extends ActiveRecord
             $event = new EventProduct([
                 'ordered_product' => $model
             ]);
-            $this->onProductDeleted($event);
+            $this->eventProductDeleted($event);
         }
     }
 
@@ -357,7 +365,15 @@ class Order extends ActiveRecord
     /**
      * @param $event
      */
-    public function onProductAdded($event)
+    public function eventOrderStatusChanged($event)
+    {
+        $this->trigger(HistoricalBehavior::EVENT_ORDER_STATUS_CHANGED, $event);
+    }
+
+    /**
+     * @param $event
+     */
+    public function eventProductAdded($event)
     {
         $this->trigger(HistoricalBehavior::EVENT_PRODUCT_ADDED, $event);
     }
@@ -365,12 +381,12 @@ class Order extends ActiveRecord
     /**
      * @param $event
      */
-    public function onProductQuantityChanged($event)
+    public function eventProductQuantityChanged($event)
     {
         $this->trigger(HistoricalBehavior::EVENT_PRODUCT_QUANTITY_CHANGED, $event);
     }
 
-    public function onProductDeleted($event)
+    public function eventProductDeleted($event)
     {
         $this->trigger(HistoricalBehavior::EVENT_PRODUCT_DELETED, $event);
     }

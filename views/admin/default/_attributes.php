@@ -1,6 +1,11 @@
+<?php
+use panix\engine\Html;
+use panix\engine\CMS;
+?>
 <tr>
     <td>
-        <a href="<?= Yii::app()->createUrl('/admin/users/default/update', array('id' => $data->user_id)) ?>"><?= $data->username ?></a>
+        <?php echo Html::a($data->username,['/admin/users/default/update',['id' => $data->user_id]]); ?>
+
         <br>
         <span class="date"><?= CMS::date($data->date_create) ?></span>
     </td>
