@@ -65,13 +65,17 @@ class DefaultController extends AdminController
         ];
         \panix\mod\cart\assets\admin\OrderAsset::register($this->view);
         $this->view->registerJs('
-             var deleteQuestion = "' . Yii::t('cart/admin', 'Вы действительно удалить запись?') . '";
-          var productSuccessAddedToOrder = "' . Yii::t('cart/admin', 'Продукт успешно добавлен к заказу.') . '";', \yii\web\View::POS_HEAD, 'myid'
+            var deleteQuestion = "' . Yii::t('cart/admin', 'Вы действительно удалить запись?') . '";
+            var productSuccessAddedToOrder = "' . Yii::t('cart/admin', 'Продукт успешно добавлен к заказу.') . '";', \yii\web\View::POS_HEAD, 'myid'
         );
 
         $post = Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
             $model->save();
+
+            if (sizeof(Yii::$app->request->post('quantity', [])))
+                $model->setProductQuantities(Yii::$app->request->post('quantity'));
+
             Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_UPDATE'));
             // return $this->redirect(['index']);
             return Yii::$app->getResponse()->redirect(['/cart/default']);
@@ -110,7 +114,6 @@ class DefaultController extends AdminController
 
     /**
      * Add product to order
-     * @throws CHttpException
      */
     public function actionAddProduct()
     {
@@ -141,7 +144,7 @@ class DefaultController extends AdminController
                         ));
                         die;
                     } else {
-                        throw new NotFoundHttpException(Yii::t('CartModule.default', 'ERROR_PRODUCT_NO_FIND'));
+                        $this->error404(Yii::t('CartModule.default', 'ERROR_PRODUCT_NO_FIND'));
                     }
                 }
 

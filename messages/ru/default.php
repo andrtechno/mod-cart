@@ -16,6 +16,7 @@ return [
     'TABLE_NUM' => 'Количество',
     'TABLE_SUM' => 'Итого (грн)',
     'PAYMENT'=>'Оплата',
+    'COST' => 'Стоимость',
     'DELIVERY'=>'Доставка',
     'MAIL_TABLE_TH_PRODUCT' => 'Товар',
     'MAIL_TABLE_TH_QUANTITY' => 'Кол.',

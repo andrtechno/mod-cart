@@ -8,7 +8,7 @@ if (empty($history)) {
     return;
 }
 ?>
-<div class="clearfix"></div>
+
 <table class="table table-striped table-bordered">
     <thead>
         <tr>
@@ -20,7 +20,7 @@ if (empty($history)) {
     <tbody>
         <?php
         foreach ($history as $row) {
-            $this->renderPartial('_' . $row->handler, array(
+            echo $this->render('_' . $row->handler, array(
                 'data' => $row,
             ));
         }

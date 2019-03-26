@@ -64,21 +64,27 @@ echo GridView::widget([
     ]
 ]);
 Pjax::end();
-?>
 
 
-<script type="text/javascript">
-    var orderTotalPrice = '<?php echo $model->total_price ?>';
+$this->registerJs('
+    var orderTotalPrice = "'.$model->total_price.'";
     $(function () {
         var total_pcs = function () {
             var sum = 0;
-            $('.quantity').each(function (key, index) {
+            $(".quantity").each(function (key, index) {
                 sum += Number($(this).text());
             });
             return sum;
         };
-        $('#total_pcs').text(total_pcs);
+        $("#total_pcs").text(total_pcs);
     });
+
+', \yii\web\View::POS_END);
+?>
+
+
+<script type="text/javascript">
+
 </script>
 <?php
 $symbol = Yii::$app->currency->active->symbol;

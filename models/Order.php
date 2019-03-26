@@ -3,9 +3,12 @@
 namespace panix\mod\cart\models;
 
 use panix\engine\Html;
-use panix\mod\shop\components\HistoricalBehavior;
+use panix\mod\cart\components\events\EventProduct;
+use panix\mod\cart\components\HistoricalBehavior;
 use Yii;
 use panix\engine\db\ActiveRecord;
+use yii\base\Event;
+use yii\base\ModelEvent;
 use yii\helpers\ArrayHelper;
 
 class Order extends ActiveRecord
@@ -125,7 +128,8 @@ class Order extends ActiveRecord
     {
 
 
-
+        // print_r($this->oldAttributes);
+        // print_r($this->attributes);die;
         if ($this->isNewRecord) {
             $this->secret_key = $this->createSecretKey();
             $this->ip_create = Yii::$app->request->getUserIP();
@@ -145,8 +149,6 @@ class Order extends ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-
-
 
 
         parent::afterSave($insert, $changedAttributes);
@@ -293,7 +295,7 @@ class Order extends ActiveRecord
     /**
      * Add product to existing order
      *
-     * @param Product $product
+     * @param /panix/mod/shop/models/Product $product
      * @param integer $quantity
      * @param float $price
      */
@@ -309,15 +311,17 @@ class Order extends ActiveRecord
             $ordered_product->quantity = $quantity;
             $ordered_product->sku = $product->sku;
             $ordered_product->price = $price;
-            $ordered_product->save();
+            //$ordered_product->save();
 
             // Raise event
-            /* $event = new CModelEvent($this, array(
-              'product_model' => $product,
-              'ordered_product' => $ordered_product,
-              'quantity' => $quantity
-              ));
-              $this->onProductAdded($event); */
+            $event = new EventProduct([
+                'product_model' => $product,
+                'ordered_product' => $ordered_product,
+                'quantity' => $quantity
+            ]);
+            $this->onProductAdded($event);
+
+
         }
     }
 
@@ -334,20 +338,41 @@ class Order extends ActiveRecord
         if ($model) {
             $model->delete();
 
-            // $event = new CModelEvent($this, array(
-            //     'ordered_product' => $model
-            // ));
-            //$this->onProductDeleted($event);
+            $event = new EventProduct([
+                'ordered_product' => $model
+            ]);
+            $this->onProductDeleted($event);
         }
     }
 
     /**
-     * @return ActiveDataProvider
+     * @return \panix\engine\data\ActiveDataProvider
      */
     public function getOrderedProducts()
     {
         $products = new search\OrderProductSearch();
         return $products->search([$products->formName() => ['order_id' => $this->id]]);
+    }
+
+    /**
+     * @param $event
+     */
+    public function onProductAdded($event)
+    {
+        $this->trigger(HistoricalBehavior::EVENT_PRODUCT_ADDED, $event);
+    }
+
+    /**
+     * @param $event
+     */
+    public function onProductQuantityChanged($event)
+    {
+        $this->trigger(HistoricalBehavior::EVENT_PRODUCT_QUANTITY_CHANGED, $event);
+    }
+
+    public function onProductDeleted($event)
+    {
+        $this->trigger(HistoricalBehavior::EVENT_PRODUCT_DELETED, $event);
     }
 
     /**
@@ -358,11 +383,12 @@ class Order extends ActiveRecord
         foreach ($this->products as $product) {
             if (isset($data[$product->id])) {
                 if ((int)$product->quantity !== (int)$data[$product->id]) {
-                    $event = new CModelEvent($this, array(
+                    $event = new ModelEvent($this, array(
                         'ordered_product' => $product,
                         'new_quantity' => (int)$data[$product->id]
                     ));
                     $this->onProductQuantityChanged($event);
+                    //$this->trigger('onProductQuantityChanged');
                 }
 
                 $product->quantity = (int)$data[$product->id];

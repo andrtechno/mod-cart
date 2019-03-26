@@ -38,7 +38,6 @@ class OrderProductSearch extends OrderProduct {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-
         ]);
 
         $this->load($params);
