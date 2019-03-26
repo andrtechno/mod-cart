@@ -24,14 +24,23 @@ GridView::widget([
     'filterModel' => $searchModel,
     'showFooter' => true,
     'footerRowOptions' => ['style' => 'font-weight:bold;', 'class' => 'text-center'],
-    'rowOptions' => function ($model, $index, $widget, $grid) {
-        return ['style' => 'background-color:' . $model->status->color . ';'];
-    },
-    'layoutOptions' => ['title' => $this->context->pageName], //'{items}{pager}{summary}'
+    //'rowOptions' => function ($model, $index, $widget, $grid) {
+    //    return ['style' => 'background-color:' . $model->status->color . ';'];
+    //},
+    'layoutOptions' => ['title' => $this->context->pageName],
     'columns' => [
-        [
+        /*[
             'class' => 'yii\grid\SerialColumn',
             'contentOptions' => ['class' => 'text-center']
+        ],*/
+        [
+            'attribute' => 'status.name',
+            'format' => 'html',
+            'contentOptions' => ['class' => 'text-left'],
+            'value' => function ($model) {
+                //return 'Номер заказа №'.$model->id.' '.$model->getGridStatus();
+                return $model->getGridStatus().' Номер заказа №'.$model->id;
+            }
         ],
         'user_name',
         [
@@ -45,7 +54,7 @@ GridView::widget([
         ],
         [
             'class' => 'panix\engine\grid\columns\ActionColumn',
-            'template' => '{print} {update} {switch} {delete}',
+            'template' => '{print} {update} {switch}',
             'buttons' => [
                 'print' => function ($url, $model, $key) {
                     return Html::a('<i class="icon-print"></i>', ['/cart/default/print', 'id' => $model->id], [

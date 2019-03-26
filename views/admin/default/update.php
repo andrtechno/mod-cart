@@ -47,3 +47,11 @@ use panix\ext\fancybox\Fancybox;
 
     </div>
 </div>
+
+<?php
+
+echo $this->render('_history', array(
+    'model' => $model,
+));
+
+

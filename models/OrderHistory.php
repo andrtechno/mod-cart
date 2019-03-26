@@ -1,5 +1,7 @@
 <?php
 namespace panix\mod\cart\models;
+
+use panix\engine\db\ActiveRecord;
 /**
  * This is the model class for table "OrderHistory".
  *
@@ -13,7 +15,7 @@ namespace panix\mod\cart\models;
  * @property string $data_after
  * @property string $date_create
  */
-class OrderHistory extends \panix\engine\db\ActiveRecord {
+class OrderHistory extends ActiveRecord {
 
 
 

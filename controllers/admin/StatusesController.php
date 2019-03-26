@@ -7,6 +7,7 @@ use Yii;
 use panix\engine\controllers\AdminController;
 use panix\mod\cart\models\OrderStatus;
 use panix\mod\cart\models\search\OrderStatusSearch;
+use yii\web\HttpException;
 
 class StatusesController extends AdminController {
 
@@ -20,6 +21,15 @@ class StatusesController extends AdminController {
             'url'=>['/admin/cart']
         ];
         $this->breadcrumbs[]=$this->pageName;
+
+        $this->buttons = [
+            [
+                'label' => Yii::t('cart/default', 'CREATE_STATUS'),
+                'url' => ['/cart/statuses/create'],
+                'options' => ['class' => 'btn btn-success']
+            ]
+        ];
+
         $searchModel = new OrderStatusSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
@@ -32,7 +42,7 @@ class StatusesController extends AdminController {
     /**
      * Update status
      * @param bool $id
-     * @throws CHttpException
+     * @return string|\yii\web\Response
      */
     public function actionUpdate($id = false) {
         if ($id === true) {
@@ -89,11 +99,11 @@ class StatusesController extends AdminController {
                     if ($m->countOrders() == 0 && $m->id != 1)
                         $m->delete();
                     else
-                        throw new CHttpException(409, Yii::t('cart/admin', 'ERR_DELETE_STATUS'));
+                        throw new HttpException(409, Yii::t('cart/admin', 'ERR_DELETE_STATUS'));
                 }
             }
 
-            if (!Yii::app()->request->isAjaxRequest)
+            if (!Yii::$app->request->isAjax)
                 return $this->redirect('index');
         }
     }

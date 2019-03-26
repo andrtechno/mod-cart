@@ -2,59 +2,82 @@
 
 namespace panix\mod\cart\models;
 
+use panix\engine\Html;
+use panix\mod\shop\components\HistoricalBehavior;
 use Yii;
-use panix\mod\cart\models\OrderStatus;
-use panix\mod\cart\models\OrderProduct;
+use panix\engine\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
-class Order extends \panix\engine\db\ActiveRecord {
+class Order extends ActiveRecord
+{
 
     const MODULE_ID = 'cart';
 
     /**
      * @return string the associated database table name
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return '{{%order}}';
     }
 
-public static function getTotal($provider, $fieldName)
-{
-    $total = 0;
-
-    foreach ($provider as $item) {
-        $total += $item[$fieldName];
+    public function behaviors()
+    {
+        $a = [];
+        $a['historical'] = [
+            'class' => HistoricalBehavior::class,
+        ];
+        return ArrayHelper::merge($a, parent::behaviors());
     }
 
-    return Yii::$app->currency->number_format($total) . ' ' . Yii::$app->currency->main->symbol;
-}
-    public static function find() {
+    public static function getTotal($provider, $fieldName)
+    {
+        $total = 0;
+
+        foreach ($provider as $item) {
+            $total += $item[$fieldName];
+        }
+
+        return Yii::$app->currency->number_format($total) . ' ' . Yii::$app->currency->main->symbol;
+    }
+
+    public static function find()
+    {
         return new query\OrderQuery(get_called_class());
     }
 
-    public function getDeliveryMethod() {
+    public function getDeliveryMethod()
+    {
         return $this->hasOne(Delivery::class, ['id' => 'delivery_id']);
     }
 
-    public function getPaymentMethod() {
+    public function getPaymentMethod()
+    {
         return $this->hasOne(Payment::class, ['id' => 'payment_id']);
     }
 
-    public function getStatus() {
+    public function getStatus()
+    {
         return $this->hasOne(OrderStatus::class, ['id' => 'status_id']);
     }
 
-    public function getProducts() {
+    public function getProducts()
+    {
         return $this->hasMany(OrderProduct::class, ['order_id' => 'id']);
     }
-    public function getProductsCount() {
+
+    public function getProductsCount()
+    {
         return $this->hasMany(OrderProduct::class, ['order_id' => 'id'])->count();
     }
 
-    public function getUrl() {
+    public function getUrl()
+    {
         return ['/cart/default/view', 'secret_key' => $this->secret_key];
     }
 
-    public function rules() {
+    public function rules()
+    {
         return [
             [['user_name', 'user_email'], 'required'],
             //[['delivery_id','payment_id'], 'required'],
@@ -63,6 +86,7 @@ public static function getTotal($provider, $fieldName)
             [['user_address'], 'string', 'max' => 255],
             [['user_phone'], 'string', 'max' => 30],
             [['user_name', 'user_email', 'discount'], 'string', 'max' => 100],
+            [['invoice'], 'string', 'max' => 50],
             ['paid', 'boolean'],
             //   ['delivery_id', 'validateDelivery'],
             //    ['payment_id', 'validatePayment'],
@@ -73,12 +97,14 @@ public static function getTotal($provider, $fieldName)
     /**
      * Check if delivery method exists
      */
-    public function validateDelivery() {
+    public function validateDelivery()
+    {
         if (Delivery::find()->where(['id' => $this->delivery_id])->count() == 0)
             $this->addError('delivery_id', Yii::t('cart/admin', 'Необходимо выбрать способ доставки.'));
     }
 
-    public function validatePayment() {
+    public function validatePayment()
+    {
         if (Payment::find()->where(['id' => $this->payment_id])->count() == 0)
             $this->addError('payment_id', Yii::t('cart/admin', 'Необходимо выбрать способ оплаты.'));
     }
@@ -86,7 +112,8 @@ public static function getTotal($provider, $fieldName)
     /**
      * Check if status exists
      */
-    public function validateStatus() {
+    public function validateStatus()
+    {
         if ($this->status_id && OrderStatus::find()->where(['id' => $this->status_id])->count() == 0)
             $this->addError('status_id', Yii::t('cart/admin', 'Ошибка проверки статуса.'));
     }
@@ -94,7 +121,9 @@ public static function getTotal($provider, $fieldName)
     /**
      * @return bool
      */
-    public function beforeSave($insert) {
+    public function beforeSave($insert)
+    {
+
 
 
         if ($this->isNewRecord) {
@@ -114,10 +143,20 @@ public static function getTotal($provider, $fieldName)
         return parent::beforeSave($insert);
     }
 
+    public function afterSave($insert, $changedAttributes)
+    {
+
+
+
+
+        parent::afterSave($insert, $changedAttributes);
+    }
+
     /**
      * @return bool
      */
-    public function afterDelete() {
+    public function afterDelete()
+    {
         foreach ($this->products as $ordered_product)
             $ordered_product->delete();
 
@@ -129,7 +168,8 @@ public static function getTotal($provider, $fieldName)
      * @param int $size
      * @return string
      */
-    public function createSecretKey($size = 10) {
+    public function createSecretKey($size = 10)
+    {
 
         $result = '';
         $chars = '1234567890qweasdzxcrtyfghvbnuioplkjnm';
@@ -146,7 +186,8 @@ public static function getTotal($provider, $fieldName)
     /**
      * Update total
      */
-    public function updateTotalPrice() {
+    public function updateTotalPrice()
+    {
 
         $this->total_price = 0;
         $products = OrderProduct::find()->where(['order_id' => $this->id])->all();
@@ -171,7 +212,8 @@ public static function getTotal($provider, $fieldName)
     /**
      * @return int
      */
-    public function updateDeliveryPrice() {
+    public function updateDeliveryPrice()
+    {
         if ($this->delivery_id) {
             $result = 0;
             $deliveryMethod = Delivery::findOne($this->delivery_id);
@@ -190,15 +232,26 @@ public static function getTotal($provider, $fieldName)
         }
     }
 
+    public function getGridStatus()
+    {
+        $class = '';
+        if ($this->status->id == 1) {
+
+        }
+        return Html::tag('span', $this->status->name, ['class' => 'badge', 'style' => 'background:' . $this->status->color]);
+    }
+
     /**
      * @return mixed
      */
-    public function getStatus_name() {
+    public function getStatus_name()
+    {
         if ($this->status)
             return $this->status->name;
     }
 
-    public function getStatus_color() {
+    public function getStatus_color()
+    {
         if ($this->status)
             return $this->status->color;
     }
@@ -206,13 +259,15 @@ public static function getTotal($provider, $fieldName)
     /**
      * @return mixed
      */
-    public function getDelivery_name() {
+    public function getDelivery_name()
+    {
         $model = Delivery::findOne($this->delivery_id);
         if ($model)
             return $model->name;
     }
 
-    public function getPayment_name() {
+    public function getPayment_name()
+    {
         $model = Payment::findOne($this->payment_id);
         if ($model)
             return $model->name;
@@ -221,13 +276,14 @@ public static function getTotal($provider, $fieldName)
     /**
      * @return mixed
      */
-    public function getFull_price() {
+    public function getFull_price()
+    {
         if (!$this->isNewRecord) {
             $result = $this->total_price + $this->delivery_price;
             if ($this->discount) {
                 $sum = $this->discount;
                 if ('%' === substr($this->discount, -1, 1))
-                    $sum = $result * (int) $this->discount / 100;
+                    $sum = $result * (int)$this->discount / 100;
                 $result -= $sum;
             }
             return $result;
@@ -241,7 +297,8 @@ public static function getTotal($provider, $fieldName)
      * @param integer $quantity
      * @param float $price
      */
-    public function addProduct($product, $quantity, $price) {
+    public function addProduct($product, $quantity, $price)
+    {
 
         if (!$this->isNewRecord) {
             $ordered_product = new OrderProduct;
@@ -269,7 +326,8 @@ public static function getTotal($provider, $fieldName)
      *
      * @param $id
      */
-    public function deleteProduct($id) {
+    public function deleteProduct($id)
+    {
 
         $model = OrderProduct::findOne($id);
 
@@ -286,7 +344,8 @@ public static function getTotal($provider, $fieldName)
     /**
      * @return ActiveDataProvider
      */
-    public function getOrderedProducts() {
+    public function getOrderedProducts()
+    {
         $products = new search\OrderProductSearch();
         return $products->search([$products->formName() => ['order_id' => $this->id]]);
     }
@@ -294,28 +353,31 @@ public static function getTotal($provider, $fieldName)
     /**
      * @param array $data
      */
-    public function setProductQuantities(array $data) {
+    public function setProductQuantities(array $data)
+    {
         foreach ($this->products as $product) {
             if (isset($data[$product->id])) {
-                if ((int) $product->quantity !== (int) $data[$product->id]) {
+                if ((int)$product->quantity !== (int)$data[$product->id]) {
                     $event = new CModelEvent($this, array(
                         'ordered_product' => $product,
-                        'new_quantity' => (int) $data[$product->id]
+                        'new_quantity' => (int)$data[$product->id]
                     ));
                     $this->onProductQuantityChanged($event);
                 }
 
-                $product->quantity = (int) $data[$product->id];
+                $product->quantity = (int)$data[$product->id];
                 $product->save(false);
             }
         }
     }
 
-    public function getRelativeUrl() {
+    public function getRelativeUrl()
+    {
         return Yii::$app->urlManager->createUrl(['/cart/default/view', 'secret_key' => $this->secret_key]);
     }
 
-    public function getAbsoluteUrl() {
+    public function getAbsoluteUrl()
+    {
         return Yii::$app->urlManager->createAbsoluteUrl(['/cart/default/view', 'secret_key' => $this->secret_key]);
     }
 
@@ -324,11 +386,12 @@ public static function getTotal($provider, $fieldName)
      *
      * @return array
      */
-    public function getHistory() {
-        $cr = new CDbCriteria;
-        $cr->order = 'date_create ASC';
-
-        return OrderHistory::model()->findAllByAttributes(array('order_id' => $this->id), $cr);
+    public function getHistory()
+    {
+        return OrderHistory::find()
+            ->where(['order_id' => $this->id])
+            ->orderBy(['date_create' => SORT_ASC])
+            ->all();
     }
 
 }

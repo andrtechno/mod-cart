@@ -3,7 +3,9 @@
 namespace panix\mod\cart\models;
 use panix\mod\cart\models\Order;
 use panix\mod\shop\models\Product;
-class OrderProduct extends \panix\engine\db\ActiveRecord {
+use panix\engine\db\ActiveRecord;
+
+class OrderProduct extends ActiveRecord {
 
     const MODULE_ID = 'cart';
 

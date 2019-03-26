@@ -34,7 +34,7 @@ $form->field($model, 'delivery_id')->dropDownList(ArrayHelper::map(Delivery::fin
 <?= $form->field($model, 'user_comment')->textArea(); ?>
 <?= $form->field($model, 'admin_comment')->textArea(); ?>
 <?= $form->field($model, 'paid')->checkbox(); ?>
-
+<?= $form->field($model, 'invoice')->textInput(['maxlength'=>50]); ?>
 
 <div class="form-group text-center">
     <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'CREATE') : Yii::t('app', 'UPDATE'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

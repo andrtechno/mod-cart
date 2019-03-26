@@ -19,7 +19,10 @@ Pjax::begin([
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-    'layout' => $this->render('@admin/views/layouts/_grid_layout', ['title' => $this->context->pageName]), //'{items}{pager}{summary}'
+    'layoutOptions' => ['title' => $this->context->pageName],
+    'rowOptions' => function ($model, $index, $widget, $grid) {
+        return ['style' => 'background-color:' . $model->color . ';'];
+    },
     'columns' => [
         'name',
         'color',

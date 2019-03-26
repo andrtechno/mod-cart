@@ -36,7 +36,7 @@ class DefaultController extends AdminController
 
     public function actionIndex()
     {
-        $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
+        $this->pageName=Yii::t('cart/admin', 'ORDERS');
         $this->buttons = [
             [
                 'label' => Yii::t('cart/default', 'CREATE_ORDER'),
@@ -44,6 +44,9 @@ class DefaultController extends AdminController
                 'options' => ['class' => 'btn btn-success']
             ]
         ];
+
+        $this->breadcrumbs[] = $this->pageName;
+
         $searchModel = new OrderSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
         return $this->render('index', [
@@ -56,7 +59,7 @@ class DefaultController extends AdminController
     {
 
         $model = $this->findModel($id);
-        $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
+        $this->pageName = Yii::t('cart/admin', 'ORDERS');
         $this->breadcrumbs = [
             $this->pageName
         ];
@@ -71,7 +74,7 @@ class DefaultController extends AdminController
             $model->save();
             Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_UPDATE'));
             // return $this->redirect(['index']);
-            return Yii::$app->getResponse()->redirect(['/admin/cart/default']);
+            return Yii::$app->getResponse()->redirect(['/cart/default']);
         }
         return $this->render('update', [
             'model' => $model,
