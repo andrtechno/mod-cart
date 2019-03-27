@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 
 use panix\ext\fancybox\Fancybox;
+
 ?>
 <div class="row">
     <div class="col-sm-6">
@@ -20,7 +21,7 @@ use panix\ext\fancybox\Fancybox;
         <?= Fancybox::widget(['target' => '.image a']); ?>
         <?php
 
-        echo Html::a('add', 'javascript:openAddProductDialog(' . $model->id . ');',['class'=>'btn btn-success']);
+        echo Html::a('add', 'javascript:openAddProductDialog(' . $model->id . ');', ['class' => 'btn btn-success']);
         if (!$model->isNewRecord) {
             ?>
 
@@ -44,14 +45,18 @@ use panix\ext\fancybox\Fancybox;
         <?php } ?>
 
 
-
     </div>
 </div>
-
-<?php
-
-echo $this->render('_history', array(
-    'model' => $model,
-));
-
+<div class="card bg-light">
+    <div class="card-header">
+        <h5>История действий заказа</h5>
+    </div>
+    <div class="card-body">
+        <?php
+        echo $this->render('_history', array(
+            'model' => $model,
+        ));
+        ?>
+    </div>
+</div>
 

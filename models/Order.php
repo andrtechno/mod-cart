@@ -88,8 +88,7 @@ class Order extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_name', 'user_email'], 'required'],
-            //[['delivery_id','payment_id'], 'required'],
+            [['user_name', 'user_email','delivery_id','payment_id','status_id'], 'required'],
             ['user_email', 'email'],
             [['user_comment', 'admin_comment'], 'string', 'max' => 500],
             [['user_address'], 'string', 'max' => 255],

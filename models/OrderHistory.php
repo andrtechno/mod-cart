@@ -1,6 +1,7 @@
 <?php
 namespace panix\mod\cart\models;
 
+use Yii;
 use panix\engine\db\ActiveRecord;
 /**
  * This is the model class for table "OrderHistory".

@@ -13,7 +13,7 @@ use panix\engine\CMS;
         <?php
         foreach ($data->getDataBefore() as $key => $val) {
             if (!empty($val)) {
-                echo "$key: <span>{$val}</span>" . '<br>';
+                echo "<strong>$key:</strong> <span>{$val}</span>" . '<br>';
             }
         }
         ?>
@@ -22,7 +22,7 @@ use panix\engine\CMS;
         <?php
         foreach ($data->getDataAfter() as $key => $val) {
             if (!empty($val)) {
-                echo "$key: <span>{$val}</span>" . '<br>';
+                echo "<strong>$key:</strong> <span>{$val}</span>" . '<br>';
             }
         }
             ?>
