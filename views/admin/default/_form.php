@@ -1,12 +1,12 @@
 <?php
 
 use yii\helpers\Html;
-use panix\engine\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use panix\mod\cart\models\OrderStatus;
 use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\Delivery;
 use panix\engine\widgets\inputmask\InputMask;
+use panix\engine\bootstrap\ActiveForm;
 ?>
 <?php
 $form = ActiveForm::begin();

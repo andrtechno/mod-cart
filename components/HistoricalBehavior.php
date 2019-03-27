@@ -2,6 +2,8 @@
 
 namespace panix\mod\cart\components;
 
+use panix\engine\Html;
+use panix\mod\cart\models\Payment;
 use Yii;
 use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\OrderStatus;
@@ -47,28 +49,44 @@ class HistoricalBehavior extends Behavior
     public function onOrderStatusChanged($event)
     {
 
-
-        //$test2 = array_intersect_assoc($event->sender['attributes'], $event->sender['oldAttributes']);
-        //print_r($test2);
-        //echo '<br><br>';
-        //print_r($event->sender['oldAttributes']);
-        //echo '<br><br>';
-        //print_r($event->sender['attributes']);
-        //echo '<br><br>';
         $changedList = array_diff_assoc($event->sender['attributes'], $event->sender['oldAttributes']);
 
-        //print_r($changedList);
         $oldList = [];
+        $newList = [];
         if ($changedList) {
             foreach ($changedList as $key => $value) {
-                $oldList[$key] = $event->sender['oldAttributes'][$key];
+                $value = $event->sender['oldAttributes'][$key];
+                if ($key == 'status_id') {
+                    $modelStatus = OrderStatus::findOne($value);
+                    $value = Html::tag('span', $modelStatus->name, ['class' => 'badge', 'style' => 'background:' . $modelStatus->color]);
+                } elseif ($key == 'delivery_id') {
+                    $model = Delivery::findOne($value);
+                    $value =  $model->name;
+                } elseif ($key == 'payment_id') {
+                    $model = Payment::findOne($value);
+                    $value =  $model->name;
+                }
+
+                $oldList[$key] = $value;
+            }
+
+            foreach ($changedList as $key => $val) {
+                $value = $val;
+                if ($key == 'status_id') {
+                    $value = $this->owner->getGridStatus();
+                } elseif ($key == 'delivery_id') {
+                    $value = $this->owner->deliveryMethod->name;
+                } elseif ($key == 'payment_id') {
+                    $value = $this->owner->paymentMethod->name;
+                }
+                $newList[$key] = $value;
             }
 
 
             $this->log([
                 'handler' => self::ATTRIBUTES_HANDLER,
                 'data_before' => serialize($oldList),
-                'data_after' => serialize($changedList),
+                'data_after' => serialize($newList),
             ]);
         }
     }

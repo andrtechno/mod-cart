@@ -11,6 +11,12 @@ use yii\base\Event;
 use yii\base\ModelEvent;
 use yii\helpers\ArrayHelper;
 
+
+/**
+ * Class Order
+ * @param int $status_id
+ * @package panix\mod\cart\models
+ */
 class Order extends ActiveRecord
 {
 
@@ -122,7 +128,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function beforeSave($insert)
     {
@@ -130,14 +136,13 @@ class Order extends ActiveRecord
 
         $event = new ModelEvent([
             'sender' => [
+                'model'=>$this,
                 'oldAttributes' => $this->oldAttributes,
                 'attributes' => $this->attributes
             ]
         ]);
         $this->eventOrderStatusChanged($event);
 
-        // print_r($this->oldAttributes);
-        // print_r($this->attributes);die;
         if ($this->isNewRecord) {
             $this->secret_key = $this->createSecretKey();
             $this->ip_create = Yii::$app->request->getUserIP();
@@ -244,23 +249,22 @@ class Order extends ActiveRecord
 
     public function getGridStatus()
     {
-        $class = '';
-        if ($this->status->id == 1) {
-
-        }
-        return Html::tag('span', $this->status->name, ['class' => 'badge', 'style' => 'background:' . $this->status->color]);
+        return Html::tag('span', $this->getStatusName(), ['class' => 'badge', 'style' => 'background:' . $this->getStatusColor()]);
     }
 
     /**
      * @return mixed
      */
-    public function getStatus_name()
+    public function getStatusName()
     {
         if ($this->status)
             return $this->status->name;
     }
 
-    public function getStatus_color()
+    /**
+     * @return mixed
+     */
+    public function getStatusColor()
     {
         if ($this->status)
             return $this->status->color;

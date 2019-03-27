@@ -78,7 +78,7 @@ class DefaultController extends AdminController
 
             Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_UPDATE'));
             // return $this->redirect(['index']);
-            return Yii::$app->getResponse()->redirect(['/cart/default']);
+            //return Yii::$app->getResponse()->redirect(['/cart/default']);
         }
         return $this->render('update', [
             'model' => $model,
