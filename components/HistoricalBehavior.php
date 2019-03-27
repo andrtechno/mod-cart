@@ -31,7 +31,6 @@ class HistoricalBehavior extends Behavior
     const EVENT_PRODUCT_ADDED = 'onProductAdded';
     const EVENT_PRODUCT_QUANTITY_CHANGED = 'onProductQuantityChanged';
     const EVENT_PRODUCT_DELETED = 'onProductDeleted';
-    const EVENT_ORDER_STATUS_CHANGED = 'onOrderStatusChanged';
 
     public function events()
     {
@@ -39,57 +38,13 @@ class HistoricalBehavior extends Behavior
             ActiveRecord::EVENT_AFTER_FIND => 'afterFind',
             ActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
             ActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
+            ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
             self::EVENT_PRODUCT_ADDED => [$this, 'onProductAdded'],
             self::EVENT_PRODUCT_QUANTITY_CHANGED => [$this, 'onProductQuantityChanged'],
             self::EVENT_PRODUCT_DELETED => [$this, 'onProductDeleted'],
-            self::EVENT_ORDER_STATUS_CHANGED => [$this, 'onOrderStatusChanged'],
         ];
     }
 
-    public function onOrderStatusChanged($event)
-    {
-
-        $changedList = array_diff_assoc($event->sender['attributes'], $event->sender['oldAttributes']);
-
-        $oldList = [];
-        $newList = [];
-        if ($changedList) {
-            foreach ($changedList as $key => $value) {
-                $value = $event->sender['oldAttributes'][$key];
-                if ($key == 'status_id') {
-                    $modelStatus = OrderStatus::findOne($value);
-                    $value = Html::tag('span', $modelStatus->name, ['class' => 'badge', 'style' => 'background:' . $modelStatus->color]);
-                } elseif ($key == 'delivery_id') {
-                    $model = Delivery::findOne($value);
-                    $value =  $model->name;
-                } elseif ($key == 'payment_id') {
-                    $model = Payment::findOne($value);
-                    $value =  $model->name;
-                }
-
-                $oldList[$key] = $value;
-            }
-
-            foreach ($changedList as $key => $val) {
-                $value = $val;
-                if ($key == 'status_id') {
-                    $value = $this->owner->getGridStatus();
-                } elseif ($key == 'delivery_id') {
-                    $value = $this->owner->deliveryMethod->name;
-                } elseif ($key == 'payment_id') {
-                    $value = $this->owner->paymentMethod->name;
-                }
-                $newList[$key] = $value;
-            }
-
-
-            $this->log([
-                'handler' => self::ATTRIBUTES_HANDLER,
-                'data_before' => serialize($oldList),
-                'data_after' => serialize($newList),
-            ]);
-        }
-    }
 
     /**
      * @param $event
@@ -171,9 +126,9 @@ class HistoricalBehavior extends Behavior
         if (!$old || $old->isNewRecord)
             return;
 
-        $changed = array();
-        $old_data = array();
-        $new_data = array();
+        $changed = [];
+        $old_data = [];
+        $new_data = [];
 
         foreach ($this->getTrackAttributes() as $attr) {
             if ($old->{$attr} != $new->{$attr}) {
@@ -242,10 +197,14 @@ class HistoricalBehavior extends Behavior
             $model = Delivery::findOne($id);
             if ($model)
                 $val = $model->name;
+        } elseif ('payment_id' === $key) {
+            $model = Payment::findOne($id);
+            if ($model)
+                $val = $model->name;
         } elseif ('status_id' === $key) {
             $model = OrderStatus::findOne($id);
             if ($model)
-                $val = $model->name;
+                $val = Html::tag('span', $model->name, ['class' => 'badge', 'style' => 'background:' . $model->color]);;
         }
 
         return $val;
@@ -258,6 +217,7 @@ class HistoricalBehavior extends Behavior
     {
         return array(
             'delivery_id',
+            'payment_id',
             'status_id',
             'paid',
             'user_name',
@@ -265,7 +225,6 @@ class HistoricalBehavior extends Behavior
             'user_address',
             'user_phone',
             'user_comment',
-            'admin_comment',
             'admin_comment',
             'discount',
         );

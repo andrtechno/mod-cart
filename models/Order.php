@@ -133,16 +133,6 @@ class Order extends ActiveRecord
     public function beforeSave($insert)
     {
 
-
-        $event = new ModelEvent([
-            'sender' => [
-                'model'=>$this,
-                'oldAttributes' => $this->oldAttributes,
-                'attributes' => $this->attributes
-            ]
-        ]);
-        $this->eventOrderStatusChanged($event);
-
         if ($this->isNewRecord) {
             $this->secret_key = $this->createSecretKey();
             $this->ip_create = Yii::$app->request->getUserIP();
