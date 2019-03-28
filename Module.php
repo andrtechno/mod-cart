@@ -16,7 +16,6 @@ class Module extends WebModule implements BootstrapInterface
     {
 
 
-
         if (!(Yii::$app instanceof yii\console\Application)) {
             $count = Order::find()->where(['status_id' => 1])->count();
             $this->count['num'] = $count;
@@ -104,9 +103,7 @@ class Module extends WebModule implements BootstrapInterface
 
     public function getAdminSidebar()
     {
-        $mod = new \panix\engine\bootstrap\Nav;
-        $items = $mod->findMenu($this->id);
-        return $items['items'];
+        return (new \panix\engine\bootstrap\BackendNav)->findMenu($this->id)['items'];
     }
 
 }
