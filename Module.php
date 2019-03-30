@@ -55,7 +55,7 @@ class Module extends WebModule implements BootstrapInterface
             'version' => '1.0',
             'icon' => $this->icon,
             'description' => Yii::t('cart/default', 'MODULE_DESC'),
-            'url' => ['/cart'],
+            'url' => ['/admin/cart'],
         ];
     }
 
@@ -68,32 +68,32 @@ class Module extends WebModule implements BootstrapInterface
                 'items' => [
                     [
                         'label' => Yii::t('cart/default', 'MODULE_NAME'),
-                        'url' => ['/cart'],
+                        'url' => ['/admin/cart'],
                         'icon' => $this->icon,
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'STATUSES'),
-                        "url" => ['/cart/statuses'],
+                        "url" => ['/admin/cart/statuses'],
                         'icon' => 'stats'
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'DELIVERY'),
-                        "url" => ['/cart/delivery'],
+                        "url" => ['/admin/cart/delivery'],
                         'icon' => 'delivery'
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'PAYMENTS'),
-                        "url" => ['/cart/payment'],
+                        "url" => ['/admin/cart/payment'],
                         'icon' => 'creditcard'
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'NOTIFIER'),
-                        "url" => ['/cart/notify'],
+                        "url" => ['/admin/cart/notify'],
                         'icon' => 'envelope'
                     ],
                     [
                         'label' => Yii::t('app', 'SETTINGS'),
-                        "url" => ['/cart/settings'],
+                        "url" => ['/admin/cart/settings'],
                         'icon' => 'settings'
                     ]
                 ],
