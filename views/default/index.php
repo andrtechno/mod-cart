@@ -110,7 +110,7 @@ var orderTotalPrice = '$totalPrice';
                             if (!empty($product['variant_models'])) {
                                 echo Html::beginTag('span', array('class' => 'cartProductOptions'));
                                 foreach ($product['variant_models'] as $variant)
-                                    echo ' - ' . $variant->attribute->title . ': ' . $variant->option->value . '<br/>';
+                                    echo ' - ' . $variant->productAttribute->title . ': ' . $variant->option->value . '<br/>';
                                 echo Html::endTag('span');
                             }
 

@@ -127,10 +127,12 @@ class Cart extends Component
 
 
             // Process variants @todo PANIX need test
+
             if (!empty($item['variants']))
                 $item['variant_models'] = ProductVariant::find()
-                        ->with(array('attribute', 'option'))
-                        ->findAllByPk($item['variants']);
+                        ->joinWith(['productAttribute', 'option'])
+                        ->where([ProductVariant::tableName().'.id'=>$item['variants']])
+                        ->all();
 
             // If product was deleted during user session!.
             if (!$item['model'])
