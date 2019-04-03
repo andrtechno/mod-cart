@@ -10,7 +10,9 @@ class CartAsset extends AssetBundle {
 
     public $js = [
         'cart.js',
-        'number_format.js',
     ];
 
+    public $depends = [
+        'panix\engine\assets\NumberFormatAsset',
+    ];
 }
