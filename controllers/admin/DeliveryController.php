@@ -5,10 +5,11 @@ namespace panix\mod\cart\controllers\admin;
 use Yii;
 use panix\mod\cart\models\search\DeliverySearch;
 use panix\mod\cart\models\Delivery;
+use panix\engine\controllers\AdminController;
 
-class DeliveryController extends \panix\engine\controllers\AdminController {
+class DeliveryController extends AdminController {
 
-    public $icon = 'icon-delivery';
+    public $icon = 'delivery';
 
     public function actions() {
         return [

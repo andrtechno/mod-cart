@@ -5,12 +5,15 @@ namespace panix\mod\cart\controllers\admin;
 use Yii;
 use panix\mod\cart\models\ProductNotifications;
 use panix\mod\cart\models\search\ProductNotificationsSearch;
-
-class NotifyController extends \panix\engine\controllers\AdminController {
+use panix\engine\controllers\AdminController;
+class NotifyController extends AdminController
+{
 
     public $buttons = false;
+    public $icon = 'envelope';
 
-    public function actions() {
+    public function actions()
+    {
         return [
             'delete' => [
                 'class' => 'panix\engine\grid\actions\DeleteAction',
@@ -19,7 +22,8 @@ class NotifyController extends \panix\engine\controllers\AdminController {
         ];
     }
 
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $this->pageName = Yii::t('cart/admin', 'NOTIFIER');
 
         $this->breadcrumbs[] = [
@@ -38,12 +42,13 @@ class NotifyController extends \panix\engine\controllers\AdminController {
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
-                    'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
-    public function actionDelivery() {
+    public function actionDelivery()
+    {
         $this->pageName = Yii::t('app', 'Сегодняшние товары');
 
         /* $this->breadcrumbs = array(
@@ -56,13 +61,14 @@ class NotifyController extends \panix\engine\controllers\AdminController {
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams(), array('today' => true));
 
         return $this->render('delivery', [
-                    'dataProvider' => $dataProvider,
-                    'searchModel' => $searchModel,
-                        ]
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ]
         );
     }
 
-    public function actionDeliverySend() {
+    public function actionDeliverySend()
+    {
         Yii::app()->request->enableCsrfValidation = false;
         $model = new ShopProduct('search');
         $data = $model->search(array('today' => true))->getData();
@@ -71,7 +77,6 @@ class NotifyController extends \panix\engine\controllers\AdminController {
         $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
         $tdStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
         $currency = Yii::app()->currency->active->symbol;
-
 
 
         $tables = '<table border="0" width="600px" cellspacing="1" cellpadding="5" style="border-spacing: 0;border-collapse: collapse;">'; //border-collapse:collapse;
@@ -104,7 +109,6 @@ class NotifyController extends \panix\engine\controllers\AdminController {
 ';
 
 
-
         $mailer = Yii::app()->mail;
         $mailer->From = 'noreply@' . $host;
         $mailer->FromName = Yii::app()->settings->get('app', 'site_name');
@@ -131,7 +135,8 @@ class NotifyController extends \panix\engine\controllers\AdminController {
     /**
      * Send emails
      */
-    public function actionSend() {
+    public function actionSend()
+    {
         $lang = Yii::app()->language;
         $record = ProductNotifications::model()->findAllByAttributes(array('product_id' => $_GET['product_id']));
         $siteName = Yii::app()->settings->get('app', 'site_mame');
@@ -142,7 +147,7 @@ class NotifyController extends \panix\engine\controllers\AdminController {
                 continue;
 
             $theme = Yii::t('cart/admin', '{site_name} уведомляет о наличии интересующего Вас продукта', array(
-                        '{site_name}' => $siteName
+                '{site_name}' => $siteName
             ));
             $body = '
 <html>

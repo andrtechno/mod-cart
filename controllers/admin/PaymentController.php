@@ -7,9 +7,11 @@ use panix\mod\cart\models\search\PaymentSearch;
 use panix\mod\cart\models\Payment;
 use panix\mod\cart\components\payment\PaymentSystemManager;
 use panix\engine\Html;
-class PaymentController extends \panix\engine\controllers\AdminController {
+use panix\engine\controllers\AdminController;
 
-    public $icon = 'icon-creditcard';
+class PaymentController extends AdminController {
+
+    public $icon = 'creditcard';
 
     public function actions() {
         return [
