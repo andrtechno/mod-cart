@@ -17,7 +17,7 @@ Yii::import('mod.cart.widgets.buyOneClick.BuyOneClickWidget');
  */
 class BuyOneClickAction extends CAction {
 
-    public $receiverMail = array('notify@corner-cms.com');
+    public $receiverMail = array('notify@pixelion.com.ua');
 
     public function run() {
 
