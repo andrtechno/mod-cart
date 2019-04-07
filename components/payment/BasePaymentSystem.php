@@ -1,23 +1,31 @@
 <?php
+
 namespace panix\mod\cart\components\payment;
 
 use Yii;
 use panix\engine\Html;
-class BasePaymentSystem extends \yii\base\Component {
+
+class BasePaymentSystem extends \yii\base\Component
+{
 
     /**
      * @return string
      */
-    public function renderSubmit() {
-       // return '<input type="submit" class="btn btn-success" value="' . Yii::t('app', 'Оплатить') . '">';
-        return Html::submitButton(Yii::t('app', 'Оплатить'), ['class' => 'btn btn-success']);
+    public function renderSubmit($options = array())
+    {
+        // return '<input type="submit" class="btn btn-success" value="' . Yii::t('app', 'Оплатить') . '">';
+        if (!isset($options['class'])) {
+            $options['class'] = 'btn btn-success';
+        }
+        return Html::submitButton(Yii::t('app', 'Оплатить'), $options);
     }
 
     /**
      * @param $paymentMethodId
      * @param $data
      */
-    public function setSettings($paymentMethodId, $data) {
+    public function setSettings($paymentMethodId, $data)
+    {
         Yii::$app->settings->set($this->getSettingsKey($paymentMethodId), $data);
     }
 
@@ -25,15 +33,17 @@ class BasePaymentSystem extends \yii\base\Component {
      * @param $paymentMethodId
      * @return mixed
      */
-    public function getSettings($paymentMethodId) {
+    public function getSettings($paymentMethodId)
+    {
         return Yii::$app->settings->get($this->getSettingsKey($paymentMethodId));
     }
 
     /**
      * @param $message string
      */
-    public function log($message){
-        Yii::info($this->getSettingsKey(basename(get_class($this))).': '.$message);
+    public function log($message)
+    {
+        Yii::info($this->getSettingsKey(basename(get_class($this))) . ': ' . $message);
     }
 
 

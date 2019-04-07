@@ -52,7 +52,7 @@ class PaymentController extends AdminController
             [
                 'icon' => 'icon-add',
                 'label' => Yii::t('cart/admin', 'CREATE_PAYMENT'),
-                'url' => ['create'],
+                'url' => ['/admin/cart/payment/create'],
                 'options' => ['class' => 'btn btn-success']
             ]
         ];
@@ -84,7 +84,7 @@ class PaymentController extends AdminController
             [
                 'icon' => 'icon-add',
                 'label' => Yii::t('cart/admin', 'CREATE_PAYMENT'),
-                'url' => ['create'],
+                'url' => ['/admin/cart/payment/create'],
                 'options' => ['class' => 'btn btn-success']
             ]
         ];

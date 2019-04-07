@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system>
+    <!-- Current directory name -->
+    <id>liqpay</id>
+    <!-- Name to display in admin panel-->
+    <name>LiqPay</name>
+    <!-- Main class -->
+    <class>LiqPayPaymentSystem</class>
+    <version>1.0</version>
+</system>

@@ -26,7 +26,8 @@ use panix\ext\tinymce\TinyMce;
         <?= $form->field($model, 'free_from')->textInput(['maxlength' => 255]) ?>
         <?=
         $form->field($model, 'payment_methods')->dropDownList(ArrayHelper::map(Payment::find()->all(), 'id', 'name'), [
-            'prompt' => '-- payment --'
+            'prompt' => '-- payment --',
+            'multiple'=>true
         ]);
         ?>
         <div id="payment_configuration"></div>

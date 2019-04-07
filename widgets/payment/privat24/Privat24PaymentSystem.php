@@ -130,7 +130,7 @@ class Privat24PaymentSystem extends BasePaymentSystem
                 <input type="hidden" name="ext_details" value="{ORDER_TITLE}" />
                 <input type="hidden" name="pay_way" value="privat24" />
                 <input type="hidden" name="return_url" value="{return_url}" />
-                <input type="hidden" name="server_url" value="{RESULT_URL}" />
+                <input type="hidden" name="server_url" value="{server_url}" />
                 {SUBMIT}
             </form>';
 
@@ -145,7 +145,7 @@ class Privat24PaymentSystem extends BasePaymentSystem
             '{MERCHANT_ID}' => $settings->merchant_id,
             '{ORDER}' => CMS::gen(5) . '_' . $order->id, //CMS::gen(5) . '_'.
             '{return_url}' => Url::toRoute(['/cart/payment/process', 'payment_id' => $method->id], true),
-            '{RESULT_URL}' => Url::toRoute(['/cart/payment/process', 'payment_id' => $method->id, 'result' => true], true),
+            '{server_url}' => Url::toRoute(['/cart/payment/process', 'payment_id' => $method->id, 'result' => true], true),
             '{SUBMIT}' => $this->renderSubmit(),
         ));
 

@@ -11,6 +11,22 @@ use panix\engine\bootstrap\Alert;
         <h1><?= $this->context->pageName; ?></h1>
         <?php
         $config = Yii::$app->settings->get('shop');
+
+
+        $liqpay = new \panix\mod\cart\widgets\payment\liqpay\LiqPay('i61699065543', 'ztgu6RktfUWoSCxEDuoBsOlbm762LQScuQ01c0BI');
+        $html = $liqpay->cnb_form(array(
+            'action'         => 'pay',
+            'amount'         => '1',
+            'currency'       => 'USD',
+            'description'    => 'description text',
+            'order_id'       => \panix\engine\CMS::gen(5),
+            'version'        => '3',
+            'sandbox' => '1', //1 test mode
+            'server_url' => Url::toRoute(['/cart/payment/process', 'payment_id' => 4, 'result' => true], true),
+            'result_url' => Url::toRoute(['/cart/payment/process', 'payment_id' => 4], true),
+        ));
+echo $html;
+
         ?>
 
         <div class="table-responsive">

@@ -84,14 +84,13 @@ class Delivery extends \panix\engine\db\ActiveRecord {
         // Clear payment relations
         DeliveryPayment::deleteAll(['delivery_id' => $this->id]);
 
-      //  foreach ($this->getPayment_methods() as $pid) {
-        if($this->getPayment_methods()){
+       foreach ($this->getPayment_methods() as $pid) {
+      //  if($this->getPayment_methods()){
             $model = new DeliveryPayment;
             $model->delivery_id = $this->id;
-            $model->payment_id = $this->getPayment_methods();
+            $model->payment_id = $pid;
             $model->save(false);
         }
-       // }
 
         return parent::afterSave($insert, $changedAttributes);
     }
