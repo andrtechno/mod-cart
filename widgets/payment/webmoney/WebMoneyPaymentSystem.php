@@ -25,9 +25,9 @@ class WebMoneyPaymentSystem extends BasePaymentSystem {
      * @return boolean|Order
      */
     public function processPaymentRequest(PaymentMethod $method) {
-        $request = Yii::app()->request;
+        $request = Yii::$app->request;
         $settings = $this->getSettings($method->id);
-        $order = Order::model()->findByPk(Yii::app()->request->getParam('LMI_PAYMENT_NO'));
+        $order = Order::model()->findByPk(Yii::$app->request->getParam('LMI_PAYMENT_NO'));
 
         if ($order === false)
             return false;
@@ -77,7 +77,7 @@ class WebMoneyPaymentSystem extends BasePaymentSystem {
             return false;
 
         // Check amount.
-        if (Yii::app()->currency->convert($order->full_price, $method->currency_id) != $forHash['LMI_PAYMENT_AMOUNT'])
+        if (Yii::$app->currency->convert($order->full_price, $method->currency_id) != $forHash['LMI_PAYMENT_AMOUNT'])
             return false;
 
         // Check payer and shop WM accounts first letter.
@@ -124,14 +124,14 @@ class WebMoneyPaymentSystem extends BasePaymentSystem {
         $settings = $this->getSettings($method->id);
 
         $html = strtr($html, array(
-            '{PAYMENT_AMOUNT}' => Yii::app()->currency->convert($order->full_price, $method->currency_id),
+            '{PAYMENT_AMOUNT}' => Yii::$app->currency->convert($order->full_price, $method->currency_id),
             '{PAYMENT_NO}' => $order->id,
             '{PAYMENT_DESC}' => Yii::t('CartModule.default', "PAYMENT_ORDER",array('{id}'=>$order->id)),
             '{PAYEE_PURSE}' => $settings['LMI_PAYEE_PURSE'],
             '{SIM_MODE}' => '0',
-            '{SUCCESS_URL}' => Yii::app()->createAbsoluteUrl('/shop/payment/process', array('payment_id' => $method->id)),
-            '{RESULT_URL}' => Yii::app()->createAbsoluteUrl('/shop/payment/process', array('payment_id' => $method->id, 'result' => true)),
-            '{FAIL_URL}' => Yii::app()->createAbsoluteUrl('/shop/payment/process', array('payment_id' => $method->id, 'fail' => true)),
+            '{SUCCESS_URL}' => Yii::$app->createAbsoluteUrl('/shop/payment/process', array('payment_id' => $method->id)),
+            '{RESULT_URL}' => Yii::$app->createAbsoluteUrl('/shop/payment/process', array('payment_id' => $method->id, 'result' => true)),
+            '{FAIL_URL}' => Yii::$app->createAbsoluteUrl('/shop/payment/process', array('payment_id' => $method->id, 'fail' => true)),
             '{SUBMIT}' => $this->renderSubmit(),
                 ));
 

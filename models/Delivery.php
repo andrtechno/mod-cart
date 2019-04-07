@@ -30,7 +30,7 @@ class Delivery extends \panix\engine\db\ActiveRecord {
     }
 
     public function getPaymentMethods() {
-        return $this->hasMany(Payment::class, ['payment_id' => 'id'])->via('categorization');
+        return $this->hasMany(Payment::class, ['id' => 'payment_id'])->via('categorization');
     }
 
     /**
@@ -84,12 +84,14 @@ class Delivery extends \panix\engine\db\ActiveRecord {
         // Clear payment relations
         DeliveryPayment::deleteAll(['delivery_id' => $this->id]);
 
-        foreach ($this->payment_methods as $pid) {
+      //  foreach ($this->getPayment_methods() as $pid) {
+        if($this->getPayment_methods()){
             $model = new DeliveryPayment;
             $model->delivery_id = $this->id;
-            $model->payment_id = $pid;
+            $model->payment_id = $this->getPayment_methods();
             $model->save(false);
         }
+       // }
 
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -104,13 +106,18 @@ class Delivery extends \panix\engine\db\ActiveRecord {
     /**
      * @return array
      */
-    public function getPayment_methods() {
+    public function getPayment_methods()
+    {
+
+
         if ($this->_payment_methods)
             return $this->_payment_methods;
 
-        $this->_payment_methods = array();
+        $this->_payment_methods = [];
         foreach ($this->categorization as $row)
             $this->_payment_methods[] = $row->payment_id;
+
+
         return $this->_payment_methods;
     }
 
@@ -118,7 +125,7 @@ class Delivery extends \panix\engine\db\ActiveRecord {
      * @return string order used delivery method
      */
     public function countOrders() {
-        return Order::find()->where(array('delivery_id' => $this->id))->count();
+        return Order::find()->where(['delivery_id' => $this->id])->count();
     }
 
 }

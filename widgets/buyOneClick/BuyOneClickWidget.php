@@ -39,7 +39,7 @@ class BuyOneClickWidget extends \panix\engine\data\Widget {
     }
 
     protected function registerClientScript() {
-        $cs = Yii::app()->clientScript;
+        $cs = Yii::$app->clientScript;
         if (is_dir($this->assetsPath)) {
             $cs->registerScriptFile($this->assetsUrl . '/js/buyOneClick.js', CClientScript::POS_END);
         } else {

@@ -8,6 +8,7 @@ return [
     'ERROR_PRODUCT_NO_FIND' => 'Ошибка. Продукт не найден.',
     'BUY' => 'Купить',
     'IN_CART' => 'корзину',
+    'PAYMENT_ORDER' => 'Оплата заказа №{id}',
     'VIEW_ORDER' => 'Просмотр заказа №{id}',
     'ERROR_ORDER_NO_FIND' => 'Ошибка. Заказ не найден.',
     'TOTAL_PAY' => 'Всего к оплате',

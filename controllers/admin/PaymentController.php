@@ -9,11 +9,13 @@ use panix\mod\cart\components\payment\PaymentSystemManager;
 use panix\engine\Html;
 use panix\engine\controllers\AdminController;
 
-class PaymentController extends AdminController {
+class PaymentController extends AdminController
+{
 
     public $icon = 'creditcard';
 
-    public function actions() {
+    public function actions()
+    {
         return [
             'sortable' => [
                 'class' => \panix\engine\grid\sortable\Action::class,
@@ -43,7 +45,8 @@ class PaymentController extends AdminController {
       }
      */
 
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $this->pageName = Yii::t('cart/admin', 'PAYMENTS');
         $this->buttons = [
             [
@@ -63,12 +66,13 @@ class PaymentController extends AdminController {
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
-                    'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
-    public function actionUpdate($id = false) {
+    public function actionUpdate($id = false)
+    {
         if ($id === true) {
             $model = new Payment();
         } else {
@@ -103,11 +107,12 @@ class PaymentController extends AdminController {
         if ($model->load($post) && $model->validate()) {
             $model->save();
 
-            /*    if ($model->payment_system) {
-              $manager = new PaymentSystemManager;
-              $system = $manager->getSystemClass($model->payment_system);
-              $system->saveAdminSettings($model->id, $_POST);
-              } */
+            if ($model->payment_system) {
+                $manager = new PaymentSystemManager;
+                $system = $manager->getSystemClass($model->payment_system);
+                $system->saveAdminSettings($model->id, $_POST);
+               // print_r($system);die;
+            }
 
             Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
             if ($model->isNewRecord) {
@@ -122,19 +127,21 @@ class PaymentController extends AdminController {
         ]);
     }
 
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = new Payment();
         if (($model = $model::findOne($id)) !== null) {
             return $model;
         } else {
-            throw new \yii\web\NotFoundHttpException('The requested page does not exist.');
+            $this->error404('The requested page does not exist.');
         }
     }
 
     /**
      * Renders payment system configuration form
      */
-    public function actionRenderConfigurationForm() {
+    public function actionRenderConfigurationForm()
+    {
 
         $systemId = Yii::$app->request->get('system');
         $paymentMethodId = Yii::$app->request->get('payment_method_id');
@@ -143,14 +150,16 @@ class PaymentController extends AdminController {
         $manager = new PaymentSystemManager;
         $system = $manager->getSystemClass($systemId);
 
-        echo $system->getConfigurationFormHtml($paymentMethodId);
+        // print_r($system->getConfigurationFormHtml($paymentMethodId));
+        return $this->renderPartial('@cart/widgets/payment/' . $systemId . '/_form', ['model' => $system->getConfigurationFormHtml($paymentMethodId)]);
     }
 
     /**
      * Дополнительное меню Контроллера.
      * @return array
      */
-    public function getAddonsMenu() {
+    public function getAddonsMenu()
+    {
         return array(
             array(
                 'label' => Yii::t('cart/admin', 'STATUSES'),

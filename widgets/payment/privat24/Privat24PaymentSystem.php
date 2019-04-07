@@ -2,116 +2,124 @@
 
 namespace panix\mod\cart\widgets\payment\privat24;
 
-use panix\mod\cart\widgets\payment\privat24\Privat24ConfigurationModel;
-use panix\mod\cart\models\PaymentMethod;
+use Yii;
+use panix\engine\CMS;
+use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\components\payment\BasePaymentSystem;
+use yii\helpers\Url;
+
 /**
  * Privat24 payment system
  */
-class Privat24PaymentSystem extends BasePaymentSystem {
+class Privat24PaymentSystem extends BasePaymentSystem
+{
 
     /**
      * This method will be triggered after redirection from payment system site.
      * If payment accepted method must return Order model to make redirection to order view.
-     * @param ShopPaymentMethod $method
+     * @param Payment $method
      * @return boolean|Order
      */
-    public function processPaymentRequest(PaymentMethod $method) {
-        $request = Yii::app()->request;
+    public function processPaymentRequest(Payment $method)
+    {
+
+        $request = Yii::$app->request;
         $log = '';
-        $log.=' Transaction ID: ' . $payments['ref'].'; ';
-        $log.=' Transaction datatime: ' . $payments['date'].'; ';
-        $log.=' UserID: ' . (Yii::app()->user->isGuest) ? 0 : Yii::app()->user->id.'; ';
-        $log.=' IP: ' . $request->userHostAddress.'; ';
+        // $log.=' Transaction ID: ' . $payments['ref'].'; ';
+        // $log .= ' Transaction datatime: ' . $payments['date'] . '; ';
+        // $log .= ' UserID: ' . (Yii::$app->user->isGuest) ? 0 : Yii::$app->user->id . '; ';
+        //  $log .= ' IP: ' . $request->userHostAddress . '; ';
         //$log.=' User-agent: ' . $request->userAgent.';';
-        self::log($log);
-        die;
-        
-
-        if (isset($_POST['payment'])) {
-            parse_str($request->getPost('payment'), $payments);
-        }
-
-        $order_id = substr($payments['order'], 5);
+        // self::log($log);
+        // die;
         $settings = $this->getSettings($method->id);
-        $order = Order::model()->findByPk($order_id);
+        $MERCHANT_ID = $settings->merchant_id;
+        $MERCHANT_PASS = $settings->merchant_pass;
 
-        // if ($order === false)
-        //     return false;
-        // For first WebMoney pre-request
-        //if (!isset($_POST['signature']) && isset($_GET['result']))
-        //     die('YES');
-
-        $MERCHANT_ID = $settings['MERCHANT_ID'];
-        $MERCHANT_PASS = $settings['MERCHANT_PASS'];
+        if ($request->post('payment')) {
+            parse_str($request->post('payment'), $payments);
 
 
-        // Grab WM variables from post.
-        // Variables to create signature.
-        /* $forHash = array(
-          'amt' => '',
-          'ccy' => '',
-          'details' => '',
-          'ext_details' => '',
-          'pay_way' => '',
-          'order' => '',
-          'merchant'=>$MERCHANT_ID
-          ); */
-        //parse_str(Yii::app()->request->getPost('payment'), $forHash);
-        // foreach ($forHash as $key => $val) {
-        //     if ($request->getParam($key))
-        //         $forHash[$key] = $request->getParam($key);
-        // }
-        // Check if order is paid.
-        if ($order->paid) {
-            Yii::log('Order is paid', 'info', 'payment privat24');
+            list($gen, $order_id) = explode('_', $payments['order']);
+
+
+            $order = Order::findOne((int)$order_id);
+
+
+            if ($order === false)
+                return false;
+
+            // Grab WM variables from post.
+            // Variables to create signature.
+            /* $forHash = array(
+              'amt' => '',
+              'ccy' => '',
+              'details' => '',
+              'ext_details' => '',
+              'pay_way' => '',
+              'order' => '',
+              'merchant'=>$MERCHANT_ID
+              ); */
+
+
+            // foreach ($forHash as $key => $val) {
+            //     if ($request->getParam($key))
+            //         $forHash[$key] = $request->getParam($key);
+            // }
+            // Check if order is paid.
+            if ($order->paid) {
+                // Yii::info('Order is paid');
+                $this->log('Order is paid');
+                return false;
+            }
+
+
+            if (Yii::$app->currency->active->iso != $payments['ccy']) {
+                $this->log('Currency error');
+                return false;
+            }
+
+
+            if (!$request->get('payment_id')) {
+                $this->log('No find post param "payment"');
+                return false;
+            }
+
+            // Create and check signature.
+            $sign = sha1(md5($request->post('payment') . $MERCHANT_PASS));
+
+            // If ok make order paid.
+            if ($sign != $request->post('signature')) {
+                $this->log('signature error');
+
+                return false;
+            }
+
+
+            // Set order paid
+            $order->paid = 1;
+            $order->save(false);
+            if ($order->paid)
+                Yii::$app->session->setFlash('success', 'Заказ успешно оплачен');
+            $log = '';
+            //$log .= 'PayID: ' . $payments['ref'];
+            //$log .= 'Datatime: ' . $payments['date'];
+            //$log .= 'UserID: ' . (Yii::$app->user->isGuest) ? 0 : Yii::$app->user->id;
+            //$log .= 'IP: ' . $request->userHostAddress;
+            // $log .= 'User-agent: ' . $request->userAgent;
+
+
+        } else {
+            $this->log('no find pay');
             return false;
         }
-
-        // unset($forHash['state'],$forHash['payCountry'],$forHash['ref'],$forHash['date']);
-        //parse_str(Yii::app()->request->getPost('payment'), $test);
-//print_r($forHash);
-        // Check amount.
-        if (Yii::app()->currency->active->iso != $payments['ccy']) {
-            Yii::log('Currency error', 'info', 'payment privat24');
-            return false;
-        }
-
-
-
-        if (!$request->getParam('payment')) {
-            Yii::log('No find post param "payment"', 'info', 'payment privat24');
-            return false;
-        }
-
-        // Create and check signature.
-        $sign = sha1(md5($request->getParam('payment') . $MERCHANT_PASS));
-
-        // If ok make order paid.
-        if ($sign != $request->getParam('signature')) {
-            Yii::log('signature error', 'info', 'payment privat24');
-            return false;
-        }
-
-
-        // Set order paid
-        $order->paid = 1;
-        $order->save(false);
-
-        $log = '';
-        $log.='PayID: ' . $payments['ref'];
-        $log.='Datatime: ' . $payments['date'];
-        $log.='UserID: ' . (Yii::app()->user->isGuest) ? 0 : Yii::app()->user->id;
-        $log.='IP: ' . $request->userHostAddress;
-        $log.='User-agent: ' . $request->userAgent;
-        $this->log($log);
-
 
         return $order;
     }
 
-    public function renderPaymentForm(ShopPaymentMethod $method, Order $order) {
+    public function renderPaymentForm(Payment $method, Order $order)
+    {
         $html = '
             <form action="https://api.privatbank.ua/p24api/ishop" method="POST" accept-charset="UTF-8">
                 <input type="hidden" name="amt" value="{AMOUNT}"/>
@@ -119,26 +127,27 @@ class Privat24PaymentSystem extends BasePaymentSystem {
                 <input type="hidden" name="merchant" value="{MERCHANT_ID}" />
                 <input type="hidden" name="order" value="{ORDER}" />
                 <input type="hidden" name="details" value="{ORDER_TITLE}" />
-                <input type="hidden" name="ext_details" value="{ORDER_ID}" />
+                <input type="hidden" name="ext_details" value="{ORDER_TITLE}" />
                 <input type="hidden" name="pay_way" value="privat24" />
-                <input type="hidden" name="return_url" value="{SUCCESS_URL}" />
+                <input type="hidden" name="return_url" value="{return_url}" />
                 <input type="hidden" name="server_url" value="{RESULT_URL}" />
                 {SUBMIT}
             </form>';
 
+
         $settings = $this->getSettings($method->id);
-        
+
         $html = strtr($html, array(
             // '{AMOUNT}' => 1,
-            '{AMOUNT}' => Yii::app()->currency->convert($order->full_price,$method->currency_id), //, $method->currency_id
+            '{AMOUNT}' => Yii::$app->currency->convert($order->full_price, $method->currency_id), //, $method->currency_id
             '{ORDER_ID}' => $order->id,
-            '{ORDER_TITLE}' => Yii::t('CartModule.default', 'PAYMENT_ORDER', array('{id}' => $order->id)),
-            '{MERCHANT_ID}' => $settings['MERCHANT_ID'],
-            '{ORDER}' => CMS::gen(5) . $order->id,
-            '{SUCCESS_URL}' => Yii::app()->createAbsoluteUrl('/cart/payment/process', array('payment_id' => $method->id)),
-            '{RESULT_URL}' => Yii::app()->createAbsoluteUrl('/cart/payment/process', array('payment_id' => $method->id, 'result' => true)),
+            '{ORDER_TITLE}' => Yii::t('cart/default', 'PAYMENT_ORDER', ['id' => $order->id]),
+            '{MERCHANT_ID}' => $settings->merchant_id,
+            '{ORDER}' => CMS::gen(5) . '_' . $order->id, //CMS::gen(5) . '_'.
+            '{return_url}' => Url::toRoute(['/cart/payment/process', 'payment_id' => $method->id], true),
+            '{RESULT_URL}' => Url::toRoute(['/cart/payment/process', 'payment_id' => $method->id, 'result' => true], true),
             '{SUBMIT}' => $this->renderSubmit(),
-                ));
+        ));
 
         return ($order->paid) ? false : $html;
     }
@@ -148,7 +157,8 @@ class Privat24PaymentSystem extends BasePaymentSystem {
      * @param $paymentMethodId
      * @param $postData
      */
-    public function saveAdminSettings($paymentMethodId, $postData) {
+    public function saveAdminSettings($paymentMethodId, $postData)
+    {
         $this->setSettings($paymentMethodId, $postData['Privat24ConfigurationModel']);
     }
 
@@ -156,20 +166,22 @@ class Privat24PaymentSystem extends BasePaymentSystem {
      * @param $paymentMethodId
      * @return string
      */
-    public function getSettingsKey($paymentMethodId) {
+    public function getSettingsKey($paymentMethodId)
+    {
         return $paymentMethodId . '_Privat24PaymentSystem';
     }
 
     /**
      * Get configuration form to display in admin panel
-     * @param string $paymentMethodId
-     * @return CForm
+     * @param $paymentMethodId
+     * @return Privat24ConfigurationModel
      */
-    public function getConfigurationFormHtml($paymentMethodId) {
+    public function getConfigurationFormHtml($paymentMethodId)
+    {
         $model = new Privat24ConfigurationModel;
-        $model->attributes = $this->getSettings($paymentMethodId);
-        $form = new BasePaymentForm($model->getForm(), $model);
-        return $form;
+        $model->load([basename(get_class($model)) => (array)$this->getSettings($paymentMethodId)]);
+
+        return $model;
     }
 
 }

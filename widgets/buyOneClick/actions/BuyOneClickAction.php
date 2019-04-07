@@ -21,9 +21,9 @@ class BuyOneClickAction extends CAction {
 
     public function run() {
 
-        $quantity = Yii::app()->request->getParam('quantity');
-        if (Yii::app()->request->isAjax) {
-            $productModel = Product::model()->findByPk(Yii::app()->request->getParam('id'));
+        $quantity = Yii::$app->request->getParam('quantity');
+        if (Yii::$app->request->isAjax) {
+            $productModel = Product::model()->findByPk(Yii::$app->request->getParam('id'));
             if (!$productModel) {
                 throw new CHttpException(404);
             }
@@ -55,9 +55,9 @@ class BuyOneClickAction extends CAction {
         Yii::import('mod.cart.models.OrderProduct');
         $order = new Order();
 
-        $user = Yii::app()->user;
+        $user = Yii::$app->user;
         // Set main data
-        $order->user_id = Yii::app()->user->isGuest ? null : Yii::app()->user->id;
+        $order->user_id = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
         $order->user_name = $user->getUsername();
         $order->user_email = $user->email;
         $order->user_phone = $model->phone;
@@ -117,8 +117,8 @@ class BuyOneClickAction extends CAction {
      * @param ByOnClickForm $model
      */
     private function sendMessage($model, $productModel) {
-        $currency = Yii::app()->currency->active->symbol;
-        $request = Yii::app()->request;
+        $currency = Yii::$app->currency->active->symbol;
+        $request = Yii::$app->request;
 
 
 
@@ -132,7 +132,7 @@ class BuyOneClickAction extends CAction {
         $params['quantity'] = $model->quantity;
         $params['phone'] = $model->phone;
         $params['name'] = $productModel->name;
-        $params['image'] = Yii::app()->controller->createAbsoluteUrl($productModel->getMainImageUrl('50x50'));
+        $params['image'] = Yii::$app->controller->createAbsoluteUrl($productModel->getMainImageUrl('50x50'));
         $params['url'] = $productModel->getAbsoluteUrl();
         $params['price'] = $productModel->priceRange();
         $params['currency'] = $currency;
@@ -147,14 +147,14 @@ class BuyOneClickAction extends CAction {
             $params['appliedDiscount'] = false;
         }
 
-        $config = Yii::app()->settings->get('app');
-        $mailer = Yii::app()->mail;
+        $config = Yii::$app->settings->get('app');
+        $mailer = Yii::$app->mail;
         $mailer->From = 'noreply@' . $request->serverName;
         $mailer->FromName = $config['site_name'];
         $mailer->Subject = Yii::t('BuyOneClickWidget.default', 'MAIL_SUBJECT');
-        $mailer->Body = Yii::app()->etpl->template_path($params, Yii::getPathOfAlias('mod.cart.widgets.buyOneClick.views') . DS . '_email_template.tpl');
+        $mailer->Body = Yii::$app->etpl->template_path($params, Yii::getPathOfAlias('mod.cart.widgets.buyOneClick.views') . DS . '_email_template.tpl');
 
-        $configCart = Yii::app()->settings->get('cart');
+        $configCart = Yii::$app->settings->get('cart');
         $this->receiverMail = explode(',', $configCart['order_emails']);
 
         foreach ($this->receiverMail as $mail) {

@@ -3,17 +3,16 @@
 
 namespace panix\mod\cart\assets\admin;
 
-use yii\web\AssetBundle;
+use panix\engine\web\AssetBundle;
 
 
 class OrderAsset extends AssetBundle {
 
-    public $sourcePath = '@cart/assets/admin';
-    public $jsOptions = array(
-        'position' => \yii\web\View::POS_END
-    );
+    public $sourcePath = __DIR__;
     public $js = [
          'js/orders.update.js',
     ];
-
+    public $depends = [
+        'yii\web\JqueryAsset',
+    ];
 }

@@ -44,9 +44,9 @@ class QiwiPaymentSystem extends BasePaymentSystem {
             }
         }
 
-        if (Yii::app()->request->getQuery('redirect'))
-            Yii::app()->request->redirect(Yii::app()->request->getQuery('redirect'));
-        Yii::app()->request->redirect('/');
+        if (Yii::$app->request->getQuery('redirect'))
+            Yii::$app->request->redirect(Yii::$app->request->getQuery('redirect'));
+        Yii::$app->request->redirect('/');
     }
 
     /**

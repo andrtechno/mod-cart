@@ -1,6 +1,6 @@
 <?php
 if ($sended) {
-    Yii::app()->tpl->alert('success', Yii::t('BuyOneClickWidget.default', 'SUCCESS'));
+    Yii::$app->tpl->alert('success', Yii::t('BuyOneClickWidget.default', 'SUCCESS'));
     ?>
     <script>$(function () {
             $('.ui-dialog-buttonpane').remove();
@@ -31,12 +31,12 @@ if ($sended) {
                 <div class="product-price">
                     <span class="price price-md">
                         <?= $productModel->priceRange() ?>
-                        <sub><?= Yii::app()->currency->active->symbol ?></sub>
+                        <sub><?= Yii::$app->currency->active->symbol ?></sub>
                     </span>
                     <?php
-                    if (Yii::app()->hasModule('discounts') && isset($productModel->appliedDiscount)) {
+                    if (Yii::$app->hasModule('discounts') && isset($productModel->appliedDiscount)) {
                         ?>
-                        <span class="price price-xs price-discount"><?= $productModel->toCurrentCurrency('originalPrice') ?> <sub><?= Yii::app()->currency->active->symbol ?></sub></span>
+                        <span class="price price-xs price-discount"><?= $productModel->toCurrentCurrency('originalPrice') ?> <sub><?= Yii::$app->currency->active->symbol ?></sub></span>
                         <?php
                     }
                     ?>
@@ -45,7 +45,7 @@ if ($sended) {
                 <br/>
                 Количество: <b><?= $quantity; ?></b>
                 <?php
-                Yii::app()->controller->renderPartial('cart.widgets.buyOneClick.views._configurations', array('productModel' => $productModel));
+                Yii::$app->controller->renderPartial('cart.widgets.buyOneClick.views._configurations', array('productModel' => $productModel));
                 ?>
             </td>
         </tr>
@@ -74,9 +74,9 @@ $form = $this->beginWidget('CActiveForm', array(
 echo $form->hiddenField($model, 'quantity', array('value' => $quantity));
 
 if ($model->hasErrors())
-//Yii::app()->tpl->alert('danger', $form->error($model, 'phone'));
+//Yii::$app->tpl->alert('danger', $form->error($model, 'phone'));
     if ($sended)
-        Yii::app()->tpl->alert('success', Yii::t('BuyOneClickWidget.default', 'SUCCESS'));
+        Yii::$app->tpl->alert('success', Yii::t('BuyOneClickWidget.default', 'SUCCESS'));
 ?>
 
 

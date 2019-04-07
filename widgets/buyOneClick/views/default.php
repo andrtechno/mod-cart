@@ -68,7 +68,7 @@ use panix\engine\Html;
     'cache' => 'false' // если нужно можно закэшировать
         ), array(
 
-    // 'href' => Yii::app()->createUrl('ajax/new_link222'), // подменяет ссылку на другую
+    // 'href' => Yii::$app->createUrl('ajax/new_link222'), // подменяет ссылку на другую
     'class' => "buyOneClick-button btn btn-default" // добавляем какой-нить класс для оформления
         )
 );*/

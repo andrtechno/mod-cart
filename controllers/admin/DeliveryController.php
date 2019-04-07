@@ -102,6 +102,13 @@ class DeliveryController extends AdminController {
 
         if ($model->load($post) && $model->validate()) {
             $model->save();
+
+           /* if ($model->delivery_system) {
+                $manager = new DeliverySystemManager;
+                $system = $manager->getSystemClass($model->delivery_system);
+                $system->saveAdminSettings($model->id, $_POST);
+            }*/
+
             Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
             if ($model->isNewRecord) {
                 return Yii::$app->getResponse()->redirect(['/admin/cart/delivery']);
@@ -120,8 +127,8 @@ class DeliveryController extends AdminController {
      * @param array $id
      */
     public function actionDelete($id = array()) {
-        if (Yii::app()->request->isPostRequest) {
-            $model = Delivery::model()->findAllByPk($_REQUEST['id']);
+        if (Yii::$app->request->isPostRequest) {
+            $model = Delivery::find()->findAllByPk($_REQUEST['id']);
 
             if (!empty($model)) {
                 foreach ($model as $m) {
@@ -132,7 +139,7 @@ class DeliveryController extends AdminController {
                 }
             }
 
-            if (!Yii::app()->request->isAjaxRequest)
+            if (!Yii::$app->request->isAjaxRequest)
                 $this->redirect('index');
         }
     }

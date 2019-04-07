@@ -20,7 +20,7 @@
     }
 
     // Register variant prices script
-    Yii::app()->clientScript->registerScript('jsVariantsData', '
+    Yii::$app->clientScript->registerScript('jsVariantsData', '
 			var jsVariantsData = ' . CJavaScript::jsonEncode($jsVariantsData) . ';
 		', CClientScript::POS_END);
 
@@ -30,7 +30,7 @@
         $confData = $this->getConfigurableData();
 
         // Register configuration script
-        Yii::app()->clientScript->registerScript('productPrices', strtr('
+        Yii::$app->clientScript->registerScript('productPrices', strtr('
 							var productPrices = {prices};
 						', array(
                     '{prices}' => CJavaScript::encode($confData['prices'])

@@ -2,7 +2,9 @@
 
 namespace panix\mod\cart\components\payment;
 
-class BasePaymentForm extends \yii\base\Object {
+use yii\base\Model;
+
+class BasePaymentForm extends Model {
 
     public $_config;
 

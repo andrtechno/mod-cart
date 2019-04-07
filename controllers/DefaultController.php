@@ -4,8 +4,6 @@ namespace panix\mod\cart\controllers;
 
 use panix\mod\shop\models\ProductVariant;
 use Yii;
-use yii\helpers\Url;
-use panix\engine\Html;
 use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 use panix\engine\controllers\WebController;
@@ -105,7 +103,7 @@ class DefaultController extends WebController
     public function actionView()
     {
         $secret_key = Yii::$app->request->get('secret_key');
-        $model = Order::find()->where('secret_key=:key', array(':key' => $secret_key))->one();
+        $model = Order::find()->where(['secret_key' => $secret_key])->one();
         if (!$model)
             $this->error404(Yii::t('cart/default', 'ERROR_ORDER_NO_FIND'));
 

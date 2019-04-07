@@ -3,15 +3,17 @@
 
 namespace panix\mod\cart\assets\admin;
 
-use yii\web\AssetBundle;
+use panix\engine\web\AssetBundle;
 
 
 class CartAdminAsset extends AssetBundle {
 
-    public $sourcePath = '@cart/assets/admin';
+    public $sourcePath = __DIR__;
 
     public $js = [
          'js/payment.js',
     ];
-
+    public $depends = [
+        'yii\web\JqueryAsset',
+    ];
 }

@@ -23,7 +23,7 @@ class YandexMoneyPaymentSystem extends BasePaymentSystem {
      */
     public function processPaymentRequest(PaymentMethod $method) {
         $settings = $this->getSettings($method->id);
-        $request = Yii::app()->request;
+        $request = Yii::$app->request;
 
         $hash_params = array(
             'notification_type' => $request->getParam('notification_type'),
@@ -49,7 +49,7 @@ class YandexMoneyPaymentSystem extends BasePaymentSystem {
         if (!$order)
             throw new CHttpException(404, 'Order not found');
 
-        if (Yii::app()->currency->convert($order->full_price, $method->currency_id) < (float) $hash_params['amount'])
+        if (Yii::$app->currency->convert($order->full_price, $method->currency_id) < (float) $hash_params['amount'])
             throw new CHttpException(404, 'Wrong amount');
 
         // Make order paid
@@ -69,7 +69,7 @@ class YandexMoneyPaymentSystem extends BasePaymentSystem {
     public function renderPaymentForm(ShopPaymentMethod $method, Order $order) {
         $settings = $this->getSettings($method->id);
 
-        $sum = Yii::app()->currency->convert($order->full_price, $method->currency_id);
+        $sum = Yii::$app->currency->convert($order->full_price, $method->currency_id);
 
         $html = '<iframe frameborder="0" allowtransparency="true" scrolling="no"
 		src="https://money.yandex.ru/embed/small.xml?uid={uid}&amp;button-text=01&amp;button-size=s&amp;button-color=white&amp;targets={comment}&amp;default-sum={sum}" width="auto" height="31">

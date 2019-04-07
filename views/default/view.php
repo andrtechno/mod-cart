@@ -9,19 +9,6 @@ use panix\engine\bootstrap\Alert;
 
     <div class="col-md-12 col-sm-12">
         <h1><?= $this->context->pageName; ?></h1>
-        <?php if (Yii::$app->session->hasFlash('success')) { ?>
-
-
-            <?php
-            echo Alert::widget([
-                'options' => ['class' => 'alert-success fadeOut-time'],
-                'body' => Yii::$app->session->getFlash('success'),
-            ]);
-            ?>
-
-
-        <?php } ?>
-
         <?php
         $config = Yii::$app->settings->get('shop');
         ?>
@@ -41,7 +28,7 @@ use panix\engine\bootstrap\Alert;
                             <td align="center" style="width:10%">
 
                                 <?php
-                                echo Html::img(Url::to($product->originalProduct->getMainImageUrl('100x')), ['alt' => $product->originalProduct->name]);
+                                echo Html::img(Url::to($product->originalProduct->getMainImage('100x')->url), ['alt' => $product->originalProduct->name]);
                                 ?>
                             </td>
                             <td>
@@ -58,7 +45,7 @@ use panix\engine\bootstrap\Alert;
                             </td>
                             <td align="center">
                                 <?php
-                                if ($config['wholesale']) {
+                                if ($config->wholesale) {
                                     echo Yii::$app->currency->number_format(Yii::$app->currency->convert($product->price * $product->quantity * $product->prd->pcs));
                                 } else {
                                     echo Yii::$app->currency->number_format(Yii::$app->currency->convert($product->price * $product->quantity));
@@ -137,7 +124,7 @@ use panix\engine\bootstrap\Alert;
 
     <div class="col-md-4">
         <div class="panel panel-default">
-            <div class="panel-heading"><?= Yii::t('cart/default', 'Состояние заказа') ?> <span class="label label-success pull-right" style=""><?= $model->status_name ?></span></div>
+            <div class="panel-heading"><?= Yii::t('cart/default', 'Состояние заказа') ?> <span class="label label-success pull-right" style=""><?= $model->statusName ?></span></div>
             <div class="panel-body">
                 <?php if ($model->paid) { ?>
                     <?= Yii::t('cart/Order', 'PAID') ?>: <span class="label label-success"><?= Yii::t('app', 'YES') ?></span>

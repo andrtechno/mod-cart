@@ -50,8 +50,8 @@ class Payment extends \panix\engine\db\ActiveRecord {
         return [
             [['name', 'currency_id'], 'required'],
             [['name'], 'trim'],
-            [['name'], 'string', 'max' => 255],
-            [['id, name, description, switch', 'safe'], 'safe'],
+            [['name','payment_system'], 'string', 'max' => 255],
+            [['id', 'name', 'description', 'switch'], 'safe'],
         ];
     }
 

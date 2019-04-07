@@ -35,7 +35,7 @@ class YandexMoneyConfigurationModel extends \yii\base\Model {
      * @return array
      */
     public function getForm() {
-        $id = Yii::app()->request->getQuery('payment_method_id');
+        $id = Yii::$app->request->getQuery('payment_method_id');
 
         return array(
             'type' => 'form',
@@ -68,7 +68,7 @@ class YandexMoneyConfigurationModel extends \yii\base\Model {
         if ($id === 'undefined')
             return Yii::t('CartModule.payments', 'SUCCESS_TEXT');
 
-        return Yii::app()->createAbsoluteUrl('/orders/payment/process', array('payment_id' => $id));
+        return Yii::$app->createAbsoluteUrl('/orders/payment/process', array('payment_id' => $id));
     }
 
 }

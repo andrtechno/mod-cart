@@ -22,8 +22,8 @@ class TEST extends FormModel {
     public function init() {
         parent::init();
 
-        if (!Yii::app()->user->isGuest)
-            $this->phone = Yii::app()->user->phone;
+        if (!Yii::$app->user->isGuest)
+            $this->phone = Yii::$app->user->phone;
     }
 
     public function rules() {
