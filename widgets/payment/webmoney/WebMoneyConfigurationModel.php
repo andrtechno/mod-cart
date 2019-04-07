@@ -1,6 +1,10 @@
 <?php
 namespace panix\mod\cart\widgets\payment\webmoney;
-class WebMoneyConfigurationModel extends \yii\base\Model {
+
+use Yii;
+use yii\base\Model;
+
+class WebMoneyConfigurationModel extends Model {
 
     public $LMI_PAYEE_PURSE;
     public $LMI_SECRET_KEY;

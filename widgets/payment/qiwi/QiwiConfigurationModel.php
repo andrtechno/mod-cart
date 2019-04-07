@@ -14,9 +14,9 @@ class QiwiConfigurationModel extends \yii\base\Model {
      * @return array
      */
     public function rules() {
-        return array(
-            array('shop_id, password', 'string')
-        );
+        return [
+            [['shop_id', 'password'], 'string']
+        ];
     }
 
     /**

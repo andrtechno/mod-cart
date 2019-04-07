@@ -2,8 +2,10 @@
 
 namespace panix\mod\cart\widgets\payment\robokassa;
 
+use panix\engine\Html;
+use Yii;
 use panix\mod\cart\widgets\payment\robokassa\RobokassaConfigurationModel;
-use panix\mod\cart\models\PaymentMethod;
+use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\components\payment\BasePaymentSystem;
 /**
@@ -19,11 +21,11 @@ class RobokassaPaymentSystem extends BasePaymentSystem {
     /**
      * This method will be triggered after redirection from payment system site.
      * If payment accepted method must return Order model to make redirection to order view.
-     * @param StorePaymentMethod $method
+     * @param Payment $method
      * @return boolean|Order
      */
 
-    public function processPaymentRequest(PaymentMethod $method) {
+    public function processPaymentRequest(Payment $method) {
         $request = Yii::$app->request;
         $settings = $this->getSettings($method->id);
         $order = Order::model()->findByAttributes(array('secret_key' => $request->getParam('Shp_orderKey')));
@@ -61,11 +63,11 @@ class RobokassaPaymentSystem extends BasePaymentSystem {
 
     /**
      * Generate robokassa payment form.
-     * @param StorePaymentMethod $method
+     * @param Payment $method
      * @param Order $order
      * @return string
      */
-    public function renderPaymentForm(StorePaymentMethod $method, Order $order) {
+    public function renderPaymentForm(Payment $method, Order $order) {
         $settings = $this->getSettings($method->id);
 
         // Registration data
@@ -88,21 +90,21 @@ class RobokassaPaymentSystem extends BasePaymentSystem {
         $crc = md5("$mrh_login:$out_sum:$inv_id:$mrh_pass1:Shp_orderKey=$shp_order_key:Shp_pmId=$shp_payment_id");
 
         if ($this->testingMode)
-            $html = CHtml::form('http://test.robokassa.ru/Index.aspx');
+            $html = Html::beginForm('http://test.robokassa.ru/Index.aspx');
         else
-            $html = CHtml::form('https://merchant.roboxchange.com/Index.aspx');
+            $html = Html::beginForm('https://merchant.roboxchange.com/Index.aspx');
 
-        $html .= CHtml::hiddenField('MrchLogin', $mrh_login);
-        $html .= CHtml::hiddenField('OutSum', $out_sum);
-        $html .= CHtml::hiddenField('InvId', $inv_id);
-        $html .= CHtml::hiddenField('Desc', $inv_desc);
-        $html .= CHtml::hiddenField('SignatureValue', $crc);
-        $html .= CHtml::hiddenField('Shp_orderKey', $shp_order_key);
-        $html .= CHtml::hiddenField('Shp_pmId', $shp_payment_id);
-        $html .= CHtml::hiddenField('IncCurrLabel', $in_curr);
-        $html .= CHtml::hiddenField('Culture', $culture);
+        $html .= Html::hiddenField('MrchLogin', $mrh_login);
+        $html .= Html::hiddenField('OutSum', $out_sum);
+        $html .= Html::hiddenField('InvId', $inv_id);
+        $html .= Html::hiddenField('Desc', $inv_desc);
+        $html .= Html::hiddenField('SignatureValue', $crc);
+        $html .= Html::hiddenField('Shp_orderKey', $shp_order_key);
+        $html .= Html::hiddenField('Shp_pmId', $shp_payment_id);
+        $html .= Html::hiddenField('IncCurrLabel', $in_curr);
+        $html .= Html::hiddenField('Culture', $culture);
         $html .= $this->renderSubmit();
-        $html .= CHtml::endForm();
+        $html .= Html::endForm();
 
         return $html;
     }

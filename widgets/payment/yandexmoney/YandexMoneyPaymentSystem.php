@@ -3,9 +3,10 @@ namespace panix\mod\cart\widgets\payment\yandexmoney;
 
 use panix\mod\cart\widgets\payment\yandexmoney\YandexMoneyConfigurationModel;
 use panix\mod\cart\models\Order;
-use panix\mod\cart\models\PaymentMethod;
+use panix\mod\cart\models\Payment;
 use panix\mod\cart\components\payment\BasePaymentSystem;
-
+use yii\web\NotFoundHttpException;
+use Yii;
 /**
  * YandexMoney payment system
  *
@@ -18,10 +19,10 @@ class YandexMoneyPaymentSystem extends BasePaymentSystem {
      * This method will be triggered after redirection from payment system site.
      * If payment accepted method must return Order model to make redirection to order view.
      *
-     * @param ShopPaymentMethod $method
-     * @throws CHttpException
+     * @param Payment $method
+     * @throws NotFoundHttpException
      */
-    public function processPaymentRequest(PaymentMethod $method) {
+    public function processPaymentRequest(Payment $method) {
         $settings = $this->getSettings($method->id);
         $request = Yii::$app->request;
 
@@ -41,16 +42,16 @@ class YandexMoneyPaymentSystem extends BasePaymentSystem {
         $hash = sha1(implode('&', $hash_params));
 
         if ($hash !== $request->getParam('sha1_hash'))
-            throw new CHttpException(404, 'Wrong hash');
+            throw new NotFoundHttpException('Wrong hash');
 
         // Load order
         $order = $this->loadOrder($hash_params['label']);
 
         if (!$order)
-            throw new CHttpException(404, 'Order not found');
+            throw new NotFoundHttpException('Order not found');
 
         if (Yii::$app->currency->convert($order->full_price, $method->currency_id) < (float) $hash_params['amount'])
-            throw new CHttpException(404, 'Wrong amount');
+            throw new NotFoundHttpException('Wrong amount');
 
         // Make order paid
         $order->paid = true;
@@ -62,11 +63,11 @@ class YandexMoneyPaymentSystem extends BasePaymentSystem {
     /**
      * Generate payment form.
      *
-     * @param ShopPaymentMethod $method
+     * @param Payment $method
      * @param Order $order
      * @return string
      */
-    public function renderPaymentForm(ShopPaymentMethod $method, Order $order) {
+    public function renderPaymentForm(Payment $method, Order $order) {
         $settings = $this->getSettings($method->id);
 
         $sum = Yii::$app->currency->convert($order->full_price, $method->currency_id);
@@ -129,7 +130,7 @@ class YandexMoneyPaymentSystem extends BasePaymentSystem {
         if (!isset($m[1]))
             return false;
 
-        return Order::model()->findByPk((int) $m[1]);
+        return Order::findOne((int) $m[1]);
     }
 
 }

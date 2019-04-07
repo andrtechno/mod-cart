@@ -1,6 +1,10 @@
 <?php
 namespace panix\mod\cart\widgets\payment\yandexmoney;
-class YandexMoneyConfigurationModel extends \yii\base\Model {
+
+use Yii;
+use yii\base\Model;
+
+class YandexMoneyConfigurationModel extends Model {
 
     /**
      * @var integer YandexMoney account number
@@ -16,9 +20,9 @@ class YandexMoneyConfigurationModel extends \yii\base\Model {
      * @return array
      */
     public function rules() {
-        return array(
-            array('uid, password', 'type', 'type' => 'string')
-        );
+        return [
+            [['uid', 'password'], 'type', 'string']
+        ];
     }
 
     /**

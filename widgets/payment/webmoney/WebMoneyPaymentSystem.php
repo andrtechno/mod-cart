@@ -1,9 +1,10 @@
 <?php
 namespace panix\mod\cart\widgets\payment\webmoney;
 
+use Yii;
 use panix\mod\cart\widgets\payment\webmoney\WebMoneyConfigurationModel;
 use panix\mod\cart\models\Order;
-use panix\mod\cart\models\PaymentMethod;
+use panix\mod\cart\models\Payment;
 use panix\mod\cart\components\payment\BasePaymentSystem;
 
 /**
@@ -21,13 +22,13 @@ class WebMoneyPaymentSystem extends BasePaymentSystem {
     /**
      * This method will be triggered after redirection from payment system site.
      * If payment accepted method must return Order model to make redirection to order view.
-     * @param ShopPaymentMethod $method
+     * @param Payment $method
      * @return boolean|Order
      */
-    public function processPaymentRequest(PaymentMethod $method) {
+    public function processPaymentRequest(Payment $method) {
         $request = Yii::$app->request;
         $settings = $this->getSettings($method->id);
-        $order = Order::model()->findByPk(Yii::$app->request->getParam('LMI_PAYMENT_NO'));
+        $order = Order::findOne(Yii::$app->request->getParam('LMI_PAYMENT_NO'));
 
         if ($order === false)
             return false;
@@ -108,7 +109,7 @@ class WebMoneyPaymentSystem extends BasePaymentSystem {
         return $order;
     }
 
-    public function renderPaymentForm(ShopPaymentMethod $method, Order $order) {
+    public function renderPaymentForm(Payment $method, Order $order) {
         $html = '
 		<form method="POST" action="https://merchant.webmoney.ru/lmi/payment.asp" accept-charset="windows-1251">
 			<input type="hidden" name="LMI_PAYMENT_AMOUNT" value="{PAYMENT_AMOUNT}">

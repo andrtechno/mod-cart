@@ -2,9 +2,10 @@
 
 namespace panix\mod\cart\widgets\payment\liqpay;
 
+use panix\engine\base\Model;
 use Yii;
 
-class LiqPayConfigurationModel extends \yii\base\Model
+class LiqPayConfigurationModel extends Model
 {
 
     public $public_key;
@@ -22,7 +23,7 @@ class LiqPayConfigurationModel extends \yii\base\Model
     public function attributeLabels()
     {
         return [
-            'public_key' => Yii::t('cart/payments', 'PRIVAT24_MERCHANT_ID'),
+            'public_key' => Yii::t('cart/widgets/payment/liqpay/LiqPayConfigurationModel', 'test'),
             'private_key' => Yii::t('cart/payments', 'PRIVAT24_MERCHANT_PASS'),
         ];
     }

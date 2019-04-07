@@ -2,39 +2,44 @@
 
 namespace panix\mod\cart\widgets\payment\qiwi;
 
-use panix\mod\cart\widgets\payment\qiwi\QiwiConfigurationModel;
+use panix\engine\CMS;
+use panix\engine\Html;
+use Yii;
 use panix\mod\cart\models\Order;
-use panix\mod\cart\models\PaymentMethod;
+use panix\mod\cart\models\Payment;
 use panix\mod\cart\components\payment\BasePaymentSystem;
+
 /**
  * Qiwi payment system
  */
-class QiwiPaymentSystem extends BasePaymentSystem {
+class QiwiPaymentSystem extends BasePaymentSystem
+{
 
     /**
      * This method will be triggered after redirection from payment system site.
      * If payment accepted method must return Order model to make redirection to order view.
-     * @param ShopPaymentMethod $method
+     * @param Payment $method
      * @return boolean|Order
      */
-    public function processPaymentRequest(PaymentMethod $method) {
+    public function processPaymentRequest(Payment $method)
+    {
         $settings = $this->getSettings($method->id);
 
         $cr = new CDbCriteria;
         $cr->order = 'created DESC';
         $orders = Order::model()->findAllByAttributes(array(
             'paid' => 0,
-                ));
+        ));
         $orders = $this->prepareOrders($orders);
 
         $xmlResponse = $this->requestStatuses($orders, $settings);
 
         foreach ($xmlResponse->{'bills-list'}->{'bill'} as $bill) {
-            if ((int) $bill->attributes()->{'status'} === 60) {
-                $orderId = (string) $bill->attributes()->{'status'};
+            if ((int)$bill->attributes()->{'status'} === 60) {
+                $orderId = (string)$bill->attributes()->{'status'};
 
                 if (isset($orders[$orderId])) {
-                    $order = Order::model()->findByPk($orderId);
+                    $order = Order::findOne($orderId);
 
                     if ($order) {
                         $order->paid = true;
@@ -51,26 +56,46 @@ class QiwiPaymentSystem extends BasePaymentSystem {
 
     /**
      * Generate qiwi payment form.
-     * @param ShopPaymentMethod $method
+     * @param Payment $method
      * @param Order $order
      * @return string
      */
-    public function renderPaymentForm(PaymentMethod $method, Order $order) {
+    public function renderPaymentForm(Payment $method, Order $order)
+    {
         $settings = $this->getSettings($method->id);
 
         $summ = Yii::$app->currency->convert($order->full_price, $method->currency_id);
 
+
+        $qiwi = new Qiwi('380682937379', $settings->password);
+
+       /* $sendMoney = $qiwi->sendMoneyToQiwi([
+            'id' => 'time() + 10 * 6',
+            'sum' => [
+                'amount'   => 1,
+                'currency' => '643'
+            ],
+            'paymentMethod' => [
+                'type' => 'Account',
+                'accountId' => '643'
+            ],
+            'comment' => 'Тестовый платеж',
+            'fields' => [
+                'account' => '+380682937379'
+            ]
+        ]);*/
+
         $html = '<div class="form">';
-        $html .= CHtml::form('https://w.qiwi.ru/setInetBill_utf.do', 'get');
-        $html .= CHtml::hiddenField('from', $settings['shop_id']);
-        $html .= CHtml::hiddenField('summ', $summ);
-        $html .= CHtml::hiddenField('com', $this->getPaymentComment($order));
-        $html .= CHtml::hiddenField('txn_id', $order->id);
+        $html .= Html::beginForm('https://w.qiwi.ru/setInetBill_utf.do', 'get');
+        $html .= Html::hiddenInput('from', $settings->shop_id);
+        $html .= Html::hiddenInput('summ', $summ);
+        $html .= Html::hiddenInput('com', $this->getPaymentComment($order));
+        $html .= Html::hiddenInput('txn_id', $order->id);
         $html .= '<div id="qiwi_phone_number">Номер телефона:<br/>';
-        $html .= CHtml::textField('to', $order->user_phone);
+        $html .= Html::textInput('to', $order->user_phone);
         $html .= '</div>';
         $html .= $this->renderSubmit();
-        $html .= CHtml::endForm();
+        $html .= Html::endForm();
         $html .= '</div>';
 
         return $html;
@@ -81,7 +106,8 @@ class QiwiPaymentSystem extends BasePaymentSystem {
      * @param $paymentMethodId
      * @param $postData
      */
-    public function saveAdminSettings($paymentMethodId, $postData) {
+    public function saveAdminSettings($paymentMethodId, $postData)
+    {
         $this->setSettings($paymentMethodId, $postData['QiwiConfigurationModel']);
     }
 
@@ -89,29 +115,29 @@ class QiwiPaymentSystem extends BasePaymentSystem {
      * @param $paymentMethodId
      * @return string
      */
-    public function getSettingsKey($paymentMethodId) {
+    public function getSettingsKey($paymentMethodId)
+    {
         return $paymentMethodId . '_QiwiPaymentSystem';
     }
 
     /**
      * Get configuration form to display in admin panel
      * @param string $paymentMethodId
-     * @return CForm
+     * @return QiwiConfigurationModel
      */
-    public function getConfigurationFormHtml($paymentMethodId) {
+    public function getConfigurationFormHtml($paymentMethodId)
+    {
         $model = new QiwiConfigurationModel();
-        //var_dump($this->getSettings($paymentMethodId));die;
-       // $model->attributes = $this->getSettings($paymentMethodId);
-        $model->load($this->getSettings($paymentMethodId));
-        $form = new \panix\mod\cart\components\payment\BasePaymentForm($model->getForm(), $model);
-        return $form;
+        $model->load([basename(get_class($model)) => (array)$this->getSettings($paymentMethodId)]);
+        return $model;
 
     }
 
     /**
      * Create bill comment contains list of products
      */
-    private function getPaymentComment($order) {
+    private function getPaymentComment($order)
+    {
         $result = array();
 
         foreach ($order->products as $product)
@@ -120,7 +146,8 @@ class QiwiPaymentSystem extends BasePaymentSystem {
         return implode(', ', $result);
     }
 
-    public function requestStatuses($orders, $settings) {
+    public function requestStatuses($orders, $settings)
+    {
         $xmlRequest = '<?xml version="1.0" encoding="utf-8"?><request>';
         $xmlRequest .= '<protocol-version>4.00</protocol-version>';
         $xmlRequest .= '<request-type>33</request-type>';
@@ -149,7 +176,8 @@ class QiwiPaymentSystem extends BasePaymentSystem {
         return simplexml_load_string($result);
     }
 
-    public function prepareOrders($orders) {
+    public function prepareOrders($orders)
+    {
         $result = array();
         foreach ($orders as $order)
             $result[$order->id] = $order;

@@ -1,6 +1,12 @@
 <?php
+
 namespace panix\mod\cart\widgets\payment\robokassa;
-class RobokassaConfigurationModel extends \yii\base\Model {
+
+use Yii;
+use yii\base\Model;
+
+class RobokassaConfigurationModel extends Model
+{
 
     public $login;
     public $password1;
@@ -9,7 +15,8 @@ class RobokassaConfigurationModel extends \yii\base\Model {
     /**
      * @return array
      */
-    public function rules() {
+    public function rules()
+    {
         return array(
             array('login, password1, password2 ', 'type')
         );
@@ -18,7 +25,8 @@ class RobokassaConfigurationModel extends \yii\base\Model {
     /**
      * @return array
      */
-    public function attributeNames() {
+    public function attributeNames()
+    {
         return array(
             'login' => Yii::t('CartModule.payments', 'ROBOKASSA_LOGIN'),
             'password1' => Yii::t('CartModule.payments', 'ROBOKASSA_PWD1'),
@@ -29,7 +37,8 @@ class RobokassaConfigurationModel extends \yii\base\Model {
     /**
      * @return array
      */
-    public function getForm() {
+    public function getForm()
+    {
         return array(
             'type' => 'form',
             'elements' => array(
@@ -45,7 +54,7 @@ class RobokassaConfigurationModel extends \yii\base\Model {
                     'label' => Yii::t('CartModule.payments', 'ROBOKASSA_PWD2'),
                     'type' => 'text',
                 ),
-                ));
+            ));
     }
 
 }

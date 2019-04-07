@@ -22,23 +22,22 @@ class PaymentController extends WebController
 
     public function actionProcess()
     {
-
         $payment_id = (int) Yii::$app->request->get('payment_id');
         $model = Payment::findOne($payment_id);
 
         if (!$model)
             $this->error404('Ошибка');
 
+
+
         $system = $model->getPaymentSystemClass();
-
-
 
         if ($system instanceof BasePaymentSystem) {
             $response = $system->processPaymentRequest($model);
             if ($response instanceof Order)
                 return $this->redirect($response->getUrl());
             else
-                $this->error404(Yii::t('cart/default', 'Возникла ошибка при обработке запроса. <br> {err}', ['err' => $response]));
+                $this->error404(Yii::t('cart/default', 'Возникла ошибка при обработке запроса. <br/> {err}', ['err' => $response]));
         }
     }
 

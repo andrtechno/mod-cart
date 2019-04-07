@@ -8,7 +8,9 @@ use panix\engine\CMS;
 use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\components\payment\BasePaymentSystem;
+use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\web\NotFoundHttpException;
 
 /**
  * Class LiqPayPaymentSystem
@@ -32,17 +34,19 @@ class LiqPayPaymentSystem extends BasePaymentSystem
 
 
         if ($request->post('data')) {
-            parse_str($request->post('data'), $payments);
+
+            $data = Json::decode(base64_decode($request->post('data')));
 
 
-            list($gen, $order_id) = explode('_', $payments['order']);
+            list($gen, $order_id) = explode('_', $data['order_id']);
 
 
             $order = Order::findOne((int)$order_id);
 
 
-            if ($order === false)
-                return false;
+            if ($order === false) {
+                throw new NotFoundHttpException('Order not found');
+            }
 
 
             // foreach ($forHash as $key => $val) {
@@ -53,29 +57,28 @@ class LiqPayPaymentSystem extends BasePaymentSystem
             if ($order->paid) {
                 // Yii::info('Order is paid');
                 $this->log('Order is paid');
-                return false;
+                throw new NotFoundHttpException('Order is paid');
             }
 
 
-            if (Yii::$app->currency->active->iso != $payments['ccy']) {
-                $this->log('Currency error');
-                return false;
-            }
+            // if (Yii::$app->currency->active->iso != $payments['ccy']) {
+            //      $this->log('Currency error');
+            //     return false;
+            //  }
 
 
-            if (!$request->get('payment_id')) {
-                $this->log('No find post param "payment"');
-                return false;
-            }
+            // if (!$request->get('payment_id')) {
+            ////     $this->log('No find post param "payment"');
+            //     return false;
+            // }
 
             // Create and check signature.
-            $sign = base64_encode(sha1($settings->private_key . $request->post('data') . $settings->private_key,1));
+            $sign = base64_encode(sha1($settings->private_key . $request->post('data') . $settings->private_key, 1));
 
             // If ok make order paid.
             if ($sign !== $request->post('signature')) {
                 $this->log('signature error');
-
-                return false;
+                throw new NotFoundHttpException('signature error');
             }
 
 
@@ -84,18 +87,13 @@ class LiqPayPaymentSystem extends BasePaymentSystem
             $order->save(false);
             if ($order->paid)
                 Yii::$app->session->setFlash('success', 'Заказ успешно оплачен');
-            $log = '';
-            //$log .= 'PayID: ' . $payments['ref'];
-            //$log .= 'Datatime: ' . $payments['date'];
-            //$log .= 'UserID: ' . (Yii::$app->user->isGuest) ? 0 : Yii::$app->user->id;
-            //$log .= 'IP: ' . $request->userHostAddress;
-            // $log .= 'User-agent: ' . $request->userAgent;
 
 
         } else {
-            $this->log('no find pay');
-            return false;
+            $this->log('POST data - Not enabled');
+            throw new NotFoundHttpException('POST data - Not enabled');
         }
+
 
         return $order;
     }
