@@ -165,29 +165,20 @@ var orderTotalPrice = '$totalPrice';
 </div>
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12">
-        <?php
-        if ($this->context->form->hasErrors()) {
-            echo yii\bootstrap4\Alert::widget([
-                'closeButton' => false,
-                'options' => ['class' => 'alert-danger'],
-                'body' => Html::errorSummary($this->context->form)
-            ]);
-        }
-
-
-        // Yii::$app->tpl->alert('info', Yii::t('cart/default', 'ALERT_CART'))
-        //  echo Html::errorSummary($this->form, '', null, array('class' => 'errorSummary alert alert-danger'));
-        ?>
+        <?= Html::errorSummary($this->context->form, ['class' => 'alert alert-danger']) ?>
     </div>
 
 
     <div class="col-lg-4 col-md-4 col-sm-12">
-        <div class="card bg-light">
-            <div class="card-header">
+        <div class="card">
+            <div class="card-header h4">
                 <?= Yii::t('cart/default', 'USER_DATA'); ?>
             </div>
             <div class="card-body">
-                <p class="hint">Поля отмеченные <span class="required">*</span> обязательны для заполнения</p>
+                <div class="text-muted mb-3">
+                    <small>Поля отмеченные <span class="required">*</span> обязательны для заполнения</small>
+                </div>
+
                 <?php echo $this->render('_fields_user', array('form' => $this->context->form)); ?>
             </div>
         </div>
@@ -195,15 +186,22 @@ var orderTotalPrice = '$totalPrice';
 
     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 
-        <div class="card bg-light">
-            <div class="card-header">Оплата / доставка</div>
+        <div class="card">
+            <div class="card-header h4"><?= Yii::t('cart/default', 'PAYMENT'); ?>
+                / <?= Yii::t('cart/default', 'DELIVERY'); ?></div>
             <div class="card-body">
-                <p class="hint">Поля отмеченные <span class="required">*</span> обязательны для заполнения</p>
+                <div class="text-muted mb-3">
+                    <small>Поля отмеченные <span class="required">*</span> обязательны для заполнения</small>
+                </div>
+                <h4 class="text-center2"><?= Yii::t('cart/default', 'DELIVERY'); ?></h4>
                 <?php
                 echo $this->render('_fields_delivery', array(
                         'form' => $this->context->form,
                         'deliveryMethods' => $deliveryMethods)
                 );
+                ?>
+                <h4 class="text-center2"><?= Yii::t('cart/default', 'PAYMENT'); ?></h4>
+                <?php
                 echo $this->render('_fields_payment', array(
                         'form' => $this->context->form,
                         'paymenyMethods' => $paymenyMethods)
@@ -217,26 +215,26 @@ var orderTotalPrice = '$totalPrice';
 
     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 
-        <div class="card bg-light">
-            <div class="card-header">dsadsadsa</div>
+        <div class="card">
+            <div class="card-header h4">dsadsadsa</div>
             <div class="card-body text-center">
                 <div class="mb-4">
-                <h5><?= Yii::t('cart/default', 'Сумма заказа'); ?>:</h5>
+                    <h5><?= Yii::t('cart/default', 'Сумма заказа'); ?>:</h5>
 
-                <span class="price price-lg text-success" id="total">
+                    <span class="price price-lg text-success" id="total">
                     <?= Yii::$app->currency->number_format($totalPrice) ?>
-                    <sub><?php echo Yii::$app->currency->active->symbol; ?></sub>
+                        <sub><?php echo Yii::$app->currency->active->symbol; ?></sub>
                 </span>
                 </div>
 
-                    <h4><?= Yii::t('cart/default', 'PAYMENT'); ?>:</h4>
-                    <div id="payment" style="">---</div>
-                    <h4><?= Yii::t('cart/default', 'DELIVERY'); ?>:</h4>
-                    <div>
-                        <h2 id="delivery" class="badge badge-secondary">---</h2>
-                    </div>
-                    <a href="javascript:submitform();"
-                       class="btn btn-primary btn-lg"><?= Yii::t('cart/default', 'BUTTON_CHECKOUT'); ?></a>
+                <h4><?= Yii::t('cart/default', 'PAYMENT'); ?>:</h4>
+                <div id="payment" style="">---</div>
+                <h4><?= Yii::t('cart/default', 'DELIVERY'); ?>:</h4>
+                <div>
+                    <h2 id="delivery" class="badge badge-secondary">---</h2>
+                </div>
+                <a href="javascript:submitform();"
+                   class="btn btn-primary btn-lg"><?= Yii::t('cart/default', 'BUTTON_CHECKOUT'); ?></a>
 
                 <input type="hidden" name="create" value="1">
             </div>

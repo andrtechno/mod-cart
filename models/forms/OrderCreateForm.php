@@ -5,8 +5,9 @@ namespace panix\mod\cart\models\forms;
 use Yii;
 use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Payment;
+use panix\engine\base\Model;
 
-class OrderCreateForm extends \panix\engine\base\Model {
+class OrderCreateForm extends Model {
 
     protected $category = 'cart';
     protected $module = 'cart';
@@ -35,7 +36,7 @@ class OrderCreateForm extends \panix\engine\base\Model {
     }
     public function rules() {
         return [
-            [['user_name', 'user_email'], 'required'],
+            [['user_name', 'user_email','user_phone','delivery_id','payment_id'], 'required'],
             [['delivery_id','payment_id'], 'required'],
             [['delivery_id','payment_id'], 'integer'],
             ['user_email', 'email'],
