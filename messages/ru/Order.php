@@ -1,5 +1,6 @@
 <?php
 return [
+    'ID' => '№',
     'USER_ID' => 'Пользователь',
     'DELIVERY_ID' => 'Способ доставки',
     'PAYMENT_ID' => 'Способ оплаты',
@@ -18,6 +19,9 @@ return [
     'INVOICE' => 'Номер накладной',
     'IP_CREATE' => 'IP адрес',
     'DISCOUNT' => 'Скидка',
+    'SECRET_KEY' => 'Секретный ключ',
+    'USER_AGENT' => 'User-агент',
+    'BUYONECLICK' => 'Купить в один клик',
     'ERROR_STATUS' => 'Ошибка проверки статуса.',
     'ERROR_PAYMENT' => 'Необходимо выбрать способ оплаты.',
     'ERROR_DELIVERY' => 'Необходимо выбрать способ доставки.'

@@ -2,7 +2,7 @@
 
 namespace panix\mod\cart\controllers;
 
-use panix\mod\shop\models\ProductVariant;
+
 use Yii;
 use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
@@ -13,6 +13,8 @@ use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\Product;
+use panix\mod\cart\models\search\OrderSearch;
+use panix\mod\shop\models\ProductVariant;
 
 class DefaultController extends WebController
 {
@@ -369,4 +371,24 @@ class DefaultController extends WebController
             ->send();
     }
 
+    /**
+     * Display user orders
+     */
+    public function actionOrders()
+    {
+        if(!Yii::$app->user->isGuest){
+            $searchModel = new OrderSearch();
+
+            //Yii::$app->request->getQueryParams()
+            $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+            $dataProvider->query->andWhere(['user_id'=>Yii::$app->user->id]);
+            $this->pageName = Yii::t('cart/default', 'MY_ORDERS');
+            return $this->render('user_orders', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ]);
+        }else{
+            $this->error404();
+        }
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 return [
+    'MY_ORDERS' => 'Мои заказы',
     'MODULE_NAME' => 'Корзина',
     'CART_EMPTY' => 'Корзина пуста',
     'WP_COUNT' => 'Новых заказов ({num})',
@@ -16,9 +17,9 @@ return [
     'USER_DATA' => 'Личные данные',
     'TABLE_NUM' => 'Количество',
     'TABLE_SUM' => 'Итого (грн)',
-    'PAYMENT'=>'Оплата',
+    'PAYMENT' => 'Оплата',
     'COST' => 'Стоимость',
-    'DELIVERY'=>'Доставка',
+    'DELIVERY' => 'Доставка',
     'MAIL_TABLE_TH_PRODUCT' => 'Товар',
     'MAIL_TABLE_TH_QUANTITY' => 'Кол.',
     'MAIL_TABLE_TH_PRICE_FOR' => 'Цена за шт.',
