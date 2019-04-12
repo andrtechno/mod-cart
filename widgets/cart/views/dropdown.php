@@ -2,6 +2,8 @@
 use yii\helpers\Html;
 use panix\mod\shop\models\Product;
 
+/** @var $currency \panix\mod\shop\components\CurrencyManager */
+/** @var $items[] \panix\mod\shop\models\Product */
 ?>
 <div class="cart">
 
@@ -10,19 +12,11 @@ use panix\mod\shop\models\Product;
         <div class="dropdown">
             <div class="cart-info dropdown-toggle" id="cart-items" data-toggle="dropdown" aria-haspopup="true"
                  aria-expanded="true">
-                <span class="count"><?= $count ?></span>
-                <span><?= $total; ?></span>
+                <span class="count"><strong><?= $count ?></strong> товара / </span>
+                <span><strong><?= $total; ?></strong></span>
                 <small><?= $currency->symbol; ?></small>
             </div>
-            <div class="dropdown-menu dropdown-menu-right">
-
-                <ul class="list-group">
-                    <li class="list-group-item">Cras justo odio</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>
-                    <li class="list-group-item">Morbi leo risus</li>
-                    <li class="list-group-item">Porta ac consectetur ac</li>
-                    <li class="list-group-item">Vestibulum at eros</li>
-                </ul>
+            <div class="dropdown-menu dropdown-menu-right2">
                 <?php
                 foreach ($items as $product) {
 
