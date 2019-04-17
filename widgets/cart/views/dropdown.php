@@ -14,7 +14,7 @@ use panix\mod\shop\models\Product;
                  aria-expanded="true">
                 <span class="count"><strong><?= $count ?></strong> товара / </span>
                 <span><strong><?= $total; ?></strong></span>
-                <small><?= $currency->symbol; ?></small>
+                <?= $currency->symbol; ?>
             </div>
             <div class="dropdown-menu dropdown-menu-right2">
                 <?php
