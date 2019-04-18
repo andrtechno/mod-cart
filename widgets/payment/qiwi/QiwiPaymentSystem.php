@@ -50,8 +50,8 @@ class QiwiPaymentSystem extends BasePaymentSystem
         }
 
         if (Yii::$app->request->getQuery('redirect'))
-            Yii::$app->request->redirect(Yii::$app->request->getQuery('redirect'));
-        Yii::$app->request->redirect('/');
+            return Yii::$app->request->redirect(Yii::$app->request->getQuery('redirect'));
+        return Yii::$app->request->redirect('/');
     }
 
     /**
@@ -85,18 +85,18 @@ class QiwiPaymentSystem extends BasePaymentSystem
             ]
         ]);*/
 
-        $html = '<div class="form">';
-        $html .= Html::beginForm('https://w.qiwi.ru/setInetBill_utf.do', 'get');
+
+        $html = Html::beginForm('https://w.qiwi.ru/setInetBill_utf.do', 'get');
         $html .= Html::hiddenInput('from', $settings->shop_id);
         $html .= Html::hiddenInput('summ', $summ);
         $html .= Html::hiddenInput('com', $this->getPaymentComment($order));
         $html .= Html::hiddenInput('txn_id', $order->id);
         $html .= '<div id="qiwi_phone_number">Номер телефона:<br/>';
-        $html .= Html::textInput('to', $order->user_phone);
+        $html .= Html::textInput('to', $order->user_phone,['class'=>'form-control']);
         $html .= '</div>';
         $html .= $this->renderSubmit();
         $html .= Html::endForm();
-        $html .= '</div>';
+
 
         return $html;
     }

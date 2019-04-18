@@ -6,6 +6,7 @@ namespace panix\mod\cart\controllers;
 use Yii;
 use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
+use yii\web\HttpException;
 use panix\engine\controllers\WebController;
 use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\models\Delivery;
@@ -62,9 +63,9 @@ class DefaultController extends WebController
             if ($this->form->load($post) && $this->form->validate()) {
                 $this->form->registerGuest();
                 $order = $this->createOrder();
-                //Yii::$app->cart->clear();
-                // Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
-                //return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+                Yii::$app->cart->clear();
+                Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                return $this->redirect(['view', 'secret_key' => $order->secret_key]);
             }
         }
 
@@ -212,7 +213,7 @@ class DefaultController extends WebController
     /**
      * Create new order
      * @return Order|boolean
-     * @throws yii\web\HttpException
+     * @throws HttpException
      */
     public function createOrder()
     {
@@ -234,7 +235,8 @@ class DefaultController extends WebController
         if ($order->validate()) {
             $order->save();
         } else {
-            throw new yii\web\HttpException(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
+            print_r($order->getErrors());die;
+            throw new HttpException(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
         }
 
         // Process products
@@ -340,7 +342,7 @@ class DefaultController extends WebController
         echo Json::encode(array(
             'errors' => $this->_errors,
             'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
-                'cart' => \yii\helpers\BaseHtml::a(Yii::t('cart/default', 'IN_CART'), '/cart'),
+                'cart' => \yii\helpers\Html::a(Yii::t('cart/default', 'IN_CART'), '/cart'),
                 'product_name' => $product
             ]),
         ));

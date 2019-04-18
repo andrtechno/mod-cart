@@ -1,5 +1,6 @@
 <?php
 return [
+    'COST_DELIVERY' => 'Стоимость доставки',
     'MY_ORDERS' => 'Мои заказы',
     'MODULE_NAME' => 'Корзина',
     'CART_EMPTY' => 'Корзина пуста',
