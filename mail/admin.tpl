@@ -38,12 +38,12 @@
         <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">
 
 
-       {Html::img($product->originalProduct->getMainImage('100x',true)->url, ['alt' => $product->originalProduct->name,'title' => $product->originalProduct->name])}
+       {Html::img($product->originalProduct->getMainImage('100x',true)->url, ['alt' => $product->name,'title' => $product->name])}
         </td>
         <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Html::a($product->originalProduct->name, Url::toRoute($product->originalProduct->getUrl(), true), ['target' => '_blank'])}</td>
         <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">{$product->quantity}</td>
-        <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center"><strong>{$app->currency->convert($product->originalProduct->price)}</strong> <sup>{$app->currency->active->symbol}</sup></td>
-        <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center"><strong>{$app->currency->convert($product->originalProduct->price * $product->quantity)}</strong> <sup>{$app->currency->active->symbol}</sup></td>
+        <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center"><strong>{$app->currency->convert($product->price)}</strong> <sup>{$app->currency->active->symbol}</sup></td>
+        <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center"><strong>{$app->currency->convert($product->price * $product->quantity)}</strong> <sup>{$app->currency->active->symbol}</sup></td>
     </tr>
 {/foreach}
 </table>

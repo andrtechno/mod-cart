@@ -55,7 +55,7 @@ $formOrder = ActiveForm::begin([
     'id' => 'cart-form',
     'options' => ['class' => 'form-horizontal'],
 ]) ?>
-?>
+
 <?php //echo Html::beginForm(['/cart'], 'post', array('id' => 'cart-form', 'name' => 'cartform')) ?>
 <div class="row">
     <?php

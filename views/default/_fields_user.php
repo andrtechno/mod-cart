@@ -23,7 +23,7 @@ use panix\engine\widgets\inputmask\InputMask;
 
 
 <div class="form-group">
-    <?= $form->field($model, 'user_address')->textarea(); ?>
+    <?= $form->field($model, 'user_comment')->textarea(); ?>
 </div>
 
 

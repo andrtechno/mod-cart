@@ -3,6 +3,7 @@
 namespace panix\mod\cart\controllers;
 
 
+use panix\mod\shop\models\Attribute;
 use Yii;
 use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
@@ -268,6 +269,36 @@ class DefaultController extends WebController
             $ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
             // }
 
+
+
+            if (isset($item['configurable_model']) && $item['configurable_model'] instanceof Product) {
+                $configurable_data = [];
+
+                $ordered_product->configurable_name = $item['configurable_model']->name;
+                // Use configurable product sku
+                $ordered_product->sku = $item['configurable_model']->sku;
+                // Save configurable data
+
+                $attributeModels = Attribute::find()
+                    ->where(['id'=>$item['model']->configurable_attributes])->all();
+                    //->findAllByPk($item['model']->configurable_attributes);
+                foreach ($attributeModels as $attribute) {
+                    $method = 'eav_' . $attribute->name;
+                    $configurable_data[$attribute->title] = $item['configurable_model']->$method;
+                }
+                $ordered_product->configurable_data = serialize($configurable_data);
+            }
+
+            // Save selected variants as key/value array
+            if (!empty($item['variant_models'])) {
+                $variants = [];
+                foreach ($item['variant_models'] as $variant)
+                    $variants[$variant->productAttribute->title] = $variant->option->value;
+                $ordered_product->variants = serialize($variants);
+            }
+
+
+
             $ordered_product->save();
             $productsCount++;
         }
@@ -372,12 +403,12 @@ class DefaultController extends WebController
             //->setBcc(Yii::$app->settings->get('app','email')) //hidden copy
             // ->setHtmlBody($this->renderPartial('@cart/mail/admin.tpl', ['order' => $order, 'test' => '1111']))
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
-            ->attach(Yii::getAlias('@uploads') . '/example-ru.pptx')
+            //->attach(Yii::getAlias('@uploads') . '/example-ru.pptx')
             // create attachment on-the-fly
-            ->attachContent('Посетите', [
+            /*->attachContent('Посетите', [
                 'fileName' => 'test.txt',
                 'contentType' => 'text/plain'
-            ])
+            ])*/
             ->send();
     }
 
