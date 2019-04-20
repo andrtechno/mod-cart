@@ -1,19 +1,27 @@
 <?php
 
 use panix\engine\Html;
+
+/**
+ * @var $form \yii\widgets\ActiveForm
+ * @var $model \panix\mod\cart\models\forms\OrderCreateForm
+ * @var $deliveryMethods \panix\mod\cart\models\Delivery
+ */
 ?>
 <?php if ($deliveryMethods) { ?>
-    <div class="form-group">
+    <div class="form-group required ">
 
         <?php
+
+        echo Html::activeLabel($model,'delivery_id');
         //  echo Html::activeRadioList($form, 'delivery_id', \yii\helpers\ArrayHelper::map($deliveryMethods, 'id', 'name'));
         foreach ($deliveryMethods as $delivery) {
             echo '<div>';
 
-            echo Html::activeRadio($form, 'delivery_id', [
+            echo Html::activeRadio($model, 'delivery_id', [
                 'label' => $delivery->name,
                 'uncheck' => false,
-                'checked' => ($form->delivery_id == $delivery->id),
+                'checked' => ($model->delivery_id == $delivery->id),
                 'value' => $delivery->id,
                 'data-price' => Yii::$app->currency->convert($delivery->price),
                 'data-free-from' => Yii::$app->currency->convert($delivery->free_from),
@@ -26,24 +34,37 @@ use panix\engine\Html;
 
             <?php
             if (!empty($delivery->description)) {
-                ?><p><?= $delivery->description ?></p>
+                ?><?= $delivery->description ?>
                 <?php
             }
             ?>
             <?php
             echo '</div>';
         }
+
+       /* echo $form->field($model,'payment_id')->radioList(\yii\helpers\ArrayHelper::map($deliveryMethods,'id','name'),[
+            'item' => function($index, $label, $name, $checked, $value) {
+                $return = '<div><label class="payment_checkbox" data-value="'.Html::encode($label).'">';
+                $return .= '<input type="radio" name="' . $name . '" value="' . $value . '" tabindex="3"> ';
+                $return .= $label;
+                $return .= '</label></div>';
+                return $return;
+            }
+        ]);*/
         ?>
-        <?= Html::error($form, 'delivery_id', ['class' => 'error']); ?>
+
+
+        <?= Html::error($model, 'delivery_id', ['class' => 'help-block']); ?>
+
+        <?= $form->field($model, 'user_address') ?>
+
+        <?php // Html::activeLabel($model, 'user_address', array('required' => true, 'class' => 'col-form-label')); ?>
+        <?php // Html::activeTextInput($model, 'user_address', array('class' => 'form-control')); ?>
+
     </div>
         <?php
     } else {
         echo 'Необходимо добавить способ доставки!';
     }
     ?>
-<div class="form-group">
-<?= Html::activeLabel($form, 'user_address', array('required' => true, 'class' => 'control-label')); ?>
-    <?= Html::activeTextInput($form, 'user_address', array('class' => 'form-control')); ?>
-</div>
-
 

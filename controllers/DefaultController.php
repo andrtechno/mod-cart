@@ -16,6 +16,7 @@ use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\Product;
 use panix\mod\cart\models\search\OrderSearch;
 use panix\mod\shop\models\ProductVariant;
+use yii\web\Response;
 
 class DefaultController extends WebController
 {
@@ -63,9 +64,16 @@ class DefaultController extends WebController
             if ($this->form->load($post) && $this->form->validate()) {
                 $this->form->registerGuest();
                 $order = $this->createOrder();
-                Yii::$app->cart->clear();
-                Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
-                return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+                /*if(Yii::$app->request->isAjax){
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return [
+                        'status' => 'success',
+                        'code' => 200,
+                    ];
+                }*/
+                //Yii::$app->cart->clear();
+                //Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                // return $this->redirect(['view', 'secret_key' => $order->secret_key]);
             }
         }
 
@@ -235,7 +243,8 @@ class DefaultController extends WebController
         if ($order->validate()) {
             $order->save();
         } else {
-            print_r($order->getErrors());die;
+            print_r($order->getErrors());
+            die;
             throw new HttpException(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
         }
 
@@ -349,17 +358,26 @@ class DefaultController extends WebController
         exit;
     }
 
+    /**
+     * @param Order $order
+     */
     private function sendAdminEmail(Order $order)
     {
-        Yii::$app->mailer->htmlLayout = "layouts/admin";
-        Yii::$app->mailer
-            ->compose()
+        $mailer = Yii::$app->mailer;
+        $mailer->htmlLayout = "@common/mail/layouts/admin";
+        $mailer->compose(['html' => '@cart/mail/admin'], ['order' => $order, 'test' => '1111'])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
             //->setCc(Yii::$app->settings->get('app','email')) //copy
             //->setBcc(Yii::$app->settings->get('app','email')) //hidden copy
-            ->setHtmlBody($this->renderPartial('@cart/mail/admin.tpl', ['order' => $order, 'test' => '1111']))
+            // ->setHtmlBody($this->renderPartial('@cart/mail/admin.tpl', ['order' => $order, 'test' => '1111']))
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
+            ->attach(Yii::getAlias('@uploads') . '/example-ru.pptx')
+            // create attachment on-the-fly
+            ->attachContent('Посетите', [
+                'fileName' => 'test.txt',
+                'contentType' => 'text/plain'
+            ])
             ->send();
     }
 
@@ -378,18 +396,18 @@ class DefaultController extends WebController
      */
     public function actionOrders()
     {
-        if(!Yii::$app->user->isGuest){
+        if (!Yii::$app->user->isGuest) {
             $searchModel = new OrderSearch();
 
             //Yii::$app->request->getQueryParams()
             $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-            $dataProvider->query->andWhere(['user_id'=>Yii::$app->user->id]);
+            $dataProvider->query->andWhere(['user_id' => Yii::$app->user->id]);
             $this->pageName = Yii::t('cart/default', 'MY_ORDERS');
             return $this->render('user_orders', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
             ]);
-        }else{
+        } else {
             $this->error404();
         }
     }

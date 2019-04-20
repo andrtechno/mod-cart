@@ -5,8 +5,6 @@ use yii\jui\Spinner;
 use panix\engine\Html;
 use panix\mod\shop\models\Product;
 
-?>
-<?php
 $this->registerJs("
 //cart.selectorTotal = '#total';
 var orderTotalPrice = '$totalPrice';
@@ -35,19 +33,30 @@ var orderTotalPrice = '$totalPrice';
             }
         });
     }
-    function submitform() {
+    /*function submitform() {
         if (document.cartform.onsubmit &&
             !document.cartform.onsubmit()) {
             return;
         }
         document.cartform.submit();
-    }
+    }*/
 
 
-", yii\web\View::POS_END, 'cart');
+", yii\web\View::POS_END);
 ?>
+<?php
+use yii\widgets\ActiveForm;
 
-<?php echo Html::beginForm(['/cart'], 'post', array('id' => 'cart-form', 'name' => 'cartform')) ?>
+$formOrder = ActiveForm::begin([
+    'enableClientValidation' => false,
+
+    'enableAjaxValidation' => true,
+    'action' => ['/cart'],
+    'id' => 'cart-form',
+    'options' => ['class' => 'form-horizontal'],
+]) ?>
+?>
+<?php //echo Html::beginForm(['/cart'], 'post', array('id' => 'cart-form', 'name' => 'cartform')) ?>
 <div class="row">
     <?php
     if (empty($items)) {
@@ -63,10 +72,10 @@ var orderTotalPrice = '$totalPrice';
     ?>
 
 
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 shopping-cart-table">
+    <div class="col-lg-12 col-md-12 col-sm-12 shopping-cart-table">
 
         <div class="table-responsive">
-            <table id="cart-table" class="table table-striped" width="100%" border="0" cellspacing="0" cellpadding="5">
+            <table id="cart-table" class="table table-striped">
                 <thead>
                 <tr>
                     <th></th>
@@ -92,27 +101,23 @@ var orderTotalPrice = '$totalPrice';
 
                         </td>
                         <td>
-                            <?php
-                            // Display product name with its variants and configurations
-                            echo Html::a(Html::encode($product['model']->name), $product['model']->getUrl());
-                            ?>
-                            <br/>
-                            <?php
-                            // Price
+                            <h5><?= Html::a(Html::encode($product['model']->name), $product['model']->getUrl()); ?></h5>
 
-                            echo Html::beginTag('span', array('class' => 'price'));
-                            echo Yii::$app->currency->number_format($price);
-                            echo ' ' . Yii::$app->currency->active->symbol;
-                            //echo ' '.($product['currency_id']) ? Yii::$app->currency->getSymbol($product['currency_id']) : Yii::$app->currency->active->symbol;
-                            echo Html::endTag('span');
-
+                            <?php
                             // Display variant options
                             if (!empty($product['variant_models'])) {
-                                echo Html::beginTag('span', array('class' => 'cartProductOptions'));
+                                echo Html::beginTag('small', array('class' => 'cartProductOptions'));
                                 foreach ($product['variant_models'] as $variant)
-                                    echo ' - ' . $variant->productAttribute->title . ': ' . $variant->option->value . '<br/>';
-                                echo Html::endTag('span');
+                                    echo ' - ' . $variant->productAttribute->title . ': <strong>' . $variant->option->value . '</strong><br/>';
+                                echo Html::endTag('small');
                             }
+                            ?>
+                            <span class="price price-sm  text-warning">
+                                <?= Yii::$app->currency->number_format($price); ?>
+                                <sub><?= Yii::$app->currency->active->symbol; ?></sub>
+                            </span>
+
+                            <?php
 
                             // Display configurable options
                             if (isset($product['configurable_model'])) {
@@ -135,21 +140,27 @@ var orderTotalPrice = '$totalPrice';
                                 'options' => ['product_id' => $index, 'class' => 'cart-spinner']
                             ]);
                             ?>
+                            <?= $product['model']->units[$product['model']->unit]; ?>
                             <?php //echo Html::textInput("quantities[$index]", $product['quantity'], array('class' => 'spinner btn-group form-control', 'product_id' => $index)) ?>
 
                         </td>
-                        <td id="price-<?= $index ?>" class="cart-product-sub-total">
+                        <td id="price-<?= $index ?>" class="text-center">
+
+                            <span class="price text-warning">
+                                <span class="cart-sub-total-price" id="row-total-price<?= $index ?>">
+                                    <?= Yii::$app->currency->number_format($price * $product['quantity']); ?>
+                                </span>
+                                <sub><?= Yii::$app->currency->active->symbol; ?></sub>
+                            </span>
+
+
                             <?php
-                            echo Html::beginTag('span', array('class' => 'cart-sub-total-price', 'id' => 'row-total-price' . $index));
-                            echo Yii::$app->currency->number_format($price * $product['quantity']);
-                            echo Html::endTag('span');
-                            //echo $convertTotalPrice;// echo Yii::$app->currency->number_format(Yii::$app->currency->convert($convertPrice, $product['currency_id']));
-                            echo ' ' . Yii::$app->currency->active->symbol;
+
                             //echo ' '.($product['currency_id'])? Yii::$app->currency->getSymbol($product['currency_id']): Yii::$app->currency->active->symbol;
                             ?>
                         </td>
                         <td width="20px" class="remove-item">
-                            <?= Html::a(Html::icon('delete'), ['/cart/default/remove', 'id' => $index], array('class' => 'remove')) ?>
+                            <?= Html::a(Html::icon('delete'), ['/cart/default/remove', 'id' => $index], ['class' => 'remove']) ?>
                         </td>
                     </tr>
                 <?php } ?>
@@ -171,15 +182,18 @@ var orderTotalPrice = '$totalPrice';
 
     <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="card">
-            <div class="card-header h4">
-                <?= Yii::t('cart/default', 'USER_DATA'); ?>
+            <div class="card-header">
+                <h4><?= Yii::t('cart/default', 'USER_DATA'); ?></h4>
             </div>
             <div class="card-body">
                 <div class="text-muted mb-3">
                     <small>Поля отмеченные <span class="required">*</span> обязательны для заполнения</small>
                 </div>
 
-                <?php echo $this->render('_fields_user', array('form' => $this->context->form)); ?>
+                <?php echo $this->render('_fields_user', [
+                    'model' => $this->context->form,
+                    'form' => $formOrder,
+                ]); ?>
             </div>
         </div>
     </div>
@@ -187,8 +201,8 @@ var orderTotalPrice = '$totalPrice';
     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 
         <div class="card">
-            <div class="card-header h4"><?= Yii::t('cart/default', 'PAYMENT'); ?>
-                / <?= Yii::t('cart/default', 'DELIVERY'); ?></div>
+            <div class="card-header"><h4><?= Yii::t('cart/default', 'PAYMENT'); ?>
+                    / <?= Yii::t('cart/default', 'DELIVERY'); ?></h4></div>
             <div class="card-body">
                 <div class="text-muted mb-3">
                     <small>Поля отмеченные <span class="required">*</span> обязательны для заполнения</small>
@@ -196,14 +210,16 @@ var orderTotalPrice = '$totalPrice';
                 <h4 class="text-center2"><?= Yii::t('cart/default', 'DELIVERY'); ?></h4>
                 <?php
                 echo $this->render('_fields_delivery', array(
-                        'form' => $this->context->form,
+                        'model' => $this->context->form,
+                        'form' => $formOrder,
                         'deliveryMethods' => $deliveryMethods)
                 );
                 ?>
                 <h4 class="text-center2"><?= Yii::t('cart/default', 'PAYMENT'); ?></h4>
                 <?php
                 echo $this->render('_fields_payment', array(
-                        'form' => $this->context->form,
+                        'model' => $this->context->form,
+                        'form' => $formOrder,
                         'paymenyMethods' => $paymenyMethods)
                 );
                 ?>
@@ -216,26 +232,28 @@ var orderTotalPrice = '$totalPrice';
     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 
         <div class="card">
-            <div class="card-header h4">dsadsadsa</div>
+            <div class="card-header"><h4>dsadsadsa</h4></div>
             <div class="card-body text-center">
                 <div class="mb-4">
                     <h5><?= Yii::t('cart/default', 'Сумма заказа'); ?>:</h5>
 
-                    <span class="price price-lg text-success" id="total">
-                    <?= Yii::$app->currency->number_format($totalPrice) ?>
+                    <span class="price price-lg text-warning">
+                        <span class="" id="total"><?= Yii::$app->currency->number_format($totalPrice) ?></span>
                         <sub><?php echo Yii::$app->currency->active->symbol; ?></sub>
                 </span>
                 </div>
 
                 <h4><?= Yii::t('cart/default', 'PAYMENT'); ?>:</h4>
-                <div id="payment" style="">---</div>
+
+                <div>
+                    <h6 id="payment">---</h6>
+                </div>
                 <h4><?= Yii::t('cart/default', 'DELIVERY'); ?>:</h4>
                 <div>
-                    <h2 id="delivery" class="badge badge-secondary">---</h2>
+                    <h6 id="delivery">---</h6>
                 </div>
-                <a href="javascript:submitform();"
-                   class="btn btn-primary btn-lg"><?= Yii::t('cart/default', 'BUTTON_CHECKOUT'); ?></a>
 
+                 <?= Html::submitButton(Yii::t('cart/default', 'BUTTON_CHECKOUT'), ['class' => 'btn btn-warning btn-lg']) ?>
                 <input type="hidden" name="create" value="1">
             </div>
         </div>
@@ -243,7 +261,8 @@ var orderTotalPrice = '$totalPrice';
     </div>
 
 </div>
-<?php echo Html::endForm() ?>
+<?php ActiveForm::end() ?>
+<?php //echo Html::endForm() ?>
 
 
 

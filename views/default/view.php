@@ -1,9 +1,10 @@
 <?php
 
-use yii\helpers\Html;
+use panix\engine\Html;
 use yii\helpers\Url;
 use panix\mod\shop\models\Product;
 use panix\engine\bootstrap\Alert;
+
 $config = Yii::$app->settings->get('shop');
 $currency = Yii::$app->currency;
 ?>
@@ -14,20 +15,20 @@ $currency = Yii::$app->currency;
         <?php
 
 
-       /* $liqpay = new \panix\mod\cart\widgets\payment\liqpay\LiqPay('i61699065543', 'ztgu6RktfUWoSCxEDuoBsOlbm762LQScuQ01c0BI');
-        $html = $liqpay->cnb_form(array(
-            'action' => 'pay',
-            'amount' => '1',
-            'currency' => 'USD',
-            'description' => 'description text',
-            'order_id' => \panix\engine\CMS::gen(5),
-            'version' => '3',
-            'sandbox' => '1', //1 test mode
-            'server_url' => Url::toRoute(['/cart/payment/process', 'payment_id' => 4, 'result' => true], true),
-            'result_url' => Url::toRoute(['/cart/payment/process', 'payment_id' => 4], true),
-        ));
-        echo $html;
-*/
+        /* $liqpay = new \panix\mod\cart\widgets\payment\liqpay\LiqPay('i61699065543', 'ztgu6RktfUWoSCxEDuoBsOlbm762LQScuQ01c0BI');
+         $html = $liqpay->cnb_form(array(
+             'action' => 'pay',
+             'amount' => '1',
+             'currency' => 'USD',
+             'description' => 'description text',
+             'order_id' => \panix\engine\CMS::gen(5),
+             'version' => '3',
+             'sandbox' => '1', //1 test mode
+             'server_url' => Url::toRoute(['/cart/payment/process', 'payment_id' => 4, 'result' => true], true),
+             'result_url' => Url::toRoute(['/cart/payment/process', 'payment_id' => 4], true),
+         ));
+         echo $html;
+ */
         ?>
 
         <div class="table-responsive">
@@ -49,28 +50,24 @@ $currency = Yii::$app->currency;
                             ?>
                         </td>
                         <td>
-                            <?= Html::beginTag('h3') ?>
-                            <?= $product->getRenderFullName(false); ?>
-                            <?= Html::endTag('h3') ?>
 
-                            <span class="price price-sm">
-                            <?= Yii::$app->currency->number_format($currency->convert($product->price)) ?>
-                            <sub><?= $currency->active->symbol; ?></sub>
+                            <h5><?= $product->getRenderFullName(false); ?> </h5>
+
+
+                            <span class="price price-sm text-warning">
+                                <?= $currency->number_format($currency->convert($product->price)) ?>
+                                <sub><?= $currency->active->symbol; ?>/шт.</sub>
                             </span>
 
                         </td>
                         <td align="center">
-                            <?= $product->quantity ?>
+                            <strong><?= $product->quantity ?></strong>
                         </td>
                         <td align="center">
-                            <?php
-                            if ($config->wholesale) {
-                                echo $currency->number_format($currency->convert($product->price * $product->quantity * $product->prd->pcs));
-                            } else {
-                                echo $currency->number_format($currency->convert($product->price * $product->quantity));
-                            }
-                            ?>
-                            <?= $currency->active->symbol; ?>
+                             <span class="price text-warning">
+                                <?= $currency->number_format($currency->convert($product->price * $product->quantity)); ?>
+                                <sub><?= $currency->active->symbol; ?></sub>
+                             </span>
                         </td>
                     </tr>
                 <?php } ?>
@@ -94,7 +91,7 @@ $currency = Yii::$app->currency;
                 </div>
 
                 <div class="form-group"><?= $model->getAttributeLabel('user_phone') ?>:
-                    <div class="float-right font-weight-bold"><?= Html::encode($model->user_phone); ?></div>
+                    <div class="float-right font-weight-bold"><?= Html::tel($model->user_phone); ?></div>
                 </div>
 
 

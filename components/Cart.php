@@ -37,7 +37,7 @@ class Cart extends Component
     {
         $this->session = Yii::$app->session;
         //$this->session->id = 'cart';
-        $this->session->timeout = 10;
+        $this->session->setTimeout(3600);
         if (!isset($this->session['cart_data']) || !is_array($this->session['cart_data']))
             $this->session['cart_data'] = array();
     }
@@ -47,7 +47,7 @@ class Cart extends Component
      * <pre>
      *      Yii::$app->cart->add(array(
      *         'product_id'      => $model->id,
-     *         'variants'        => $variants,// e.g: array(1,2,3,...)
+     *         'variants'        => $variants,// e.g: [1,2,3,...]
      *         'configurable_id' => $configurable_id,
      *         'quantity'        => (int) Yii::$app->request->post('quantity', 1),
      *         'price'           => $model->price,

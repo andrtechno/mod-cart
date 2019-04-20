@@ -25,14 +25,18 @@ class Module extends WebModule implements BootstrapInterface
         parent::init();
     }
 
+    public function getCountByUser(){
+        if(!Yii::$app->user->isGuest)
+            return Order::find()->where(['status_id' => 1,'user_id'=>Yii::$app->user->id])->count();
+    }
     public function bootstrap($app)
     {
         $app->urlManager->addRules(
             [
 
                 'cart' => 'cart/default/index',
-                'cart/view/<secret_key>' => 'cart/default/view',
-               // 'cart/remove/<id:(\d+)>' => 'cart/default/remove',
+                'cart/view/<secret_key:[0-9a-z]{10}$>' => 'cart/default/view',
+                'cart/remove/<id:\d+>' => 'cart/default/remove',
                // 'cart/clear' => 'cart/default/clear',
                // 'cart/payment' => 'cart/default/payment',
                // 'cart/recount' => 'cart/default/recount',

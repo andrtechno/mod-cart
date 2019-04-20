@@ -5,7 +5,7 @@ use panix\engine\Html;
 <div class="heading-gradient">
 <h1><?= $this->context->pageName; ?></h1>
 </div>
-
+<div class="table-responsive">
 <?php
 echo \panix\engine\grid\GridView::widget([
     //'id'=>'list-product',
@@ -49,7 +49,7 @@ echo \panix\engine\grid\GridView::widget([
             'format' => 'html',
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
-                return $model->deliveryMethod->name . '<br/><strong>Адрес:</strong> ' . $model->user_address;
+                return $model->deliveryMethod->name . '<br/>'.Yii::t('cart/OrderCreateForm','USER_ADDRESS').': ' . $model->user_address;
             }
         ],
         [
@@ -91,3 +91,5 @@ echo \panix\engine\grid\GridView::widget([
         ]
     ]
 ]);
+?>
+</div>

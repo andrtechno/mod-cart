@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+use panix\engine\Html;
 use yii\helpers\Url;
 use panix\mod\shop\models\Product;
 
@@ -14,7 +14,7 @@ $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
 <?php } ?>
 
 <?php if ($order->user_phone) { ?>
-    <p><b><?= $order->getAttributeLabel('user_phone') ?>:</b> <?= $order->user_phone; ?></p>
+    <p><b><?= $order->getAttributeLabel('user_phone') ?>:</b> <?= Html::tel($order->user_phone); ?></p>
 <?php } ?>
 
 <?php if ($order->user_email) { ?>
@@ -47,7 +47,8 @@ $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
         <tr>
             <td style="<?= $thStyle; ?>" align="center">
                 <?php
-                    echo Html::img($message->embed(Url::to($row->originalProduct->getMainImageUrl('100x'), true)), ['alt' => $row->originalProduct->name]);
+                echo $row->originalProduct->getMainImage('100x',true)->url;
+                    echo Html::img($row->originalProduct->getMainImage('100x',true)->url, ['alt' => $row->originalProduct->name]);
 
                 ?>
             </td>
