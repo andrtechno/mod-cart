@@ -76,13 +76,6 @@ class m170908_134034_cart extends Migration
         ], $tableOptions);
 
 
-        // create table order product notify
-        $this->createTable('{{%order__product_notify}}', [
-            'id' => $this->primaryKey()->unsigned(),
-            'product_id' => $this->integer()->notNull()->unsigned(),
-            'email' => $this->string(100),
-        ], $tableOptions);
-
 
         // create table order history
         $this->createTable('{{%order__history}}', [
@@ -207,7 +200,7 @@ class m170908_134034_cart extends Migration
         $this->dropTable('{{%order__delivery}}');
         $this->dropTable('{{%order__delivery_translate}}');
         $this->dropTable('{{%order__delivery_payment}}');
-        $this->dropTable('{{%order__product_notify}}');
+
     }
 
     private function addIndexes()
@@ -222,8 +215,7 @@ class m170908_134034_cart extends Migration
         // order status indexes
         $this->createIndex('ordern', '{{%order__status}}', 'ordern');
 
-        // order product notify indexes
-        $this->createIndex('product_id', '{{%order__product_notify}}', 'product_id');
+
 
         // order products indexes
         $this->createIndex('order_id', '{{%order__product}}', 'order_id');

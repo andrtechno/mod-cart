@@ -11,7 +11,6 @@ return [
     'CREATE_DELIVERY'=>'Добавить доставку',
     'CREATE_PAYMENT'=>'Добавить оплату',
     'PAYMENTS' => 'Оплата',
-    'NOTIFIER' => 'Уведомление',
     'STATS' => 'Статистика',
     'STATUSES' => 'Статусы заказов',
     'CREATE_STATUSES' => 'Создание статуса',

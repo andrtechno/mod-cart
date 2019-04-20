@@ -394,9 +394,10 @@ class DefaultController extends WebController
      */
     private function sendAdminEmail(Order $order)
     {
+
         $mailer = Yii::$app->mailer;
         $mailer->htmlLayout = "@common/mail/layouts/admin";
-        $mailer->compose(['html' => '@cart/mail/admin'], ['order' => $order, 'test' => '1111'])
+        $mailer->compose(['html' => '@cart/mail/admin'], ['order' => $order])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
             //->setCc(Yii::$app->settings->get('app','email')) //copy
