@@ -156,7 +156,7 @@ class Cart extends Component
         foreach ($data as $item) {
 
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
-            $result += Yii::$app->currency->convert(Product::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'],$item['model']->currency_id);
+            $result += Product::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
 
         }
 
@@ -216,7 +216,7 @@ class Cart extends Component
                 $calcPrice = Product::calculatePrices($productModel, $data['variants'], $data['configurable_id'], $data['quantity']);
                 if ($data['configurable_id']) {
 
-                    $rowTotal = $data['quantity'] * $calcPrice;
+                    $rowTotal = $calcPrice * $data['quantity'];
                 } else {
                     //if ($productModel->appliedDiscount) {
                         //$priceTotal = ;
@@ -228,7 +228,7 @@ class Cart extends Component
                    //     $calcPrice = $pr->value;
                     //}
 
-                    $rowTotal = $data['quantity'] * $calcPrice;
+                    $rowTotal = $calcPrice * $data['quantity'];
 
                 }
             }
@@ -238,7 +238,7 @@ class Cart extends Component
         Yii::$app->response->format = Response::FORMAT_JSON;
         return [
             'unit_price' => Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice)),
-            'rowTotal' => Yii::$app->currency->number_format(Yii::$app->currency->convert($rowTotal)),
+            'rowTotal' => Yii::$app->currency->number_format($rowTotal),
             'totalPrice' => Yii::$app->currency->number_format(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
         ];
     }
