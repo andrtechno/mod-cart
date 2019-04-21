@@ -59,13 +59,14 @@ $formOrder = ActiveForm::begin([
 <?php //echo Html::beginForm(['/cart'], 'post', array('id' => 'cart-form', 'name' => 'cartform')) ?>
 <div class="row">
     <?php
-    if (empty($items)) {
-        echo Html::beginTag('div', array('id' => 'container-cart', 'class' => 'indent'));
-        echo Html::beginTag('h1');
-        echo Yii::t('cart/default', 'CART_EMPTY');
-        echo Html::endTag('h1');
-        echo Html::endTag('div');
-        return;
+    if (empty($items)) { ?>
+        <div id="empty-cart-page" class="text-center col">
+            <i class="icon-shopcart" style="font-size:130px"></i>
+            <h2><?= Yii::t('cart/default', 'CART_EMPTY_HINT') ?></h2>
+
+            <?= Html::a(Yii::t('cart/default', 'CART_EMPTY_BTN'), ['/'], array('class' => 'btn btn-lg btn-outline-secondary')); ?>
+        </div>
+        <?php return;
     }
 
 

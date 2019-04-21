@@ -156,7 +156,7 @@ class Cart extends Component
         foreach ($data as $item) {
 
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
-            $result += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
+            $result += Yii::$app->currency->convert(Product::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'],$item['model']->currency_id);
 
         }
 
@@ -189,32 +189,55 @@ class Cart extends Component
      */
     public function ajaxRecount($data)
     {
+
         if (!is_array($data) || empty($data))
             return;
 
         $currentData = $this->getData();
+        $rowTotal = 0;
+        $calcPrice = 0;
+
 
         foreach ($data as $index => $quantity) {
             if ((int)$quantity < 1)
                 $quantity = 1;
 
-            if (isset($currentData[$index])) {
-                $currentData[$index]['quantity'] = (int)$quantity;
 
+
+
+            if (isset($currentData[$index])) {
+
+                $currentData[$index]['quantity'] = (int)$quantity;
                 $data = $currentData[$index];
-                //print_r($currentData[$index]);die;
+
+
+                $productModel = Product::findOne($data['product_id']);
+
+                $calcPrice = Product::calculatePrices($productModel, $data['variants'], $data['configurable_id'], $data['quantity']);
                 if ($data['configurable_id']) {
-                    $productModel = Product::findOne($index);
-                    $rowTotal = $data['quantity'] * Product::calculatePrices($productModel, $data['variants'], $data['configurable_id']);
+
+                    $rowTotal = $data['quantity'] * $calcPrice;
                 } else {
-                    $rowTotal = $data['quantity'] * $data['price'];
+                    //if ($productModel->appliedDiscount) {
+                        //$priceTotal = ;
+                    //} else {
+                   //     $priceTotal = $data['price'];
+                    //}
+
+                   // if ($data['quantity'] > 1 && ($pr = $productModel->getPriceByQuantity($data['quantity']))) {
+                   //     $calcPrice = $pr->value;
+                    //}
+
+                    $rowTotal = $data['quantity'] * $calcPrice;
 
                 }
             }
         }
+
         $this->session['cart_data'] = $currentData;
         Yii::$app->response->format = Response::FORMAT_JSON;
         return [
+            'unit_price' => Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice)),
             'rowTotal' => Yii::$app->currency->number_format(Yii::$app->currency->convert($rowTotal)),
             'totalPrice' => Yii::$app->currency->number_format(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
         ];

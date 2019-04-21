@@ -4,6 +4,8 @@ return [
     'MY_ORDERS' => 'Мои заказы',
     'MODULE_NAME' => 'Корзина',
     'CART_EMPTY' => 'Корзина пуста',
+    'CART_EMPTY_HINT'=>'Ваша корзина пуста',
+    'CART_EMPTY_BTN'=>'Вернуться к покупкам',
     'WP_COUNT' => 'Новых заказов ({num})',
     'SUCCESS_ORDER' => 'Спасибо. Ваш заказ принят.',
     'SUCCESS_ADDCART' => 'Товар "{product_name}" успешно добавлен в {cart}.',

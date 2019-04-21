@@ -7,6 +7,7 @@ use panix\mod\shop\models\Attribute;
 use Yii;
 use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
 use panix\engine\controllers\WebController;
 use panix\mod\cart\models\forms\OrderCreateForm;
@@ -17,6 +18,7 @@ use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\Product;
 use panix\mod\cart\models\search\OrderSearch;
 use panix\mod\shop\models\ProductVariant;
+use yii\web\NotAcceptableHttpException;
 use yii\web\Response;
 
 class DefaultController extends WebController
@@ -38,9 +40,10 @@ class DefaultController extends WebController
             if (Yii::$app->request->isPost && !empty($_POST['quantities'])) {
                 $test = array();
                 $test[Yii::$app->request->post('product_id')] = Yii::$app->request->post('quantities');
-                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
                 return Yii::$app->cart->ajaxRecount($test);
             }
+        }else{
+            throw new ForbiddenHttpException(Yii::t('app/error',403));
         }
     }
 
