@@ -45,13 +45,8 @@ class StatusesController extends AdminController {
      * @return string|\yii\web\Response
      */
     public function actionUpdate($id = false) {
-        if ($id === true) {
-            $model = new OrderStatus;
-        } else
-            $model = OrderStatus::findOne($id);
 
-        if (!$model)
-            $this->error404(Yii::t('cart/admin', 'NO_STATUSES'));
+        $model = OrderStatus::findModel($id,Yii::t('cart/admin', 'NO_STATUSES'));
 
         
         $title = ($model->isNewRecord) ? Yii::t('cart/admin', 'CREATE_STATUSES') :

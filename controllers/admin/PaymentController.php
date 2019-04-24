@@ -73,11 +73,7 @@ class PaymentController extends AdminController
 
     public function actionUpdate($id = false)
     {
-        if ($id === true) {
-            $model = new Payment();
-        } else {
-            $model = $this->findModel($id);
-        }
+        $model = Payment::findModel($id);
 
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
         $this->buttons = [
@@ -127,15 +123,6 @@ class PaymentController extends AdminController
         ]);
     }
 
-    protected function findModel($id)
-    {
-        $model = new Payment();
-        if (($model = $model::findOne($id)) !== null) {
-            return $model;
-        } else {
-            $this->error404('The requested page does not exist.');
-        }
-    }
 
     /**
      * Renders payment system configuration form

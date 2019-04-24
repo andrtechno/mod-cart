@@ -142,11 +142,11 @@ class HistoricalBehavior extends Behavior
         }
 
         if (!empty($changed)) {
-            $this->log(array(
+            $this->log([
                 'handler' => self::ATTRIBUTES_HANDLER,
                 'data_before' => $this->prepareAttributes($old_data),
                 'data_after' => $this->prepareAttributes($new_data),
-            ));
+            ]);
         }
     }
 
@@ -179,7 +179,7 @@ class HistoricalBehavior extends Behavior
      */
     public function prepareAttributes(array $attrs)
     {
-        $result = array();
+        $result = [];
 
         foreach ($attrs as $key => $val)
             $result[$key] = $this->idToText($key, $val);
@@ -218,7 +218,7 @@ class HistoricalBehavior extends Behavior
      */
     public function getTrackAttributes()
     {
-        return array(
+        return [
             'delivery_id',
             'payment_id',
             'status_id',
@@ -230,7 +230,7 @@ class HistoricalBehavior extends Behavior
             'user_comment',
             'admin_comment',
             'discount',
-        );
+        ];
     }
 
 }

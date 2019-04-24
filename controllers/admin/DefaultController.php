@@ -3,6 +3,7 @@
 namespace panix\mod\cart\controllers\admin;
 
 
+use panix\mod\cart\models\Order;
 use Yii;
 use yii\web\NotFoundHttpException;
 use panix\engine\controllers\AdminController;
@@ -36,7 +37,7 @@ class DefaultController extends AdminController
 
     public function actionIndex()
     {
-        $this->pageName=Yii::t('cart/admin', 'ORDERS');
+        $this->pageName = Yii::t('cart/admin', 'ORDERS');
         $this->buttons = [
             [
                 'label' => Yii::t('cart/default', 'CREATE_ORDER'),
@@ -55,10 +56,9 @@ class DefaultController extends AdminController
         ]);
     }
 
-    public function actionUpdate($id)
+    public function actionUpdate($id=false)
     {
-
-        $model = $this->findModel($id);
+        $model = Order::findModel($id, Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
         $this->pageName = Yii::t('cart/admin', 'ORDERS');
         $this->breadcrumbs = [
             $this->pageName
@@ -90,7 +90,9 @@ class DefaultController extends AdminController
 
         $request = Yii::$app->request;
         $order_id = $request->post('id');
-        $model = $this->findModel($order_id);
+
+        $model = Order::findModel($order_id, Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
+
         if ($order_id) {
             if (!$request->isAjax) {
                 return $this->redirect(['/admin/cart/default/update', 'id' => $order_id]);
@@ -120,7 +122,8 @@ class DefaultController extends AdminController
         $request = Yii::$app->request;
         if ($request->isPost) {
             if ($request->isAjax) {
-                $order = $this->findModel($request->post('order_id'));
+                $order = Order::findModel($request->post('order_id'), Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
+
                 $product = Product::findOne($request->post('product_id'));
 
                 $find = OrderProduct::find()->where(array('order_id' => $order->id, 'product_id' => $product->id))->one();
@@ -167,10 +170,7 @@ class DefaultController extends AdminController
      */
     public function actionDeleteProduct()
     {
-        $order = $this->findModel(Yii::$app->request->post('order_id'));
-
-        if (!$order)
-            $this->error404();
+        $order = Order::findModel(Yii::$app->request->post('order_id'), Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
 
         //if ($order->is_deleted)
         //    throw new NotFoundHttpException(Yii::t('cart/admin', 'ORDER_ISDELETED'));
@@ -186,14 +186,5 @@ class DefaultController extends AdminController
         ));
     }
 
-    protected function findModel($id)
-    {
-        $model = new \panix\mod\cart\models\Order;
-        if (($model = $model::findOne($id)) !== null) {
-            return $model;
-        } else {
-            $this->error404(Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
-        }
-    }
 
 }

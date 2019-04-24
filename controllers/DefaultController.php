@@ -38,7 +38,7 @@ class DefaultController extends WebController
     {
         if (Yii::$app->request->isAjax) {
             if (Yii::$app->request->isPost && !empty($_POST['quantities'])) {
-                $test = array();
+                $test = [];
                 $test[Yii::$app->request->post('product_id')] = Yii::$app->request->post('quantities');
                 return Yii::$app->cart->ajaxRecount($test);
             }

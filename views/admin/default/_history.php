@@ -20,9 +20,9 @@ if (empty($history)) {
     <tbody>
         <?php
         foreach ($history as $row) {
-            echo $this->render('_' . $row->handler, array(
+            echo $this->render('_' . $row->handler, [
                 'data' => $row,
-            ));
+            ]);
         }
         ?>
     </tbody>

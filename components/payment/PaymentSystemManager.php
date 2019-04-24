@@ -7,7 +7,7 @@ class PaymentSystemManager extends \yii\base\Component {
     /**
      * @var array
      */
-    private $_systems = array();
+    private $_systems = [];
 
     /**
      * Find all payment systems installed
