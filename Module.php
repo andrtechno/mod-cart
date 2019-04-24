@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart;
 
+use panix\mod\admin\widgets\sidebar\BackendNav;
 use Yii;
 use panix\engine\WebModule;
 use panix\mod\cart\models\Order;
@@ -108,7 +109,7 @@ class Module extends WebModule implements BootstrapInterface
 
     public function getAdminSidebar()
     {
-        return (new \panix\engine\bootstrap\BackendNav)->findMenu($this->id)['items'];
+        return (new BackendNav())->findMenu($this->id)['items'];
     }
 
 }
