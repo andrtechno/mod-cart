@@ -399,7 +399,7 @@ class DefaultController extends WebController
     {
 
         $mailer = Yii::$app->mailer;
-        $mailer->htmlLayout = "@common/mail/layouts/admin";
+        $mailer->htmlLayout = "@app/mail/layouts/admin";
         $mailer->compose(['html' => '@cart/mail/admin'], ['order' => $order])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
