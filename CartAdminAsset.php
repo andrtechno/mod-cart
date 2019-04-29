@@ -1,0 +1,19 @@
+<?php
+
+
+namespace panix\mod\cart;
+
+use panix\engine\web\AssetBundle;
+
+
+class CartAdminAsset extends AssetBundle {
+
+    public $sourcePath = __DIR__.'/assets';
+
+    public $js = [
+         'admin/js/payment.js',
+    ];
+    public $depends = [
+        'yii\web\JqueryAsset',
+    ];
+}
