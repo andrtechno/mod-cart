@@ -9,7 +9,7 @@ use panix\engine\base\Model;
 
 class OrderCreateForm extends Model {
 
-    protected $category = 'cart';
+    public static $category = 'cart';
     protected $module = 'cart';
     public $user_name;
     public $user_email;

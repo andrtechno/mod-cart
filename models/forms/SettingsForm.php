@@ -5,7 +5,7 @@ use Yii;
 
 class SettingsForm extends \panix\engine\SettingsModel {
 
-    public $category = 'cart';
+    public static $category = 'cart';
     public $module = 'cart';
     public $order_emails;
     public $tpl_body_user;
