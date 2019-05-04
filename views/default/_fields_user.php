@@ -1,7 +1,6 @@
 <?php
 
 use panix\engine\Html;
-use panix\engine\widgets\inputmask\InputMask;
 
 /**
  * @var $form \yii\widgets\ActiveForm
@@ -13,7 +12,7 @@ use panix\engine\widgets\inputmask\InputMask;
 </div>
 <div class="form-group">
 
-    <?= $form->field($model, 'user_phone'); ?>
+    <?= $form->field($model, 'user_phone')->widget(\panix\ext\telinput\PhoneInput::class); ?>
 
 </div>
 

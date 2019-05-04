@@ -63,7 +63,7 @@ class DefaultController extends AdminController
         $this->breadcrumbs = [
             $this->pageName
         ];
-        \panix\mod\cart\assets\admin\OrderAsset::register($this->view);
+        \panix\mod\cart\OrderAsset::register($this->view);
         $this->view->registerJs('
             var deleteQuestion = "' . Yii::t('cart/admin', 'Вы действительно удалить запись?') . '";
             var productSuccessAddedToOrder = "' . Yii::t('cart/admin', 'Продукт успешно добавлен к заказу.') . '";', \yii\web\View::POS_HEAD, 'myid'

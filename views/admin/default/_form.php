@@ -5,7 +5,6 @@ use yii\helpers\ArrayHelper;
 use panix\mod\cart\models\OrderStatus;
 use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\Delivery;
-use panix\engine\widgets\inputmask\InputMask;
 use panix\engine\bootstrap\ActiveForm;
 
 ?>
@@ -40,7 +39,7 @@ $form->field($model, 'delivery_id')->dropDownList(ArrayHelper::map(Delivery::fin
 <?= $form->field($model, 'discount')->textInput(); ?>
 <?= $form->field($model, 'user_name')->textInput(); ?>
 <?= $form->field($model, 'user_address')->textInput(); ?>
-<?= $form->field($model, 'user_phone')->widget(InputMask::class); ?>
+<?= $form->field($model, 'user_phone')->widget(\panix\ext\telinput\PhoneInput::class); ?>
 
 <?= $form->field($model, 'user_comment')->textArea(); ?>
 <?= $form->field($model, 'admin_comment')->textArea(); ?>
