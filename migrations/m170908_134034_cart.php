@@ -5,13 +5,13 @@
  * Generation migrate by PIXELION CMS
  * @author PIXELION CMS development team <dev@pixelion.com.ua>
  *
- * Class m170908_134034_cart22
+ * Class m170908_134034_cart
  */
 use yii\db\Migration;
 use panix\mod\cart\models\Order;
 
 /**
- * Class m170908_134034_cart11
+ * Class m170908_134034_cart
  */
 class m170908_134034_cart extends Migration
 {
@@ -31,8 +31,11 @@ class m170908_134034_cart extends Migration
             'delivery_id' => $this->integer()->notNull()->unsigned(),
             'payment_id' => $this->integer()->notNull()->unsigned(),
             'status_id' => $this->integer()->notNull()->unsigned(),
-            'delivery_price' => 'float(10,2) DEFAULT NULL',
-            'total_price' => 'float(10,2) DEFAULT NULL',
+            //'delivery_price' => 'float(10,2) DEFAULT NULL',
+            //'total_price' => 'float(10,2) DEFAULT NULL',
+            'delivery_price' => $this->money(10,2),
+            'total_price' => $this->money(10,2),
+
             'user_name' => $this->string(100),
             'user_email' => $this->string(100),
             'user_address' => $this->string(255),
