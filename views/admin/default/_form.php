@@ -36,14 +36,14 @@ $form->field($model, 'delivery_id')->dropDownList(ArrayHelper::map(Delivery::fin
     'prompt' => '-- доставка --'
 ]);
 ?>
-<?= $form->field($model, 'discount')->textInput(); ?>
+
 <?= $form->field($model, 'user_name')->textInput(); ?>
 <?= $form->field($model, 'user_address')->textInput(); ?>
 <?= $form->field($model, 'user_phone')->widget(\panix\ext\telinput\PhoneInput::class); ?>
-
 <?= $form->field($model, 'user_comment')->textArea(); ?>
 <?= $form->field($model, 'admin_comment')->textArea(); ?>
 <?= $form->field($model, 'paid')->checkbox(); ?>
+<?= $form->field($model, 'discount')->textInput(); ?>
 <?= $form->field($model, 'invoice')->textInput(['maxlength' => 50]); ?>
 
     <div class="form-group text-center">
