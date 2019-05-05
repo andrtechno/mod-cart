@@ -7,7 +7,8 @@ use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Payment;
 use panix\engine\base\Model;
 
-class OrderCreateForm extends Model {
+class OrderCreateForm extends Model
+{
 
     public static $category = 'cart';
     protected $module = 'cart';
@@ -19,7 +20,9 @@ class OrderCreateForm extends Model {
     public $delivery_id;
     public $payment_id;
     public $registerGuest = false;
-    public function init() {
+
+    public function init()
+    {
         $user = Yii::$app->user;
         if (!$user->isGuest && Yii::$app->controller instanceof \panix\engine\controllers\WebController) {
             // NEED CONFINGURE
@@ -27,18 +30,20 @@ class OrderCreateForm extends Model {
             $this->user_phone = $user->phone;
             //$this->user_address = Yii::app()->user->address; //comment for april
             $this->user_email = $user->getEmail();
- 
+
         } else {
-          //  $this->_password = User::encodePassword(CMS::gen((int) Yii::$app->settings->get('users', 'min_password') + 2));
+            //  $this->_password = User::encodePassword(CMS::gen((int) Yii::$app->settings->get('users', 'min_password') + 2));
         }
 
         parent::init();
     }
-    public function rules() {
+
+    public function rules()
+    {
         return [
-            [['user_name', 'user_email','user_phone','delivery_id','payment_id'], 'required'],
-            [['delivery_id','payment_id'], 'required'],
-            [['delivery_id','payment_id'], 'integer'],
+            [['user_name', 'user_email', 'user_phone', 'delivery_id', 'payment_id'], 'required'],
+            [['delivery_id', 'payment_id'], 'required'],
+            [['delivery_id', 'payment_id'], 'integer'],
             ['user_email', 'email'],
             [['user_comment'], 'string', 'max' => 500],
             [['user_address'], 'string', 'max' => 255],
@@ -49,17 +54,20 @@ class OrderCreateForm extends Model {
         ];
     }
 
-    public function validateDelivery() {
+    public function validateDelivery()
+    {
         if (Delivery::find()->where(['id' => $this->delivery_id])->count() == 0)
-            $this->addError('delivery_id', Yii::t('cart/OrderCreateForm','VALID_DELIVERY'));
+            $this->addError('delivery_id', Yii::t('cart/OrderCreateForm', 'VALID_DELIVERY'));
     }
 
-    public function validatePayment() {
+    public function validatePayment()
+    {
         if (Payment::find()->where(['id' => $this->payment_id])->count() == 0)
-            $this->addError('payment_id', Yii::t('cart/OrderCreateForm','VALID_PAYMENT'));
+            $this->addError('payment_id', Yii::t('cart/OrderCreateForm', 'VALID_PAYMENT'));
     }
 
-    public function registerGuest() {
+    public function registerGuest()
+    {
         if (Yii::$app->user->isGuest && $this->registerGuest) {
             $user = new User('registerFast');
             $user->password = $this->_password;
@@ -82,7 +90,8 @@ class OrderCreateForm extends Model {
         }
     }
 
-    private function sendRegisterMail() {
+    private function sendRegisterMail()
+    {
         $mailer = Yii::$app->mail;
         $mailer->From = 'noreply@' . Yii::$app->request->serverName;
         $mailer->FromName = Yii::$app->settings->get('core', 'site_name');

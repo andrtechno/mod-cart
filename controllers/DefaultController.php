@@ -3,6 +3,7 @@
 namespace panix\mod\cart\controllers;
 
 
+use panix\engine\bootstrap\ActiveForm;
 use panix\mod\shop\models\Attribute;
 use Yii;
 use yii\helpers\Json;
@@ -18,7 +19,6 @@ use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\Product;
 use panix\mod\cart\models\search\OrderSearch;
 use panix\mod\shop\models\ProductVariant;
-use yii\web\NotAcceptableHttpException;
 use yii\web\Response;
 
 class DefaultController extends WebController
@@ -42,8 +42,8 @@ class DefaultController extends WebController
                 $test[Yii::$app->request->post('product_id')] = Yii::$app->request->post('quantities');
                 return Yii::$app->cart->ajaxRecount($test);
             }
-        }else{
-            throw new ForbiddenHttpException(Yii::t('app/error',403));
+        } else {
+            throw new ForbiddenHttpException(Yii::t('app/error', 403));
         }
     }
 
@@ -65,6 +65,13 @@ class DefaultController extends WebController
         $post = Yii::$app->request->post();
 
         if ($post) {
+
+
+           // $this->formAjaxValidate($this->form, $post);
+            if (Yii::$app->request->isAjax && $this->form->load($post)) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($this->form);
+            }
             if ($this->form->load($post) && $this->form->validate()) {
                 $this->form->registerGuest();
                 $order = $this->createOrder();
@@ -90,17 +97,19 @@ class DefaultController extends WebController
 
 
         $paymenyMethods = Payment::find()->all();
+
         $this->view->registerJs("
-        var penny = '" . Yii::$app->currency->active->penny . "';
-        var separator_thousandth = '" . Yii::$app->currency->active->separator_thousandth . "';
-        var separator_hundredth = '" . Yii::$app->currency->active->separator_hundredth . "';
-     ", yii\web\View::POS_HEAD, 'numberformat');
-        return $this->render('index', array(
+            var penny = '" . Yii::$app->currency->active->penny . "';
+            var separator_thousandth = '" . Yii::$app->currency->active->separator_thousandth . "';
+            var separator_hundredth = '" . Yii::$app->currency->active->separator_hundredth . "';
+        ", yii\web\View::POS_HEAD, 'numberformat');
+
+        return $this->render('index', [
             'items' => Yii::$app->cart->getDataWithModels(),
             'totalPrice' => Yii::$app->cart->getTotalPrice(),
             'deliveryMethods' => $deliveryMethods,
             'paymenyMethods' => $paymenyMethods,
-        ));
+        ]);
     }
 
     public function actionPayment()
@@ -273,7 +282,6 @@ class DefaultController extends WebController
             // }
 
 
-
             if (isset($item['configurable_model']) && $item['configurable_model'] instanceof Product) {
                 $configurable_data = [];
 
@@ -283,8 +291,8 @@ class DefaultController extends WebController
                 // Save configurable data
 
                 $attributeModels = Attribute::find()
-                    ->where(['id'=>$item['model']->configurable_attributes])->all();
-                    //->findAllByPk($item['model']->configurable_attributes);
+                    ->where(['id' => $item['model']->configurable_attributes])->all();
+                //->findAllByPk($item['model']->configurable_attributes);
                 foreach ($attributeModels as $attribute) {
                     $method = 'eav_' . $attribute->name;
                     $configurable_data[$attribute->title] = $item['configurable_model']->$method;
@@ -299,7 +307,6 @@ class DefaultController extends WebController
                     $variants[$variant->productAttribute->title] = $variant->option->value;
                 $ordered_product->variants = serialize($variants);
             }
-
 
 
             $ordered_product->save();
@@ -399,7 +406,8 @@ class DefaultController extends WebController
     {
 
         $mailer = Yii::$app->mailer;
-        $mailer->htmlLayout = "@app/mail/layouts/admin";
+        //$mailer->htmlLayout = "@app/mail/layouts/admin";
+        $mailer->htmlLayout = "layouts/html";
         $mailer->compose(['html' => '@cart/mail/admin'], ['order' => $order])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])

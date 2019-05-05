@@ -87,7 +87,9 @@ class Order extends ActiveRecord
 
     public function rules()
     {
+
         return [
+            ['user_phone', 'panix\ext\telinput\PhoneInputValidator'],
             [['user_name', 'user_email', 'delivery_id', 'payment_id', 'user_phone'], 'required'],
             ['user_email', 'email'],
             [['user_comment', 'admin_comment'], 'string', 'max' => 500],
