@@ -181,7 +181,7 @@ class DefaultController extends AdminController
     public function actionRenderOrderedProducts($order_id)
     {
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
-        return $this->renderAjax('_orderedProducts', array(
+        return $this->renderAjax('_order-products', array(
             'model' => Order::findModel($order_id)
         ));
     }

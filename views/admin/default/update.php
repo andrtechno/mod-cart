@@ -35,9 +35,7 @@ use panix\ext\fancybox\Fancybox;
             <div id="orderedProducts">
                 <?php
                 if (!$model->isNewRecord) {
-                    echo $this->render('_orderedProducts', array(
-                        'model' => $model,
-                    ));
+                    echo $this->render('_order-products', ['model' => $model]);
                 }
                 ?>
             </div>
@@ -53,9 +51,7 @@ use panix\ext\fancybox\Fancybox;
     </div>
     <div class="card-body">
         <?php
-        echo $this->render('_history', array(
-            'model' => $model,
-        ));
+        echo $this->render('_history', ['model' => $model]);
         ?>
     </div>
 </div>

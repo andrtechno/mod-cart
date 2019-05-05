@@ -1,4 +1,3 @@
-
 /**
  * Show dialog
  * @param order_id
@@ -10,7 +9,7 @@ function openAddProductDialog(order_id) {
         responsive: true,
         resizable: false,
         height: 'auto',
-        draggable:false,
+        draggable: false,
         open: function () {
             $('.ui-widget-overlay').bind('click', function () {
                 $('#dialog-modal').dialog('close');
@@ -30,19 +29,23 @@ function openAddProductDialog(order_id) {
 
 /**
  * Add product to order
- * @param el TR
+ * @param el
+ * @param order_id
+ * @returns {boolean}
  */
 function addProductToOrder(el, order_id) {
     var product_id = $(el).attr('href');
 
     var quantity = $('#count_' + product_id).val();
     var price = $('#price_' + product_id).val();
-
+    var csrfParam = yii.getCsrfParam();
+    var csrfToken = yii.getCsrfToken();
+    console.log(csrfToken,csrfParam);
     $.ajax({
         url: "/admin/cart/default/add-product",
         type: "POST",
         data: {
-            token: common.token,
+           // '"+csrfParam+"': csrfToken,
             order_id: order_id,
             product_id: product_id,
             quantity: quantity,
@@ -58,9 +61,9 @@ function addProductToOrder(el, order_id) {
             }
         },
         error: function (xhr, textStatus, errorThrown) {
-            if(xhr.status !== 200){
-            common.notify(xhr.status, 'error');
-        }
+            if (xhr.status !== 200) {
+                common.notify(xhr.status, 'error');
+            }
         }
     });
 
@@ -69,9 +72,8 @@ function addProductToOrder(el, order_id) {
 
 /**
  * Delete ordered product
- * @param product_id
+ * @param id
  * @param order_id
- * @param token
  */
 function deleteOrderedProduct(id, order_id) {
     if (confirm(deleteQuestion)) {
@@ -94,8 +96,7 @@ function deleteOrderedProduct(id, order_id) {
 /**
  * Update products list
  */
-function reloadOrderedProducts(order_id)
-{
+function reloadOrderedProducts(order_id) {
     $('#orderedProducts').load('/admin/cart/default/render-ordered-products?order_id=' + order_id);
 }
 
@@ -103,12 +104,10 @@ function reloadOrderedProducts(order_id)
  * Recount total price on change delivery method
  * @param el
  */
-function recountOrderTotalPrice(el)
-{
+function recountOrderTotalPrice(el) {
     var deliveryMethod = searchDeliveryMethodById($(el).val());
 
-    if (!deliveryMethod)
-    {
+    if (!deliveryMethod) {
         return;
     }
 
@@ -116,10 +115,8 @@ function recountOrderTotalPrice(el)
     var delivery_price = parseFloat(deliveryMethod.price);
     var free_from = parseFloat(deliveryMethod.free_from);
 
-    if (delivery_price > 0)
-    {
-        if (free_from > 0 && total > free_from)
-        {
+    if (delivery_price > 0) {
+        if (free_from > 0 && total > free_from) {
             $("#orderDeliveryPrice").html('0.00');
         } else {
             total = total + delivery_price;
@@ -135,12 +132,10 @@ function recountOrderTotalPrice(el)
 /**
  * @param id
  */
-function searchDeliveryMethodById(id)
-{
+function searchDeliveryMethodById(id) {
     var result = false;
     $(deliveryMethods).each(function () {
-        if (parseInt(this.id) == parseInt(id))
-        {
+        if (parseInt(this.id) === parseInt(id)) {
             result = this;
         }
     });
