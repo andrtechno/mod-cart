@@ -312,7 +312,7 @@ class Order extends ActiveRecord
             $ordered_product->quantity = $quantity;
             $ordered_product->sku = $product->sku;
             $ordered_product->price = $price;
-            //$ordered_product->save();
+            $ordered_product->save();
 
             // Raise event
             $event = new EventProduct([

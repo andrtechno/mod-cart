@@ -12,6 +12,7 @@ use panix\mod\shop\models\Product;
 use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\search\ProductSearch;
 use panix\mod\cart\models\search\OrderSearch;
+use yii\web\Response;
 
 class DefaultController extends AdminController
 {
@@ -56,7 +57,7 @@ class DefaultController extends AdminController
         ]);
     }
 
-    public function actionUpdate($id=false)
+    public function actionUpdate($id = false)
     {
         $model = Order::findModel($id, Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
         $this->pageName = Yii::t('cart/admin', 'ORDERS');
@@ -119,50 +120,49 @@ class DefaultController extends AdminController
      */
     public function actionAddProduct()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $result = [];
         $request = Yii::$app->request;
         if ($request->isPost) {
             if ($request->isAjax) {
                 $order = Order::findModel($request->post('order_id'), Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
 
-                $product = Product::findOne($request->post('product_id'));
+                $product = Product::findModel($request->post('product_id'));
 
-                $find = OrderProduct::find()->where(array('order_id' => $order->id, 'product_id' => $product->id))->one();
+                $find = OrderProduct::find()->where(['order_id' => $order->id, 'product_id' => $product->id])->one();
 
                 if ($find) {
                     if ($request->isAjax) {
-                        echo \yii\helpers\Json::encode(array(
+                        $result = [
                             'success' => false,
                             'message' => Yii::t('cart/admin', 'ERR_ORDER_PRODUCT_EXISTS'),
-                        ));
-                        die;
-                    } else {
-                        //throw new CHttpException(400, Yii::t('CartModule.admin', 'ERR_ORDER_PRODUCT_EXISTS'));
-                    }
-                }
-                if (!$product) {
-                    if ($request->isAjax) {
-                        echo \yii\helpers\Json::encode(array(
-                            'success' => false,
-                            'message' => Yii::t('cart/default', 'ERROR_PRODUCT_NO_FIND'),
-                        ));
-                        die;
-                    } else {
-                        $this->error404(Yii::t('CartModule.default', 'ERROR_PRODUCT_NO_FIND'));
+                        ];
+
                     }
                 }
 
+                if ($request->isAjax) {
+                    $result = [
+                        'success' => false,
+                        'message' => Yii::t('cart/default', 'ERROR_PRODUCT_NO_FIND'),
+                    ];
+
+                }
+
+
                 $order->addProduct($product, $request->post('quantity'), $request->post('price'));
-                echo \yii\helpers\Json::encode(array(
+                $result = [
                     'success' => true,
                     'message' => Yii::t('cart/admin', 'SUCCESS_ADD_PRODUCT_ORDER'),
-                ));
-                die;
+                ];
             } else {
                 //throw new CHttpException(500, Yii::t('error', '500'));
             }
         } else {
             //throw new CHttpException(500, Yii::t('error', '500'));
         }
+
+        return $result;
     }
 
     /**
@@ -182,7 +182,7 @@ class DefaultController extends AdminController
     {
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
         return $this->renderAjax('_orderedProducts', array(
-            'model' => $this->findModel($order_id)
+            'model' => Order::findModel($order_id)
         ));
     }
 
