@@ -13,7 +13,7 @@ class OrderStatusSearch extends OrderStatus {
     public function rules() {
         return [
             [['id'], 'integer'],
-            [['name', 'seo_alias'], 'safe'],
+            [['name', 'slug'], 'safe'],
         ];
     }
 
