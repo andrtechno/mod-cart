@@ -54,77 +54,82 @@ echo number_format((8 * 100) / $cnt, 2, '.', ',');
 
 
         <?php
+
+        // echo \yii\helpers\VarDumper::dump($highchartsData,10,true);
+        // echo \yii\helpers\VarDumper::dump($highchartsDrill,10,true);
+
+        //  die;
         echo \panix\ext\highcharts\Highcharts::widget([
             'scripts' => [
-                'highcharts-more', // enables supplementary chart types (gauge, arearange, columnrange, etc.)
-                'modules/exporting', // adds Exporting button/menu to chart
-                'modules/drilldown', // adds Exporting button/menu to chart
+                // 'highcharts-more', // enables supplementary chart types (gauge, arearange, columnrange, etc.)
+                'modules/exporting',
+                //'modules/drilldown',
             ],
-            'options' => array(
-                'chart' => array(
+            'options' => [
+                'chart' => [
                     'type' => 'column',
                     'plotBackgroundColor' => null,
                     'plotBorderWidth' => null,
                     'plotShadow' => false,
                     'backgroundColor' => 'rgba(255, 255, 255, 0)'
-                ),
-                'title' => array('text' => $this->context->pageName),
-                'xAxis' => array(
-                    'type' => 'category'
+                ],
+                'title' => ['text' => $this->context->pageName],
+                'xAxis' => [
+                    'type' => 'category',
                     //'categories' => range(1, cal_days_in_month(CAL_GREGORIAN, $month, $year))
-                    //  'categories' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                ),
-                'yAxis' => array(
-                    'title' => array('text' => 'Сумма')
-                ),
+                    //'categories' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                ],
+                'yAxis' => [
+                    'title' => ['text' => 'Сумма']
+                ],
 
-                'legend' => array(
+                'legend' => [
                     'enabled' => false
-                ),
-                'plotOptions' => array(
-                    'areaspline' => array(
+                ],
+                'plotOptions' => [
+                    'areaspline' => [
                         'fillOpacity' => 0.5
-                    ),
-                    'area' => array(
+                    ],
+                    'area' => [
                         'pointStart' => 1940,
-                        'marker' => array(
+                        'marker' => [
                             'enabled' => false,
                             'symbol' => 'circle',
                             'radius' => 2,
-                            'states' => array(
-                                'hover' => array(
+                            'states' => [
+                                'hover' => [
                                     'enabled' => true
-                                )
-                            )
-                        )
-                    ),
-                    'series' => array(
+                                ]
+                            ]
+                        ]
+                    ],
+                    'series' => [
                         'borderWidth' => 0,
-                        'dataLabels' => array(
+                        'dataLabels' => [
                             'enabled' => true,
                             'format' => '{point.y:.1f}%'
-                        )
-                    )
-                ),
+                        ]
+                    ]
+                ],
                 // 'tooltip' => array(
                 //     'shared' => true,
                 //     'valueSuffix' => ' кол.'
                 // ),
-                'tooltip' => array(
+                'tooltip' => [
                     'headerFormat' => '<span style="font-size:11px">{series.name}</span><br>',
                     'pointFormat' => '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-                ),
-                'series' => array(
+                ],
+                'series' => [
                     // array('name' => 'Сумма заказов', 'data' => $data_total),
                     //array('name' => 'Заказы', 'data' => $data),
-                    array(
+                    [
                         'name' => 'Заказов',
-                        // 'colorByPoint'=> true,
-                        'tooltip' => array(
+                        'colorByPoint' => true,
+                        'tooltip' => [
                             'pointFormat' => '<span style="font-weight: bold; color: {series.color}">{series.name}</span>: {point.value}<br/><b>Продано товаров: {point.products}<br/>{point.total_price}</b>' // {point.y:.1f}
-                        ),
+                        ],
                         'data' => $highchartsData
-                    ),
+                    ],
 
                     /* array(
                          'name' => 'Дохол',
@@ -133,37 +138,20 @@ echo number_format((8 * 100) / $cnt, 2, '.', ',');
                          ),
                          'data' => $highchartsData
                      ),*/
-                ),
+                ],
 
-                "drilldown" => array(
-                    'activeDataLabelStyle' => array(
+                "drilldown" => [
+                    'activeDataLabelStyle' => [
                         'color' => '#ea5510',//'#343a40',
                         'cursor' => 'pointer',
                         'fontWeight' => 'bold',
                         'textDecoration' => 'none',
-                    ),
+                    ],
                     "series" => $highchartsDrill
-                )
-                /*"drilldown" => array(
-                    "series" => array(
-                        array(
-                            "name" => "Chrome",
-                            "id" => "Month_2",
-                            "data" => array(
-                                [
-                                    "v65.0",
-                                    0.1
-                                ],
-                                [
-                                    "v64.0",
-                                    1.3
-                                ],
-                            )
-                        ),
-                    )
-                )*/
-            )
+                ]
+            ]
         ]);
         ?>
     </div>
 </div>
+
