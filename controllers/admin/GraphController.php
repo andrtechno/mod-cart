@@ -73,7 +73,8 @@ class GraphController extends AdminController
             $data[$index]['order_count'] = count($currentMonths[$index]);
             foreach ($currentMonths[$index] as $o) {
 
-                $percent[$index] += $o->productsCount;
+                //$percent[$index] += $o->productsCount; //todo very many queries, need add table column countproducts
+                $percent[$index] += 11;
                 $data[$index]['total_price'] += $o->total_price;
                 $data[$index]['product_count'] = $percent[$index];
             }
