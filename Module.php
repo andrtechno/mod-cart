@@ -34,7 +34,6 @@ class Module extends WebModule implements BootstrapInterface
     {
         $app->urlManager->addRules(
             [
-
                 'cart' => 'cart/default/index',
                 'cart/view/<secret_key:[0-9a-z]{10}$>' => 'cart/default/view',
                 'cart/remove/<id:\d+>' => 'cart/default/remove',
@@ -43,9 +42,8 @@ class Module extends WebModule implements BootstrapInterface
                // 'cart/recount' => 'cart/default/recount',
 
                 'cart/payment/process' => 'cart/payment/process',
+                'cart/orders/<page:\d+>' => 'cart/default/orders',
                 'cart/orders' => 'cart/default/orders',
-
-
                 'cart/<action:[0-9a-zA-Z_\-]+>' => 'cart/default/<action>',
                // 'cart/<action:[0-9a-zA-Z_\-]+>/*' => 'cart/default/<action>',
 
