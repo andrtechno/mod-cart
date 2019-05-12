@@ -446,6 +446,7 @@ class DefaultController extends WebController
             $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
             $dataProvider->query->andWhere(['user_id' => Yii::$app->user->id]);
             $this->pageName = Yii::t('cart/default', 'MY_ORDERS');
+            $this->view->title = $this->pageName;
             return $this->render('user_orders', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
