@@ -15,8 +15,6 @@ class Module extends WebModule implements BootstrapInterface
 
     public function init()
     {
-
-
         if (!(Yii::$app instanceof yii\console\Application)) {
             $count = Order::find()->where(['status_id' => 1])->count();
             $this->count['num'] = $count;
@@ -26,10 +24,12 @@ class Module extends WebModule implements BootstrapInterface
         parent::init();
     }
 
-    public function getCountByUser(){
-        if(!Yii::$app->user->isGuest)
-            return Order::find()->where(['status_id' => 1,'user_id'=>Yii::$app->user->id])->count();
+    public function getCountByUser()
+    {
+        if (!Yii::$app->user->isGuest)
+            return Order::find()->where(['status_id' => 1, 'user_id' => Yii::$app->user->id])->count();
     }
+
     public function bootstrap($app)
     {
         $app->urlManager->addRules(
@@ -37,15 +37,15 @@ class Module extends WebModule implements BootstrapInterface
                 'cart' => 'cart/default/index',
                 'cart/view/<secret_key:[0-9a-z]{10}$>' => 'cart/default/view',
                 'cart/remove/<id:\d+>' => 'cart/default/remove',
-               // 'cart/clear' => 'cart/default/clear',
-               // 'cart/payment' => 'cart/default/payment',
-               // 'cart/recount' => 'cart/default/recount',
+                // 'cart/clear' => 'cart/default/clear',
+                // 'cart/payment' => 'cart/default/payment',
+                // 'cart/recount' => 'cart/default/recount',
 
                 'cart/payment/process' => 'cart/payment/process',
                 'cart/orders/<page:\d+>' => 'cart/default/orders',
                 'cart/orders' => 'cart/default/orders',
                 'cart/<action:[0-9a-zA-Z_\-]+>' => 'cart/default/<action>',
-               // 'cart/<action:[0-9a-zA-Z_\-]+>/*' => 'cart/default/<action>',
+                // 'cart/<action:[0-9a-zA-Z_\-]+>/*' => 'cart/default/<action>',
 
             ],
             true
