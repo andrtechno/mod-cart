@@ -157,7 +157,7 @@ cart = {
             responsive: true,
             open: function () {
                 var that = this;
-                common.ajax('/notify', {
+                common.ajax('/shop/notify', {
                     product_id: product_id
                 }, function (data, textStatus, xhr) {
                     $(that).html(data.data);
