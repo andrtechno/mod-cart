@@ -3,6 +3,7 @@
 namespace panix\mod\cart\controllers\admin;
 
 
+use Mpdf\Mpdf;
 use panix\mod\cart\models\Order;
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -21,19 +22,27 @@ class DefaultController extends AdminController
     {
         $model = Order::findModel($id);
 
-        $content = $this->renderPartial('_pdf_order', ['model' => $model]);
-
-
-        $pdf = new Pdf([
-            'content' => $content,
-            'methods' => [
-                //'SetHeader' => [Yii::$app->name],
-                'SetHeader' => $this->renderPartial('@theme/views/pdf/header', []),
-                'SetFooter' => ['Страница: {PAGENO}'],
-            ]
+        $mpdf = new Mpdf([
+            //'mode' => 'utf-8',
+            'default_font_size' => 9,
+            'default_font' => 'times',
+            'margin_top' => 40,
+            'margin_bottom' => 9,
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_footer' => 5,
+            'margin_header' => 5,
         ]);
 
-        return $pdf->render();
+        $mpdf->SetTitle('Module');
+        $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer'));
+        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', [
+            'title' => $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()])
+        ]));
+        $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
+        $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
+        return $mpdf->Output("order-{$model->id}.pdf", 'I');
+
     }
 
     public function actionIndex()

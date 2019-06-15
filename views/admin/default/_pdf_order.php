@@ -11,7 +11,7 @@ use panix\mod\shop\models\Product;
 
     <thead>
     <tr>
-        <th colspan="2" align="center"><h2>№ заказа <?= $model->id ?></h2></th>
+        <th colspan="2" align="center"><h2><?= $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]) ?></h2></th>
     </tr>
     <tr>
         <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('user_name'); ?>:</td>
@@ -27,11 +27,13 @@ use panix\mod\shop\models\Product;
     </tr>
     <tr>
         <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('delivery_id'); ?>:</td>
-        <td width="30%" align="right" class="text-center"><?= Yii::$app->formatter->asHtml($model->deliveryMethod->name); ?></td>
+        <td width="30%" align="right"
+            class="text-center"><?= Yii::$app->formatter->asHtml($model->deliveryMethod->name); ?></td>
     </tr>
     <tr>
         <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('payment_id'); ?>:</td>
-        <td width="30%" align="right" class="text-center"><?= Yii::$app->formatter->asHtml($model->paymentMethod->name); ?></td>
+        <td width="30%" align="right"
+            class="text-center"><?= Yii::$app->formatter->asHtml($model->paymentMethod->name); ?></td>
     </tr>
     </thead>
     <tbody>
