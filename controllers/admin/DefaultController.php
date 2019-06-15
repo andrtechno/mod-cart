@@ -21,8 +21,9 @@ class DefaultController extends AdminController
     public function actionPrint($id)
     {
         $model = Order::findModel($id);
-
+        $title = $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]);
         $mpdf = new Mpdf([
+           // 'debug' => true,
             //'mode' => 'utf-8',
             'default_font_size' => 9,
             'default_font' => 'times',
@@ -33,11 +34,13 @@ class DefaultController extends AdminController
             'margin_footer' => 5,
             'margin_header' => 5,
         ]);
-
-        $mpdf->SetTitle('Module');
+        $mpdf->SetCreator('My Creator');
+        $mpdf->SetAuthor('My Name');
+        //$mpdf->SetProtection(['copy','print'], 'asdsad', 'MyPassword');
+        $mpdf->SetTitle($title);
         $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer'));
         $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', [
-            'title' => $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()])
+            'title' => $title
         ]));
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
