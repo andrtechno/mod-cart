@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+use panix\engine\Html;
 use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
 
@@ -38,8 +38,7 @@ GridView::widget([
             'format' => 'html',
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
-                //return 'Номер заказа №'.$model->id.' '.$model->getGridStatus();
-                return $model->getGridStatus().' Номер заказа №'.$model->id;
+                return $model->getGridStatus() . ' '.$model::t('NEW_ORDER_ID',['id'=>$model->getNumberId()]);
             }
         ],
         'user_name',
@@ -57,8 +56,8 @@ GridView::widget([
             'template' => '{print} {update} {switch}',
             'buttons' => [
                 'print' => function ($url, $model, $key) {
-                    return Html::a('<i class="icon-print"></i>', ['/cart/default/print', 'id' => $model->id], [
-                        'title' => Yii::t('yii', 'VIEW'),
+                    return Html::a(Html::icon('print'), ['print', 'id' => $model->id], [
+                        'title' => Yii::t('cart/admin', 'PRINT'),
                         'class' => 'btn btn-sm btn-info linkTarget',
                         'target' => '_blank'
                     ]);

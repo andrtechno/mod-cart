@@ -19,7 +19,7 @@ class DefaultController extends AdminController
 
     public function actionPrint($id)
     {
-        $model = $this->findModel($id);
+        $model = Order::findModel($id);
 
         $content = $this->renderPartial('_pdf_order', ['model' => $model]);
 
