@@ -74,10 +74,12 @@ class Module extends WebModule implements BootstrapInterface
             'cart' => [
                 'label' => Yii::t('cart/default', 'MODULE_NAME'),
                 'icon' => $this->icon,
+                'badge' => $this->count['num'],
                 'items' => [
                     [
                         'label' => Yii::t('cart/default', 'MODULE_NAME'),
                         'url' => ['/admin/cart'],
+                        'badge' => $this->count['num'],
                         'icon' => $this->icon,
                     ],
                     [

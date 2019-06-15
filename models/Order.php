@@ -23,13 +23,16 @@ class Order extends ActiveRecord
     const MODULE_ID = 'cart';
 
     /**
-     * @return string the associated database table name
+     * @inheritdoc
      */
     public static function tableName()
     {
         return '{{%order}}';
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         $a = [];
@@ -37,6 +40,16 @@ class Order extends ActiveRecord
             'class' => HistoricalBehavior::class,
         ];
         return ArrayHelper::merge($a, parent::behaviors());
+    }
+
+    /**
+     * Конвертирует число, с 1 в 000001
+     *
+     * @return string
+     */
+    public function getNumberId()
+    {
+        return sprintf('%06d', $this->id);
     }
 
     public static function getTotal($provider, $fieldName)
@@ -55,26 +68,46 @@ class Order extends ActiveRecord
         return new query\OrderQuery(get_called_class());
     }
 
+    /**
+     * Relation
+     * @return \yii\db\ActiveQuery
+     */
     public function getDeliveryMethod()
     {
         return $this->hasOne(Delivery::class, ['id' => 'delivery_id']);
     }
 
+    /**
+     * Relation
+     * @return \yii\db\ActiveQuery
+     */
     public function getPaymentMethod()
     {
         return $this->hasOne(Payment::class, ['id' => 'payment_id']);
     }
 
+    /**
+     * Relation
+     * @return \yii\db\ActiveQuery
+     */
     public function getStatus()
     {
         return $this->hasOne(OrderStatus::class, ['id' => 'status_id']);
     }
 
+    /**
+     * Relation
+     * @return \yii\db\ActiveQuery
+     */
     public function getProducts()
     {
         return $this->hasMany(OrderProduct::class, ['order_id' => 'id']);
     }
 
+    /**
+     * Relation
+     * @return int|string
+     */
     public function getProductsCount()
     {
         return $this->hasMany(OrderProduct::class, ['order_id' => 'id'])->count();
@@ -87,7 +120,6 @@ class Order extends ActiveRecord
 
     public function rules()
     {
-
         return [
             ['user_phone', 'panix\ext\telinput\PhoneInputValidator'],
             [['user_name', 'user_email', 'delivery_id', 'payment_id', 'user_phone'], 'required'],
