@@ -2,18 +2,15 @@
 
 namespace panix\mod\cart\controllers\admin;
 
-
-use Mpdf\Mpdf;
-use panix\mod\cart\models\Order;
 use Yii;
-use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use panix\engine\controllers\AdminController;
-use panix\engine\pdf\Pdf;
 use panix\mod\shop\models\Product;
+use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderProduct;
 use panix\mod\shop\models\search\ProductSearch;
 use panix\mod\cart\models\search\OrderSearch;
-use yii\web\Response;
+use Mpdf\Mpdf;
 
 class DefaultController extends AdminController
 {
@@ -23,7 +20,7 @@ class DefaultController extends AdminController
         $model = Order::findModel($id);
         $title = $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]);
         $mpdf = new Mpdf([
-           // 'debug' => true,
+            // 'debug' => true,
             //'mode' => 'utf-8',
             'default_font_size' => 9,
             'default_font' => 'times',
