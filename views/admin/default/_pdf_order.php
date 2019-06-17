@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use panix\mod\shop\models\Product;
 
 
 ?>
@@ -57,6 +56,9 @@ use panix\mod\shop\models\Product;
         $totalCountPrice = 0;
         $totalCountPriceAll = 0;
         foreach ($model->products as $product) {
+            /**
+             * @var \panix\mod\cart\models\OrderProduct $product
+             */
             $totalCountQuantity += $product->quantity;
             $totalCountPrice += $product->price;
             $totalCountPriceAll += $product->price * $product->quantity;
@@ -66,7 +68,8 @@ use panix\mod\shop\models\Product;
                 $image = '/uploads/no-image.png';
             }
 
-            $newprice = Yii::$app->currency->convert($product->price);
+            $newprice = Yii::$app->currency->convert($product->price, $product->currency_id);
+
             ?>
             <tr>
                 <td width="10%" align="center">
