@@ -45,7 +45,7 @@ class DeliveryController extends AdminController {
         $this->pageName = Yii::t('cart/admin', 'DELIVERY');
         $this->buttons = [
             [
-                'icon' => 'icon-add',
+                'icon' => 'add',
                 'label' => Yii::t('cart/admin', 'CREATE_DELIVERY'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']
@@ -77,7 +77,7 @@ class DeliveryController extends AdminController {
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
         $this->buttons = [
             [
-                'icon' => 'icon-add',
+                'icon' => 'add',
                 'label' => Yii::t('cart/admin', 'CREATE_DELIVERY'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']

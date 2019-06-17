@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\controllers\admin;
 
+use panix\engine\Html;
 use Yii;
 use yii\web\Response;
 use panix\engine\controllers\AdminController;
@@ -51,8 +52,8 @@ class DefaultController extends AdminController
         $this->buttons = [
             [
                 'label' => Yii::t('cart/default', 'CREATE_ORDER'),
-                'url' => ['/admin/cart/default/create'],
-                'options' => ['class' => 'btn btn-success']
+                'url' => ['create'],
+                'options' => ['class' => 'btn btn-success', 'target' => '_blank']
             ]
         ];
 
@@ -78,6 +79,16 @@ class DefaultController extends AdminController
             var deleteQuestion = "' . Yii::t('cart/admin', 'Вы действительно удалить запись?') . '";
             var productSuccessAddedToOrder = "' . Yii::t('cart/admin', 'Продукт успешно добавлен к заказу.') . '";', \yii\web\View::POS_HEAD, 'myid'
         );
+
+
+        $this->buttons = [
+            [
+                'label' => Yii::t('cart/admin', 'PRINT'),
+                'icon' => 'print',
+                'url' => ['print', 'id' => $model->id],
+                'options' => ['class' => 'btn btn-success']
+            ]
+        ];
 
         $post = Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
