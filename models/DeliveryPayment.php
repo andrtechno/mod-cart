@@ -2,10 +2,15 @@
 
 namespace panix\mod\cart\models;
 
-class DeliveryPayment extends \yii\db\ActiveRecord {
+use yii\db\ActiveRecord;
 
-
-    public static function tableName() {
+class DeliveryPayment extends ActiveRecord
+{
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
         return '{{%order__delivery_payment}}';
     }
 

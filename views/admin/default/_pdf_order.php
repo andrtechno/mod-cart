@@ -13,6 +13,10 @@ use yii\helpers\Url;
         <th colspan="2" align="center"><h2><?= $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]) ?></h2></th>
     </tr>
     <tr>
+        <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('created_at'); ?>:</td>
+        <td width="30%" align="right" class="text-center"><?= Yii::$app->formatter->asDatetime($model->created_at); ?></td>
+    </tr>
+    <tr>
         <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('user_name'); ?>:</td>
         <td width="30%" align="right" class="text-center"><?= $model->user_name; ?></td>
     </tr>

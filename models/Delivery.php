@@ -5,14 +5,17 @@ namespace panix\mod\cart\models;
 use yii\helpers\ArrayHelper;
 use panix\engine\behaviors\TranslateBehavior;
 use panix\mod\cart\models\translate\DeliveryTranslate;
-use panix\mod\cart\models\DeliveryPayment;
+use panix\engine\db\ActiveRecord;
 
-class Delivery extends \panix\engine\db\ActiveRecord {
+class Delivery extends ActiveRecord {
 
     const MODULE_ID = 'cart';
 
     public $_payment_methods;
 
+    /**
+     * @inheritdoc
+     */
     public static function tableName() {
         return '{{%order__delivery}}';
     }

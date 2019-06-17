@@ -6,7 +6,7 @@ return [
     'PAYMENT_ID' => 'Способ оплаты',
     'DELIVERY_PRICE' => 'Цена доставки',
     'TOTAL_PRICE' => 'Сумма товаров',
-    'DATE_CREATE' => 'Дата',
+    'CREATED_AT' => 'Дата заказа',
     'FULL_PRICE' => 'К оплате',
     'STATUS_ID' => 'Статус',
     'PAID' => 'Оплачен',
