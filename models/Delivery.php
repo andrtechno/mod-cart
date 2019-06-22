@@ -112,7 +112,7 @@ class Delivery extends ActiveRecord {
         $systems = new DeliverySystemManager();
 
         foreach ($systems->getSystems() as $system) {
-            $result[(string) $system->id] = $system->name;
+            $result[$system['id']] = $system['name'];
         }
 
         return $result;

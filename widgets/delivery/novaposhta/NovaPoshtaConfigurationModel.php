@@ -10,7 +10,6 @@ class NovaPoshtaConfigurationModel extends Model
 
     public $api_key;
 
-
     public function rules()
     {
         return [

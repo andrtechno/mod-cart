@@ -2,7 +2,9 @@
 
 namespace panix\mod\cart\components\delivery;
 
+use Yii;
 use yii\base\Component;
+use yii\helpers\Json;
 
 class DeliverySystemManager extends Component {
 
@@ -16,17 +18,17 @@ class DeliverySystemManager extends Component {
      * @return array
      */
     public function getSystems() {
-        $pattern = \Yii::getAlias('@cart/widgets/delivery') . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . 'config.xml';
+        $pattern = Yii::getAlias('@cart/widgets/delivery') . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . 'config.json';
 
         foreach (glob($pattern, GLOB_BRACE) as $file) {
-            $config = simplexml_load_file($file);
-            $this->_systems[(string) $config->id] = $config;
+            $config = Json::decode(file_get_contents($file));
+            $this->_systems[$config['id']] = $config;
         }
         return $this->_systems;
     }
 
     /**
-     * Read and return system config.xml
+     * Read and return system config.json
      * @param $name
      */
     public function getSystemInfo($name) {
@@ -39,7 +41,7 @@ class DeliverySystemManager extends Component {
      */
     public function getSystemClass($id) {
         $systemInfo = $this->getSystemInfo($id);
-        $className = (string) $systemInfo->class;
+        $className = $systemInfo['class'];
 
         $systemArray = $this->getDefaultModelClasses();
 
