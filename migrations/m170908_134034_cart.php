@@ -130,6 +130,7 @@ class m170908_134034_cart extends Migration
             'id' => $this->primaryKey()->unsigned(),
             'price' => 'float(10,2) DEFAULT NULL',
             'free_from' => 'float(10,2) DEFAULT NULL',
+            'system' => $this->string(100),
             'switch' => $this->boolean()->defaultValue(1),
             'ordern' => $this->integer(),
         ], $tableOptions);

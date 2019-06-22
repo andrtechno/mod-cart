@@ -10,22 +10,15 @@ use panix\mod\shop\models\Currency;
 ?>
 
 
-<div class="card bg-light">
+<?php
+$form = ActiveForm::begin();
+?>
+<div class="card">
     <div class="card-header">
         <h5><?= Html::encode($this->context->pageName) ?></h5>
     </div>
     <div class="card-body">
 
-
-        <?php
-        $form = ActiveForm::begin([
-            'options' => ['class' => 'form-horizontal']
-        ]);
-        ?>
-        <?php
-
-
-        ?>
         <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
         <?=
         $form->field($model, 'currency_id')->dropDownList(ArrayHelper::map(Currency::find()->all(), 'id', 'name'), [
@@ -45,14 +38,9 @@ use panix\mod\shop\models\Currency;
         ?>
 
 
-        <div class="form-group text-center">
-            <?= $model->submitButton(); ?>
-        </div>
-
-
-        <?php ActiveForm::end(); ?>
-
-
+    </div>
+    <div class="card-footer text-center">
+        <?= $model->submitButton(); ?>
     </div>
 </div>
-
+<?php ActiveForm::end(); ?>

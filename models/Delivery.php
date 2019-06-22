@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\models;
 
+use panix\mod\cart\components\delivery\DeliverySystemManager;
 use yii\helpers\ArrayHelper;
 use panix\engine\behaviors\TranslateBehavior;
 use panix\mod\cart\models\translate\DeliveryTranslate;
@@ -47,7 +48,7 @@ class Delivery extends ActiveRecord {
 
             ['payment_methods', 'validatePaymentMethods'],
             ['name', 'string', 'max' => 255],
-            [['description','price','free_from'], 'string'],
+            [['description','price','free_from','system'], 'string'],
         ];
     }
 
@@ -104,7 +105,18 @@ class Delivery extends ActiveRecord {
     public function setPayment_methods($data) {
         $this->_payment_methods = $data;
     }
+    public function getDeliverySystemsArray() {
 
+        $result = [];
+
+        $systems = new DeliverySystemManager();
+
+        foreach ($systems->getSystems() as $system) {
+            $result[(string) $system->id] = $system->name;
+        }
+
+        return $result;
+    }
     /**
      * @return array
      */

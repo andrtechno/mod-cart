@@ -6,7 +6,7 @@ namespace panix\mod\cart;
 use panix\engine\web\AssetBundle;
 
 
-class CartAdminAsset extends AssetBundle {
+class CartPaymentAsset extends AssetBundle {
 
     public $sourcePath = __DIR__.'/assets';
 

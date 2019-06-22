@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\controllers\admin;
 
+use panix\mod\cart\components\delivery\DeliverySystemManager;
 use Yii;
 use panix\mod\cart\models\search\DeliverySearch;
 use panix\mod\cart\models\Delivery;
@@ -67,12 +68,10 @@ class DeliveryController extends AdminController {
     }
 
     public function actionUpdate($id = false) {
-        if ($id === true) {
-            $model = new Delivery();
-        } else {
-            $model = $this->findModel($id);
-        }
 
+            $model = Delivery::findModel($id);
+
+        \panix\mod\cart\CartDeliveryAsset::register($this->view);
 
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
         $this->buttons = [
@@ -103,11 +102,13 @@ class DeliveryController extends AdminController {
         if ($model->load($post) && $model->validate()) {
             $model->save();
 
-           /* if ($model->delivery_system) {
+            if ($model->system) {
                 $manager = new DeliverySystemManager;
-                $system = $manager->getSystemClass($model->delivery_system);
+                $system = $manager->getSystemClass($model->system);
                 $system->saveAdminSettings($model->id, $_POST);
-            }*/
+            }
+
+
 
             Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
             if ($model->isNewRecord) {
@@ -144,13 +145,22 @@ class DeliveryController extends AdminController {
         }
     }
 
-    protected function findModel($id) {
-        $model = new Delivery();
-        if (($model = $model::findOne($id)) !== null) {
-            return $model;
-        } else {
-            $this->error404();
-        }
+
+    /**
+     * Renders payment system configuration form
+     */
+    public function actionRenderConfigurationForm()
+    {
+
+        $systemId = Yii::$app->request->get('system');
+        $delivery_id = Yii::$app->request->get('delivery_id');
+        if (empty($systemId))
+            exit;
+        $manager = new DeliverySystemManager();
+        $system = $manager->getSystemClass($systemId);
+
+        return $this->renderPartial('@cart/widgets/delivery/' . $systemId . '/_form', ['model' => $system->getConfigurationFormHtml($delivery_id)]);
     }
+
 
 }

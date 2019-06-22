@@ -93,7 +93,7 @@ class PaymentController extends AdminController
             'url' => ['index']
         ];
         $this->breadcrumbs[] = Yii::t('app', 'UPDATE');
-        \panix\mod\cart\CartAdminAsset::register($this->view);
+        \panix\mod\cart\CartPaymentAsset::register($this->view);
 
 
         //$model->setScenario("admin");

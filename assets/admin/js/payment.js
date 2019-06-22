@@ -4,4 +4,5 @@ $(document).ready(function () {
         $('#payment_configuration').load('/admin/cart/payment/render-configuration-form?system=' + $(this).val() + '&payment_method_id=' + $(this).attr('rel'));
     });
     sel.change();
+
 });
