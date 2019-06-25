@@ -54,10 +54,37 @@ cart = {
         }, 'html', 'GET');
     },
     /**
-     * @param formid Id формиы
+     * @param set_id Id товара
      */
-    add: function (formid) {
-        var form = $("#form-add-cart-" + formid);
+    add_set: function (set_id) {
+        $.ajax({
+            url: '/cart/add-set',
+            type: 'POST',
+            dataType: 'json',
+            data: form.serialize(),
+            success: function (data, textStatus, xhr) {
+                if (data.errors) {
+                    common.notify(data.errors, 'error');
+                } else {
+                    cart.renderBlockCart();
+                    common.notify(data.message, 'success');
+                    common.removeLoader();
+                    $('body,html').animate({
+                        // scrollTop: 0
+                    }, 500, function () {
+                        $("#cart").fadeOut().fadeIn();
+                    });
+                }
+            },
+            complete: function () {
+
+//common.notify_list[0].close();
+            }
+        });
+
+    },
+    add: function (product_id) {
+        var form = $("#form-add-cart-" + product_id);
         $.ajax({
             url: form.attr('action'),
             type: 'POST',
