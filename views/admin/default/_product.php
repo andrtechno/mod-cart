@@ -7,7 +7,7 @@ $data_after = $data->getDataAfter();
 ?>
 <tr>
     <td>
-        <?php echo Html::a($data->username, ['/admin/users/default/update', ['id' => $data->user_id]]); ?>
+        <?php echo Html::a($data->username, ['/admin/users/default/update', 'id' => $data->user_id]); ?>
 
         <br/>
         <span class="date"><?= CMS::date($data->date_create) ?></span>

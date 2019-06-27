@@ -38,7 +38,16 @@ echo GridView::widget([
                 return $model->originalProduct->renderGridImage('50x50');
             },
         ],
-        'originalProduct.name',
+        [
+            'attribute' => 'originalProduct.name',
+            'format' => 'raw',
+            //'footer' => $model->productsCount,
+            'value' => function ($model) {
+                return Html::a($model->originalProduct->name.$model->originalProduct->id,$model->originalProduct->getUrl());
+            },
+           // 'contentOptions' => [],
+
+        ],
         [
             'attribute' => 'quantity',
             'footer' => $model->productsCount,
