@@ -9,18 +9,20 @@ use panix\mod\cart\models\OrderStatus;
 use panix\mod\cart\models\search\OrderStatusSearch;
 use yii\web\HttpException;
 
-class StatusesController extends AdminController {
+class StatusesController extends AdminController
+{
 
     /**
      * Display statuses list
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $this->pageName = Yii::t('cart/admin', 'STATUSES');
         $this->breadcrumbs[] = [
-            'label'=>Yii::t('cart/admin', 'ORDERS'),
-            'url'=>['/admin/cart']
+            'label' => Yii::t('cart/admin', 'ORDERS'),
+            'url' => ['/admin/cart']
         ];
-        $this->breadcrumbs[]=$this->pageName;
+        $this->breadcrumbs[] = $this->pageName;
 
         $this->buttons = [
             [
@@ -34,8 +36,8 @@ class StatusesController extends AdminController {
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
-                    'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
@@ -44,36 +46,40 @@ class StatusesController extends AdminController {
      * @param bool $id
      * @return string|\yii\web\Response
      */
-    public function actionUpdate($id = false) {
+    public function actionUpdate($id = false)
+    {
 
-        $model = OrderStatus::findModel($id,Yii::t('cart/admin', 'NO_STATUSES'));
+        $model = OrderStatus::findModel($id, Yii::t('cart/admin', 'NO_STATUSES'));
 
-        
+
         $title = ($model->isNewRecord) ? Yii::t('cart/admin', 'CREATE_STATUSES') :
-                Yii::t('cart/admin', 'UPDATE_STATUSES');
+            Yii::t('cart/admin', 'UPDATE_STATUSES');
 
-        
+
         $this->breadcrumbs[] = [
-            'label'=>Yii::t('cart/admin', 'ORDERS'),
-            'url'=>['/admin/cart']
+            'label' => Yii::t('cart/admin', 'ORDERS'),
+            'url' => ['/admin/cart']
         ];
-        
+
         $this->breadcrumbs[] = [
-            'label'=>Yii::t('cart/admin', 'STATUSES'),
-            'url'=>['index']
+            'label' => Yii::t('cart/admin', 'STATUSES'),
+            'url' => ['index']
         ];
-        
+
         $this->breadcrumbs[] = $title;
 
         $this->pageName = $title;
 
         $post = Yii::$app->request->post();
 
-
+        $isNew = $model->isNewRecord;
         if ($model->load($post) && $model->validate()) {
-                $model->save();
-                return $this->redirect('index');
-            }
+            $model->save();
+            Yii::$app->session->setFlash('success', Yii::t('app', ($isNew) ? 'SUCCESS_CREATE' : 'SUCCESS_UPDATE'));
+            $redirect = (isset($post['redirect'])) ? $post['redirect'] : Yii::$app->request->url;
+            if (!Yii::$app->request->isAjax)
+                return $this->redirect($redirect);
+        }
 
 
         return $this->render('update', array(
@@ -85,7 +91,8 @@ class StatusesController extends AdminController {
      * Delete status
      * @param array $id
      */
-    public function actionDelete($id = array()) {
+    public function actionDelete($id = array())
+    {
         if (Yii::$app->request->isPost) {
             $model = OrderStatus::model()->findAllByPk($_REQUEST['id']);
 
@@ -107,25 +114,26 @@ class StatusesController extends AdminController {
      * Дополнительное меню Контроллера.
      * @return array
      */
-    public function getAddonsMenu22() {
+    public function getAddonsMenu22()
+    {
         return array(
             array(
                 'label' => Yii::t('cart/admin', 'ORDER', 0),
                 'url' => array('/admin/cart'),
                 'icon' => Html::icon('icon-cart'),
-           
+
             ),
             array(
                 'label' => Yii::t('cart/admin', 'STATS'),
                 'url' => array('/admin/cart/statistics'),
                 'icon' => Html::icon('icon-stats'),
-             
+
             ),
             array(
                 'label' => Yii::t('cart/admin', 'HISTORY'),
                 'url' => array('/admin/cart/history'),
                 'icon' => Html::icon('icon-history'),
-             
+
             ),
         );
     }

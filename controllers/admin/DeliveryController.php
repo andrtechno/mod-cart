@@ -93,12 +93,9 @@ class DeliveryController extends AdminController {
         ];
         $this->breadcrumbs[] = Yii::t('app', 'UPDATE');
 
-
-
-        //$model->setScenario("admin");
         $post = Yii::$app->request->post();
 
-
+        $isNew = $model->isNewRecord;
         if ($model->load($post) && $model->validate()) {
             $model->save();
 
@@ -108,14 +105,10 @@ class DeliveryController extends AdminController {
                 $system->saveAdminSettings($model->id, $_POST);
             }
 
-
-
-            Yii::$app->session->setFlash('success', \Yii::t('app', 'SUCCESS_CREATE'));
-            if ($model->isNewRecord) {
-                return Yii::$app->getResponse()->redirect(['/admin/cart/delivery']);
-            } else {
-                return Yii::$app->getResponse()->redirect(['/admin/cart/delivery/update', 'id' => $model->id]);
-            }
+            Yii::$app->session->setFlash('success', Yii::t('app', ($isNew) ? 'SUCCESS_CREATE' : 'SUCCESS_UPDATE'));
+            $redirect = (isset($post['redirect'])) ? $post['redirect'] : Yii::$app->request->url;
+            if (!Yii::$app->request->isAjax)
+                return $this->redirect($redirect);
         }
 
         return $this->render('update', [
