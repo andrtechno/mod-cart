@@ -1,12 +1,14 @@
 <?php
 
-//namespace panix\mod\cart\migrations;
+namespace panix\mod\cart\migrations;
+
 /**
  * Generation migrate by PIXELION CMS
  * @author PIXELION CMS development team <dev@pixelion.com.ua>
  *
  * Class m170908_134034_cart
  */
+use Yii;
 use yii\db\Migration;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderStatus;
@@ -18,6 +20,7 @@ use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\translate\DeliveryTranslate;
 use panix\mod\cart\models\translate\PaymentTranslate;
 use panix\mod\cart\models\DeliveryPayment;
+
 /**
  * Class m170908_134034_cart
  */
@@ -41,8 +44,8 @@ class m170908_134034_cart extends Migration
             'status_id' => $this->integer()->notNull()->unsigned(),
             //'delivery_price' => 'float(10,2) DEFAULT NULL',
             //'total_price' => 'float(10,2) DEFAULT NULL',
-            'delivery_price' => $this->money(10,2),
-            'total_price' => $this->money(10,2),
+            'delivery_price' => $this->money(10, 2),
+            'total_price' => $this->money(10, 2),
             'user_name' => $this->string(100),
             'user_email' => $this->string(100),
             'user_address' => $this->string(255),
@@ -82,9 +85,8 @@ class m170908_134034_cart extends Migration
             'variants' => $this->text(),
             'quantity' => $this->smallInteger(8),
             'sku' => $this->string(100),
-            'price' => $this->money(10,2),
+            'price' => $this->money(10, 2),
         ], $tableOptions);
-
 
 
         // create table order history
@@ -225,7 +227,6 @@ class m170908_134034_cart extends Migration
 
         // order status indexes
         $this->createIndex('ordern', OrderStatus::tableName(), 'ordern');
-
 
 
         // order products indexes
