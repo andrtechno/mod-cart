@@ -117,7 +117,7 @@ class BuyOneClickAction extends CAction {
      * @param ByOnClickForm $model
      */
     private function sendMessage($model, $productModel) {
-        $currency = Yii::$app->currency->active->symbol;
+        $currency = Yii::$app->currency->active['symbol'];
         $request = Yii::$app->request;
 
 

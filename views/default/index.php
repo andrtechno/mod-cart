@@ -115,7 +115,7 @@ $formOrder = ActiveForm::begin([
                             ?>
                             <span class="price price-sm  text-warning">
                                 <?= Yii::$app->currency->number_format($price); ?>
-                                <sub><?= Yii::$app->currency->active->symbol; ?></sub>
+                                <sub><?= Yii::$app->currency->active['symbol']; ?></sub>
                             </span>
 
                             <?php
@@ -151,13 +151,13 @@ $formOrder = ActiveForm::begin([
                                 <span class="cart-sub-total-price" id="row-total-price<?= $index ?>">
                                     <?= Yii::$app->currency->number_format($price * $product['quantity']); ?>
                                 </span>
-                                <sub><?= Yii::$app->currency->active->symbol; ?></sub>
+                                <sub><?= Yii::$app->currency->active['symbol']; ?></sub>
                             </span>
 
 
                             <?php
 
-                            //echo ' '.($product['currency_id'])? Yii::$app->currency->getSymbol($product['currency_id']): Yii::$app->currency->active->symbol;
+                            //echo ' '.($product['currency_id'])? Yii::$app->currency->getSymbol($product['currency_id']): Yii::$app->currency->active['symbol'];
                             ?>
                         </td>
                         <td width="20px" class="remove-item">
@@ -240,7 +240,7 @@ $formOrder = ActiveForm::begin([
 
                     <span class="price price-lg text-warning">
                         <span class="" id="total"><?= Yii::$app->currency->number_format($totalPrice) ?></span>
-                        <sub><?php echo Yii::$app->currency->active->symbol; ?></sub>
+                        <sub><?php echo Yii::$app->currency->active['symbol']; ?></sub>
                 </span>
                 </div>
 

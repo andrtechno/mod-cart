@@ -76,7 +76,7 @@ echo \panix\engine\grid\GridView::widget([
             'format' => 'html',
             'value' => function ($model) {
                 $priceHtml = Yii::$app->currency->number_format($model->full_price);
-                $symbol = Html::tag('sup', Yii::$app->currency->main->symbol);
+                $symbol = Html::tag('sup', Yii::$app->currency->main['symbol']);
                 return Html::tag('span', $priceHtml, ['class' => 'text-success font-weight-bold']) . ' ' . $symbol;
             }
         ],

@@ -81,9 +81,9 @@ use yii\helpers\Url;
                 <td width="40%"><?= $product->originalProduct->name ?></td>
                 <td align="center"><?= $product->quantity ?></td>
                 <td align="center"><?= Yii::$app->currency->number_format($newprice) ?>
-                    <sub><?= Yii::$app->currency->active->symbol ?></sub></td>
+                    <sub><?= Yii::$app->currency->active['symbol'] ?></sub></td>
                 <td align="center"><?= Yii::$app->currency->number_format($newprice * $product->quantity) ?>
-                    <sub><?= Yii::$app->currency->active->symbol ?></sub></td>
+                    <sub><?= Yii::$app->currency->active['symbol'] ?></sub></td>
             </tr>
         <?php } ?>
 
@@ -93,16 +93,16 @@ use yii\helpers\Url;
             <th colspan="2" class="text-right">Всего</th>
             <th class="text-center"><?= $totalCountQuantity; ?></th>
             <th class="text-center"><?= Yii::$app->currency->number_format(Yii::$app->currency->convert($totalCountPrice)); ?>
-                <sub><?= Yii::$app->currency->active->symbol ?></sub></th>
+                <sub><?= Yii::$app->currency->active['symbol'] ?></sub></th>
             <th class="text-center"><?= Yii::$app->currency->number_format(Yii::$app->currency->convert($totalCountPriceAll)); ?>
-                <sub><?= Yii::$app->currency->active->symbol ?></sub></th>
+                <sub><?= Yii::$app->currency->active['symbol'] ?></sub></th>
         </tr>
         </tfoot>
     </table>
     <br/><br/>
     <div class="text-right">
         Всего к оплате: <h1><?= Yii::$app->currency->number_format($model->total_price); ?>
-            <sub><?= Yii::$app->currency->active->symbol ?></sub></h1>
+            <sub><?= Yii::$app->currency->active['symbol'] ?></sub></h1>
     </div>
 <?php } ?>
 

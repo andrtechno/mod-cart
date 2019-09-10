@@ -5,7 +5,7 @@ use panix\engine\grid\GridView;
 use panix\mod\shop\models\Product;
 use yii\helpers\Html;
 
-$symbol = Yii::$app->currency->active->symbol;
+$symbol = Yii::$app->currency->active['symbol'];
 
 Pjax::begin([
     'id' => 'pjax-container-products',
@@ -58,9 +58,9 @@ echo GridView::widget([
             'attribute' => 'price',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
-            'footer' => Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main->symbol,
+            'footer' => Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main['symbol'],
             'value' => function ($model) {
-                return Yii::$app->currency->number_format($model->price) . ' ' . Yii::$app->currency->main->symbol;
+                return Yii::$app->currency->number_format($model->price) . ' ' . Yii::$app->currency->main['symbol'];
             }
         ],
         [

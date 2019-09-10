@@ -99,9 +99,9 @@ class DefaultController extends WebController
         $paymenyMethods = Payment::find()->all();
 
         $this->view->registerJs("
-            var penny = '" . Yii::$app->currency->active->penny . "';
-            var separator_thousandth = '" . Yii::$app->currency->active->separator_thousandth . "';
-            var separator_hundredth = '" . Yii::$app->currency->active->separator_hundredth . "';
+            var penny = '" . Yii::$app->currency->active['penny'] . "';
+            var separator_thousandth = '" . Yii::$app->currency->active['separator_thousandth'] . "';
+            var separator_hundredth = '" . Yii::$app->currency->active['separator_hundredth'] . "';
         ", yii\web\View::POS_HEAD, 'numberformat');
 
         return $this->render('index', [
@@ -324,7 +324,7 @@ class DefaultController extends WebController
             'text' => Yii::t('cart/default', $text, [
                 'num' => $productsCount,
                 'total' => $order->total_price,
-                'currency' => Yii::$app->currency->active->symbol,
+                'currency' => Yii::$app->currency->active['symbol'],
                 'username' => Yii::$app->user->isGuest ? $order->user_name : Yii::$app->user->getDisplayName()
             ])
         ]);

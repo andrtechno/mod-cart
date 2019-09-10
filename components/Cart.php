@@ -177,7 +177,7 @@ class Cart extends Component
                 // print_r($currency);
                 $total[$currency->iso] += (Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity']);
             } else {
-                $total[Yii::$app->currency->main->iso] += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
+                $total[Yii::$app->currency->main['iso']] += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
             }
         }
         return $total;

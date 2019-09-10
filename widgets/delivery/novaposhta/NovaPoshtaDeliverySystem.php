@@ -75,7 +75,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
             }
 
 
-            if (Yii::$app->currency->active->iso != $payments['ccy']) {
+            if (Yii::$app->currency->active['iso'] != $payments['ccy']) {
                 $this->log('Currency error');
                 return false;
             }

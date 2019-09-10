@@ -75,7 +75,7 @@ class Privat24PaymentSystem extends BasePaymentSystem
             }
 
 
-            if (Yii::$app->currency->active->iso != $payments['ccy']) {
+            if (Yii::$app->currency->active['iso'] != $payments['ccy']) {
                 $this->log('Currency error');
                 return false;
             }

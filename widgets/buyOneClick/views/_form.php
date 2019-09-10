@@ -31,12 +31,12 @@ if ($sended) {
                 <div class="product-price">
                     <span class="price price-md">
                         <?= $productModel->priceRange() ?>
-                        <sub><?= Yii::$app->currency->active->symbol ?></sub>
+                        <sub><?= Yii::$app->currency->active['symbol'] ?></sub>
                     </span>
                     <?php
                     if (Yii::$app->hasModule('discounts') && isset($productModel->appliedDiscount)) {
                         ?>
-                        <span class="price price-xs price-discount"><?= $productModel->toCurrentCurrency('originalPrice') ?> <sub><?= Yii::$app->currency->active->symbol ?></sub></span>
+                        <span class="price price-xs price-discount"><?= $productModel->toCurrentCurrency('originalPrice') ?> <sub><?= Yii::$app->currency->active['symbol'] ?></sub></span>
                         <?php
                     }
                     ?>

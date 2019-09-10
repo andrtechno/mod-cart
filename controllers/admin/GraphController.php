@@ -114,7 +114,7 @@ class GraphController extends AdminController
                 'name' => date('F', strtotime("{$year}-{$index}")),
                 'products' => $product_count,
                 'value' => $order_count,
-                'total_price' => Yii::$app->currency->number_format($total_price) . ' ' . Yii::$app->currency->active->symbol,
+                'total_price' => Yii::$app->currency->number_format($total_price) . ' ' . Yii::$app->currency->active['symbol'],
                 // 'color' => $this->getSeasonColor($index),
                 "drilldown" => "Month_{$index}"
             ];

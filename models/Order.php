@@ -60,7 +60,7 @@ class Order extends ActiveRecord
             $total += $item[$fieldName];
         }
 
-        return Yii::$app->currency->number_format($total) . ' ' . Yii::$app->currency->main->symbol;
+        return Yii::$app->currency->number_format($total) . ' ' . Yii::$app->currency->main['symbol'];
     }
 
     public static function find()
@@ -235,7 +235,7 @@ class Order extends ActiveRecord
             // $currency = ShopCurrency::model()->findByPk($p->currency_id);
             // $this->total_price += $p->price * $currency->rate * $p->quantity;
             // }else{
-            $curr_rate = Yii::$app->currency->active->rate;
+            $curr_rate = Yii::$app->currency->active['rate'];
 
             $this->total_price += (Yii::$app->settings->get('shop', 'wholesale')) ? $p->price * $p->prd->pcs * $curr_rate * $p->quantity : $p->price * $curr_rate * $p->quantity;
 
