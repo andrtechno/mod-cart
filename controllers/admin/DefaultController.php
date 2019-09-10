@@ -2,7 +2,6 @@
 
 namespace panix\mod\cart\controllers\admin;
 
-use panix\engine\Html;
 use Yii;
 use yii\web\Response;
 use panix\engine\controllers\AdminController;
@@ -37,12 +36,10 @@ class DefaultController extends AdminController
         //$mpdf->SetProtection(['copy','print'], 'asdsad', 'MyPassword');
         $mpdf->SetTitle($title);
         $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer'));
-        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', [
-            'title' => $title
-        ]));
+        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => $title]));
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
-        return $mpdf->Output("order-{$model->id}.pdf", 'I');
+        return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => $model->id]) . ".pdf", 'I');
 
     }
 
