@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\controllers\admin;
 
+use panix\engine\CMS;
 use Yii;
 use yii\web\Response;
 use panix\engine\controllers\AdminController;
@@ -17,6 +18,7 @@ class DefaultController extends AdminController
 
     public function actionPrint($id)
     {
+        $currentDate = CMS::date(date('Y-m-d H:i:s'));
         $model = Order::findModel($id);
         $title = $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]);
         $mpdf = new Mpdf([
@@ -24,19 +26,20 @@ class DefaultController extends AdminController
             //'mode' => 'utf-8',
             'default_font_size' => 9,
             'default_font' => 'times',
-            'margin_top' => 40,
+            'margin_top' => 25,
             'margin_bottom' => 9,
-            'margin_left' => 10,
-            'margin_right' => 10,
+            'margin_left' => 5,
+            'margin_right' => 5,
             'margin_footer' => 5,
             'margin_header' => 5,
         ]);
         $mpdf->SetCreator('My Creator');
         $mpdf->SetAuthor('My Name');
+
         //$mpdf->SetProtection(['copy','print'], 'asdsad', 'MyPassword');
         $mpdf->SetTitle($title);
-        $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer'));
-        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => $title]));
+        $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer',['currentDate'=>$currentDate]));
+        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => '№'.$model->getNumberId()]));
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
         return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => $model->id]) . ".pdf", 'I');

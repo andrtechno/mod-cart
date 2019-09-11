@@ -3,45 +3,38 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+$currency = Yii::$app->currency;
 
 ?>
 
-<table border="0" cellspacing="0" cellpadding="2" style="width:100%;">
-
-    <thead>
+<table border="0" cellspacing="0" cellpadding="2" style="width:100%;" class="table2">
     <tr>
-        <th colspan="2" align="center"><h2><?= $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]) ?></h2></th>
+        <td width="30%" align="left" class="text-left"><?= $model->getAttributeLabel('created_at'); ?>:</td>
+        <td width="70%" align="left" class="text-left">
+            <strong><?= Yii::$app->formatter->asDatetime($model->created_at); ?></strong></td>
     </tr>
     <tr>
-        <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('created_at'); ?>:</td>
-        <td width="30%" align="right" class="text-center"><?= Yii::$app->formatter->asDatetime($model->created_at); ?></td>
+        <td width="30%" align="left" class="text-left"><?= $model->getAttributeLabel('user_name'); ?>:</td>
+        <td width="70%" align="left" class="text-left"><strong><?= $model->user_name; ?></strong></td>
     </tr>
     <tr>
-        <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('user_name'); ?>:</td>
-        <td width="30%" align="right" class="text-center"><?= $model->user_name; ?></td>
+        <td width="30%" align="left" class="text-left"><?= $model->getAttributeLabel('user_phone'); ?>:</td>
+        <td width="70%" align="left" class="text-left"><strong><?= $model->user_phone; ?></strong></td>
     </tr>
     <tr>
-        <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('user_phone'); ?>:</td>
-        <td width="30%" align="right" class="text-center"><?= $model->user_phone; ?></td>
+        <td width="30%" align="left" class="text-left"><?= $model->getAttributeLabel('user_address'); ?>:</td>
+        <td width="70%" align="left" class="text-left"><strong><?= $model->user_address; ?></strong></td>
     </tr>
     <tr>
-        <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('user_address'); ?>:</td>
-        <td width="30%" align="right" class="text-center"><?= $model->user_address; ?></td>
+        <td width="30%" align="left" class="text-left"><?= $model->getAttributeLabel('delivery_id'); ?>:</td>
+        <td width="70%" align="left" class="text-left">
+            <strong><?= Yii::$app->formatter->asHtml($model->deliveryMethod->name); ?></strong></td>
     </tr>
     <tr>
-        <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('delivery_id'); ?>:</td>
-        <td width="30%" align="right"
-            class="text-center"><?= Yii::$app->formatter->asHtml($model->deliveryMethod->name); ?></td>
+        <td width="30%" align="left" class="text-left"><?= $model->getAttributeLabel('payment_id'); ?>:</td>
+        <td width="70%" align="left" class="text-left">
+            <strong><?= Yii::$app->formatter->asHtml($model->paymentMethod->name); ?></strong></td>
     </tr>
-    <tr>
-        <td width="70%" align="right" class="text-center"><?= $model->getAttributeLabel('payment_id'); ?>:</td>
-        <td width="30%" align="right"
-            class="text-center"><?= Yii::$app->formatter->asHtml($model->paymentMethod->name); ?></td>
-    </tr>
-    </thead>
-    <tbody>
-
-    </tbody>
 </table>
 <br/><br/>
 <?php if ($model->products) { ?>
@@ -72,7 +65,7 @@ use yii\helpers\Url;
                 $image = '/uploads/no-image.png';
             }
 
-            $newprice = Yii::$app->currency->convert($product->price, $product->currency_id);
+            $newprice = $currency->convert($product->price, $product->currency_id);
 
             ?>
             <tr>
@@ -80,10 +73,10 @@ use yii\helpers\Url;
                     <?php echo Html::img(Url::to($image, true), ['alt' => $product->originalProduct->name, 'width' => 50, 'height' => 50]); ?></td>
                 <td width="40%"><?= $product->originalProduct->name ?></td>
                 <td align="center"><?= $product->quantity ?></td>
-                <td align="center"><?= Yii::$app->currency->number_format($newprice) ?>
-                    <sub><?= Yii::$app->currency->active['symbol'] ?></sub></td>
-                <td align="center"><?= Yii::$app->currency->number_format($newprice * $product->quantity) ?>
-                    <sub><?= Yii::$app->currency->active['symbol'] ?></sub></td>
+                <td align="center"><?= $currency->number_format($newprice) ?>
+                    <?= $currency->active['symbol'] ?></td>
+                <td align="center"><?= $currency->number_format($newprice * $product->quantity) ?>
+                    <?= $currency->active['symbol'] ?></td>
             </tr>
         <?php } ?>
 
@@ -92,17 +85,25 @@ use yii\helpers\Url;
         <tr>
             <th colspan="2" class="text-right">Всего</th>
             <th class="text-center"><?= $totalCountQuantity; ?></th>
-            <th class="text-center"><?= Yii::$app->currency->number_format(Yii::$app->currency->convert($totalCountPrice)); ?>
-                <sub><?= Yii::$app->currency->active['symbol'] ?></sub></th>
-            <th class="text-center"><?= Yii::$app->currency->number_format(Yii::$app->currency->convert($totalCountPriceAll)); ?>
-                <sub><?= Yii::$app->currency->active['symbol'] ?></sub></th>
+            <th class="text-center"><?= $currency->number_format($currency->convert($totalCountPrice)); ?>
+                <?= $currency->active['symbol'] ?></th>
+            <th class="text-center"><?= $currency->number_format($currency->convert($totalCountPriceAll)); ?>
+                <?= $currency->active['symbol'] ?></th>
         </tr>
         </tfoot>
     </table>
-    <br/><br/>
+    <br/>
+    <hr/>
     <div class="text-right">
-        Всего к оплате: <h1><?= Yii::$app->currency->number_format($model->total_price); ?>
-            <sub><?= Yii::$app->currency->active['symbol'] ?></sub></h1>
+
+        <?php if($model->delivery_price > 0){ ?>
+            <p><?= Yii::t('cart/default','COST_DELIVERY'); ?>:
+                <strong><?= $currency->number_format($model->delivery_price); ?> <?= $currency->active['symbol'] ?></strong>
+            </p>
+        <?php } ?>
+        <?= Yii::t('cart/default','TOTAL_PAY'); ?>:
+        <h3><?= $currency->number_format($model->total_price); ?>
+            <?= $currency->active['symbol'] ?></h3>
     </div>
 <?php } ?>
 
