@@ -15,6 +15,8 @@ return [
     'STATUSES' => 'Статусы заказов',
     'CREATE_STATUSES' => 'Создание статуса',
     'UPDATE_STATUSES' => 'Создание статуса',
+    'PROMOCODE' => 'Промо-код',
+    'CREATE_PROMOCODE' => 'Добавить промо-код',
     'ERR_DELETE_STATUS' => 'Ошибка удаления статуса. Он используется заказами.',
     'ERR_ORDER_PRODUCT_EXISTS' => 'Ошибка, товар в этом заказе уже существует.',
     'NO_STATUSES' => 'Статус не найден.',

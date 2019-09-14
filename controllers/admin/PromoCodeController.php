@@ -4,6 +4,7 @@ namespace panix\mod\cart\controllers\admin;
 
 use Yii;
 use panix\engine\controllers\AdminController;
+use panix\mod\cart\models\PromoCode;
 use panix\mod\cart\models\search\PromoCodeSearch;
 
 class PromoCodeController extends AdminController
@@ -12,10 +13,10 @@ class PromoCodeController extends AdminController
 
     public function actionIndex()
     {
-        $this->pageName = Yii::t('cart/admin', 'ORDERS');
+        $this->pageName = Yii::t('cart/admin', 'PROMOCODE');
         $this->buttons = [
             [
-                'label' => Yii::t('cart/default', 'CREATE_ORDER'),
+                'label' => Yii::t('cart/admin', 'CREATE_PROMOCODE'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success', 'target' => '_blank']
             ]
@@ -33,8 +34,8 @@ class PromoCodeController extends AdminController
 
     public function actionUpdate($id = false)
     {
-        $model = PromoCodeSearch::findModel($id, Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
-        $this->pageName = Yii::t('cart/admin', 'ORDERS');
+        $model = PromoCode::findModel($id);
+        $this->pageName = Yii::t('cart/admin', 'PROMOCODE');
         $this->breadcrumbs = [
             $this->pageName
         ];

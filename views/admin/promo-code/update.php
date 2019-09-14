@@ -11,7 +11,7 @@ $form = ActiveForm::begin();
     </div>
     <div class="card-body">
         <?= $form->field($model, 'code')->textInput(['maxlength' => 50]); ?>
-        <?= $form->field($model, 'discount')->textInput(['maxlength' => 255]); ?>
+        <?= $form->field($model, 'discount')->textInput(['maxlength' => 50]); ?>
         <?= $form->field($model, 'max_use'); ?>
     </div>
     <div class="card-footer text-center">

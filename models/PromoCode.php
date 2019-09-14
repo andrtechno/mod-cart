@@ -28,9 +28,10 @@ class PromoCode extends ActiveRecord
     public function rules()
     {
         return [
-            ['code', 'required'],
+            [['code', 'discount', 'max_use'], 'required'],
             [['max_use', 'used'], 'number'],
             ['code', 'string', 'max' => 50],
+            ['discount', 'string', 'max' => 10],
             //[['code'], 'string'],
         ];
     }

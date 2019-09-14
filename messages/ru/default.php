@@ -23,7 +23,6 @@ return [
     'TABLE_SUM' => 'Итого (грн)',
     'PAYMENT' => 'Оплата',
     'COST' => 'Стоимость',
-    'PROMO_CODE' => 'Промо код',
     'DELIVERY' => 'Доставка',
     'MAIL_TABLE_TH_PRODUCT' => 'Товар',
     'MAIL_TABLE_TH_QUANTITY' => 'Кол.',
