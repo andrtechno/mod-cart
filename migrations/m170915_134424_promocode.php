@@ -16,6 +16,8 @@ use panix\mod\cart\models\PromoCode;
  */
 class m170915_134424_promocode extends Migration
 {
+    public static $categoryTable = '{{%order__promocode_category}}';
+    public static $manufacturerTable = '{{%order__promocode_manufacturer}}';
 
     public function up()
     {
@@ -35,7 +37,26 @@ class m170915_134424_promocode extends Migration
             'updated_at' => $this->integer(11)->null(),
         ], $tableOptions);
 
-        //$this->createIndex('user_id', PromoCode::tableName(), 'user_id');
+
+        $this->createTable(self::$categoryTable, [
+            'id' => $this->primaryKey()->unsigned(),
+            'promocode_id' => $this->integer()->unsigned(),
+            'category_id' => $this->integer()->unsigned(),
+        ], $tableOptions);
+
+
+        $this->createTable(self::$manufacturerTable, [
+            'id' => $this->primaryKey()->unsigned(),
+            'promocode_id' => $this->integer()->unsigned(),
+            'manufacturer_id' => $this->integer()->unsigned(),
+        ], $tableOptions);
+
+
+        $this->createIndex('promocode_id', self::$manufacturerTable, 'promocode_id');
+        $this->createIndex('manufacturer_id', self::$manufacturerTable, 'manufacturer_id');
+
+        $this->createIndex('promocode_id', self::$categoryTable, 'promocode_id');
+        $this->createIndex('category_id', self::$categoryTable, 'category_id');
 
     }
 
@@ -45,7 +66,8 @@ class m170915_134424_promocode extends Migration
             $this->dropForeignKey('{{%fk_order__promocode}}', PromoCode::tableName());
         }
         $this->dropTable(PromoCode::tableName());
-
+        $this->dropTable(self::$categoryTable);
+        $this->dropTable(self::$manufacturerTable);
     }
 
 }

@@ -5,22 +5,26 @@ namespace panix\mod\cart\models\search;
 use panix\engine\data\ActiveDataProvider;
 use panix\mod\cart\models\PromoCode;
 
-class PromoCodeSearch extends PromoCode {
+class PromoCodeSearch extends PromoCode
+{
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
-            [['id'], 'integer'],
+            [['id', 'used', 'max_use'], 'integer'],
             [['code'], 'safe'],
+            [['created_at', 'updated_at'], 'date', 'format' => 'php:Y-m-d']
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios() {
+    public function scenarios()
+    {
         // bypass scenarios() implementation in the parent class
         return \yii\base\Model::scenarios();
     }
@@ -32,7 +36,8 @@ class PromoCodeSearch extends PromoCode {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params)
+    {
         $query = PromoCode::find();
 
         $dataProvider = new ActiveDataProvider([
@@ -53,6 +58,8 @@ class PromoCodeSearch extends PromoCode {
 
 
         $query->andFilterWhere(['like', 'code', $this->code]);
+        $query->andFilterWhere(['like', 'used', $this->used]);
+        $query->andFilterWhere(['like', 'max_use', $this->max_use]);
 
         return $dataProvider;
     }

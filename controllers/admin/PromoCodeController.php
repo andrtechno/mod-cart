@@ -39,24 +39,37 @@ class PromoCodeController extends AdminController
         $this->breadcrumbs = [
             $this->pageName
         ];
-
-        /*  $this->buttons = [
-              [
-                  'label' => Yii::t('cart/admin', 'PRINT'),
-                  'icon' => 'print',
-                  'url' => ['print', 'id' => $model->id],
-                  'options' => ['class' => 'btn btn-success']
-              ]
-          ];*/
+        $this->buttons = [
+            [
+                'label' => Yii::t('cart/admin', 'CREATE_PROMOCODE'),
+                'url' => ['create'],
+                'options' => ['class' => 'btn btn-success', 'target' => '_blank']
+            ]
+        ];
         $isNew = $model->isNewRecord;
         $post = Yii::$app->request->post();
-        if ($model->load($post) && $model->validate()) {
-            $model->save();
-            $this->redirectPage($isNew, $post);
+
+        if (!isset($post['PromoCode']['manufacturers'])) {
+           // $model->manufacturers = [];
         }
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        if (!isset($post['PromoCode']['categories']))
+          //  $model->categories = [];
+
+            if (!$model->categories) {
+                $model->categories = [];
+            }
+        if (!$model->manufacturers) {
+            $model->manufacturers = [];
+        }
+
+        if ($model->load($post)) {
+            if ($model->validate()) {
+                //print_r($model->attributes);die;
+                $model->save();
+                $this->redirectPage($isNew, $post);
+            }
+        }
+        return $this->render('update', ['model' => $model]);
     }
 
 
