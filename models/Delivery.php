@@ -8,7 +8,8 @@ use panix\engine\behaviors\TranslateBehavior;
 use panix\mod\cart\models\translate\DeliveryTranslate;
 use panix\engine\db\ActiveRecord;
 
-class Delivery extends ActiveRecord {
+class Delivery extends ActiveRecord
+{
 
     const MODULE_ID = 'cart';
 
@@ -17,51 +18,59 @@ class Delivery extends ActiveRecord {
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return '{{%order__delivery}}';
     }
-    public static function find() {
+
+    public static function find()
+    {
         return new query\DeliveryQuery(get_called_class());
     }
-    
-    public function getTranslations() {
+
+    public function getTranslations()
+    {
         return $this->hasMany(DeliveryTranslate::class, ['object_id' => 'id']);
     }
 
 
-    public function getCategorization() {
+    public function getCategorization()
+    {
         return $this->hasMany(DeliveryPayment::class, ['delivery_id' => 'id']);
     }
 
-    public function getPaymentMethods() {
+    public function getPaymentMethods()
+    {
         return $this->hasMany(Payment::class, ['id' => 'payment_id'])->via('categorization');
     }
 
     /**
      * @return array validation rules for model attributes.
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             ['name', 'required'],
 
-           // ['price, free_from', 'number'],
+            // ['price, free_from', 'number'],
 
             ['payment_methods', 'validatePaymentMethods'],
             ['name', 'string', 'max' => 255],
-            [['description','price','free_from','system'], 'string'],
+            [['description', 'price', 'free_from', 'system'], 'string'],
         ];
     }
 
-    public function behaviors() {
+    public function behaviors()
+    {
         return ArrayHelper::merge([
-                    'translate' => [
-                        'class' => TranslateBehavior::class,
-                        'translationAttributes' => [
-                            'name',
-                            'description'
-                        ]
-                    ],
-                        ], parent::behaviors());
+            'translate' => [
+                'class' => TranslateBehavior::class,
+                'translationAttributes' => [
+                    'name',
+                    'description'
+                ]
+            ],
+        ], parent::behaviors());
     }
 
     /**
@@ -69,7 +78,8 @@ class Delivery extends ActiveRecord {
      * @param $attr
      * @return mixed
      */
-    public function validatePaymentMethods($attr) {
+    public function validatePaymentMethods($attr)
+    {
         if (!is_array($this->$attr))
             return;
 
@@ -82,14 +92,15 @@ class Delivery extends ActiveRecord {
     /**
      * After save event
      */
-    public function afterSave($insert, $changedAttributes) {
+    public function afterSave($insert, $changedAttributes)
+    {
 
 
         // Clear payment relations
         DeliveryPayment::deleteAll(['delivery_id' => $this->id]);
 
-       foreach ($this->getPayment_methods() as $pid) {
-      //  if($this->getPayment_methods()){
+        foreach ($this->getPayment_methods() as $pid) {
+            //  if($this->getPayment_methods()){
             $model = new DeliveryPayment;
             $model->delivery_id = $this->id;
             $model->payment_id = $pid;
@@ -102,10 +113,13 @@ class Delivery extends ActiveRecord {
     /**
      * @param $data array ids of payment methods
      */
-    public function setPayment_methods($data) {
+    public function setPayment_methods($data)
+    {
         $this->_payment_methods = $data;
     }
-    public function getDeliverySystemsArray() {
+
+    public function getDeliverySystemsArray()
+    {
 
         $result = [];
 
@@ -117,6 +131,7 @@ class Delivery extends ActiveRecord {
 
         return $result;
     }
+
     /**
      * @return array
      */
@@ -138,7 +153,8 @@ class Delivery extends ActiveRecord {
     /**
      * @return string order used delivery method
      */
-    public function countOrders() {
+    public function countOrders()
+    {
         return Order::find()->where(['delivery_id' => $this->id])->count();
     }
 
