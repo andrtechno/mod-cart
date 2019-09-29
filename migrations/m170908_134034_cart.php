@@ -198,10 +198,10 @@ class m170908_134034_cart extends Migration
     public function down()
     {
         if ($this->db->driverName != "sqlite") {
-            $this->dropForeignKey('{{%fk_order__status}}', Order::tableName());
-            $this->dropForeignKey('{{%fk_order__payment}}', Order::tableName());
-            $this->dropForeignKey('{{%fk_order__delivery}}', Order::tableName());
-            $this->dropForeignKey('{{%fk_product__order}}', OrderProduct::tableName());
+            //$this->dropForeignKey('{{%fk_order__status}}', Order::tableName());
+            //$this->dropForeignKey('{{%fk_order__payment}}', Order::tableName());
+            //$this->dropForeignKey('{{%fk_order__delivery}}', Order::tableName());
+            //$this->dropForeignKey('{{%fk_product__order}}', OrderProduct::tableName());
         }
         $this->dropTable(Order::tableName());
         $this->dropTable(OrderStatus::tableName());

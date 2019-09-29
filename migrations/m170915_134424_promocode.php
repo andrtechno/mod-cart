@@ -63,7 +63,7 @@ class m170915_134424_promocode extends Migration
     public function down()
     {
         if ($this->db->driverName != "sqlite") {
-            $this->dropForeignKey('{{%fk_order__promocode}}', PromoCode::tableName());
+            //$this->dropForeignKey('{{%fk_order__promocode}}', PromoCode::tableName());
         }
         $this->dropTable(PromoCode::tableName());
         $this->dropTable(self::$categoryTable);
