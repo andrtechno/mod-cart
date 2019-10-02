@@ -9,7 +9,7 @@ namespace panix\mod\cart\migrations;
  * Class m170908_134034_cart
  */
 use Yii;
-use yii\db\Migration;
+use panix\engine\db\Migration;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderStatus;
 use panix\mod\cart\models\OrderProduct;
@@ -26,14 +26,10 @@ use panix\mod\cart\models\DeliveryPayment;
  */
 class m170908_134034_cart extends Migration
 {
+    public $settingsForm = 'panix\mod\cart\models\forms\SettingsForm';
 
     public function up()
     {
-        $tableOptions = null;
-        if ($this->db->driverName === 'mysql') {
-            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
-        }
-
         // create table order
         $this->createTable(Order::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
@@ -60,7 +56,7 @@ class m170908_134034_cart extends Migration
             'updated_at' => $this->integer(11)->null(),
             'paid' => $this->boolean()->defaultValue(0),
             'buyOneClick' => $this->boolean()->defaultValue(0),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
         // create table order status
         $this->createTable(OrderStatus::tableName(), [
@@ -68,7 +64,7 @@ class m170908_134034_cart extends Migration
             'name' => $this->string(100),
             'color' => $this->string(7),
             'ordern' => $this->integer(),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
 
         // create table order products
@@ -86,7 +82,7 @@ class m170908_134034_cart extends Migration
             'quantity' => $this->smallInteger(8),
             'sku' => $this->string(100),
             'price' => $this->money(10, 2),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
 
         // create table order history
@@ -99,7 +95,7 @@ class m170908_134034_cart extends Migration
             'data_before' => $this->text(),
             'data_after' => $this->text(),
             'date_create' => $this->datetime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
         // create table order history product
         $this->createTable(OrderProductHistroy::tableName(), [
@@ -107,7 +103,7 @@ class m170908_134034_cart extends Migration
             'order_id' => $this->integer()->notNull()->unsigned(),
             'product_id' => $this->integer()->notNull()->unsigned(),
             'date_create' => $this->datetime(),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
 
         // create table order history product
@@ -117,7 +113,7 @@ class m170908_134034_cart extends Migration
             'switch' => $this->boolean()->defaultValue(1),
             'payment_system' => $this->string(100),
             'ordern' => $this->integer(),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
         $this->createTable(PaymentTranslate::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
@@ -125,7 +121,7 @@ class m170908_134034_cart extends Migration
             'language_id' => $this->tinyInteger()->unsigned(),
             'name' => $this->string(255),
             'description' => $this->text(),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
 
         $this->createTable(Delivery::tableName(), [
@@ -135,7 +131,7 @@ class m170908_134034_cart extends Migration
             'system' => $this->string(100),
             'switch' => $this->boolean()->defaultValue(1),
             'ordern' => $this->integer(),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
         $this->createTable(DeliveryTranslate::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
@@ -143,13 +139,13 @@ class m170908_134034_cart extends Migration
             'language_id' => $this->tinyInteger()->unsigned(),
             'name' => $this->string(255),
             'description' => $this->text(),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
         $this->createTable(DeliveryPayment::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
             'delivery_id' => $this->integer()->unsigned(),
             'payment_id' => $this->integer()->unsigned(),
-        ], $tableOptions);
+        ], $this->tableOptions);
 
 
         $this->addIndexes();
@@ -193,6 +189,8 @@ class m170908_134034_cart extends Migration
             $this->addForeignKey('{{%fk_order_delivery}}', Order::tableName(), 'delivery_id', Delivery::tableName(), 'id', "NO ACTION", "NO ACTION");
             $this->addForeignKey('{{%fk_product_order}}', OrderProduct::tableName(), 'order_id', Order::tableName(), 'id', "NO ACTION", "NO ACTION");
         }
+
+        $this->loadSettings();
     }
 
     public function down()
