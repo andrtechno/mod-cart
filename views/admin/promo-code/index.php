@@ -15,9 +15,23 @@ Pjax::begin([
     'layoutOptions' => ['title' => $this->context->pageName],
     'columns' => [
         'code',
-        'discount',
-        'used',
-        'max_use',
+        'discount' => [
+            'attribute' => 'discount',
+            'format' => 'raw',
+            'headerOptions' => ['class' => 'text-center'],
+            'contentOptions' => ['class' => 'text-center'],
+        ],
+        'used' => [
+            'attribute' => 'used',
+            'format' => 'raw',
+            'headerOptions' => ['class' => 'text-center'],
+            'contentOptions' => ['class' => 'text-center'],
+            'value' => function ($model) {
+                $used = ($model->used > 0) ? '<span class="text-success">' . $model->used . '</span>' : $model->used;
+                $max_use = '<span class="text-danger">' . $model->max_use . '</span>';
+                return $used . '/' . $max_use;
+            }
+        ],
         'categories' => [
             'attribute' => 'categories',
             'format' => 'raw',

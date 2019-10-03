@@ -2,15 +2,21 @@
 
 namespace panix\mod\cart\models;
 
-class OrderStatus extends \panix\engine\db\ActiveRecord {
+use panix\engine\db\ActiveRecord;
+
+class OrderStatus extends ActiveRecord
+{
 
     const MODULE_ID = 'cart';
+    public $disallow_delete = [1];
 
-    public static function tableName() {
+    public static function tableName()
+    {
         return '{{%order__status}}';
     }
 
-    public function rules() {
+    public function rules()
+    {
         return [
             ['name', 'required'],
             ['ordern', 'number'],
@@ -19,7 +25,8 @@ class OrderStatus extends \panix\engine\db\ActiveRecord {
         ];
     }
 
-    public function countOrders() {
+    public function countOrders()
+    {
         return Order::find()->where(array('status_id' => $this->id))->count();
     }
 

@@ -22,6 +22,7 @@ class Order extends ActiveRecord
 
     const MODULE_ID = 'cart';
 
+
     /**
      * @inheritdoc
      */

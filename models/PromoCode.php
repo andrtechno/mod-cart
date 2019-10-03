@@ -16,6 +16,8 @@ class PromoCode extends ActiveRecord
 {
 
     const MODULE_ID = 'cart';
+    public static $categoryTable = '{{%order__promocode_categories}}';
+    public static $manufacturerTable = '{{%order__promocode_manufacturer}}';
     /**
      * @var array ids of categories to apply promo-code
      */
@@ -85,7 +87,8 @@ class PromoCode extends ActiveRecord
         if (is_array($this->_categories))
             return $this->_categories;
 
-        $this->_categories = Yii::$app->db->createCommand('SELECT category_id FROM {{%order__promocode_categories}} WHERE promocode_id=:id')
+        $table = self::$categoryTable;
+        $this->_categories = Yii::$app->db->createCommand("SELECT category_id FROM {$table} WHERE promocode_id=:id")
             ->bindValue(':id', $this->id)
             ->queryColumn();
 
@@ -110,7 +113,8 @@ class PromoCode extends ActiveRecord
         if (is_array($this->_manufacturers))
             return $this->_manufacturers;
 
-        $this->_manufacturers = Yii::$app->db->createCommand('SELECT manufacturer_id FROM {{%order__promocode_manufacturer}} WHERE promocode_id=:id')
+        $table = self::$manufacturerTable;
+        $this->_manufacturers = Yii::$app->db->createCommand("SELECT manufacturer_id FROM {$table} WHERE promocode_id=:id")
             ->bindValue(':id', $this->id)
             ->queryColumn();
 
@@ -124,10 +128,10 @@ class PromoCode extends ActiveRecord
     public function clearRelations()
     {
         Yii::$app->db->createCommand()
-            ->delete('{{%order__promocode_manufacturer}}', 'promocode_id=:id', [':id' => $this->id])
+            ->delete(self::$manufacturerTable, 'promocode_id=:id', [':id' => $this->id])
             ->execute();
         Yii::$app->db->createCommand()
-            ->delete('{{%order__promocode_categories}}', 'promocode_id=:id', [':id' => $this->id])
+            ->delete(self::$categoryTable, 'promocode_id=:id', [':id' => $this->id])
             ->execute();
 
     }
@@ -148,7 +152,7 @@ class PromoCode extends ActiveRecord
         // Process manufacturers
         if (!empty($this->_manufacturers)) {
             foreach ($this->_manufacturers as $id) {
-                Yii::$app->db->createCommand()->insert('{{%order__promocode_manufacturer}}', [
+                Yii::$app->db->createCommand()->insert(self::$manufacturerTable, [
                     'promocode_id' => $this->id,
                     'manufacturer_id' => $id,
                 ])->execute();
@@ -159,7 +163,7 @@ class PromoCode extends ActiveRecord
         if (!empty($this->_categories)) {
             foreach (array_unique($this->_categories) as $id) {
 
-                Yii::$app->db->createCommand()->insert('{{%order__promocode_categories}}', [
+                Yii::$app->db->createCommand()->insert(self::$categoryTable, [
                     'promocode_id' => $this->id,
                     'category_id' => $id,
                 ])->execute();

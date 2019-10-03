@@ -22,12 +22,12 @@ $form = ActiveForm::begin();
         <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
         <?=
         $form->field($model, 'currency_id')->dropDownList(ArrayHelper::map(Currency::find()->all(), 'id', 'name'), [
-            'prompt' => '-- статус --'
+            'prompt' => '-- Валюта --'
         ]);
         ?>
         <?=
         $form->field($model, 'payment_system')->dropDownList($model->getPaymentSystemsArray(), [
-            'prompt' => '-- статус --',
+            'prompt' => '-- Система оплаты --',
             'rel' => $model->id
         ]);
         ?>
