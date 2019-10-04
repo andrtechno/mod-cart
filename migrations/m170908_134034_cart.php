@@ -163,13 +163,6 @@ class m170908_134034_cart extends Migration
         ]);
 
 
-        $columns = ['object_id', 'language_id', 'name', 'description'];
-        $this->batchInsert(PaymentTranslate::tableName(), $columns, [
-            [1, Yii::$app->language, 'Наличными', ''],
-            [2, Yii::$app->language, 'Приват24', ''],
-        ]);
-
-
         $this->batchInsert(Delivery::tableName(), ['ordern'], [
             [1],
             [2],
@@ -177,11 +170,17 @@ class m170908_134034_cart extends Migration
 
 
         $columns = ['object_id', 'language_id', 'name', 'description'];
-        $this->batchInsert(DeliveryTranslate::tableName(), $columns, [
-            [1, Yii::$app->language, 'Самовывоз', ''],
-            [2, Yii::$app->language, 'Новая почта', ''],
-        ]);
 
+        foreach (Yii::$app->languageManager->getLanguages(false) as $lang) {
+            $this->batchInsert(PaymentTranslate::tableName(), $columns, [
+                [1, $lang['id'], 'Наличными', ''],
+                [2, $lang['id'], 'Приват24', ''],
+            ]);
+            $this->batchInsert(DeliveryTranslate::tableName(), $columns, [
+                [1, $lang['id'], 'Самовывоз', ''],
+                [2, $lang['id'], 'Новая почта', ''],
+            ]);
+        }
 
         if ($this->db->driverName != "sqlite") {
             $this->addForeignKey('{{%fk_order_status}}', Order::tableName(), 'status_id', OrderStatus::tableName(), 'id', "NO ACTION", "NO ACTION");
