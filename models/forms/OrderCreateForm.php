@@ -94,7 +94,7 @@ class OrderCreateForm extends Model
     {
         $mailer = Yii::$app->mail;
         $mailer->From = 'noreply@' . Yii::$app->request->serverName;
-        $mailer->FromName = Yii::$app->settings->get('core', 'site_name');
+        $mailer->FromName = Yii::$app->settings->get('app', 'sitename');
         $mailer->Subject = 'Вы загеристрованы';
         $mailer->Body = 'Ваш пароль: ' . $this->_newpassword;
         $mailer->AddAddress($this->email);
