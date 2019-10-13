@@ -14,7 +14,22 @@ use yii\helpers\ArrayHelper;
 
 /**
  * Class Order
- * @param int $status_id
+ * @property int $id
+ * @property int $user_id
+ * @property int $status_id
+ * @property int $payment_id
+ * @property int $delivery_id
+ * @property string $secret_key
+ * @property float $total_price
+ * @property float $delivery_price
+ * @property string $user_name
+ * @property string $user_email
+ * @property string $user_address
+ * @property string $user_phone
+ * @property string $user_comment
+ * @property string $admin_comment
+ * @property string $user_agent
+ *
  * @package panix\mod\cart\models
  */
 class Order extends ActiveRecord
@@ -462,6 +477,36 @@ class Order extends ActiveRecord
             ->where(['order_id' => $this->id])
             ->orderBy(['date_create' => SORT_ASC])
             ->all();
+    }
+
+    /**
+     * @return \yii\mail\MailerInterface
+     */
+    public function sendAdminEmail()
+    {
+        $mailer = Yii::$app->mailer;
+        $mailer->compose(['html' => '@cart/mail/order.tpl'], ['order' => $this])
+            ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
+            ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
+            ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $this->id]))
+            ->send();
+        return $mailer;
+    }
+
+    /**
+     * @return \yii\mail\MailerInterface
+     */
+    public function sendClientEmail()
+    {
+        $mailer = Yii::$app->mailer;
+        $mailer->htmlLayout='@cart/mail/layouts/client';
+        $mailer->compose('@cart/mail/order.tpl', ['order' => $this])
+            ->setFrom('noreply@' . Yii::$app->request->serverName)
+            ->setTo($this->user_email)
+            ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $this->id]))
+            ->send();
+
+        return $mailer;
     }
 
 }

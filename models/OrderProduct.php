@@ -1,40 +1,61 @@
 <?php
 
 namespace panix\mod\cart\models;
+
 use panix\mod\cart\models\Order;
 use panix\mod\shop\models\Product;
 use panix\engine\db\ActiveRecord;
 
-class OrderProduct extends ActiveRecord {
+/**
+ * Class OrderProduct
+ * @property integer $order_id
+ * @property integer $product_id
+ * @property integer $configurable_id
+ * @property integer $currency_id
+ * @property integer $supplier_id
+ * @property string $name
+ * @property string $configurable_name
+ * @property integer $quantity Quantity products
+ * @property float $price Products price
+ * @property string $configurable_data
+ * @property string $sku Article product
+ * @property string $variants
+ *
+ * @package panix\mod\cart\models
+ */
+class OrderProduct extends ActiveRecord
+{
 
     const MODULE_ID = 'cart';
 
     /**
      * @return string the associated database table name
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return '{{%order__product}}';
     }
-    public static function find() {
+
+    public static function find()
+    {
         return new query\OrderProductQuery(get_called_class());
     }
-    public function rules() {
-        return [
-        ];
-    }
-    public function getOrder() {
+
+    public function getOrder()
+    {
         return $this->hasOne(Order::class, ['id' => 'order_id']);
     }
 
-    public function getOriginalProduct() {
+    public function getOriginalProduct()
+    {
         return $this->hasOne(Product::class, ['id' => 'product_id']);
     }
-
 
     /**
      * @return boolean
      */
-    public function afterSave($insert, $changedAttributes) {
+    public function afterSave($insert, $changedAttributes)
+    {
         $this->order->updateTotalPrice();
         $this->order->updateDeliveryPrice();
 
@@ -46,7 +67,8 @@ class OrderProduct extends ActiveRecord {
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function afterDelete() {
+    public function afterDelete()
+    {
         if ($this->order) {
             $this->order->updateTotalPrice();
             $this->order->updateDeliveryPrice();
@@ -61,10 +83,10 @@ class OrderProduct extends ActiveRecord {
      * @param bool $appendConfigurableName
      * @return string
      */
-    public function getRenderFullName($appendConfigurableName = true) {
-        
+    public function getRenderFullName($appendConfigurableName = true)
+    {
 
-        
+
         $result = \yii\helpers\Html::a($this->name, $this->originalProduct->getUrl(), array('target' => '_blank'));
 
         if (!empty($this->configurable_name) && $appendConfigurableName)
@@ -91,7 +113,8 @@ class OrderProduct extends ActiveRecord {
         return $result;
     }
 
-    public function getCategories() {
+    public function getCategories()
+    {
         $content = array();
         foreach ($this->prd->categories as $c) {
             $content[] = $c->name;

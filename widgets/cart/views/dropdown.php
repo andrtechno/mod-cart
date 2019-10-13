@@ -14,7 +14,7 @@ use panix\mod\shop\models\Product;
                  aria-expanded="true">
                 <span class="count"><strong><?= $count ?></strong> товара / </span>
                 <span><strong><?= $total; ?></strong></span>
-                <?= $currency->symbol; ?>
+                <?= $currency['symbol']; ?>
             </div>
             <div class="dropdown-menu dropdown-menu-right2">
                 <?php
@@ -33,14 +33,14 @@ use panix\mod\shop\models\Product;
                             <?php echo Html::a($product['model']->name, $product['model']->getUrl()) ?>
                             <br/>
                             (<?php echo $product['quantity'] ?>)
-                            <?= Yii::$app->currency->number_format(Yii::$app->currency->convert($price)) ?> <?= $currency->symbol; ?>
+                            <?= Yii::$app->currency->number_format(Yii::$app->currency->convert($price)) ?> <?= $currency['symbol']; ?>
                         </div>
                     </div>
 
                 <?php } ?>
                 <div class="cart-detail clearfix">
                     <span class="total-price pull-left"><span
-                                class="label label-success"><?= $total ?></span> <?= $currency->symbol; ?></span>
+                                class="label label-success"><?= $total ?></span> <?= $currency['symbol']; ?></span>
                     <?= Html::a(Yii::t('cart/default', 'BUTTON_CHECKOUT'), array('/cart'), array('class' => 'btn btn-sm btn-primary pull-right')) ?>
                 </div>
             </div>

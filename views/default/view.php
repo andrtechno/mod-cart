@@ -37,7 +37,7 @@ $currency = Yii::$app->currency;
                 <tr>
                     <th align="center" style="width:40%" colspan="2"><?= Yii::t('cart/default', 'TABLE_PRODUCT') ?></th>
                     <th align="center" style="width:30%"><?= Yii::t('cart/default', 'TABLE_NUM') ?></th>
-                    <th align="center" style="width:30%"><?= Yii::t('cart/default', 'TABLE_SUM') ?></th>
+                    <th align="center" style="width:30%"><?= Yii::t('cart/default', 'TABLE_SUM',['currency'=> $currency->active['symbol']]) ?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -56,7 +56,7 @@ $currency = Yii::$app->currency;
 
                             <span class="price price-sm text-warning">
                                 <?= $currency->number_format($currency->convert($product->price)) ?>
-                                <sub><?= $currency->active->symbol; ?>/шт.</sub>
+                                <sub><?= $currency->active['symbol']; ?>/шт.</sub>
                             </span>
 
                         </td>
@@ -66,7 +66,7 @@ $currency = Yii::$app->currency;
                         <td align="center">
                              <span class="price text-warning">
                                 <?= $currency->number_format($currency->convert($product->price * $product->quantity)); ?>
-                                <sub><?= $currency->active->symbol; ?></sub>
+                                <sub><?= $currency->active['symbol']; ?></sub>
                              </span>
                         </td>
                     </tr>
@@ -107,7 +107,7 @@ $currency = Yii::$app->currency;
 
     <div class="col-md-4">
         <div class="card">
-            <div class="card-header"><h4>Доставки и оплаты</h4></div>
+            <div class="card-header"><h4><?= Yii::t('cart/default', 'DELIVERY_PAYMENT') ?></h4></div>
             <div class="card-body">
                 <h4>Доставка</h4>
                 <?php if ($model->delivery_price > 0) { ?>
@@ -116,7 +116,7 @@ $currency = Yii::$app->currency;
                         <div class="float-right font-weight-bold">
                             <span class="price">
                                 <?= $currency->number_format($currency->convert($model->delivery_price)) ?>
-                                <sub><?= $currency->active->symbol ?></sub>
+                                <sub><?= $currency->active['symbol'] ?></sub>
                             </span>
                         </div>
                     </div>
@@ -155,7 +155,7 @@ $currency = Yii::$app->currency;
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h4><?= Yii::t('cart/default', 'Состояние заказа') ?>
+                <h4><?= Yii::t('cart/default', 'ORDER_STATUS') ?>
                     <span class="badge badge-success float-right"><?= $model->statusName ?></span>
                 </h4>
             </div>
@@ -179,7 +179,7 @@ $currency = Yii::$app->currency;
                     <div class="float-right font-weight-bold">
                         <span class="price price-lg">
                             <?= $currency->number_format($model->full_price) ?>
-                            <sub><?= $currency->active->symbol ?></sub>
+                            <sub><?= $currency->active['symbol'] ?></sub>
                         </span>
                     </div>
                 </div>

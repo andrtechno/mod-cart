@@ -4,6 +4,7 @@ namespace panix\mod\cart\controllers;
 
 
 use panix\engine\bootstrap\ActiveForm;
+use panix\mod\cart\CartAsset;
 use panix\mod\shop\models\Attribute;
 use Yii;
 use yii\helpers\Json;
@@ -67,7 +68,7 @@ class DefaultController extends WebController
         if ($post) {
 
 
-           // $this->formAjaxValidate($this->form, $post);
+            // $this->formAjaxValidate($this->form, $post);
             if (Yii::$app->request->isAjax && $this->form->load($post)) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return ActiveForm::validate($this->form);
@@ -319,8 +320,9 @@ class DefaultController extends WebController
         $order->updateDeliveryPrice();
         $text = (Yii::$app->user->isGuest) ? 'NOTIFACTION_GUEST_TEXT' : 'NOTIFACTION_USER_TEXT';
         $order->attachBehavior('notifaction', [
-            'class' => \panix\engine\behaviors\NotifactionBehavior::class,
+            'class' => 'panix\engine\behaviors\NotificationBehavior',
             'type' => 'success',
+            'sound'=>CartAsset::register($this->view)->baseUrl.'/notification_new-order.mp3',
             'text' => Yii::t('cart/default', $text, [
                 'num' => $productsCount,
                 'total' => $order->total_price,
@@ -329,13 +331,10 @@ class DefaultController extends WebController
             ])
         ]);
 
-
         // Send email to user.
-        //$this->sendClientEmail($order);
+        $order->sendClientEmail();
         // Send email to admin.
-        $this->sendAdminEmail($order);
-
-
+        $order->sendAdminEmail();
         // $order->detachBehavior('notifaction');
         return $order;
     }
@@ -401,37 +400,35 @@ class DefaultController extends WebController
 
     /**
      * @param Order $order
+     * @return \yii\mail\MailerInterface
      */
     private function sendAdminEmail(Order $order)
     {
 
         $mailer = Yii::$app->mailer;
-        //$mailer->htmlLayout = "@app/mail/layouts/admin";
-        $mailer->htmlLayout = "layouts/html";
-        $mailer->compose(['html' => '@cart/mail/admin'], ['order' => $order])
+        $mailer->compose(['html' => '@cart/mail/order.tpl'], ['order' => $order])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
-            //->setCc(Yii::$app->settings->get('app','email')) //copy
-            //->setBcc(Yii::$app->settings->get('app','email')) //hidden copy
-            // ->setHtmlBody($this->renderPartial('@cart/mail/admin.tpl', ['order' => $order, 'test' => '1111']))
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
-            //->attach(Yii::getAlias('@uploads') . '/example-ru.pptx')
-            // create attachment on-the-fly
-            /*->attachContent('Посетите', [
-                'fileName' => 'test.txt',
-                'contentType' => 'text/plain'
-            ])*/
             ->send();
+        return $mailer;
     }
 
+    /**
+     * @param Order $order
+     * @return \yii\mail\MailerInterface
+     */
     private function sendClientEmail(Order $order)
     {
-        Yii::$app->mailer
-            ->compose('@cart/mail/admin', ['order' => $order])
+        $mailer = Yii::$app->mailer;
+        $mailer->htmlLayout='@cart/mail/layouts/client';
+        $mailer->compose('@cart/mail/order.tpl', ['order' => $order])
             ->setFrom('noreply@' . Yii::$app->request->serverName)
             ->setTo($order->user_email)
             ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $order->id]))
             ->send();
+
+        return $mailer;
     }
 
     /**
