@@ -18,7 +18,8 @@ class OrderSearch extends Order
     {
         return [
             [['id', 'status_id', 'price_min', 'price_max'], 'integer'],
-            [['name', 'slug', 'status_id', 'user_name', 'total_price'], 'safe'],
+            [['status_id', 'user_name', 'total_price'], 'safe'],
+            [['user_phone', 'user_email'], 'string'],
         ];
     }
 
@@ -84,6 +85,8 @@ class OrderSearch extends Order
         }
 
         $query->andFilterWhere(['like', 'user_name', $this->user_name]);
+        $query->andFilterWhere(['like', 'user_phone', $this->user_phone]);
+        $query->andFilterWhere(['like', 'user_email', $this->user_email]);
         $query->andFilterWhere(['like', 'status_id', $this->status_id]);
         //$query->andFilterWhere(['like', 'total_price', $this->total_price]);
 

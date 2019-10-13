@@ -28,7 +28,8 @@ GridView::widget([
     'layoutOptions' => ['title' => $this->context->pageName],
     'columns' => [
         [
-            'attribute' => 'status.name',
+            'attribute' => 'id',
+            'header'=>Yii::t('cart/Order','ORDER_ID'),
             'format' => 'html',
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
@@ -37,15 +38,20 @@ GridView::widget([
             }
         ],
         'user_name',
-        /*[
-            'attribute' => 'total_price',
-            'format' => 'html',
+        [
+            'attribute' => 'user_email',
+            'format' => 'email',
             'contentOptions' => ['class' => 'text-center'],
-            'footer' => \panix\mod\cart\models\Order::getTotal($dataProvider->models, 'total_price'),
+        ],
+        [
+            'attribute' => 'user_phone',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center'],
             'value' => function ($model) {
-                return Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main['symbol'];
+                /** @var $model Order */
+                return Html::tel($model->user_phone);
             }
-        ],*/
+        ],
         [
             'attribute' => 'total_price',
             'format' => 'html',

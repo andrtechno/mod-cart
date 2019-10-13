@@ -38,8 +38,8 @@ class DefaultController extends AdminController
 
         //$mpdf->SetProtection(['copy','print'], 'asdsad', 'MyPassword');
         $mpdf->SetTitle($title);
-        $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer',['currentDate'=>$currentDate]));
-        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => '№'.$model->getNumberId()]));
+        $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer', ['currentDate' => $currentDate]));
+        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => '№' . $model->getNumberId()]));
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
         return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => $model->id]) . ".pdf", 'I');
@@ -51,8 +51,9 @@ class DefaultController extends AdminController
         $this->pageName = Yii::t('cart/admin', 'ORDERS');
         $this->buttons = [
             [
-                'label' => Yii::t('cart/default', 'CREATE_ORDER'),
+                'label' => Yii::t('cart/admin', 'CREATE_ORDER'),
                 'url' => ['create'],
+                'icon' => 'add',
                 'options' => ['class' => 'btn btn-success', 'target' => '_blank']
             ]
         ];
