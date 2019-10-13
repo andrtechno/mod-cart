@@ -10,24 +10,13 @@ class OrderSearch extends Order
 {
     public $price_min;
     public $price_max;
-//            'max' => (int)Order::find()->aggregateTotalPrice('MAX'),
-//'min' => (int)Order::find()->aggregateTotalPrice('MIN'),
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['price_min'],
-                'number',
-                'min' => (int)Order::find()->aggregateTotalPrice('MIN'),
-                'max' => (int)Order::find()->aggregateTotalPrice('MAX')
-            ],
-            [['price_max'],
-                'number',
-                'min' => (int)Order::find()->aggregateTotalPrice('MIN'),
-                'max' => (int)Order::find()->aggregateTotalPrice('MAX')
-            ],
             [['id', 'status_id', 'price_min', 'price_max'], 'integer'],
             [['name', 'slug', 'status_id', 'user_name', 'total_price'], 'safe'],
         ];
