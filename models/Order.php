@@ -36,7 +36,7 @@ class Order extends ActiveRecord
 {
 
     const MODULE_ID = 'cart';
-
+    const route = '/admin/cart/default';
 
     /**
      * @inheritdoc
@@ -499,7 +499,7 @@ class Order extends ActiveRecord
     public function sendClientEmail()
     {
         $mailer = Yii::$app->mailer;
-        $mailer->htmlLayout='@cart/mail/layouts/client';
+        $mailer->htmlLayout = '@cart/mail/layouts/client';
         $mailer->compose('@cart/mail/order.tpl', ['order' => $this])
             ->setFrom('noreply@' . Yii::$app->request->serverName)
             ->setTo($this->user_email)

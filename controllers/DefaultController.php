@@ -8,6 +8,7 @@ use panix\mod\cart\CartAsset;
 use panix\mod\shop\models\Attribute;
 use Yii;
 use yii\helpers\Json;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
@@ -318,14 +319,15 @@ class DefaultController extends WebController
         $order->refresh(); //@todo panix text email tpl
         // All products added. Update delivery price.
         $order->updateDeliveryPrice();
-        $text = (Yii::$app->user->isGuest) ? 'NOTIFACTION_GUEST_TEXT' : 'NOTIFACTION_USER_TEXT';
-        $order->attachBehavior('notifaction', [
+        $text = (Yii::$app->user->isGuest) ? 'NOTIFICATION_GUEST_TEXT' : 'NOTIFICATION_USER_TEXT';
+        $order->attachBehavior('notification', [
             'class' => 'panix\engine\behaviors\NotificationBehavior',
             'type' => 'success',
-            'sound'=>CartAsset::register($this->view)->baseUrl.'/notification_new-order.mp3',
+            'url' => Url::to($order->getUpdateUrl()),
+            'sound' => CartAsset::register($this->view)->baseUrl . '/notification_new-order.mp3',
             'text' => Yii::t('cart/default', $text, [
                 'num' => $productsCount,
-                'total' => $order->total_price,
+                'total' => Yii::$app->currency->number_format($order->total_price),
                 'currency' => Yii::$app->currency->active['symbol'],
                 'username' => Yii::$app->user->isGuest ? $order->user_name : Yii::$app->user->getDisplayName()
             ])
@@ -335,7 +337,7 @@ class DefaultController extends WebController
         $order->sendClientEmail();
         // Send email to admin.
         $order->sendAdminEmail();
-        // $order->detachBehavior('notifaction');
+        // $order->detachBehavior('notification');
         return $order;
     }
 
@@ -421,7 +423,7 @@ class DefaultController extends WebController
     private function sendClientEmail(Order $order)
     {
         $mailer = Yii::$app->mailer;
-        $mailer->htmlLayout='@cart/mail/layouts/client';
+        $mailer->htmlLayout = '@cart/mail/layouts/client';
         $mailer->compose('@cart/mail/order.tpl', ['order' => $order])
             ->setFrom('noreply@' . Yii::$app->request->serverName)
             ->setTo($order->user_email)

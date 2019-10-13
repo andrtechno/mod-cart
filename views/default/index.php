@@ -80,7 +80,7 @@ $formOrder = ActiveForm::begin([
                 <thead>
                 <tr>
                     <th></th>
-                    <th style="width:30%"><?= Yii::t('cart/default', 'TABLE_NAME') ?></th>
+                    <th style="width:30%"><?= Yii::t('cart/default', 'TABLE_PRODUCT') ?></th>
                     <th style="width:30%"><?= Yii::t('cart/default', 'TABLE_NUM') ?></th>
                     <th style="width:30%">Сумма</th>
                     <th></th>

@@ -3,17 +3,15 @@
 use panix\engine\Html;
 use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
+use panix\mod\cart\models\Order;
 
-//\panix\engine\assets\ShowLoadingAsset::register($this);
 ?>
 
 
 <?php
 
 Pjax::begin([
-    'id' => 'pjax-container',
-    'enablePushState' => false,
-    'linkSelector' => 'a:not(.linkTarget)'
+    'id' => 'pjax-grid-order',
 ]);
 ?>
 <?=
@@ -29,26 +27,37 @@ GridView::widget([
     //},
     'layoutOptions' => ['title' => $this->context->pageName],
     'columns' => [
-        /*[
-            'class' => 'yii\grid\SerialColumn',
-            'contentOptions' => ['class' => 'text-center']
-        ],*/
         [
             'attribute' => 'status.name',
             'format' => 'html',
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
-                return $model->getGridStatus() . ' '.$model::t('NEW_ORDER_ID',['id'=>$model->getNumberId()]);
+                /** @var $model Order */
+                return $model->getGridStatus() . ' ' . $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]);
             }
         ],
         'user_name',
-        [
+        /*[
             'attribute' => 'total_price',
             'format' => 'html',
             'contentOptions' => ['class' => 'text-center'],
             'footer' => \panix\mod\cart\models\Order::getTotal($dataProvider->models, 'total_price'),
             'value' => function ($model) {
                 return Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main['symbol'];
+            }
+        ],*/
+        [
+            'attribute' => 'total_price',
+            'format' => 'html',
+            'class' => 'panix\engine\grid\columns\jui\SliderColumn',
+            'max' => (int)Order::find()->aggregateTotalPrice('MAX'),
+            'min' => (int)Order::find()->aggregateTotalPrice('MIN'),
+            'contentOptions' => ['class' => 'text-center'],
+            'value' => function ($model) {
+                /** @var $model Order */
+                $priceHtml = Yii::$app->currency->number_format(Yii::$app->currency->convert($model->total_price));
+                $symbol = Html::tag('sup', Yii::$app->currency->main['symbol']);
+                return Html::tag('span', $priceHtml, ['class' => 'text-success font-weight-bold']) . ' ' . $symbol;
             }
         ],
         [
