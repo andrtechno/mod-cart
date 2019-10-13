@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\models\search;
 
+use Yii;
 use panix\engine\data\ActiveDataProvider;
 use panix\mod\cart\models\Order;
 
@@ -9,13 +10,24 @@ class OrderSearch extends Order
 {
     public $price_min;
     public $price_max;
-
+//            'max' => (int)Order::find()->aggregateTotalPrice('MAX'),
+//'min' => (int)Order::find()->aggregateTotalPrice('MIN'),
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
+            [['price_min'],
+                'number',
+                'min' => (int)Order::find()->aggregateTotalPrice('MIN'),
+                'max' => (int)Order::find()->aggregateTotalPrice('MAX')
+            ],
+            [['price_max'],
+                'number',
+                'min' => (int)Order::find()->aggregateTotalPrice('MIN'),
+                'max' => (int)Order::find()->aggregateTotalPrice('MAX')
+            ],
             [['id', 'status_id', 'price_min', 'price_max'], 'integer'],
             [['name', 'slug', 'status_id', 'user_name', 'total_price'], 'safe'],
         ];
@@ -48,15 +60,18 @@ class OrderSearch extends Order
 
         if (isset($params[$className]['total_price']['min'])) {
             $this->price_min = $params[$className]['total_price']['min'];
+            if (!is_numeric($this->price_min)) {
+                $this->addError('total_price', Yii::t('yii', '{attribute} must be a number.', ['attribute' => 'min']));
+                return $dataProvider;
+            }
         }
         if (isset($params[$className]['total_price']['max'])) {
             $this->price_max = $params[$className]['total_price']['max'];
+            if (!is_numeric($this->price_max)) {
+                $this->addError('total_price', Yii::t('yii', '{attribute} must be a number.', ['attribute' => 'max']));
+                return $dataProvider;
+            }
         }
-        if(!is_numeric($this->price_max) || !is_numeric($this->price_min)){
-            $this->addError('total_price','No valid price range');
-            return $dataProvider;
-        }
-
 
         $this->load($params);
 
