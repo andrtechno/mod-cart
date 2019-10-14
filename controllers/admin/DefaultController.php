@@ -54,7 +54,7 @@ class DefaultController extends AdminController
                 'label' => Yii::t('cart/admin', 'CREATE_ORDER'),
                 'url' => ['create'],
                 'icon' => 'add',
-                'options' => ['class' => 'btn btn-success', 'target' => '_blank']
+                'options' => ['class' => 'btn btn-success']
             ]
         ];
 
