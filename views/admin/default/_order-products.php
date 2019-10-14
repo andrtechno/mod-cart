@@ -21,7 +21,7 @@ echo GridView::widget([
     'showFooter' => true,
     'footerRowOptions' => ['style' => 'font-weight:bold;', 'class' => 'text-center'],
     'layoutOptions' => [
-        'title' => $this->context->pageName,
+        'title' => Yii::t('cart/admin','ORDER_PRODUCTS'),
         'buttons' => [
             [
                 'label' => 'добавить товар',

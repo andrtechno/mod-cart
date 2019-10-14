@@ -21,7 +21,7 @@ use panix\ext\fancybox\Fancybox;
         <?= Fancybox::widget(['target' => '.image a']); ?>
         <?php
 
-        echo Html::a('add', 'javascript:openAddProductDialog(' . $model->id . ');', ['class' => 'btn btn-success']);
+        //echo Html::a('add', 'javascript:openAddProductDialog(' . $model->id . ');', ['class' => 'btn btn-success']);
         if (!$model->isNewRecord) {
             ?>
 

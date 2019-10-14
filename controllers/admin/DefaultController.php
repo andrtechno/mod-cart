@@ -33,16 +33,17 @@ class DefaultController extends AdminController
             'margin_footer' => 5,
             'margin_header' => 5,
         ]);
-        $mpdf->SetCreator('My Creator');
-        $mpdf->SetAuthor('My Name');
+
+        $mpdf->SetCreator(Yii::$app->name);
+        $mpdf->SetAuthor(Yii::$app->user->getDisplayName());
 
         //$mpdf->SetProtection(['copy','print'], 'asdsad', 'MyPassword');
         $mpdf->SetTitle($title);
         $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer', ['currentDate' => $currentDate]));
-        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => '№' . $model->getNumberId()]));
+        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => '№' . $model->numberId]));
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
-        return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => $model->id]) . ".pdf", 'I');
+        return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => $model->numberId]) . ".pdf", 'I');
 
     }
 
@@ -84,10 +85,10 @@ class DefaultController extends AdminController
 
         $this->buttons = [
             [
-                'label' => Yii::t('cart/admin', 'PRINT'),
+                'label' => Yii::t('cart/admin', 'PRINT_PDF'),
                 'icon' => 'print',
                 'url' => ['print', 'id' => $model->id],
-                'options' => ['class' => 'btn btn-success']
+                'options' => ['class' => 'btn btn-primary']
             ]
         ];
         $isNew = $model->isNewRecord;

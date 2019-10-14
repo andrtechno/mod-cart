@@ -29,7 +29,7 @@ GridView::widget([
     'columns' => [
         [
             'attribute' => 'id',
-            'header'=>Yii::t('cart/Order','ORDER_ID'),
+            'header' => Yii::t('cart/Order', 'ORDER_ID'),
             'format' => 'html',
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
@@ -73,7 +73,8 @@ GridView::widget([
                 'print' => function ($url, $model, $key) {
                     return Html::a(Html::icon('print'), ['print', 'id' => $model->id], [
                         'title' => Yii::t('cart/admin', 'PRINT'),
-                        'class' => 'btn btn-sm btn-info linkTarget',
+                        'class' => 'btn btn-sm btn-info',
+                        'data-pjax' => 0,
                         'target' => '_blank'
                     ]);
                 }

@@ -30,6 +30,9 @@ use yii\helpers\ArrayHelper;
  * @property string $admin_comment
  * @property string $user_agent
  *
+ * Methods getter
+ * @property string $numberId
+ *
  * @package panix\mod\cart\models
  */
 class Order extends ActiveRecord
