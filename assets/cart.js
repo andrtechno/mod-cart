@@ -46,7 +46,7 @@ cart = {
     /**
      * @param product_id ИД обэекта
 
-    remove: function (product_id) {
+     remove: function (product_id) {
 
 
         $.ajax({
@@ -267,18 +267,20 @@ cart = {
 cart.init();
 
 
-$(function(){
-    $(document).on('click','#cart-table a.remove',function(){
+$(function () {
+    $(document).on('click', '#cart-table a.remove', function () {
         $.ajax({
             url: $(this).attr('href'),
             type: 'GET',
             dataType: 'json',
             success: function (data) {
-                if(data.success){
-                    $('#product-'+data.id).remove();
-                    common.notify(data.message,'success');
+                if (data.success) {
+                    $('#product-' + data.id).remove();
+                    common.notify(data.message, 'success');
                     cart.renderBlockCart();
                     $(cart.selectorTotal).html(data.total_price);
+                }else{
+                    common.notify('remove error', 'success');
                 }
             }
         });
