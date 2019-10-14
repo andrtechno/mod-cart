@@ -45,15 +45,20 @@ cart = {
     },
     /**
      * @param product_id ИД обэекта
-     */
+
     remove: function (product_id) {
-        common.setText('loadingText', 'пересчет...');
-        console.log(common.getText('loadingText'));
-        common.ajax(common.url('/cart/remove/' + product_id), {}, function () {
-            cart.renderBlockCart();
-            common.report('Товар успешно удален!');
-        }, 'html', 'GET');
-    },
+
+
+        $.ajax({
+            url: common.url('/cart/remove/' + product_id),
+            type: 'GET',
+            dataType: 'html',
+            success: function () {
+                cart.renderBlockCart();
+            }
+        });
+        return false;
+    },*/
     /**
      * @param set_id Id товара
      */
@@ -173,7 +178,7 @@ cart = {
     /**
      * @param product_id ИД обэекта
 
-    notifier: function (product_id) {
+     notifier: function (product_id) {
         $('body').append($('<div/>', {
             'id': 'dialog'
         }));
@@ -244,7 +249,7 @@ cart = {
                         $(this).val(max);
                 },
                 change: function (event, ui) {
-                     var product_id = $(this).attr('product_id');
+                    var product_id = $(this).attr('product_id');
                     if ($(this).val() < 1) {
                         $(this).val(1);
                     }
@@ -261,4 +266,23 @@ cart = {
 
 cart.init();
 
+
+$(function(){
+    $(document).on('click','#cart-table a.remove',function(){
+        $.ajax({
+            url: $(this).attr('href'),
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if(data.success){
+                    $('#product-'+data.id).remove();
+                    common.notify(data.message,'success');
+                    cart.renderBlockCart();
+                    $(cart.selectorTotal).html(data.total_price);
+                }
+            }
+        });
+        return false;
+    })
+})
 

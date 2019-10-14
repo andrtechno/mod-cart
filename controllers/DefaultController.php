@@ -37,7 +37,6 @@ class DefaultController extends WebController
     protected $_errors = false;
 
 
-
     public function actions()
     {
         return [
@@ -213,12 +212,22 @@ class DefaultController extends WebController
 
     /**
      * Remove product from cart and redirect
+     * @param $id
+     * @return array|Response
      */
     public function actionRemove($id)
     {
         Yii::$app->cart->remove($id);
-        if (!Yii::$app->request->isAjax) {
+        if (!Yii::$app->request->isAjax || !Yii::$app->cart->countItems()) {
             return $this->redirect(['index']);
+        } else {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return [
+                'id' => $id,
+                'success' => true,
+                'total_price'=>Yii::$app->currency->number_format(Yii::$app->cart->totalPrice),
+                'message' => Yii::t('cart/default', 'SUCCESS_PRODUCT_CART_DELETE')
+            ];
         }
     }
 

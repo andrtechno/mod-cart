@@ -25,6 +25,7 @@ return [
     'PAYMENT' => 'Оплата',
     'COST' => 'Стоимость',
     'DELIVERY_PAYMENT' => 'Доставки и оплаты',
+    'SUCCESS_PRODUCT_CART_DELETE' => 'Товар успешно удален с корзины',
     'ORDER_STATUS' => 'Состояние заказа',
     'DELIVERY' => 'Доставка',
     'MAIL_TABLE_TH_PRODUCT' => 'Товар',

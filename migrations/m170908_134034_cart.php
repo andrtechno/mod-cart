@@ -114,7 +114,7 @@ class m170908_134034_cart extends Migration
             'currency_id' => $this->integer()->unsigned(),
             'switch' => $this->boolean()->defaultValue(1),
             'payment_system' => $this->string(100),
-            'ordern' => $this->integer(),
+            'ordern' => $this->integer()->unsigned(),
         ], $this->tableOptions);
 
         $this->createTable(PaymentTranslate::tableName(), [
@@ -128,11 +128,11 @@ class m170908_134034_cart extends Migration
 
         $this->createTable(Delivery::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
-            'price' => 'float(10,2) DEFAULT NULL',
-            'free_from' => 'float(10,2) DEFAULT NULL',
+            'price' => $this->money(10, 2)->null(),
+            'free_from' => $this->money(10, 2)->null(),
             'system' => $this->string(100),
             'switch' => $this->boolean()->defaultValue(1),
-            'ordern' => $this->integer(),
+            'ordern' => $this->integer()->unsigned(),
         ], $this->tableOptions);
 
         $this->createTable(DeliveryTranslate::tableName(), [

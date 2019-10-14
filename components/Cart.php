@@ -8,6 +8,7 @@ use yii\base\Component;
 use panix\mod\shop\models\Product;
 use panix\mod\shop\models\Currency;
 use yii\web\Response;
+use yii\web\Session;
 
 class Cart extends Component
 {
@@ -28,7 +29,7 @@ class Cart extends Component
 
     protected $_total_price = 0;
     /**
-     * @var HttpSession
+     * @var Session
      */
     private $session;
     public $data = [];
