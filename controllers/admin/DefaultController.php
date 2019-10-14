@@ -206,5 +206,124 @@ class DefaultController extends AdminController
         ));
     }
 
+    public function actionPdfOrders($render = 'delivery', $type = 0, $start, $end)
+    {
 
+
+        $dateStart = strtotime($start);
+
+        $dateEnd = strtotime($end) + 86400;
+
+        if ($type) {
+            /*Yii::import('ext.tcpdf.TCPDF');
+            $contact = Yii::app()->settings->get('contacts');
+            $phones = explode(',', $contact['phone']);
+            $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+            $pdf->SetCreator(PDF_CREATOR);
+            $pdf->SetHeaderData("", "", Yii::app()->settings->get('app', 'site_name'), $phones[0].', '.$phones[1].', 3 konteynernaya, rolet 460');
+            //$pdf->SetHeaderData("", "", Yii::app()->settings->get('app', 'site_name'), "phone " . $phones[0]);
+            $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+            $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+            $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf->SetMargins(0, PDF_MARGIN_TOP, 0); //PDF_MARGIN_TOP
+            $pdf->SetMargins(10, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+            $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+            $pdf->SetFooterMargin(0); //PDF_MARGIN_FOOTER
+            $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM); //PDF_MARGIN_BOTTOM
+            $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+            $pdf->setJPEGQuality(100);
+            $pdf->AddPage();
+            $pdf->setFontSubsetting(true);
+            $pdf->SetFont('freeserif', '', 12);
+            $pdf->Write(0, '', '', 0, 'L', true, 0, false, false, 0);*/
+            $mpdf = new Mpdf([
+                // 'debug' => true,
+                //'mode' => 'utf-8',
+                'default_font_size' => 9,
+                'default_font' => 'times',
+                'margin_top' => 35,
+                'margin_bottom' => 9,
+                'margin_left' => 5,
+                'margin_right' => 5,
+                'margin_footer' => 10,
+                'margin_header' => 5,
+            ]);
+            $mpdf->use_kwt = true;
+            $mpdf->SetCreator(Yii::$app->name);
+            $mpdf->SetAuthor(Yii::$app->user->getDisplayName());
+
+            // $mpdf->SetProtection(['print','copy'], 'admin', '111');
+            //$mpdf->SetTitle($title);
+            $mpdf->SetHTMLFooter($this->renderPartial('@cart/views/admin/default/pdf/_footer_delivery', ['currentDate' => 'dsadsa']));
+
+            $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
+            // $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
+            // return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => $model->numberId]) . ".pdf", 'I');
+
+        }
+
+
+        /* $model = Order::find()->with([
+          'products' => function (\yii\db\ActiveQuery $query) {
+               $query->andWhere(['not', ['manufacturer_id' => null]]);
+           },
+       ]);*/
+
+
+        $model = Order::find()->with('products');
+        // $model->where(['status_id' => 1]);
+        if ($render == 'brands') {
+            $view = 'pdf/products';
+            $model->joinWith(['products p']);
+            $model->between($dateStart, $dateEnd);
+            $model->andWhere(['not', ['p.manufacturer_id' => null]]);
+            $model->orderBy(['p.manufacturer_id' => SORT_DESC]);
+
+            $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_products', [
+                'start_date' => CMS::date($dateStart,false),
+                'end_date' => CMS::date($dateEnd,false),
+            ]));
+        } else {
+            $view = 'pdf/delivery';
+            $model->between($dateStart, $dateEnd);
+            $model->orderBy(['delivery_id' => SORT_DESC]);
+
+            $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_delivery', [
+                'start_date' => CMS::date($dateStart,false),
+                'end_date' => CMS::date($dateEnd,false),
+                ]));
+
+        }
+        $model = $model->all();
+
+
+        $array = [];
+        if ($type) {
+
+            $mpdf->WriteHTML($this->renderPartial($view, [
+                'array' => $array,
+                'model' => $model,
+                'dateStart' => CMS::date($dateStart),
+                //'dateStart' => date('Y-m-d', $dateStart),
+                'dateEnd' => date('Y-m-d', $dateEnd - 86400)
+
+            ]), 2);
+            $mpdf->Ln();
+            return $mpdf->Output($this->action->id . ".pdf", 'I');
+        } else {
+            $this->layout = 'mod.admin.views.layouts.print';
+            $this->render('pdf/products', array(
+                'array' => $array,
+                'model' => $model,
+                'dateStart' => date('Y-m-d', strtotime($dateStart)),
+                'dateEnd' => date('Y-m-d', strtotime($dateEnd) - 86400)
+            ));
+        }
+
+    }
+
+    public function manufacturerSort($a, $b)
+    {
+        return strnatcmp($a['manufacturer'], $b['manufacturer']);
+    }
 }

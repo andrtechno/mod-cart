@@ -2,15 +2,13 @@
 
 namespace panix\mod\cart\models;
 
-use panix\engine\Html;
-use panix\mod\cart\components\events\EventProduct;
-use panix\mod\cart\components\HistoricalBehavior;
 use Yii;
-use panix\engine\db\ActiveRecord;
-use yii\base\Event;
 use yii\base\ModelEvent;
 use yii\helpers\ArrayHelper;
-
+use panix\engine\Html;
+use panix\engine\db\ActiveRecord;
+use panix\mod\cart\components\events\EventProduct;
+use panix\mod\cart\components\HistoricalBehavior;
 
 /**
  * Class Order

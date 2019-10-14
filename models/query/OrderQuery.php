@@ -2,12 +2,13 @@
 
 namespace panix\mod\cart\models\query;
 
-use panix\mod\shop\models\Currency;
+use panix\engine\traits\query\DefaultQueryTrait;
 use yii\db\ActiveQuery;
 use yii\db\Exception;
 
 class OrderQuery extends ActiveQuery
 {
+    use DefaultQueryTrait;
 
     public function init()
     {
@@ -17,6 +18,10 @@ class OrderQuery extends ActiveQuery
         parent::init();
     }
 
+    /**
+     * @param string $function
+     * @return mixed|null
+     */
     public function aggregateTotalPrice($function = 'MIN')
     {
         $modelClass = $this->modelClass;
@@ -46,7 +51,7 @@ class OrderQuery extends ActiveQuery
     public function applyPrice($value, $operator = '=')
     {
         if (!in_array($operator, ['=', '>=', '<='])) {
-            throw new Exception('error operator in '.__FUNCTION__);
+            throw new Exception('error operator in ' . __FUNCTION__);
         }
         $modelClass = $this->modelClass;
         $tableName = $modelClass::tableName();

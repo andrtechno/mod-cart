@@ -74,6 +74,7 @@ class m170908_134034_cart extends Migration
             'product_id' => $this->integer()->notNull()->unsigned(),
             'currency_id' => $this->integer()->unsigned(),
             'supplier_id' => $this->integer()->unsigned(),
+            'manufacturer_id' => $this->integer()->unsigned(),
             'configurable_id' => $this->integer()->unsigned(),
             'name' => $this->string(255),
             'configurable_name' => $this->text(),
@@ -232,6 +233,7 @@ class m170908_134034_cart extends Migration
         $this->createIndex('currency_id', OrderProduct::tableName(), 'currency_id');
         $this->createIndex('supplier_id', OrderProduct::tableName(), 'supplier_id');
         $this->createIndex('configurable_id', OrderProduct::tableName(), 'configurable_id');
+        $this->createIndex('manufacturer_id', OrderProduct::tableName(), 'manufacturer_id');
 
         // order history indexes
         $this->createIndex('order_id', OrderHistory::tableName(), 'order_id');

@@ -7,7 +7,7 @@ use panix\mod\cart\models\Order;
 
 ?>
 
-
+<?php echo $this->render('_filter_pdf'); ?>
 <?php
 
 Pjax::begin([
