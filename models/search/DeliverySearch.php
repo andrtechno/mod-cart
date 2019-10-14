@@ -5,6 +5,12 @@ namespace panix\mod\cart\models\search;
 use panix\engine\data\ActiveDataProvider;
 use panix\mod\cart\models\Delivery;
 
+/**
+ * Class DeliverySearch
+ * @property integer $id
+ * @property string $name
+ * @package panix\mod\cart\models\search
+ */
 class DeliverySearch extends Delivery {
 
     /**
@@ -34,7 +40,7 @@ class DeliverySearch extends Delivery {
      */
     public function search($params) {
         $query = Delivery::find();
-
+        $query->joinWith(['translations translations']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -51,8 +57,7 @@ class DeliverySearch extends Delivery {
             'id' => $this->id,
         ]);
 
-
-        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'translations.name', $this->name]);
 
         return $dataProvider;
     }

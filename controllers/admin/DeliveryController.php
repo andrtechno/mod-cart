@@ -8,50 +8,40 @@ use panix\mod\cart\models\search\DeliverySearch;
 use panix\mod\cart\models\Delivery;
 use panix\engine\controllers\AdminController;
 
-class DeliveryController extends AdminController {
+class DeliveryController extends AdminController
+{
 
     public $icon = 'delivery';
 
-    public function actions() {
+    public function actions()
+    {
         return [
             'sortable' => [
-                'class' => \panix\engine\grid\sortable\Action::class,
+                'class' => 'panix\engine\grid\sortable\Action',
                 'modelClass' => Delivery::class,
             ],
             'delete' => [
                 'class' => 'panix\engine\grid\actions\DeleteAction',
                 'modelClass' => Delivery::class,
             ],
+            'switch' => [
+                'class' => 'panix\engine\actions\SwitchAction',
+                'modelClass' => Delivery::class,
+            ],
         ];
     }
 
-    /*
-      public function actions() {
-      return array(
-      'order' => array(
-      'class' => 'ext.adminList.actions.SortingAction',
-      ),
-      'switch' => array(
-      'class' => 'ext.adminList.actions.SwitchAction',
-      ),
-      'sortable' => array(
-      'class' => 'ext.sortable.SortableAction',
-      'model' => Delivery::model(),
-      )
-      );
-      }
-     */
-
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $this->pageName = Yii::t('cart/admin', 'DELIVERY');
-        $this->buttons = [
+        /*$this->buttons = [
             [
                 'icon' => 'add',
-                'label' => Yii::t('cart/admin', 'CREATE_DELIVERY'),
+                'label' => Yii::t('app', 'CREATE'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']
             ]
-        ];
+        ];*/
         $this->breadcrumbs[] = [
             'label' => Yii::t('cart/default', 'MODULE_NAME'),
             'url' => ['/admin/cart']
@@ -62,40 +52,44 @@ class DeliveryController extends AdminController {
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
-                    'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
-    public function actionUpdate($id = false) {
+    public function actionUpdate($id = false)
+    {
 
-            $model = Delivery::findModel($id);
-
+        $model = Delivery::findModel($id);
+        $isNew = $model->isNewRecord;
         \panix\mod\cart\CartDeliveryAsset::register($this->view);
 
-        $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
+
         $this->buttons = [
             [
                 'icon' => 'add',
-                'label' => Yii::t('cart/admin', 'CREATE_DELIVERY'),
+                'label' => Yii::t('app', 'CREATE'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']
             ],
 
         ];
         $this->breadcrumbs[] = [
-            'label' => $this->pageName,
+            'label' => Yii::t('cart/default', 'MODULE_NAME'),
             'url' => ['index']
         ];
         $this->breadcrumbs[] = [
             'label' => Yii::t('cart/admin', 'DELIVERY'),
             'url' => ['index']
         ];
-        $this->breadcrumbs[] = Yii::t('app', 'UPDATE');
+
+        $this->pageName = Yii::t('app', $isNew ? 'CREATE' : 'UPDATE');
+
+        $this->breadcrumbs[] = $this->pageName;
 
         $post = Yii::$app->request->post();
 
-        $isNew = $model->isNewRecord;
+
         if ($model->load($post) && $model->validate()) {
             $model->save();
 
@@ -117,7 +111,8 @@ class DeliveryController extends AdminController {
      * Delete method
      * @param array $id
      */
-    public function actionDelete($id = array()) {
+    public function actionDelete($id = array())
+    {
         if (Yii::$app->request->isPostRequest) {
             $model = Delivery::find()->findAllByPk($_REQUEST['id']);
 

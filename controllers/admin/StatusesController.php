@@ -26,7 +26,7 @@ class StatusesController extends AdminController
 
         $this->buttons = [
             [
-                'label' => Yii::t('cart/default', 'CREATE_STATUS'),
+                'label' => Yii::t('app', 'CREATE'),
                 'url' => ['/cart/statuses/create'],
                 'options' => ['class' => 'btn btn-success']
             ]

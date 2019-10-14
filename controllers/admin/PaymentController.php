@@ -51,7 +51,7 @@ class PaymentController extends AdminController
         $this->buttons = [
             [
                 'icon' => 'add',
-                'label' => Yii::t('cart/admin', 'CREATE_PAYMENT'),
+                'label' => Yii::t('app', 'CREATE'),
                 'url' => ['/admin/cart/payment/create'],
                 'options' => ['class' => 'btn btn-success']
             ]
@@ -79,7 +79,7 @@ class PaymentController extends AdminController
         $this->buttons = [
             [
                 'icon' => 'add',
-                'label' => Yii::t('cart/admin', 'CREATE_PAYMENT'),
+                'label' => Yii::t('app', 'CREATE'),
                 'url' => ['/admin/cart/payment/create'],
                 'options' => ['class' => 'btn btn-success']
             ]

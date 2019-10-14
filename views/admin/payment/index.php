@@ -1,25 +1,26 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\Pjax;
+use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
-?>
-
-
-
-
-
-<?php
 
 Pjax::begin([
-    'id' => 'pjax-container', 'enablePushState' => false,
+   // 'id' => 'pjax-container',
 ]);
-?>
-<?= GridView::widget([
+echo GridView::widget([
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-    'layoutOptions' => ['title' => $this->context->pageName],
+    'layoutOptions' => [
+        'title' => $this->context->pageName,
+        'buttons' => [
+            [
+                'icon' => 'add',
+                'label' => Yii::t('app', 'CREATE'),
+                'url' => ['create'],
+                'options' => ['class' => 'btn btn-sm btn-success']
+            ]
+        ]
+    ],
     'columns' => [
         'name',
         'description:html',
@@ -29,5 +30,4 @@ Pjax::begin([
         ]
     ]
 ]);
-?>
-<?php Pjax::end(); ?>
+Pjax::end();

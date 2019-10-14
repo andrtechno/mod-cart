@@ -18,7 +18,7 @@ class DefaultController extends AdminController
 
     public function actionPrint($id)
     {
-        $currentDate = CMS::date(date('Y-m-d H:i:s'));
+        $currentDate = CMS::date(time());
         $model = Order::findModel($id);
         $title = $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]);
         $mpdf = new Mpdf([
