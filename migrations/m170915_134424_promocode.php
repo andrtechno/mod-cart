@@ -49,7 +49,7 @@ class m170915_134424_promocode extends Migration
             'manufacturer_id' => $this->integer()->unsigned(),
         ], $tableOptions);
 
-
+        $this->createIndex('code', PromoCode::tableName(), 'code');
         $this->createIndex('promocode_id', PromoCode::$manufacturerTable, 'promocode_id');
         $this->createIndex('manufacturer_id', PromoCode::$manufacturerTable, 'manufacturer_id');
 

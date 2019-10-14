@@ -19,6 +19,7 @@ class OrderCreateForm extends Model
     public $user_comment;
     public $delivery_id;
     public $payment_id;
+    public $promocode_id;
     public $registerGuest = false;
 
     public function init()
@@ -41,9 +42,9 @@ class OrderCreateForm extends Model
     public function rules()
     {
         return [
-            [['user_name', 'user_email', 'user_phone', 'delivery_id', 'payment_id'], 'required'],
+            [['user_name', 'user_email', 'user_phone'], 'required'],
             [['delivery_id', 'payment_id'], 'required'],
-            [['delivery_id', 'payment_id'], 'integer'],
+            [['delivery_id', 'payment_id','promocode_id'], 'integer'],
             ['user_email', 'email'],
             [['user_comment'], 'string', 'max' => 500],
             [['user_address'], 'string', 'max' => 255],

@@ -13,7 +13,7 @@ use panix\engine\Html;
 
         <?php
 
-        echo Html::activeLabel($model,'delivery_id');
+        echo Html::activeLabel($model, 'delivery_id');
         //  echo Html::activeRadioList($form, 'delivery_id', \yii\helpers\ArrayHelper::map($deliveryMethods, 'id', 'name'));
         foreach ($deliveryMethods as $delivery) {
             echo '<div>';
@@ -33,24 +33,22 @@ use panix\engine\Html;
             ?>
 
             <?php
-            if (!empty($delivery->description)) {
-                ?><?= $delivery->description ?>
-                <?php
-            }
-            ?>
+            if (!empty($delivery->description)) { ?>
+                <?= $delivery->description ?>
+            <?php } ?>
             <?php
             echo '</div>';
         }
 
-       /* echo $form->field($model,'payment_id')->radioList(\yii\helpers\ArrayHelper::map($deliveryMethods,'id','name'),[
-            'item' => function($index, $label, $name, $checked, $value) {
-                $return = '<div><label class="payment_checkbox" data-value="'.Html::encode($label).'">';
-                $return .= '<input type="radio" name="' . $name . '" value="' . $value . '" tabindex="3"> ';
-                $return .= $label;
-                $return .= '</label></div>';
-                return $return;
-            }
-        ]);*/
+        /* echo $form->field($model,'payment_id')->radioList(\yii\helpers\ArrayHelper::map($deliveryMethods,'id','name'),[
+             'item' => function($index, $label, $name, $checked, $value) {
+                 $return = '<div><label class="payment_checkbox" data-value="'.Html::encode($label).'">';
+                 $return .= '<input type="radio" name="' . $name . '" value="' . $value . '" tabindex="3"> ';
+                 $return .= $label;
+                 $return .= '</label></div>';
+                 return $return;
+             }
+         ]);*/
         ?>
 
 
@@ -62,9 +60,9 @@ use panix\engine\Html;
         <?php // Html::activeTextInput($model, 'user_address', array('class' => 'form-control')); ?>
 
     </div>
-        <?php
-    } else {
-        echo 'Необходимо добавить способ доставки!';
-    }
-    ?>
+    <?php
+} else {
+    echo 'Необходимо добавить способ доставки!';
+}
+?>
 

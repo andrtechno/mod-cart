@@ -51,7 +51,7 @@ class Delivery extends ActiveRecord
     {
         return [
             ['name', 'required'],
-
+            [['system'], 'default'],
             // ['price, free_from', 'number'],
 
             ['payment_methods', 'validatePaymentMethods'],

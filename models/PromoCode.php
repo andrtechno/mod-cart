@@ -7,10 +7,16 @@ use panix\engine\db\ActiveRecord;
 
 /**
  * Class PromoCode
- * @package panix\mod\cart\models
  *
  * @property array $categories Category ids
  * @property array $manufacturers Manufacturer ids
+ *
+ * @property integer $id
+ * @property string $discount
+ * @property string $code
+ *
+ * @package panix\mod\cart\models
+ *
  */
 class PromoCode extends ActiveRecord
 {

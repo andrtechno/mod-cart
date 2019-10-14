@@ -37,10 +37,11 @@ cart = {
                 total = total + delivery_price;
             }
         }
-        $(cart.selectorTotal).html(total.toFixed(2));
+
+        $(cart.selectorTotal).html(price_format(total.toFixed(2)));
     },
     renderBlockCart: function () {
-        $("#cart").load('/cart/render-small-cart', {skin: cart.skin});
+        $("#cart").load(common.url('/cart/render-small-cart'), {skin: cart.skin});
     },
     /**
      * @param product_id ИД обэекта
@@ -48,7 +49,7 @@ cart = {
     remove: function (product_id) {
         common.setText('loadingText', 'пересчет...');
         console.log(common.getText('loadingText'));
-        common.ajax('/cart/remove/' + product_id, {}, function () {
+        common.ajax(common.url('/cart/remove/' + product_id), {}, function () {
             cart.renderBlockCart();
             common.report('Товар успешно удален!');
         }, 'html', 'GET');
@@ -138,7 +139,7 @@ cart = {
 
         cart_recount_xhr = $.ajax({
             type: 'POST',
-            url: '/cart/recount',
+            url: common.url('/cart/recount'),
             data: {
                 product_id: product_id,
                 quantities: quantities
@@ -171,7 +172,7 @@ cart = {
     },
     /**
      * @param product_id ИД обэекта
-     */
+
     notifier: function (product_id) {
         $('body').append($('<div/>', {
             'id': 'dialog'
@@ -184,7 +185,7 @@ cart = {
             responsive: true,
             open: function () {
                 var that = this;
-                common.ajax('/shop/notify', {
+                common.ajax(common.url('/shop/notify'), {
                     product_id: product_id
                 }, function (data, textStatus, xhr) {
                     $(that).html(data.data);
@@ -204,8 +205,8 @@ cart = {
                 text: common.message.send,
                 'class': 'btn btn-primary',
                 click: function () {
-                    common.ajax('/notify', $('#notify-form').serialize(), function (data, textStatus, xhr) {
-                        if (data.status == 'OK') {
+                    common.ajax(common.url('/notify'), $('#notify-form').serialize(), function (data, textStatus, xhr) {
+                        if (data.status === 'OK') {
                             $('#dialog').remove();
                             //common.report(data.message);
                             common.notify(data.message, 'success');
@@ -216,7 +217,7 @@ cart = {
                 }
             }]
         });
-    },
+    },*/
     init: function () {
         console.log('cart.init');
         $(function () {

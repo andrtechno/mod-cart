@@ -115,7 +115,7 @@ $formOrder = ActiveForm::begin([
                             ?>
                             <span class="price price-sm  text-warning">
                                 <?= Yii::$app->currency->number_format($price); ?>
-                                <sub><?= Yii::$app->currency->active['symbol']; ?></sub>
+                                <sub><?= Yii::$app->currency->active['symbol']; ?>/<?= $product['model']->units[$product['model']->unit]; ?></sub>
                             </span>
 
                             <?php
@@ -166,6 +166,19 @@ $formOrder = ActiveForm::begin([
                     </tr>
                 <?php } ?>
                 </tbody>
+                <tfoot>
+                <td colspan="3"></td>
+                <td colspan="2">
+
+                    <?php
+                    echo panix\mod\cart\widgets\promocode\PromoCodeWidget::widget([
+                        'model' => $this->context->form,
+                        'attribute' => 'promocode_id'
+                    ]);
+                    ?>
+
+                </td>
+                </tfoot>
             </table>
 
 
@@ -175,6 +188,8 @@ $formOrder = ActiveForm::begin([
         ?>
     </div>
 </div>
+
+
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12">
         <?= Html::errorSummary($this->context->form, ['class' => 'alert alert-danger']) ?>
@@ -254,7 +269,7 @@ $formOrder = ActiveForm::begin([
                     <h6 id="delivery">---</h6>
                 </div>
 
-                 <?= Html::submitButton(Yii::t('cart/default', 'BUTTON_CHECKOUT'), ['class' => 'btn btn-warning btn-lg']) ?>
+                <?= Html::submitButton(Yii::t('cart/default', 'BUTTON_CHECKOUT'), ['class' => 'btn btn-warning btn-lg']) ?>
                 <input type="hidden" name="create" value="1">
             </div>
         </div>

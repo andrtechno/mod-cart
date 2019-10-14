@@ -38,6 +38,7 @@ class m170908_134034_cart extends Migration
             'delivery_id' => $this->integer()->notNull()->unsigned(),
             'payment_id' => $this->integer()->notNull()->unsigned(),
             'status_id' => $this->integer()->notNull()->unsigned(),
+            'promocode_id' => $this->integer()->null()->unsigned(),
             //'delivery_price' => 'float(10,2) DEFAULT NULL',
             //'total_price' => 'float(10,2) DEFAULT NULL',
             'delivery_price' => $this->money(10, 2),

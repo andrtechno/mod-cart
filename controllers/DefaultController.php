@@ -36,6 +36,17 @@ class DefaultController extends WebController
      */
     protected $_errors = false;
 
+
+
+    public function actions()
+    {
+        return [
+            'promoCode' => [
+                'class' => 'panix\mod\cart\widgets\promocode\PromoCodeAction',
+            ],
+        ];
+    }
+
     public function actionRecount()
     {
         if (Yii::$app->request->isAjax) {
