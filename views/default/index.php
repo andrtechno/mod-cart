@@ -157,7 +157,7 @@ $formOrder = ActiveForm::begin([
 
                             <?php
 
-                            //echo ' '.($product['currency_id'])? Yii::$app->currency->getSymbol($product['currency_id']): Yii::$app->currency->active['symbol'];
+
                             ?>
                         </td>
                         <td width="20px" class="remove-item">
