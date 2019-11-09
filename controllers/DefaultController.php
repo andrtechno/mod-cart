@@ -385,7 +385,7 @@ class DefaultController extends WebController
         Yii::$app->cart->recount(Yii::$app->request->post('quantities'));
 
         if (!Yii::$app->request->isAjax)
-            return Yii::$app->request->redirect($this->createUrl('index'));
+            return $this->redirect($this->createUrl('index'));
     }
 
     /**
@@ -410,13 +410,13 @@ class DefaultController extends WebController
     protected function _finish($product = null)
     {
 
-        echo Json::encode(array(
+        echo Json::encode([
             'errors' => $this->_errors,
             'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
                 'cart' => \yii\helpers\Html::a(Yii::t('cart/default', 'IN_CART'), '/cart'),
                 'product_name' => $product
             ]),
-        ));
+        ]);
         exit;
     }
 

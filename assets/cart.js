@@ -27,7 +27,8 @@ cart = {
      * @param that
      */
     recountTotalPrice: function (that) {
-        var total = parseFloat(orderTotalPrice);
+        //var total = parseFloat(orderTotalPrice);
+        var total = orderTotalPrice;
         var delivery_price = parseFloat($(that).attr('data-price'));
         var free_from = parseFloat($(that).attr('data-free-from'));
         if (delivery_price > 0) {
@@ -38,7 +39,8 @@ cart = {
             }
         }
 
-        $(cart.selectorTotal).html(price_format(total.toFixed(2)));
+       // $(cart.selectorTotal).html(price_format(total.toFixed(2)));
+        $(cart.selectorTotal).html(total);
     },
     renderBlockCart: function () {
         $("#cart").load(common.url('/cart/render-small-cart'), {skin: cart.skin});
@@ -159,7 +161,8 @@ cart = {
 
                 }
                 var test = data.totalPrice;
-                var total = parseInt(test.replace(separator_thousandth, '').replace(separator_hundredth, '')) + delprice;
+                var total = test;
+                //var total = parseInt(test.replace(separator_thousandth, '').replace(separator_hundredth, '')) + delprice;
                 // }
 
 
@@ -170,7 +173,8 @@ cart = {
                 //$('#balance').text((Number(data.totalPrice) * disum / 100));
 
                 common.removeLoader();
-                $(cart.selectorTotal).text(price_format(total));
+                //$(cart.selectorTotal).text(price_format(total));
+                $(cart.selectorTotal).html(total);
                 cart.renderBlockCart();
             }
         });

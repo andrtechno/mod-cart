@@ -237,7 +237,7 @@ class Cart extends Component
         return [
             'unit_price' => Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice)),
             'rowTotal' => Yii::$app->currency->number_format($rowTotal),
-            'totalPrice' => Yii::$app->currency->number_format(Yii::$app->currency->convert(Yii::$app->cart->getTotalPrice())),
+            'totalPrice' => Yii::$app->currency->number_format(Yii::$app->cart->getTotalPrice()),
         ];
     }
 
