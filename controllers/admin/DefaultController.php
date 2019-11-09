@@ -20,7 +20,7 @@ class DefaultController extends AdminController
     {
         $currentDate = CMS::date(time());
         $model = Order::findModel($id);
-        $title = $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]);
+        $title = $model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]);
         $mpdf = new Mpdf([
             // 'debug' => true,
             //'mode' => 'utf-8',
@@ -40,10 +40,10 @@ class DefaultController extends AdminController
         //$mpdf->SetProtection(['copy','print'], 'asdsad', 'MyPassword');
         $mpdf->SetTitle($title);
         $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer', ['currentDate' => $currentDate]));
-        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => '№' . $model->numberId]));
+        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => '№' . CMS::idToNumber($model->id)]));
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
-        return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => $model->numberId]) . ".pdf", 'I');
+        return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]) . ".pdf", 'I');
 
     }
 
@@ -258,7 +258,7 @@ class DefaultController extends AdminController
 
             $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
             // $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
-            // return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => $model->numberId]) . ".pdf", 'I');
+            // return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]) . ".pdf", 'I');
 
         }
 

@@ -28,9 +28,6 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property string $admin_comment
  * @property string $user_agent
  *
- * Methods getter
- * @property string $numberId
- *
  * @package panix\mod\cart\models
  */
 class Order extends ActiveRecord
@@ -57,16 +54,6 @@ class Order extends ActiveRecord
             'class' => HistoricalBehavior::class,
         ];
         return ArrayHelper::merge($a, parent::behaviors());
-    }
-
-    /**
-     * Конвертирует число, с 1 в 000001
-     *
-     * @return string
-     */
-    public function getNumberId()
-    {
-        return sprintf('%06d', $this->id);
     }
 
     public static function getTotal($provider, $fieldName)

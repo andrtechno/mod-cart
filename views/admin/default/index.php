@@ -34,7 +34,7 @@ GridView::widget([
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
                 /** @var $model Order */
-                return $model->getGridStatus() . ' ' . $model::t('NEW_ORDER_ID', ['id' => $model->getNumberId()]);
+                return $model->getGridStatus() . ' ' . $model::t('NEW_ORDER_ID', ['id' => \panix\engine\CMS::idToNumber($model->id)]);
             }
         ],
         'user_name',
