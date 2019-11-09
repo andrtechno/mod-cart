@@ -132,7 +132,7 @@ $formOrder = ActiveForm::begin([
                             }
                             ?>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <?php
                             echo Spinner::widget([
                                 'name' => "quantities[$index]",
@@ -161,7 +161,7 @@ $formOrder = ActiveForm::begin([
                             ?>
                         </td>
                         <td width="20px" class="remove-item">
-                            <?= Html::a(Html::icon('delete'), ['/cart/default/remove', 'id' => $index], ['class' => 'remove']) ?>
+                            <?= Html::a(Html::icon('delete'), ['/cart/default/remove', 'id' => $index], ['class' => 'btn btn-sm text-danger remove']) ?>
                         </td>
                     </tr>
                 <?php } ?>
