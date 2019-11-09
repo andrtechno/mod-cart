@@ -38,21 +38,22 @@ class Cart extends Component
     {
         $this->session = Yii::$app->session;
         //$this->session->id = 'cart';
-        $this->session->setTimeout(3600);
+        $this->session->setTimeout(100);
+        $this->session->cookieParams = ['lifetime' => 60];
         if (!isset($this->session['cart_data']) || !is_array($this->session['cart_data']))
-            $this->session['cart_data'] = array();
+            $this->session['cart_data'] = [];
     }
 
     /**
      * Add product to cart
      * <pre>
-     *      Yii::$app->cart->add(array(
+     *      Yii::$app->cart->add([
      *         'product_id'      => $model->id,
      *         'variants'        => $variants,// e.g: [1,2,3,...]
      *         'configurable_id' => $configurable_id,
      *         'quantity'        => (int) Yii::$app->request->post('quantity', 1),
      *         'price'           => $model->price,
-     *      ));
+     *      ]);
      * </pre>
      * @param array $data
      */
@@ -96,7 +97,7 @@ class Cart extends Component
      */
     public function clear()
     {
-        $this->session['cart_data'] = array();
+        $this->session['cart_data'] = [];
     }
 
     /**
@@ -116,7 +117,7 @@ class Cart extends Component
         $data = $this->getData();
 
         if (empty($data))
-            return array();
+            return [];
 
         foreach ($data as $index => &$item) {
 
@@ -152,15 +153,11 @@ class Cart extends Component
     public function getTotalPrice()
     {
         $result = 0;
-       // $data = $this->data;
         $data = $this->getDataWithModels();
         foreach ($data as $item) {
-
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
             $result += Product::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
-
         }
-
         return $result;
     }
 
