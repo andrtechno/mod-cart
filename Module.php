@@ -27,7 +27,10 @@ class Module extends WebModule implements BootstrapInterface
     public function getCountByUser()
     {
         if (!Yii::$app->user->isGuest)
-            return Order::find()->where(['status_id' => 1, 'user_id' => Yii::$app->user->id])->count();
+            return Order::find()->where([
+                'status_id' => 1,
+                'user_id' => Yii::$app->user->id
+            ])->count();
     }
 
     public function bootstrap($app)
@@ -76,7 +79,7 @@ class Module extends WebModule implements BootstrapInterface
                 'label' => Yii::t('cart/admin', 'ORDERS'),
                 'icon' => $this->icon,
                 'badge' => $this->count['num'],
-                'badgeOptions'=>['id'=>'navbar-badge-cart'],
+                'badgeOptions' => ['id' => 'navbar-badge-cart'],
                 'items' => [
                     [
                         'label' => Yii::t('cart/admin', 'ORDERS_LIST'),
