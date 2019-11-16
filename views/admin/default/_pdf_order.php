@@ -74,10 +74,10 @@ $currency = Yii::$app->currency;
     <table border="1" cellspacing="0" cellpadding="2" style="width:100%;" class="table table-bordered">
         <thead>
         <tr>
-            <th width="35%" colspan="2" class="text-center">Товар</th>
-            <th width="10%" class="text-center">Кол.</th>
-            <th width="15%" class="text-center">Цена за шт.</th>
-            <th width="20%" class="text-center">Общая стоимость</th>
+            <th width="35%" colspan="2" class="text-center"><?= Yii::t('cart/default', 'TABLE_PRODUCT'); ?></th>
+            <th width="10%" class="text-center"><?= Yii::t('cart/default', 'TABLE_NUM'); ?></th>
+            <th width="15%" class="text-center"><?= Yii::t('cart/default', 'PRICE_PER_UNIT'); ?></th>
+            <th width="20%" class="text-center"><?= Yii::t('cart/default', 'TOTAL_COST'); ?></th>
         </tr>
         </thead>
         <tbody>

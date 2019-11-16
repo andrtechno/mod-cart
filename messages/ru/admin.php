@@ -33,7 +33,6 @@ return [
     'ORDERED_PRODUCTS' => 'Заказанные продукты',
     'HISTORY_RESET' => 'Сбросить фильтры',
     'SAVE_PDF' => 'Сохранить в PDF',
-    'FOR_PAYMENT' => 'К оплате',
     'HISTORY_DELETE_PRODUCT' => 'Удалил товар',
     'HISTORY_CHANGE_PRODUCT' => 'Изменил товар',
     'HISTORY_CREATE_PRODUCT' => 'Добавил товар {name}',
