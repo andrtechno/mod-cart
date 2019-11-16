@@ -6,15 +6,6 @@ use panix\engine\grid\GridView;
 use panix\mod\shop\models\search\ProductSearch;
 use panix\mod\cart\models\search\OrderProductSearch;
 
-?>
-
-
-<?php
-
-//   if (!isset($dataProvider))
-//    $dataProvider = new Product('search');
-// Fix sort url
-//   $dataProvider = $dataProvider->search();
 $searchModel = new ProductSearch();
 $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
@@ -24,8 +15,8 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
 
 Pjax::begin([
     'id' => 'pjax-container-productlist',
-    'clientOptions' => ['method' => 'POST'],
-    'enablePushState' => false,
+   // 'clientOptions' => ['method' => 'POST'],
+   // 'enablePushState' => false,
     //'linkSelector' => 'a:not(.linkTarget)'
 ]);
 
@@ -33,14 +24,16 @@ echo GridView::widget([
     'filterUrl' => ['/admin/cart/default/add-product-list', 'id' => $model->id],
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
+    'enableLayout'=>false,
     //'filterModel' => $searchModel,
 
     'columns' => [
         [
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center image'],
-            'value' => function ($data) {
-                return $data->renderGridImage('50x50');
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
+                return $model->renderGridImage();
             },
         ],
         'name',
@@ -49,18 +42,20 @@ echo GridView::widget([
             'attribute' => 'price',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
-            'value' => function ($data) {
-                return Html::textInput("price_{$data->id}", $data->price, ['id' => "price_{$data->id}", 'class' => 'form-control']);
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
+                return Html::textInput("price_{$model->id}", $model->price, ['id' => "price_{$model->id}", 'class' => 'form-control']);
             }
         ],
         [
             'attribute' => 'quantity',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
-            'value' => function ($data) {
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
                 return \yii\jui\Spinner::widget([
-                    'id' => "count_{$data->id}",
-                    'name' => "count_{$data->id}",
+                    'id' => "count_{$model->id}",
+                    'name' => "count_{$model->id}",
                     'value' => 1,
                     'clientOptions' => ['max' => 999],
                     'options' => ['class' => 'cart-spinner']

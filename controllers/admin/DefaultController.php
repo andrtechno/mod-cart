@@ -40,7 +40,10 @@ class DefaultController extends AdminController
         //$mpdf->SetProtection(['copy','print'], 'asdsad', 'MyPassword');
         $mpdf->SetTitle($title);
         $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer', ['currentDate' => $currentDate]));
-        $mpdf->SetHTMLHeader($this->renderPartial('@theme/views/pdf/header', ['title' => '№' . CMS::idToNumber($model->id)]));
+        $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_order', [
+
+            'model' => $model
+        ]));
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
         return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]) . ".pdf", 'I');

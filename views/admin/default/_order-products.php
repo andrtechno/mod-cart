@@ -2,15 +2,15 @@
 
 use yii\widgets\Pjax;
 use panix\engine\grid\GridView;
-use panix\mod\shop\models\Product;
+use panix\mod\cart\models\OrderProduct;
 use yii\helpers\Html;
 
 $symbol = Yii::$app->currency->active['symbol'];
 
 Pjax::begin([
     'id' => 'pjax-container-products',
-    'enablePushState' => false,
-    'linkSelector' => 'a:not(.linkTarget)'
+   // 'enablePushState' => false,
+   // 'linkSelector' => 'a:not(.linkTarget)'
 ]);
 
 echo GridView::widget([
@@ -21,7 +21,7 @@ echo GridView::widget([
     'showFooter' => true,
     'footerRowOptions' => ['style' => 'font-weight:bold;', 'class' => 'text-center'],
     'layoutOptions' => [
-        'title' => Yii::t('cart/admin','ORDER_PRODUCTS'),
+        'title' => Yii::t('cart/admin', 'ORDER_PRODUCTS'),
         'buttons' => [
             [
                 'label' => 'добавить товар',
@@ -31,22 +31,22 @@ echo GridView::widget([
         ]
     ],
     'columns' => [
-        [
-            'format' => 'raw',
-            'contentOptions' => ['class' => 'text-center image'],
+        'image' => [
+            'class' => 'panix\engine\grid\columns\ImageColumn',
+            'attribute' => 'image',
+            // 'filter'=>true,
             'value' => function ($model) {
-                return $model->originalProduct->renderGridImage('50x50');
+                /** @var $model OrderProduct */
+                return ($model->originalProduct) ? $model->originalProduct->renderGridImage() : Html::tag('span','удален',['class'=>'badge badge-danger']);
             },
         ],
         [
-            'attribute' => 'originalProduct.name',
+            'attribute' => 'name',
             'format' => 'raw',
-            //'footer' => $model->productsCount,
             'value' => function ($model) {
-                return Html::a($model->originalProduct->name.$model->originalProduct->id,$model->originalProduct->getUrl());
+                /** @var $model OrderProduct */
+                return ($model->originalProduct) ? Html::a($model->name . ' ['.$model->product_id.']', $model->originalProduct->getUrl()) : $model->name;
             },
-           // 'contentOptions' => [],
-
         ],
         [
             'attribute' => 'quantity',

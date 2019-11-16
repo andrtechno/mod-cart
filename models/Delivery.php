@@ -8,6 +8,17 @@ use panix\engine\behaviors\TranslateBehavior;
 use panix\mod\cart\models\translate\DeliveryTranslate;
 use panix\engine\db\ActiveRecord;
 
+/**
+ * Class Delivery
+ *
+ * @property float $price
+ * @property float $free_from
+ * @property string $system
+ * @property string $name
+ * @property string $description
+ *
+ * @package panix\mod\cart\models
+ */
 class Delivery extends ActiveRecord
 {
 
@@ -84,13 +95,13 @@ class Delivery extends ActiveRecord
             return;
 
         foreach ($this->$attr as $id) {
-            if (Payment::find()->where(array('id' => $id))->count() == 0)
-                $this->addError($attr, $this->t('ERROR_PAYMENT'));
+            if (Payment::find()->where(['id' => $id])->count() == 0)
+                $this->addError($attr, self::t('ERROR_PAYMENT'));
         }
     }
 
     /**
-     * After save event
+     * @inheritdoc
      */
     public function afterSave($insert, $changedAttributes)
     {

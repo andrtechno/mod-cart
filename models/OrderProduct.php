@@ -2,12 +2,12 @@
 
 namespace panix\mod\cart\models;
 
-use panix\mod\cart\models\Order;
 use panix\mod\shop\models\Product;
 use panix\engine\db\ActiveRecord;
 
 /**
  * Class OrderProduct
+ *
  * @property integer $order_id
  * @property integer $product_id
  * @property integer $configurable_id
@@ -20,6 +20,8 @@ use panix\engine\db\ActiveRecord;
  * @property string $configurable_data
  * @property string $sku Article product
  * @property string $variants
+ * @property Product $originalProduct
+ * @property Order $order
  *
  * @package panix\mod\cart\models
  */
@@ -52,7 +54,7 @@ class OrderProduct extends ActiveRecord
     }
 
     /**
-     * @return boolean
+     * @inheritdoc
      */
     public function afterSave($insert, $changedAttributes)
     {
@@ -65,6 +67,14 @@ class OrderProduct extends ActiveRecord
         }
 
         return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function afterFind2()
+    {
+        parent::afterFind();
+        if (!$this->originalProduct) {
+            $this->price = 0;
+        }
     }
 
     public function afterDelete()
@@ -87,7 +97,7 @@ class OrderProduct extends ActiveRecord
     {
 
 
-        $result = \yii\helpers\Html::a($this->name, $this->originalProduct->getUrl(), array('target' => '_blank'));
+        $result = \yii\helpers\Html::a($this->name, $this->originalProduct->getUrl(), ['target' => '_blank']);
 
         if (!empty($this->configurable_name) && $appendConfigurableName)
             $result .= '<br/>' . $this->configurable_name;
@@ -116,7 +126,7 @@ class OrderProduct extends ActiveRecord
     public function getCategories()
     {
         $content = array();
-        foreach ($this->prd->categories as $c) {
+        foreach ($this->originalProduct->categories as $c) {
             $content[] = $c->name;
         }
         return implode(', ', $content);

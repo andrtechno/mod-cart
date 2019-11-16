@@ -27,6 +27,12 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property string $user_comment
  * @property string $admin_comment
  * @property string $user_agent
+ * @property integer $created_at
+ * @property integer $updated_at
+ * @property OrderStatus $status
+ * @property OrderProduct[] $products
+ * @property Delivery $deliveryMethod
+ * @property Payment $paymentMethod
  *
  * @package panix\mod\cart\models
  */
@@ -187,10 +193,11 @@ class Order extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function afterSave($insert, $changedAttributes)
     {
-
-
         parent::afterSave($insert, $changedAttributes);
     }
 
@@ -234,17 +241,14 @@ class Order extends ActiveRecord
         $this->total_price = 0;
         $products = OrderProduct::find()->where(['order_id' => $this->id])->all();
 
-        foreach ($products as $p) {
-            //if($p->currency_id){
-            // $currency = ShopCurrency::model()->findByPk($p->currency_id);
-            // $this->total_price += $p->price * $currency->rate * $p->quantity;
-            // }else{
-            $curr_rate = Yii::$app->currency->active['rate'];
+        foreach ($products as $product) {
+            /** @var OrderProduct $product */
 
-            $this->total_price += (Yii::$app->settings->get('shop', 'wholesale')) ? $p->price * $p->prd->pcs * $curr_rate * $p->quantity : $p->price * $curr_rate * $p->quantity;
+            $currency_rate = Yii::$app->currency->active['rate'];
+            if ($product->originalProduct) {
+                $this->total_price += $product->price * $currency_rate * $product->quantity;
+            }
 
-
-            //  }
         }
 
 
