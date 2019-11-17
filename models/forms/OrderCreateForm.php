@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\models\forms;
 
+use panix\mod\cart\models\PromoCode;
 use Yii;
 use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Payment;
@@ -38,21 +39,46 @@ class OrderCreateForm extends Model
 
         parent::init();
     }
-
+    public function scenarios() {
+        $scenarios = parent::scenarios();
+       // $scenarios['create-form-order'] = ['payment_id','user_phone','delivery_id','promocode_id','user_comment'];//Scenario Values Only Accepted
+        return $scenarios;
+    }
     public function rules()
     {
         return [
             [['user_name', 'user_email', 'user_phone'], 'required'],
             [['delivery_id', 'payment_id'], 'required'],
-            [['delivery_id', 'payment_id','promocode_id'], 'integer'],
+            [['delivery_id', 'payment_id', 'promocode_id'], 'integer'],//
             ['user_email', 'email'],
-            [['user_comment'], 'string', 'max' => 500],
+            ['user_comment', 'string'],
             [['user_address'], 'string', 'max' => 255],
             [['user_phone'], 'string', 'max' => 30],
             ['registerGuest', 'boolean'],
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
+            //['promocode_id', 'validatePromoCode','on'=>['create-form-order']],
         ];
+    }
+
+    public function beforeValidate()
+    {
+        $p = PromoCode::find()->where(['code' => $this->promocode_id])->one();
+        if ($p) {
+            $this->promocode_id = $p->id;
+        }
+        return parent::beforeValidate();
+    }
+    public function afterValidate()
+    {
+
+        parent::afterValidate();
+    }
+
+    public function validatePromoCode()
+    {
+
+
     }
 
     public function validateDelivery()

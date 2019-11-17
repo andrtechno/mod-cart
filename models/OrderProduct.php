@@ -96,8 +96,12 @@ class OrderProduct extends ActiveRecord
     public function getRenderFullName($appendConfigurableName = true)
     {
 
+        if ($this->originalProduct) {
+            $result = \yii\helpers\Html::a($this->name, $this->originalProduct->getUrl(), ['target' => '_blank']);
+        } else {
+            $result = $this->name;
+        }
 
-        $result = \yii\helpers\Html::a($this->name, $this->originalProduct->getUrl(), ['target' => '_blank']);
 
         if (!empty($this->configurable_name) && $appendConfigurableName)
             $result .= '<br/>' . $this->configurable_name;
@@ -108,10 +112,10 @@ class OrderProduct extends ActiveRecord
             $this->configurable_data = unserialize($this->configurable_data);
 
         if (!is_array($variants))
-            $variants = array();
+            $variants = [];
 
         if (!is_array($this->configurable_data))
-            $this->configurable_data = array();
+            $this->configurable_data = [];
 
         $variants = array_merge($variants, $this->configurable_data);
 

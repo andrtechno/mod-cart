@@ -78,6 +78,7 @@ class m170908_134034_cart extends Migration
             'manufacturer_id' => $this->integer()->unsigned(),
             'configurable_id' => $this->integer()->unsigned(),
             'name' => $this->string(255),
+            'discount' => $this->string(25)->null(),
             'configurable_name' => $this->text(),
             'configurable_data' => $this->text(),
             'variants' => $this->text(),

@@ -5,8 +5,24 @@ use yii\helpers\Url;
 use panix\mod\shop\models\Product;
 use panix\engine\bootstrap\Alert;
 
+/**
+ * @var \panix\mod\cart\models\Order $model
+ */
 $config = Yii::$app->settings->get('shop');
 $currency = Yii::$app->currency;
+?>
+
+
+<?php
+if (Yii::$app->session->hasFlash('success-promocode')) {
+
+    echo \panix\engine\bootstrap\Alert::widget([
+        'options' => ['class' => 'alert alert-success'],
+        'closeButton' => false,
+        'body' => Yii::$app->session->getFlash('success-promocode')
+    ]);
+
+}
 ?>
 <div class="shopping-cart row">
 
@@ -36,17 +52,26 @@ $currency = Yii::$app->currency;
                 <thead>
                 <tr>
                     <th align="center" style="width:40%" colspan="2"><?= Yii::t('cart/default', 'TABLE_PRODUCT') ?></th>
-                    <th align="center" style="width:30%"><?= Yii::t('cart/default', 'TABLE_NUM') ?></th>
-                    <th align="center" style="width:30%"><?= Yii::t('cart/default', 'TABLE_SUM',['currency'=> $currency->active['symbol']]) ?></th>
+                    <th align="center" style="width:30%"><?= Yii::t('cart/default', 'QUANTITY') ?></th>
+                    <th align="center"
+                        style="width:30%"><?= Yii::t('cart/default', 'TABLE_SUM', ['currency' => $currency->active['symbol']]) ?></th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($model->getOrderedProducts()->getModels() as $product) { //$model->getOrderedProducts()->getData()    ?>
+                <?php foreach ($model->getOrderedProducts()->getModels() as $product) {
+                    /** @var \panix\mod\cart\models\OrderProduct $product */
+
+                    //$model->getOrderedProducts()->getData()    ?>
                     <tr>
                         <td align="center" style="width:10%">
 
                             <?php
-                            echo Html::img(Url::to($product->originalProduct->getMainImage('100x')->url), ['alt' => $product->originalProduct->name]);
+                            if ($product->originalProduct) {
+                                echo Html::img(Url::to($product->originalProduct->getMainImage('100x')->url), ['alt' => $product->originalProduct->name]);
+                            } else {
+                                echo Html::tag('span', 'удален', ['class' => 'badge badge-danger']);
+                            }
+
                             ?>
                         </td>
                         <td>
@@ -66,12 +91,41 @@ $currency = Yii::$app->currency;
                         <td align="center">
                              <span class="price text-warning">
                                 <?= $currency->number_format($currency->convert($product->price * $product->quantity)); ?>
-                                <sub><?= $currency->active['symbol']; ?></sub>
+                                 <sub><?= $currency->active['symbol']; ?></sub>
                              </span>
                         </td>
                     </tr>
                 <?php } ?>
                 </tbody>
+                <?php if (!$model->promoCode) { ?>
+                    <tfoot>
+                    <td colspan="2" class="text-right">
+                        <label class="control-label h5" for="ordercreateform-promocode_id" style="margin-bottom: 0">
+                            Введите промо-код
+                        </label>
+                    </td>
+                    <td colspan="3">
+                        <?php
+                        echo Html::beginForm();
+                        echo panix\mod\cart\widgets\promocode\PromoCodeWidget::widget([
+                            'model' => $model,
+                            'attribute' => 'promocode_id'
+                        ]);
+                        echo Html::error($model, 'promocode_id');
+                        echo Html::endForm();
+
+                        /*echo \panix\mod\cart\widgets\promocode\PromoCodeInput::widget([
+                            'model' => $model,
+                            'attribute' => 'promocode_id',
+                            'options' => [
+                                'placeholder' => 'Введите промо-код'
+                            ]
+                        ]);*/
+
+                        ?>
+                    </td>
+                    </tfoot>
+                <?php } ?>
             </table>
         </div>
     </div>
@@ -174,7 +228,13 @@ $currency = Yii::$app->currency;
                     <?php } ?>
 
                 </div>
-
+                <?php if ($model->promoCode) { ?>
+                    <div class="form-group"><?= Yii::t('cart/default', 'PROMO_CODE_ACTIVATED') ?>:
+                        <div class="float-right font-weight-bold">
+                            <span class="badge2 badge-success2 text-success"><strong>-<?= $model->promoCode->discount; ?></strong></span>
+                        </div>
+                    </div>
+                <?php } ?>
                 <div class="form-group"><?= Yii::t('cart/default', 'TOTAL_PAY') ?>:
                     <div class="float-right font-weight-bold">
                         <span class="price price-lg">

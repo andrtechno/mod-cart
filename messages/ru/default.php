@@ -29,6 +29,7 @@ return [
     'DELIVERY' => 'Доставка',
     'MAIL_TABLE_TH_PRODUCT' => 'Товар',
     'QUANTITY' => 'Кол.',
+    'PROMO_CODE_ACTIVATED'=>'Активирован промо-код',
     'PRICE_PER_UNIT' => 'Цена за шт.',
     'TOTAL_PRICE' => 'Общая цена',
     'TOTAL_COST' => 'Общая стоимость',

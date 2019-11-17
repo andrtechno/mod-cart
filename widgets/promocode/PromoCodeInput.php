@@ -11,7 +11,8 @@ use yii\widgets\InputWidget;
 class PromoCodeInput extends InputWidget
 {
 
-
+    public $result;
+    public $form;
     public function init()
     {
         parent::init();
@@ -20,21 +21,24 @@ class PromoCodeInput extends InputWidget
         if (!isset($this->options['class']))
             $this->options['class'] = 'form-control';
 
-        $this->view->registerJs("
+
+            $this->view->registerJs("
             $('#$id').on('change', function() {
                 var value = $(this).val();
                 console.log('dsadas');
                 $.ajax({
                     type:'POST',
                     dataType:'json',
-                    url:'/cart/promo-code',
+                    url:common.url('/cart/promo-code'),
                     data:{code:value},
                     success:function(data){
+                    var resultSelector = $('#promocode-result'); //#promocode-result, #promoCodeResult
                         if(data.success){
-                            $('#promocode-result').html(data.message);
+                            resultSelector.removeClass('text-danger').addClass('text-success');
                         }else{
-                            common.notify(data.message,'error');
+                            resultSelector.removeClass('text-success').addClass('text-danger');
                         }
+                        resultSelector.html(data.message);
                     }
                 });
             });
@@ -44,7 +48,7 @@ class PromoCodeInput extends InputWidget
                 $.ajax({
                     type:'POST',
                     dataType:'json',
-                    url:'/cart/promo-code',
+                    url:common.url('/cart/promo-code'),
                     data:{code:value,accept:1},
                     success:function(data){
                         if(data.success){
@@ -56,6 +60,9 @@ class PromoCodeInput extends InputWidget
         ");
 
 
+
+
+
     }
 
     /**
@@ -63,7 +70,6 @@ class PromoCodeInput extends InputWidget
      */
     public function run()
     {
-        $button = Html::button('button', ['id' => 'submit-promocode']);
         if ($this->hasModel()) {
             return Html::activeInput('text', $this->model, $this->attribute, $this->options);
         }

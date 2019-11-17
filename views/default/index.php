@@ -81,7 +81,7 @@ $formOrder = ActiveForm::begin([
                 <tr>
                     <th></th>
                     <th style="width:30%"><?= Yii::t('cart/default', 'TABLE_PRODUCT') ?></th>
-                    <th style="width:30%"><?= Yii::t('cart/default', 'TABLE_NUM') ?></th>
+                    <th style="width:30%"><?= Yii::t('cart/default', 'QUANTITY') ?></th>
                     <th style="width:30%">Сумма</th>
                     <th></th>
                 </tr>
@@ -115,7 +115,8 @@ $formOrder = ActiveForm::begin([
                             ?>
                             <span class="price price-sm  text-warning">
                                 <?= Yii::$app->currency->number_format($price); ?>
-                                <sub><?= Yii::$app->currency->active['symbol']; ?>/<?= $product['model']->units[$product['model']->unit]; ?></sub>
+                                <sub><?= Yii::$app->currency->active['symbol']; ?>
+                                    /<?= $product['model']->units[$product['model']->unit]; ?></sub>
                             </span>
 
                             <?php
@@ -167,16 +168,18 @@ $formOrder = ActiveForm::begin([
                 <?php } ?>
                 </tbody>
                 <tfoot>
-                <td colspan="3"></td>
-                <td colspan="2">
-
+                <td colspan="2" class="text-right">
+                    <label class="control-label h5" for="ordercreateform-promocode_id" style="margin-bottom: 0">
+                        Введите промо-код
+                    </label>
+                </td>
+                <td colspan="3">
                     <?php
                     echo panix\mod\cart\widgets\promocode\PromoCodeWidget::widget([
                         'model' => $this->context->form,
                         'attribute' => 'promocode_id'
                     ]);
                     ?>
-
                 </td>
                 </tfoot>
             </table>

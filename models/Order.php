@@ -12,14 +12,16 @@ use panix\mod\cart\components\HistoricalBehavior;
 
 /**
  * Class Order
- * @property int $id
- * @property int $user_id
- * @property int $status_id
- * @property int $payment_id
- * @property int $delivery_id
+ * @property integer $id
+ * @property integer $user_id
+ * @property integer $status_id
+ * @property integer $payment_id
+ * @property integer $delivery_id
+ * @property integer $promocode_id
  * @property string $secret_key
  * @property float $total_price
  * @property float $delivery_price
+ * @property float $full_price
  * @property string $user_name
  * @property string $user_email
  * @property string $user_address
@@ -29,10 +31,12 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property string $user_agent
  * @property integer $created_at
  * @property integer $updated_at
+ * @property boolean $paid
  * @property OrderStatus $status
  * @property OrderProduct[] $products
  * @property Delivery $deliveryMethod
  * @property Payment $paymentMethod
+ * @property PromoCode $promoCode
  *
  * @package panix\mod\cart\models
  */
@@ -77,7 +81,10 @@ class Order extends ActiveRecord
     {
         return new query\OrderQuery(get_called_class());
     }
-
+    public function getPromoCode()
+    {
+        return $this->hasOne(PromoCode::class, ['id' => 'promocode_id']);
+    }
     /**
      * Relation
      * @return \yii\db\ActiveQuery
@@ -143,7 +150,22 @@ class Order extends ActiveRecord
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
             ['status_id', 'validateStatus'],
+            ['promocode_id', 'validatePromoCode'],
         ];
+    }
+    public function validatePromoCode($attribute)
+    {
+        $value = $this->{$attribute};
+
+        if(is_string($value)){
+            $f = PromoCode::find()->where(['code'=>$value])->one();
+            if($f){
+                $this->{$attribute} = $f->id;
+            }else{
+                $this->addError($attribute,'Error promocode');
+            }
+        }
+
     }
 
     /**
@@ -251,6 +273,12 @@ class Order extends ActiveRecord
 
         }
 
+        /*if($this->promoCode){
+            if ('%' === substr($this->promoCode->discount, -1, 1)) {
+                $this->total_price -= $this->total_price * ((double) $this->promoCode->discount) / 100;
+            }
+
+        }*/
 
         $this->save(false);
     }

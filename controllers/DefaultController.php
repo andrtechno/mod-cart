@@ -7,6 +7,7 @@ use panix\engine\bootstrap\ActiveForm;
 use panix\mod\cart\CartAsset;
 use panix\mod\shop\models\Attribute;
 use Yii;
+use yii\base\Exception;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
@@ -71,7 +72,7 @@ class DefaultController extends WebController
         if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
             $this->processRecount();
         }
-        $this->form = new OrderCreateForm;
+        $this->form = new OrderCreateForm(); //['scenario' => 'create-form-order']
 
         // Make order
         $post = Yii::$app->request->post();
@@ -142,6 +143,24 @@ class DefaultController extends WebController
         $model = Order::find()->where(['secret_key' => $secret_key])->one();
         if (!$model)
             $this->error404(Yii::t('cart/default', 'ERROR_ORDER_NO_FIND'));
+
+        $post = Yii::$app->request->post();
+        if ($post) {
+            if ($model->load($post)) {
+                if ($model->validate()) {
+                    //$model->save();
+                    $model->updateTotalPrice();
+                    $model->updateDeliveryPrice();
+                    Yii::$app->session->setFlash('success-promocode','YAhhoo');
+                    Yii::$app->session->addFlash('success-promocode','YAhhoo');
+                    $this->refresh();
+                } else {
+
+                }
+            }
+            // print_r($post);
+            //  die;
+        }
 
         $this->pageName = Yii::t('cart/default', 'VIEW_ORDER', ['id' => $model->id]);
         $this->breadcrumbs[] = $this->pageName;
@@ -225,7 +244,7 @@ class DefaultController extends WebController
             return [
                 'id' => $id,
                 'success' => true,
-                'total_price'=>Yii::$app->currency->number_format(Yii::$app->cart->totalPrice),
+                'total_price' => Yii::$app->currency->number_format(Yii::$app->cart->totalPrice),
                 'message' => Yii::t('cart/default', 'SUCCESS_PRODUCT_CART_DELETE')
             ];
         }
@@ -256,7 +275,7 @@ class DefaultController extends WebController
     /**
      * Create new order
      * @return Order|boolean
-     * @throws HttpException
+     * @throws Exception
      */
     public function createOrder()
     {
@@ -274,13 +293,14 @@ class DefaultController extends WebController
         $order->user_comment = $this->form->user_comment;
         $order->delivery_id = $this->form->delivery_id;
         $order->payment_id = $this->form->payment_id;
+        $order->promocode_id = $this->form->promocode_id;
 
         if ($order->validate()) {
             $order->save();
         } else {
             print_r($order->getErrors());
             die;
-            throw new HttpException(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
+            throw new Exception(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
         }
 
         // Process products
@@ -474,4 +494,5 @@ class DefaultController extends WebController
             $this->error404();
         }
     }
+
 }

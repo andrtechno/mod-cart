@@ -3,7 +3,7 @@
 use panix\engine\Html;
 
 /**
- * @var $form \yii\widgets\ActiveForm
+ * @var $form \panix\engine\bootstrap\ActiveForm
  * @var $model \panix\mod\cart\models\forms\OrderCreateForm
  */
 ?>
