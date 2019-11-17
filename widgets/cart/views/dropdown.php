@@ -41,7 +41,7 @@ use panix\mod\shop\models\Product;
                 <div class="cart-detail clearfix">
                     <span class="total-price pull-left"><span
                                 class="label label-success"><?= $total ?></span> <?= $currency['symbol']; ?></span>
-                    <?= Html::a(Yii::t('cart/default', 'BUTTON_CHECKOUT'), array('/cart'), array('class' => 'btn btn-sm btn-primary pull-right')) ?>
+                    <?= Html::a(Yii::t('cart/default', 'BUTTON_CHECKOUT'), ['/cart'], ['class' => 'btn btn-sm btn-primary pull-right']) ?>
                 </div>
             </div>
         </div>

@@ -5,11 +5,18 @@ namespace panix\mod\cart\widgets\cart;
 use Yii;
 use yii\helpers\Html;
 use panix\mod\shop\models\Product;
+use panix\engine\data\Widget;
+use yii\web\View;
 
-class CartWidget extends \panix\engine\data\Widget {
+class CartWidget extends Widget
+{
 
 
-    public function run() {
+    public function run()
+    {
+
+        $this->getView()->registerJs("cart.skin = '{$this->skin}';", View::POS_END);
+
         $cart = Yii::$app->cart;
         $currency = Yii::$app->currency->active;
         $items = $cart->getDataWithModels();
