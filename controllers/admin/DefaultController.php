@@ -75,8 +75,13 @@ class DefaultController extends AdminController
     public function actionUpdate($id = false)
     {
         $model = Order::findModel($id, Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
-        $this->pageName = Yii::t('cart/admin', 'ORDERS');
+        $isNew = $model->isNewRecord;
+        $this->pageName = ($isNew) ? $model::t('CREATE_ORDER') : $model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]);
         $this->breadcrumbs = [
+            [
+                'label' => Yii::t('cart/admin', 'ORDERS'),
+                'url' => ['index']
+            ],
             $this->pageName
         ];
         \panix\mod\cart\OrderAsset::register($this->view);
@@ -91,10 +96,10 @@ class DefaultController extends AdminController
                 'label' => Yii::t('cart/admin', 'PRINT_PDF'),
                 'icon' => 'print',
                 'url' => ['print', 'id' => $model->id],
-                'options' => ['class' => 'btn btn-primary']
+                'options' => ['class' => 'btn btn-primary', 'target' => '_blank']
             ]
         ];
-        $isNew = $model->isNewRecord;
+
         $post = Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
             $model->save();
@@ -283,8 +288,8 @@ class DefaultController extends AdminController
             $model->orderBy(['p.manufacturer_id' => SORT_DESC]);
 
             $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_products', [
-                'start_date' => CMS::date($dateStart,false),
-                'end_date' => CMS::date($dateEnd,false),
+                'start_date' => CMS::date($dateStart, false),
+                'end_date' => CMS::date($dateEnd, false),
             ]));
         } else {
             $view = 'pdf/delivery';
@@ -292,9 +297,9 @@ class DefaultController extends AdminController
             $model->orderBy(['delivery_id' => SORT_DESC]);
 
             $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_delivery', [
-                'start_date' => CMS::date($dateStart,false),
-                'end_date' => CMS::date($dateEnd,false),
-                ]));
+                'start_date' => CMS::date($dateStart, false),
+                'end_date' => CMS::date($dateEnd, false),
+            ]));
 
         }
         $model = $model->all();
