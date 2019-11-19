@@ -112,7 +112,7 @@ foreach ($array as $key => $items) {
                     <td><?= $row['name'] ?> (<?= $row['size'] ?>)</td>
                 <?php } else { ?>
                     <td width="10%" align="center">
-                        <?= Html::img($row['image'], array('width' => 50, 'height' => 50)); ?>
+                        <?= Html::img($row['image'], ['width' => 50, 'height' => 50]); ?>
                     </td>
                 <?php } ?>
                 <td align="center"><?= $row['quantity'] ?></td>
@@ -147,6 +147,6 @@ foreach ($array as $key => $items) {
 <br/>
 
 <h3 style="text-align: center">
-    <small><?= Yii::t('shop/default', 'PRODUCTS_COUNTER', ['count'=>$total_count]); ?> на сумму:</small> <?= Yii::$app->currency->number_format($total_price) ?>
+    <small><?= Yii::t('shop/default', 'PRODUCTS_COUNTER', $total_count); ?> на сумму:</small> <?= Yii::$app->currency->number_format($total_price) ?>
     <small><?= Yii::$app->currency->active['symbol'] ?></small>
 </h3>

@@ -6,8 +6,8 @@
             <tr>
                 <th width="5%" align="center" class="text-center">№</th>
                 <th width="20%" align="center" class="text-center">ФИО<br></th>
-                <th width="55%" align="center" class="text-center">Адрес доставки<br></th>
-                <th width="10%" align="center" class="text-center">Телефон<br></th>
+                <th width="45%" align="center" class="text-center">Адрес доставки<br></th>
+                <th width="20%" align="center" class="text-center">Телефон<br></th>
                 <th width="10%" align="center" class="text-center">товаров<br></th>
             </tr>
         </thead>
@@ -33,14 +33,14 @@
                 foreach ($items as $row) {
                     ?>
                     <tr>
-                        <td align="center"><?= $i ?></td>
+                        <td align="center" style="vertical-align:middle"><?= $i ?></td>
                         <td>
                             <?= $row['user_name'] ?>
                             <p>Оплата: <?= $row['payment'] ?></p>
                         </td>
-                        <td align="center"><?= $row['city'] ?><?= $row['user_address'] ?></td>
-                        <td align="center"><?= $row['user_phone'] ?></td>
-                        <td align="center"><?= $row['productsCount'] ?></td>
+                        <td align="center" style="vertical-align:middle"><?= $row['city'] ?><?= $row['user_address'] ?></td>
+                        <td align="center" style="vertical-align:middle"><?= \panix\engine\CMS::phone_number_format($row['user_phone']) ?></td>
+                        <td align="center" style="vertical-align:middle"><?= $row['productsCount'] ?></td>
                     </tr>
                     <?php
                     $i++;

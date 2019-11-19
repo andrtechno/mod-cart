@@ -1,82 +1,63 @@
 <?php
 use panix\engine\CMS;
 use panix\engine\Html;
+use panix\engine\jui\DatePicker;
 
 ?>
 <div class="card">
     <div class="card-header">
-        <h5>Фиьтры</h5>
+        <h5>Фильтры</h5>
     </div>
     <div class="card-body">
-        dsasad
-    </div>
-</div>
-<div class="p-5">
-        <div class="form-group">
+        <?= Html::beginForm('/admin/cart/default/pdf-orders','GET'); ?>
+        <div class="p-3">
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text">с</span>
+                    </div>
+                    <?php
+                    echo DatePicker::widget([
+                        'name' => 'start',
+                        'value' => (Yii::$app->request->get('start')) ? Yii::$app->request->get('start') : date('Y-m-d'),
+                        //'language' => 'ru',
+                        'dateFormat' => 'yyyy-MM-dd',
+                    ]);
+                    ?>
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">по</span>
+                    </div>
+                    <?php
+                    echo DatePicker::widget([
+                        'name' => 'end',
+                        'value' => (Yii::$app->request->get('end')) ? Yii::$app->request->get('end') : date('Y-m-d'),
+                        //'language' => 'ru',
+                        'dateFormat' => 'yyyy-MM-dd',
+                    ]);
+                    ?>
+                    <?php
 
+                    echo Html::dropDownList('render', 'delivery', ['delivery' => 'Распределить по доставке', 'brands' => 'Распределить по производителю'], ['class' => 'custom-select']);
+                    ?>
+                    <?php
+                    echo Html::dropDownList('type', 1, [1 => 'PDF', 0 => 'Html'], ['class' => 'custom-select']);
 
-            <div class="input-group">
-                <div class="input-group-append"><span class="input-group-text">с</span></div>
-                <?php
-                /*$this->widget('app.jui.JuiDatePicker', array(
-                    'value' => (isset($_GET['start'])) ? $_GET['start'] : date('Y-m-d'),
-                    'options' => array(
-                        'dateFormat' => 'yy-mm-dd',
-                    ),
-                    'htmlOptions' => array('name' => 'start')
-                ));*/
-                ?>
-                <div class="input-group-prepend"><span class="input-group-text">по</span></div>
-                <?php
-               /* $this->widget('app.jui.JuiDatePicker', array(
-                    'value' => (isset($_GET['end'])) ? $_GET['end'] : date('Y-m-d'),
-                    'options' => array(
-                        'dateFormat' => 'yy-mm-dd',
-                        'maxDate' => 0,
-                    ),
-                    'htmlOptions' => array('name' => 'end')
-                ));*/
-                ?>
+                    ?>
+
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                        <?= Html::checkBox('image', true, ['class' => 'form-control2']); ?>
+                        <?= Html::label('Картинки', 'image', ['class' => 'control-label']); ?>
+                            </span>
+                    </div>
+                    <div class="input-group-prepend">
+                        <?= Html::submitButton('Показать', ['class' => 'btn btn-success', 'name' => '']); ?>
+                    </div>
+                </div>
             </div>
         </div>
-
-
-        <div class="form-group">
-            <?php
-           /* $this->widget('ext.bootstrap.selectinput.SelectInput', array(
-                'name' => "render",
-                'value' => 'delivery',
-                'data' => array('delivery' => 'Распределить по доставке', 'brands' => 'Распределить по производителю'),
-                'options' => array(
-                    'mobile' => CMS::isMobile(),
-                    'width' => CMS::isMobile() ? false : 'auto'
-                ),
-                'htmlOptions' => array()
-            ));*/
-            ?>
-        </div>
-        <div class="form-group">
-            <?php
-           /* $this->widget('ext.bootstrap.selectinput.SelectInput', array(
-                'name' => "type",
-                'value' => 1,
-                'data' => array(1 => 'PDF', 0 => 'Html'),
-                'options' => array(
-                    'mobile' => CMS::isModile(),
-                    'width' => CMS::isModile() ? false : 'auto'
-                ),
-                'htmlOptions' => array()
-            ));*/
-            ?>
-        </div>
-        <div class="form-group">
-            <?= Html::checkBox('image', true, array('class' => 'form-control2')); ?>
-            <?= Html::label('Картинки', 'image', array('class' => 'control-label')); ?>
-        </div>
-
-        <?= Html::submitButton('Показать', array('class' => 'btn btn-success', 'name' => '')); ?>
-
-
+        <?= Html::endForm(); ?>
+    </div>
 </div>
 
 
