@@ -22,12 +22,14 @@ $form = ActiveForm::begin();
         <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
         <?=
         $form->field($model, 'currency_id')->dropDownList(ArrayHelper::map(Currency::find()->all(), 'id', 'name'), [
-            'prompt' => '-- Валюта --'
+            'prompt' => Yii::t('shop/Product','SELECT_CURRENCY', [
+                'currency' => Yii::$app->currency->main['iso']
+            ])
         ]);
         ?>
         <?=
         $form->field($model, 'payment_system')->dropDownList($model->getPaymentSystemsArray(), [
-            'prompt' => '-- Система оплаты --',
+            'prompt' => html_entity_decode(Yii::t('cart/default','SELECT_SYSTEM_PAYMENT')),
             'rel' => $model->id
         ]);
         ?>

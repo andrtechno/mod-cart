@@ -2,12 +2,18 @@
 
 namespace panix\mod\cart\models\forms;
 
-use panix\mod\cart\models\PromoCode;
 use Yii;
 use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Payment;
 use panix\engine\base\Model;
+use panix\engine\CMS;
+use panix\mod\cart\models\PromoCode;
+use panix\mod\user\models\User;
 
+/**
+ * Class OrderCreateForm
+ * @package panix\mod\cart\models\forms
+ */
 class OrderCreateForm extends Model
 {
 
@@ -39,11 +45,14 @@ class OrderCreateForm extends Model
 
         parent::init();
     }
-    public function scenarios() {
+
+    public function scenarios()
+    {
         $scenarios = parent::scenarios();
-       // $scenarios['create-form-order'] = ['payment_id','user_phone','delivery_id','promocode_id','user_comment'];//Scenario Values Only Accepted
+        // $scenarios['create-form-order'] = ['payment_id','user_phone','delivery_id','promocode_id','user_comment'];//Scenario Values Only Accepted
         return $scenarios;
     }
+
     public function rules()
     {
         return [
@@ -69,6 +78,7 @@ class OrderCreateForm extends Model
         }
         return parent::beforeValidate();
     }
+
     public function afterValidate()
     {
 
@@ -96,21 +106,20 @@ class OrderCreateForm extends Model
     public function registerGuest()
     {
         if (Yii::$app->user->isGuest && $this->registerGuest) {
-            $user = new User('registerFast');
-            $user->password = $this->_password;
+            $user = new User(['scenario' => 'register_fast']);
+            $user->password = CMS::gen(5);
             $user->username = $this->user_name;
             $user->email = $this->user_email;
-            $user->login = $this->user_email;
-            $user->address = $this->user_address;
+            //$user->address = $this->user_address;
             $user->phone = $this->user_phone;
-            $user->group_id = 2;
+            // $user->group_id = 2;
             if ($user->validate()) {
                 $user->save();
-                $this->sendRegisterMail();
-                Yii::$app->user->setFlash('success_register', Yii::t('app', 'SUCCESS_REGISTER'));
+                // $this->sendRegisterMail($user);
+                Yii::$app->session->setFlash('success_register', Yii::t('app', 'SUCCESS_REGISTER'));
             } else {
                 $this->addError('registerGuest', 'Ошибка регистрации');
-                Yii::$app->user->setFlash('error_register', Yii::t('CartModule.default', 'ERROR_REGISTER'));
+                Yii::$app->session->setFlash('error_register', Yii::t('cart/default', 'ERROR_REGISTER'));
                 print_r($user->getErrors());
                 die('error register');
             }

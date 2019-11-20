@@ -21,14 +21,14 @@ $form = ActiveForm::begin();
         <?= $form->field($model, 'free_from')->textInput(['maxlength' => 255]) ?>
         <?=
         $form->field($model, 'system')->dropDownList($model->getDeliverySystemsArray(), [
-            'prompt' => '-- delivery_system --',
+            'prompt' => html_entity_decode(Yii::t('cart/default','SELECT_SYSTEM_DELIVERY')),
             'data-id'=>$model->id
         ]);
         ?>
         <div id="delivery_configuration"></div>
         <?=
         $form->field($model, 'payment_methods')->dropDownList(ArrayHelper::map(Payment::find()->all(), 'id', 'name'), [
-            'prompt' => '-- payment --',
+            'prompt' => html_entity_decode(Yii::t('cart/default','SELECT_SYSTEM_PAYMENT')),
             'multiple' => true
         ]);
         ?>

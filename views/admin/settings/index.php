@@ -5,7 +5,7 @@ use panix\engine\bootstrap\ActiveForm;
 use panix\ext\taginput\TagInput;
 use panix\ext\tinymce\TinyMce;
 
-
+/*
 echo \panix\ext\highcharts\Highcharts::widget([
     'options' => [
         'title' => [
@@ -71,13 +71,11 @@ echo \panix\ext\highcharts\Highcharts::widget([
         ]
     ]
 ]);
+*/
 
-
-$form = ActiveForm::begin([
-    'options' => ['class' => 'form-horizontal'],
-]);
+$form = ActiveForm::begin();
 ?>
-    <div class="card bg-light">
+    <div class="card">
         <div class="card-header">
             <h5><?= $this->context->pageName ?></h5>
         </div>

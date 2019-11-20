@@ -26,10 +26,9 @@ use panix\engine\Html;
 </div>
 
 
-<?php if (Yii::$app->user->isGuest && $form->registerGuest) { ?>
+<?php if (Yii::$app->user->isGuest && $model->registerGuest) { ?>
     <div class="form-group">
-        <?= Html::activeLabel($form, 'registerGuest', ['required' => true, 'class' => 'col-form-label']); ?>
-        <?= Html::activeCheckBox($form, 'registerGuest', ['class' => 'form-inline']); ?>
+        <?= $form->field($model, 'registerGuest')->checkbox(); ?>
     </div>
 <?php } ?>
 
