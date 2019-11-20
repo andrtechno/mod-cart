@@ -58,7 +58,14 @@ GridView::widget([
             'class' => 'panix\engine\grid\columns\jui\SliderColumn',
             'max' => (int)Order::find()->aggregateTotalPrice('MAX'),
             'min' => (int)Order::find()->aggregateTotalPrice('MIN'),
+            'prefix' => '<sup>' . Yii::$app->currency->main['symbol'] . '</sup>',
             'contentOptions' => ['class' => 'text-center'],
+            'minCallback' => function ($value) {
+                return Yii::$app->currency->number_format($value);
+            },
+            'maxCallback' => function ($value) {
+                return Yii::$app->currency->number_format($value);
+            },
             'value' => function ($model) {
                 /** @var $model Order */
                 $priceHtml = Yii::$app->currency->number_format(Yii::$app->currency->convert($model->total_price));
