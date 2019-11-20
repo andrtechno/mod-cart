@@ -1,6 +1,6 @@
 {
   "id": "novaposhta",
-  "name": "NovaPoshta",
+  "name": "Новая Почта",
   "class": "NovaPoshtaDeliverySystem",
   "version": "1.0"
 }
