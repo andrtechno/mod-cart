@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+use panix\engine\Html;
 use yii\widgets\Pjax;
 use panix\engine\grid\GridView;
 use panix\mod\shop\models\search\ProductSearch;
@@ -67,7 +67,7 @@ echo GridView::widget([
             'template' => '{add}',
             'buttons' => [
                 'add' => function ($url, $data, $key) {
-                    return Html::a('<i class="icon-add"></i>', $data->id, [
+                    return Html::a(Html::icon('add'), $data->id, [
                         'title' => Yii::t('yii', 'VIEW'),
                         'class' => 'btn btn-sm btn-success addProductToOrder',
                         'onClick' => 'return addProductToOrder(this, ' . Yii::$app->request->get('id') . ');'

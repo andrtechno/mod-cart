@@ -11,10 +11,7 @@ use panix\ext\fancybox\Fancybox;
             <div class="card-header">
                 <h5><?= Html::encode($this->context->pageName) ?></h5>
             </div>
-            <div class="card-body">
-
-                <?= $this->render('_form', ['model' => $model]) ?>
-            </div>
+            <?= $this->render('_form', ['model' => $model]) ?>
         </div>
     </div>
     <div class="col-sm-6">
