@@ -254,7 +254,7 @@ $formOrder = ActiveForm::begin([
             <div class="card-header"><h4>dsadsadsa</h4></div>
             <div class="card-body text-center">
                 <div class="mb-4">
-                    <h5><?= Yii::t('cart/default', 'Сумма заказа'); ?>:</h5>
+                    <h5><?= Yii::t('cart/default', 'ORDER_PRICE'); ?>:</h5>
 
                     <span class="price price-lg text-warning">
                         <span class="" id="total"><?= Yii::$app->currency->number_format($totalPrice) ?></span>
