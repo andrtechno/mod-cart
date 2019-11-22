@@ -56,7 +56,7 @@ class OrderCreateForm extends Model
     public function rules()
     {
         return [
-            [['user_name', 'user_email', 'user_phone'], 'required'],
+            [['user_name', 'user_email', 'user_phone', 'user_address'], 'required'],
             [['delivery_id', 'payment_id'], 'required'],
             [['delivery_id', 'payment_id', 'promocode_id'], 'integer'],//
             ['user_email', 'email'],
