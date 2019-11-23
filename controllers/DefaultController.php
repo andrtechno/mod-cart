@@ -95,9 +95,11 @@ class DefaultController extends WebController
                         'code' => 200,
                     ];
                 }*/
-                //Yii::$app->cart->clear();
-                //Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
-                // return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+                if(!YII_DEBUG){
+                    Yii::$app->cart->clear();
+                    Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                    return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+                }
             }
         }
 

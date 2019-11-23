@@ -86,19 +86,19 @@ $form = ActiveForm::begin();
                 ->hint('Введите E-mail и нажмите Enter');
             ?>
 
-            <?= $form->field($model, 'tpl_subject_user'); ?>
-            <?= $form->field($model, 'tpl_subject_admin'); ?>
+            <?php //echo $form->field($model, 'tpl_subject_user'); ?>
+            <?php //echo $form->field($model, 'tpl_subject_admin'); ?>
 
 
-            <?= $form->field($model, 'tpl_body_user')->widget(TinyMce::class, [
+            <?php /*echo $form->field($model, 'tpl_body_user')->widget(TinyMce::class, [
                 'options' => ['rows' => 6],
 
-            ]);
+            ]);*/
             ?>
-            <?= $form->field($model, 'tpl_body_admin')->widget(TinyMce::class, [
+            <?php /*echo $form->field($model, 'tpl_body_admin')->widget(TinyMce::class, [
                 'options' => ['rows' => 6],
 
-            ]);
+            ]);*/
             ?>
 
 

@@ -37,19 +37,19 @@
     {foreach from=$order.products item=product}
         <tr>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">
-                {Html::img(Url::to($product->originalProduct->getMainImage('100x',true)->url,true), [
+                {Html::a(Html::img(Url::to($product->originalProduct->getMainImage('x100',true)->url,true), [
                 'alt' => $product->name,
                 'title' => $product->name
-                ])}
+                ]),$product->originalProduct->getUrl(),['target'=>'_blank'])}
             </td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Html::a($product->originalProduct->name, Url::to($product->originalProduct->getUrl(), true), ['target' => '_blank'])}</td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;"
                 align="center">{$product->quantity}</td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">
-                <strong>{$app->currency->convert($product->price)}</strong>
+                <strong>{$app->currency->number_format($app->currency->convert($product->price))}</strong>
                 <sup>{$app->currency->active['symbol']}</sup></td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">
-                <strong>{$app->currency->convert($product->price * $product->quantity)}</strong>
+                <strong>{$app->currency->number_format($app->currency->convert($product->price * $product->quantity))}</strong>
                 <sup>{$app->currency->active['symbol']}</sup></td>
         </tr>
     {/foreach}
@@ -59,5 +59,4 @@
     {Html::a(Url::to($order->getUrl(),true),Url::to($order->getUrl(),true),['target'=>'_blank'])}</p>
 <br/><br/><br/>
 {Yii::t('cart/default', 'TOTAL_PAY')}:
-<h1 style="display:inline">{Yii::$app->currency->number_format($order->total_price + $order->delivery_price)}</h1>
-{$app->currency->active['symbol']}
+<h1 style="display:inline">{$app->currency->number_format($order->total_price + $order->delivery_price)} <sup>{$app->currency->active['symbol']}</sup></h1>

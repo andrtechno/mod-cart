@@ -48,67 +48,13 @@ class SettingsForm extends \panix\engine\SettingsModel
         ];
     }
 
-    public function getForm()
-    {
-        Yii::import('ext.BootstrapTagInput');
-        Yii::app()->controller->widget('ext.tinymce.TinymceWidget');
-        return new TabForm(array('id' => __CLASS__,
-            'showErrorSummary' => false,
-            'attributes' => array(
-                'enctype' => 'multipart/form-data',
-                'class' => 'form-horizontal'
-            ),
-            'elements' => array(
-                'global' => array(
-                    'type' => 'form',
-                    'title' => Yii::t('core', 'Общие'),
-                    'elements' => array(
-                        'order_emails' => array(
-                            'type' => 'BootstrapTagInput',
-                        ),
-                    )
-                ),
-                'tpl_mail_user' => array(
-                    'type' => 'form',
-                    'title' => Yii::t('core', 'Шаблон письма для покупателя'),
-                    'elements' => array(
-                        'tpl_subject_user' => array('type' => 'text'),
-                        'tpl_body_user' => array(
-                            'type' => 'textarea',
-                            'class' => 'editor',
-                            'hint' => Html::link('Документация', 'javascript:open_manual()')
-                        ),
-                    )
-                ),
-                'tpl_mail_admin' => array(
-                    'type' => 'form',
-                    'title' => Yii::t('core', 'Шаблон письма для администратора'),
-                    'elements' => array(
-                        'tpl_subject_admin' => array('type' => 'text'),
-                        'tpl_body_admin' => array(
-                            'type' => 'textarea',
-                            'class' => 'editor',
-                            'hint' => Html::link('Документация', 'javascript:open_manual()')
-                        ),
-                    )
-                ),
-            ),
-            'buttons' => array(
-                'submit' => array(
-                    'type' => 'submit',
-                    'class' => 'btn btn-success',
-                    'label' => Yii::t('app', 'SAVE')
-                )
-            )
-        ), $this);
-    }
 
 
     public function rules()
     {
         return [
-            [['order_emails', 'tpl_body_user', 'tpl_body_admin', 'tpl_subject_user', 'tpl_subject_admin'], 'required'],
-            [['tpl_body_user', 'tpl_body_admin', 'tpl_subject_user', 'tpl_subject_admin'], 'string'],
+            [['order_emails'], 'required'], //, 'tpl_body_user', 'tpl_body_admin', 'tpl_subject_user', 'tpl_subject_admin'
+            //[['tpl_body_user', 'tpl_body_admin', 'tpl_subject_user', 'tpl_subject_admin'], 'string'],
         ];
     }
 
