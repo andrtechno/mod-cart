@@ -119,10 +119,11 @@ class Cart extends Component
         if (empty($data))
             return [];
 
+
         foreach ($data as $index => &$item) {
 
-            $item['variant_models'] = array();
-            $item['model'] = Product::find()->where(['id' => $item['product_id']])->one();
+            $item['variant_models'] = [];
+            $item['model'] = Product::findOne($item['product_id']);
             // Load configurable product
             if ($item['configurable_id'])
                 $item['configurable_model'] = Product::findOne($item['configurable_id']);
@@ -153,8 +154,8 @@ class Cart extends Component
     public function getTotalPrice()
     {
         $result = 0;
-        $data = $this->getDataWithModels();
-        foreach ($data as $item) {
+       // $data = $this->getDataWithModels();
+        foreach ($this->data as $item) {
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
             $result += Product::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
         }
@@ -166,9 +167,9 @@ class Cart extends Component
      */
     public function getTotalPriceAllCurrency()
     {
-        $total = array();
-        $data = $this->getDataWithModels();
-        foreach ($data as $item) {
+        $total = [];
+       // $data = $this->getDataWithModels();
+        foreach ($this->data as $item) {
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
             if ($item['currency_id']) {
                 $currency = Currency::findOne($item['currency_id']);

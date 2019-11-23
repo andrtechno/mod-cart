@@ -307,7 +307,7 @@ class DefaultController extends WebController
 
         // Process products
         $productsCount = 0;
-        foreach (Yii::$app->cart->getDataWithModels() as $item) {
+        foreach (Yii::$app->cart->getDataWithModels() as $item) { //Yii::$app->cart->getDataWithModels()
 
             $ordered_product = new OrderProduct;
             $ordered_product->order_id = $order->id;

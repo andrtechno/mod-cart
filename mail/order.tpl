@@ -37,7 +37,7 @@
     {foreach from=$order.products item=product}
         <tr>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">
-                {Html::a(Html::img(Url::to($product->originalProduct->getMainImage('x100',true)->url,true), [
+                {Html::a(Html::img(Url::to($product->originalProduct->getMainImage('x100')->url,true), [
                 'alt' => $product->name,
                 'title' => $product->name
                 ]),$product->originalProduct->getUrl(),['target'=>'_blank'])}
