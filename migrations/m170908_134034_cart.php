@@ -85,6 +85,7 @@ class m170908_134034_cart extends Migration
             'quantity' => $this->smallInteger(8),
             'sku' => $this->string(100),
             'price' => $this->money(10, 2),
+            'price_purchase' => $this->money(10, 2)->comment('Цена закупки'),
         ], $this->tableOptions);
 
 

@@ -8,5 +8,6 @@ return [
     'QUANTITY' => 'Количество',
     'SKU' => 'Артикул',
     'PRICE' => 'Цена',
+    'PRICE_PURCHASE' => 'Цена закупки',
     'CATEGORIES' => 'Категории',
 ];
