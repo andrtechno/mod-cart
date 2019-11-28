@@ -23,7 +23,7 @@ class Delivery extends ActiveRecord
 {
 
     const MODULE_ID = 'cart';
-
+    public $translationClass = DeliveryTranslate::class;
     public $_payment_methods;
 
     /**
@@ -38,12 +38,6 @@ class Delivery extends ActiveRecord
     {
         return new query\DeliveryQuery(get_called_class());
     }
-
-    public function getTranslations()
-    {
-        return $this->hasMany(DeliveryTranslate::class, ['object_id' => 'id']);
-    }
-
 
     public function getCategorization()
     {
@@ -69,19 +63,6 @@ class Delivery extends ActiveRecord
             ['name', 'string', 'max' => 255],
             [['description', 'price', 'free_from', 'system'], 'string'],
         ];
-    }
-
-    public function behaviors()
-    {
-        return ArrayHelper::merge([
-            'translate' => [
-                'class' => TranslateBehavior::class,
-                'translationAttributes' => [
-                    'name',
-                    'description'
-                ]
-            ],
-        ], parent::behaviors());
     }
 
     /**

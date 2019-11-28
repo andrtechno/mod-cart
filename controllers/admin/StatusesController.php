@@ -56,6 +56,7 @@ class StatusesController extends AdminController
         $title = ($model->isNewRecord) ? Yii::t('cart/admin', 'CREATE_STATUSES') :
             Yii::t('cart/admin', 'UPDATE_STATUSES');
 
+        $this->pageName = $title;
 
         $this->breadcrumbs[] = [
             'label' => Yii::t('cart/admin', 'ORDERS'),
@@ -67,9 +68,7 @@ class StatusesController extends AdminController
             'url' => ['index']
         ];
 
-        $this->breadcrumbs[] = $title;
-
-        $this->pageName = $title;
+        $this->breadcrumbs[] = $this->pageName;
 
         $post = Yii::$app->request->post();
 

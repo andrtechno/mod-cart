@@ -74,32 +74,22 @@ class PaymentController extends AdminController
     public function actionUpdate($id = false)
     {
         $model = Payment::findModel($id);
+        $isNew = $model->isNewRecord;
+        $this->pageName = Yii::t('cart/admin', 'PAYMENTS');
 
-        $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
-        $this->buttons = [
-            [
-                'icon' => 'add',
-                'label' => Yii::t('app', 'CREATE'),
-                'url' => ['/admin/cart/payment/create'],
-                'options' => ['class' => 'btn btn-success']
-            ]
+        $this->breadcrumbs[] = [
+            'label' => Yii::t('cart/admin', 'ORDERS'),
+            'url' => ['/admin/cart']
         ];
         $this->breadcrumbs[] = [
             'label' => $this->pageName,
             'url' => ['index']
         ];
-        $this->breadcrumbs[] = [
-            'label' => Yii::t('cart/admin', 'PAYMENTS'),
-            'url' => ['index']
-        ];
-        $this->breadcrumbs[] = Yii::t('app', 'UPDATE');
+        $this->breadcrumbs[] = Yii::t('app', ($isNew) ? 'CREATE' : 'UPDATE');
         \panix\mod\cart\CartPaymentAsset::register($this->view);
 
-
-        //$model->setScenario("admin");
         $post = Yii::$app->request->post();
 
-        $isNew = $model->isNewRecord;
         if ($model->load($post) && $model->validate()) {
             $model->save();
 
@@ -107,7 +97,7 @@ class PaymentController extends AdminController
                 $manager = new PaymentSystemManager;
                 $system = $manager->getSystemClass($model->payment_system);
                 $system->saveAdminSettings($model->id, $_POST);
-               // print_r($system);die;
+                // print_r($system);die;
             }
 
             $this->redirectPage($isNew, $post);

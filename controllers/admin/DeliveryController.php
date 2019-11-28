@@ -7,6 +7,7 @@ use Yii;
 use panix\mod\cart\models\search\DeliverySearch;
 use panix\mod\cart\models\Delivery;
 use panix\engine\controllers\AdminController;
+use yii\web\HttpException;
 
 class DeliveryController extends AdminController
 {
@@ -34,14 +35,16 @@ class DeliveryController extends AdminController
     public function actionIndex()
     {
         $this->pageName = Yii::t('cart/admin', 'DELIVERY');
-        /*$this->buttons = [
+
+        $this->buttons = [
             [
                 'icon' => 'add',
                 'label' => Yii::t('app', 'CREATE'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']
-            ]
-        ];*/
+            ],
+
+        ];
         $this->breadcrumbs[] = [
             'label' => Yii::t('cart/default', 'MODULE_NAME'),
             'url' => ['/admin/cart']
@@ -59,24 +62,13 @@ class DeliveryController extends AdminController
 
     public function actionUpdate($id = false)
     {
-
         $model = Delivery::findModel($id);
         $isNew = $model->isNewRecord;
         \panix\mod\cart\CartDeliveryAsset::register($this->view);
 
-
-        $this->buttons = [
-            [
-                'icon' => 'add',
-                'label' => Yii::t('app', 'CREATE'),
-                'url' => ['create'],
-                'options' => ['class' => 'btn btn-success']
-            ],
-
-        ];
         $this->breadcrumbs[] = [
-            'label' => Yii::t('cart/default', 'MODULE_NAME'),
-            'url' => ['index']
+            'label' => Yii::t('cart/admin', 'ORDERS'),
+            'url' => ['/admin/cart']
         ];
         $this->breadcrumbs[] = [
             'label' => Yii::t('cart/admin', 'DELIVERY'),
@@ -90,16 +82,19 @@ class DeliveryController extends AdminController
         $post = Yii::$app->request->post();
 
 
-        if ($model->load($post) && $model->validate()) {
-            $model->save();
+        if ($model->load($post)) {
+            if($model->validate()){
+                $model->save();
 
-            if ($model->system) {
-                $manager = new DeliverySystemManager;
-                $system = $manager->getSystemClass($model->system);
-                $system->saveAdminSettings($model->id, $_POST);
+                if ($model->system) {
+                    $manager = new DeliverySystemManager;
+                    $system = $manager->getSystemClass($model->system);
+                    $system->saveAdminSettings($model->id, $_POST);
+                }
+
+                $this->redirectPage($isNew, $post);
             }
 
-            $this->redirectPage($isNew, $post);
         }
 
         return $this->render('update', [
@@ -111,22 +106,22 @@ class DeliveryController extends AdminController
      * Delete method
      * @param array $id
      */
-    public function actionDelete($id = array())
+    public function actionDelete($id = [])
     {
-        if (Yii::$app->request->isPostRequest) {
-            $model = Delivery::find()->findAllByPk($_REQUEST['id']);
+        if (Yii::$app->request->isPost) {
+            $model = Delivery::find()->where(['id'=>$_REQUEST['id']])->all();
 
             if (!empty($model)) {
                 foreach ($model as $m) {
                     if ($m->countOrders() == 0)
                         $m->delete();
                     else
-                        throw new CHttpException(409, Yii::t('CartModule.admin', 'ERR_DEL_DELIVERY'));
+                        throw new HttpException(409, Yii::t('cart/admin', 'ERR_DEL_DELIVERY'));
                 }
             }
 
-            if (!Yii::$app->request->isAjaxRequest)
-                $this->redirect('index');
+            if (!Yii::$app->request->isAjax)
+                return $this->redirect('index');
         }
     }
 

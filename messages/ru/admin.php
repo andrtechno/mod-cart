@@ -17,6 +17,8 @@ return [
     'CREATE_STATUSES' => 'Создание статуса',
     'UPDATE_STATUSES' => 'Создание статуса',
     'PROMOCODE' => 'Промо-код',
+    'ORDER_PRINT' => 'Печать заказа',
+    'ORDER_VIEW' => 'Просмотр заказа',
     'CREATE_PROMOCODE' => 'Добавить промо-код',
     'ERR_DELETE_STATUS' => 'Ошибка удаления статуса. Он используется заказами.',
     'ERR_ORDER_PRODUCT_EXISTS' => 'Ошибка, товар в этом заказе уже существует.',
