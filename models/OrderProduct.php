@@ -17,6 +17,7 @@ use panix\engine\db\ActiveRecord;
  * @property string $configurable_name
  * @property integer $quantity Quantity products
  * @property float $price Products price
+ * @property float $price_purchase
  * @property string $configurable_data
  * @property string $sku Article product
  * @property string $variants

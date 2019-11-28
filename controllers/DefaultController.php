@@ -307,7 +307,7 @@ class DefaultController extends WebController
 
         // Process products
         $productsCount = 0;
-        foreach (Yii::$app->cart->getDataWithModels() as $item) { //Yii::$app->cart->getDataWithModels()
+        foreach (Yii::$app->cart->getDataWithModels() as $item) {
 
             $ordered_product = new OrderProduct;
             $ordered_product->order_id = $order->id;
@@ -318,6 +318,7 @@ class DefaultController extends WebController
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
+            $ordered_product->price_purchase = $item['model']->price_purchase;
             // if($item['currency_id']){
             //     $currency = Currency::model()->findByPk($item['currency_id']);
             //$ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
