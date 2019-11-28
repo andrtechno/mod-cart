@@ -248,7 +248,7 @@ class Order extends ActiveRecord
             $result .= mb_substr($chars, rand(0, mb_strlen($chars, 'utf8')), 1);
         }
 
-        if (Order::find()->where(['secret_key' => $result])->count() > 0)
+        if (static::find()->where(['secret_key' => $result])->count() > 0)
             $this->createSecretKey($size);
 
         return $result;

@@ -4,6 +4,7 @@ namespace panix\mod\cart\controllers;
 
 
 use panix\engine\bootstrap\ActiveForm;
+use panix\engine\CMS;
 use panix\mod\cart\CartAsset;
 use panix\mod\shop\models\Attribute;
 use Yii;
@@ -131,7 +132,7 @@ class DefaultController extends WebController
     {
         if (isset($_POST)) {
             $this->form = Payment::find()->all();
-            echo $this->render('_payment', array('model' => $this->form));
+            echo $this->render('_payment', ['model' => $this->form]);
         }
     }
 
@@ -153,22 +154,20 @@ class DefaultController extends WebController
                     //$model->save();
                     $model->updateTotalPrice();
                     $model->updateDeliveryPrice();
-                    Yii::$app->session->setFlash('success-promocode','YAhhoo');
-                    Yii::$app->session->addFlash('success-promocode','YAhhoo');
+                    //Yii::$app->session->setFlash('success-promocode','YAhhoo');
+                    //Yii::$app->session->addFlash('success-promocode','YAhhoo');
                     $this->refresh();
-                } else {
-
                 }
             }
             // print_r($post);
             //  die;
         }
 
-        $this->pageName = Yii::t('cart/default', 'VIEW_ORDER', ['id' => $model->id]);
+        $this->pageName = Yii::t('cart/default', 'VIEW_ORDER', ['id' => CMS::idToNumber($model->id)]);
         $this->breadcrumbs[] = $this->pageName;
-        return $this->render('view', array(
+        return $this->render('view', [
             'model' => $model,
-        ));
+        ]);
     }
 
     /**
@@ -182,7 +181,7 @@ class DefaultController extends WebController
         }
 
 
-        $variants = array();
+        $variants = [];
 
         // Load product model
         $model = Product::findOne(Yii::$app->request->post('product_id', 0));

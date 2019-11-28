@@ -18,7 +18,7 @@ class PaymentController extends AdminController
     {
         return [
             'sortable' => [
-                'class' => \panix\engine\grid\sortable\Action::class,
+                'class' => 'panix\engine\grid\sortable\Action',
                 'modelClass' => Payment::class,
             ],
             'delete' => [

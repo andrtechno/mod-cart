@@ -7,11 +7,11 @@ use panix\engine\Html;
 
 class BasePaymentSystem extends \yii\base\Component
 {
-
     /**
+     * @param array $options
      * @return string
      */
-    public function renderSubmit($options = array())
+    public function renderSubmit($options = [])
     {
         // return '<input type="submit" class="btn btn-success" value="' . Yii::t('app', 'Оплатить') . '">';
         if (!isset($options['class'])) {

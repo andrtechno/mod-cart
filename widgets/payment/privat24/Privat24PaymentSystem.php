@@ -122,34 +122,34 @@ class Privat24PaymentSystem extends BasePaymentSystem
     {
         $html = '
             <form action="https://api.privatbank.ua/p24api/ishop" method="POST" accept-charset="UTF-8">
-                <input type="hidden" name="amt" value="{AMOUNT}"/>
+                <input type="hidden" name="amt" value="{amount}"/>
                 <input type="hidden" name="ccy" value="UAH" />
-                <input type="hidden" name="merchant" value="{MERCHANT_ID}" />
-                <input type="hidden" name="order" value="{ORDER}" />
-                <input type="hidden" name="details" value="{ORDER_TITLE}" />
-                <input type="hidden" name="ext_details" value="{ORDER_TITLE}" />
+                <input type="hidden" name="merchant" value="{merchant_id}" />
+                <input type="hidden" name="order" value="{order}" />
+                <input type="hidden" name="details" value="{order_title}" />
+                <input type="hidden" name="ext_details" value="{order_title}" />
                 <input type="hidden" name="pay_way" value="privat24" />
                 <input type="hidden" name="return_url" value="{return_url}" />
                 <input type="hidden" name="server_url" value="{server_url}" />
-                {SUBMIT}
+                {submit}
             </form>';
 
 
         $settings = $this->getSettings($method->id);
 
-        $html = strtr($html, array(
-            // '{AMOUNT}' => 1,
-            '{AMOUNT}' => Yii::$app->currency->convert($order->full_price, $method->currency_id), //, $method->currency_id
-            '{ORDER_ID}' => $order->id,
-            '{ORDER_TITLE}' => Yii::t('cart/default', 'PAYMENT_ORDER', ['id' => $order->id]),
-            '{MERCHANT_ID}' => $settings->merchant_id,
-            '{ORDER}' => CMS::gen(5) . '_' . $order->id, //CMS::gen(5) . '_'.
+        $html = strtr($html, [
+            '{amount}' => Yii::$app->currency->convert($order->full_price, $method->currency_id), //, $method->currency_id
+            '{order_id}' => $order->id,
+            '{order_title}' => Yii::t('cart/default', 'PAYMENT_ORDER', ['id' => $order->id]),
+            '{merchant_id}' => $settings->merchant_id,
+            '{order}' => CMS::gen(5) . '_' . $order->id, //CMS::gen(5) . '_'.
             '{return_url}' => Url::toRoute(['/cart/payment/process', 'payment_id' => $method->id], true),
             '{server_url}' => Url::toRoute(['/cart/payment/process', 'payment_id' => $method->id, 'result' => true], true),
-            '{SUBMIT}' => $this->renderSubmit(),
-        ));
+            '{submit}' => $this->renderSubmit(),
+        ]);
 
         return ($order->paid) ? false : $html;
+
     }
 
     /**

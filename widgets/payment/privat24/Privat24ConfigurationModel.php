@@ -3,8 +3,9 @@
 namespace panix\mod\cart\widgets\payment\privat24;
 
 use Yii;
+use panix\engine\base\Model;
 
-class Privat24ConfigurationModel extends \yii\base\Model
+class Privat24ConfigurationModel extends Model
 {
 
     public $merchant_id;
@@ -22,8 +23,8 @@ class Privat24ConfigurationModel extends \yii\base\Model
     public function attributeLabels()
     {
         return [
-            'merchant_id' => Yii::t('cart/payments', 'PRIVAT24_MERCHANT_ID'),
-            'merchant_pass' => Yii::t('cart/payments', 'PRIVAT24_MERCHANT_PASS'),
+            'merchant_id' => Yii::t('cart/widgets/payment/privat24/default', 'PRIVAT24_MERCHANT_ID'),
+            'merchant_pass' => Yii::t('cart/widgets/payment/privat24/default', 'PRIVAT24_MERCHANT_PASS'),
         ];
     }
 

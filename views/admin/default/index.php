@@ -75,12 +75,20 @@ GridView::widget([
         ],
         [
             'class' => 'panix\engine\grid\columns\ActionColumn',
-            'template' => '{print} {update} {switch}',
+            'template' => '{view} {print} {update}',
             'buttons' => [
                 'print' => function ($url, $model, $key) {
                     return Html::a(Html::icon('print'), ['print', 'id' => $model->id], [
                         'title' => Yii::t('cart/admin', 'PRINT'),
                         'class' => 'btn btn-sm btn-info',
+                        'data-pjax' => 0,
+                        'target' => '_blank'
+                    ]);
+                },
+                'view' => function ($url, $model, $key) {
+                    return Html::a(Html::icon('search'), $model->getUrl(), [
+                        'title' => Yii::t('cart/admin', 'PRINT'),
+                        'class' => 'btn btn-sm btn-secondary',
                         'data-pjax' => 0,
                         'target' => '_blank'
                     ]);
