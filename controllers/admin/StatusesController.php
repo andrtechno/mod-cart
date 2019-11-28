@@ -2,7 +2,7 @@
 
 namespace panix\mod\cart\controllers\admin;
 
-
+use panix\engine\Html;
 use Yii;
 use panix\engine\controllers\AdminController;
 use panix\mod\cart\models\OrderStatus;
@@ -11,6 +11,15 @@ use yii\web\HttpException;
 
 class StatusesController extends AdminController
 {
+    public function actions()
+    {
+        return [
+            'delete' => [
+                'class' => 'panix\engine\actions\DeleteAction',
+                'modelClass' => OrderStatus::class,
+            ],
+        ];
+    }
 
     /**
      * Display statuses list
@@ -27,7 +36,7 @@ class StatusesController extends AdminController
         $this->buttons = [
             [
                 'label' => Yii::t('app', 'CREATE'),
-                'url' => ['/cart/statuses/create'],
+                'url' => ['create'],
                 'icon' => 'add',
                 'options' => ['class' => 'btn btn-success']
             ]
@@ -86,12 +95,15 @@ class StatusesController extends AdminController
 
     /**
      * Delete status
+     *
      * @param array $id
+     * @return \yii\web\Response
+     * @throws HttpException
      */
-    public function actionDelete($id = array())
+    public function actionDelete($id = [])
     {
         if (Yii::$app->request->isPost) {
-            $model = OrderStatus::model()->findAllByPk($_REQUEST['id']);
+            $model = OrderStatus::find()->where(['id' => $_REQUEST['id']])->all();
 
             if (!empty($model)) {
                 foreach ($model as $m) {
@@ -116,20 +128,20 @@ class StatusesController extends AdminController
         return array(
             array(
                 'label' => Yii::t('cart/admin', 'ORDER', 0),
-                'url' => array('/admin/cart'),
-                'icon' => Html::icon('icon-cart'),
+                'url' => ['/admin/cart'],
+                'icon' => Html::icon('cart'),
 
             ),
             array(
                 'label' => Yii::t('cart/admin', 'STATS'),
-                'url' => array('/admin/cart/statistics'),
-                'icon' => Html::icon('icon-stats'),
+                'url' => ['/admin/cart/statistics'],
+                'icon' => Html::icon('stats'),
 
             ),
             array(
                 'label' => Yii::t('cart/admin', 'HISTORY'),
-                'url' => array('/admin/cart/history'),
-                'icon' => Html::icon('icon-history'),
+                'url' => ['/admin/cart/history'],
+                'icon' => Html::icon('history'),
 
             ),
         );

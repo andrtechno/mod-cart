@@ -22,7 +22,7 @@ class PaymentController extends AdminController
                 'modelClass' => Payment::class,
             ],
             'delete' => [
-                'class' => 'panix\engine\grid\actions\DeleteAction',
+                'class' => 'panix\engine\actions\DeleteAction',
                 'modelClass' => Payment::class,
             ],
         ];

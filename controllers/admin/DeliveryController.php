@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\controllers\admin;
 
+
 use panix\mod\cart\components\delivery\DeliverySystemManager;
 use Yii;
 use panix\mod\cart\models\search\DeliverySearch;
@@ -22,7 +23,7 @@ class DeliveryController extends AdminController
                 'modelClass' => Delivery::class,
             ],
             'delete' => [
-                'class' => 'panix\engine\grid\actions\DeleteAction',
+                'class' => 'panix\engine\actions\DeleteAction',
                 'modelClass' => Delivery::class,
             ],
             'switch' => [
