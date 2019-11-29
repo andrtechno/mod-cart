@@ -60,4 +60,18 @@ class OrderQuery extends ActiveQuery
         }
         return $this;
     }
+
+    /**
+     * Default status is new
+     *
+     * @param int $status_id
+     * @return $this
+     */
+    public function status($status_id = 1)
+    {
+        $modelClass = $this->modelClass;
+        $tableName = $modelClass::tableName();
+        $this->andWhere([$tableName . '.status_id' => $status_id]);
+        return $this;
+    }
 }
