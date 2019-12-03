@@ -79,9 +79,6 @@ class DefaultController extends WebController
         $post = Yii::$app->request->post();
 
         if ($post) {
-
-
-            // $this->formAjaxValidate($this->form, $post);
             if (Yii::$app->request->isAjax && $this->form->load($post)) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return ActiveForm::validate($this->form);
