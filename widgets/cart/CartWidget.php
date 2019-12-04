@@ -19,8 +19,8 @@ class CartWidget extends Widget
 
         $cart = Yii::$app->cart;
         $currency = Yii::$app->currency->active;
-       // $items = $cart->getDataWithModels();
-        $items = $cart->data;
+        $items = $cart->getDataWithModels();
+        //$items = $cart->data;
         $total = Yii::$app->currency->number_format($cart->getTotalPrice());
         $dataRender = [
             'count' => $cart->countItems(),
