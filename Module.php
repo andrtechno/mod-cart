@@ -54,7 +54,9 @@ class Module extends WebModule implements BootstrapInterface
             ],
             true
         );
-        $app->counters[$this->id] = (int) $this->count['num'];
+        if (!(Yii::$app instanceof yii\console\Application)) {
+            $app->counters[$this->id] = (int)$this->count['num'];
+        }
         $app->setComponents([
             'cart' => ['class' => 'panix\mod\cart\components\Cart'],
         ]);
