@@ -8,6 +8,7 @@ use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\components\delivery\BaseDeliverySystem;
 use yii\helpers\Url;
+use yii\httpclient\Client;
 
 /**
  * NovaPoshta delivery system
@@ -21,7 +22,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
      * @param Delivery $method
      * @return boolean|Order
      */
-    public function processPaymentRequest(Delivery $method)
+    public function processRequest(Delivery $method)
     {
 
         $request = Yii::$app->request;
@@ -34,86 +35,38 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         // self::log($log);
         // die;
         $settings = $this->getSettings($method->id);
-        $MERCHANT_ID = $settings->merchant_id;
-        $MERCHANT_PASS = $settings->merchant_pass;
-
-        if ($request->post('payment')) {
-            parse_str($request->post('payment'), $payments);
 
 
-            list($gen, $order_id) = explode('_', $payments['order']);
 
 
-            $order = Order::findOne((int)$order_id);
 
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://api.novaposhta.ua/v2.0/json/')
+            ->setData([
+                'apiKey' => $settings->api_key,
+                'Language'=>'ru',
+               // "modelName" => "Address",
+               // "calledMethod" => "getCities",
 
-            if ($order === false)
-                return false;
+          //      "modelName"=> "AddressGeneral",
+    //"calledMethod"=> "getWarehouses",
 
-            // Grab WM variables from post.
-            // Variables to create signature.
-            /* $forHash = array(
-              'amt' => '',
-              'ccy' => '',
-              'details' => '',
-              'ext_details' => '',
-              'pay_way' => '',
-              'order' => '',
-              'merchant'=>$MERCHANT_ID
-              ); */
-
-
-            // foreach ($forHash as $key => $val) {
-            //     if ($request->getParam($key))
-            //         $forHash[$key] = $request->getParam($key);
-            // }
-            // Check if order is paid.
-            if ($order->paid) {
-                // Yii::info('Order is paid');
-                $this->log('Order is paid');
-                return false;
+                "modelName" => "Address",
+                "calledMethod" => "getCities",
+            ])
+            ->setFormat(Client::FORMAT_JSON)
+            ->addHeaders(['content-type' => 'application/json'])
+            ->send();
+        if ($response->isOk) {
+            if($response->data['success']){
+                //CMS::dump($response->data['data']);
+                print_r($response->data['data']);die;
             }
 
-
-            if (Yii::$app->currency->active['iso'] != $payments['ccy']) {
-                $this->log('Currency error');
-                return false;
-            }
-
-
-            if (!$request->get('payment_id')) {
-                $this->log('No find post param "payment"');
-                return false;
-            }
-
-            // Create and check signature.
-            $sign = sha1(md5($request->post('payment') . $MERCHANT_PASS));
-
-            // If ok make order paid.
-            if ($sign != $request->post('signature')) {
-                $this->log('signature error');
-
-                return false;
-            }
-
-
-            // Set order paid
-            $order->paid = 1;
-            $order->save(false);
-            if ($order->paid)
-                Yii::$app->session->setFlash('success', 'Заказ успешно оплачен');
-            $log = '';
-            //$log .= 'PayID: ' . $payments['ref'];
-            //$log .= 'Datatime: ' . $payments['date'];
-            //$log .= 'UserID: ' . (Yii::$app->user->isGuest) ? 0 : Yii::$app->user->id;
-            //$log .= 'IP: ' . $request->userHostAddress;
-            // $log .= 'User-agent: ' . $request->userAgent;
-
-
-        } else {
-            $this->log('no find pay');
-            return false;
         }
+die;
 
         return $order;
     }

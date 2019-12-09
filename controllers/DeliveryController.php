@@ -20,20 +20,20 @@ class DeliveryController extends WebController
         return parent::beforeAction($action);
     }
 
-    public function actionProcess()
+    public function actionProcess($id)
     {
-        $payment_id = (int) Yii::$app->request->get('delivery_id');
-        $model = Delivery::findOne($payment_id);
+       // $payment_id = (int) Yii::$app->request->get('id');
+        $model = Delivery::findOne($id);
 
         if (!$model)
-            $this->error404('Ошибка');
+            $this->error404();
 
 
 
-        $system = $model->getPaymentSystemClass();
+        $system = $model->getDeliverySystemClass();
 
         if ($system instanceof BaseDeliverySystem) {
-            $response = $system->processPaymentRequest($model);
+            $response = $system->processRequest($model);
             if ($response instanceof Order)
                 return $this->redirect($response->getUrl());
             else

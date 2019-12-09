@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\models;
 
+
 use panix\mod\cart\components\delivery\DeliverySystemManager;
 use yii\helpers\ArrayHelper;
 use panix\engine\behaviors\TranslateBehavior;
@@ -124,6 +125,16 @@ class Delivery extends ActiveRecord
         return $result;
     }
 
+    /**
+     * @return mixed|DeliverySystemManager
+     */
+    public function getDeliverySystemClass()
+    {
+        if ($this->system) {
+            $manager = new DeliverySystemManager;
+            return $manager->getSystemClass($this->system);
+        }
+    }
     /**
      * @return array
      */
