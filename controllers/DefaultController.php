@@ -86,18 +86,9 @@ class DefaultController extends WebController
             if ($this->form->load($post) && $this->form->validate()) {
                 $this->form->registerGuest();
                 $order = $this->createOrder();
-                /*if(Yii::$app->request->isAjax){
-                    Yii::$app->response->format = Response::FORMAT_JSON;
-                    return [
-                        'status' => 'success',
-                        'code' => 200,
-                    ];
-                }*/
-                //if(!YII_DEBUG){
-                    Yii::$app->cart->clear();
-                    Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
-                    return $this->redirect(['view', 'secret_key' => $order->secret_key]);
-                //}
+                Yii::$app->cart->clear();
+                Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                return $this->redirect(['view', 'secret_key' => $order->secret_key]);
             }
         }
 

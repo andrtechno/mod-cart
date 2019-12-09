@@ -78,7 +78,7 @@ $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
 <?php } ?>
 
 <a href="#" class="btn">dasd</a>
-    <p><strong>Детали заказа вы можете просмотреть на странице:</strong><br/> <?= Html::a(Url::to($order->getUrl(),true),Url::to($order->getUrl(),true),['target'=>'_blank']);?></p>
+    <p><strong><?= Yii::t('cart/default', 'DETAIL_ORDER_VIEW') ?>:</strong><br/> <?= Html::a(Url::to($order->getUrl(),true),Url::to($order->getUrl(),true),['target'=>'_blank']);?></p>
 <br/><br/>
 
 
