@@ -12,9 +12,9 @@
         }
     ],
     "require": {
-        "panix/engine": "*",
-        "panix/wgt-colorpicker": "*",
-        "panix/wgt-highcharts": "*"
+        "panix/engine": "dev-master",
+        "panix/wgt-colorpicker": "dev-master",
+        "panix/wgt-highcharts": "dev-master"
     },
     "autoload": {
         "psr-4": {
