@@ -2,11 +2,14 @@
 
 namespace panix\mod\cart\widgets\delivery\novaposhta;
 
+use panix\mod\cart\models\forms\OrderCreateForm;
+use panix\mod\cart\widgets\delivery\novaposhta\api\NovaPoshtaApi;
 use Yii;
 use panix\engine\CMS;
 use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\components\delivery\BaseDeliverySystem;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\httpclient\Client;
 
@@ -15,6 +18,7 @@ use yii\httpclient\Client;
  */
 class NovaPoshtaDeliverySystem extends BaseDeliverySystem
 {
+
 
     /**
      * This method will be triggered after redirection from payment system site.
@@ -37,104 +41,213 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         $settings = $this->getSettings($method->id);
 
 
+        /* $value=[];
+
+         $client = new Client();
+         $response = $client->createRequest()
+             ->setMethod('POST')
+             ->setUrl('https://api.novaposhta.ua/v2.0/json/')
+             ->setData([
+                 'apiKey' => $settings->api_key,
+                 'Language' => 'ru',
+                 "modelName"=> "AddressGeneral",
+                 "calledMethod"=>  "getWarehouseTypes",
+                 "methodProperties" => [
+                     'Language' => 'ru',
+                  ]
+             ])
+             ->setOptions([
+                 CURLOPT_CONNECTTIMEOUT => 5, // connection timeout
+                 CURLOPT_TIMEOUT => 10, // data receiving timeout
+             ])
+             ->setFormat(Client::FORMAT_JSON)
+             ->addHeaders(['content-type' => 'application/json'])
+             ->send();
+
+         if ($response->isOk) {
+             if ($response->data['success']) {
+                 foreach ($response->data['data'] as $data) {
+                     $value[$data['Ref']] = $data['Description'];
+                 }
+                 // die;
+                 //CMS::dump($response->data['data']);
+                 // print_r($response->data['data']);die;
+             }
+
+         }*/
 
 
+        /*$cacheIdCities2 = 'cache_novaposhta_cities2';
+        $value2 = Yii::$app->cache->get($cacheIdCities2);
+        if ($value2 === false) {
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('POST')
+                ->setUrl('https://api.novaposhta.ua/v2.0/json/')
+                ->setData([
+                    'apiKey' => $settings->api_key,
+                    'Language' => 'ru',
+                    "modelName" => "Address",
+                    "calledMethod" => "getWarehouses",
+                    "methodProperties" => [
+                        'TypeOfWarehouseRef' => '841339c7-591a-42e2-8233-7a0a00f0ed6f',
+                    ]
+                ])
+                ->setOptions([
+                    CURLOPT_CONNECTTIMEOUT => 5, // connection timeout
+                    CURLOPT_TIMEOUT => 10, // data receiving timeout
+                ])
+                ->setFormat(Client::FORMAT_JSON)
+                ->addHeaders(['content-type' => 'application/json'])
+                ->send();
 
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://api.novaposhta.ua/v2.0/json/')
-            ->setData([
-                'apiKey' => $settings->api_key,
-                'Language'=>'ru',
-               // "modelName" => "Address",
-               // "calledMethod" => "getCities",
+            if ($response->isOk) {
+                if ($response->data['success']) {
+                    foreach ($response->data['data'] as $data) {
 
-          //      "modelName"=> "AddressGeneral",
-    //"calledMethod"=> "getWarehouses",
+                        $value2[$data['Ref']] = $data['DescriptionRu'];
+                    }
+                    // die;
+                    //CMS::dump($response->data['data']);
+                    // print_r($response->data['data']);die;
+                }
 
-                "modelName" => "Address",
-                "calledMethod" => "getCities",
-            ])
-            ->setFormat(Client::FORMAT_JSON)
-            ->addHeaders(['content-type' => 'application/json'])
-            ->send();
-        if ($response->isOk) {
-            if($response->data['success']){
-                //CMS::dump($response->data['data']);
-                print_r($response->data['data']);die;
             }
-
+            Yii::$app->cache->set($cacheIdCities2, $value2, 86400 * 24);
         }
-die;
+        CMS::dump($value2);
+        die;*/
+
+
+        $cacheIdCities = 'cache_novaposhta_cities';
+        $value = Yii::$app->cache->get($cacheIdCities);
+        if ($value === false) {
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('POST')
+                ->setUrl('https://api.novaposhta.ua/v2.0/json/')
+                ->setData([
+                    'apiKey' => $settings->api_key,
+                    'Language' => 'ru',
+
+                    //"modelName"=> "AddressGeneral",
+                    //"calledMethod"=> "getWarehouses",
+
+                    "modelName" => "Address",
+                    "calledMethod" => "getCities",
+
+
+                    //    "modelName"=> "AddressGeneral",
+                    // "calledMethod"=> "getSettlements",
+
+                    //"methodProperties" => [
+                    //"FindByString" => "Бровари"
+                    //  'Warehouse'=>1,
+                    // ]
+//841339c7-591a-42e2-8233-7a0a00f0ed6f
+                    // "modelName"=> "Address",
+//"calledMethod"=> "getAreas",
+                ])
+                ->setOptions([
+                    CURLOPT_CONNECTTIMEOUT => 5, // connection timeout
+                    CURLOPT_TIMEOUT => 10, // data receiving timeout
+                ])
+                ->setFormat(Client::FORMAT_JSON)
+                ->addHeaders(['content-type' => 'application/json'])
+                ->send();
+
+            if ($response->isOk) {
+                if ($response->data['success']) {
+                    foreach ($response->data['data'] as $data) {
+                        //   CMS::dump($data);
+                        $value[] = $data['DescriptionRu'];
+                    }
+                }
+            }
+            Yii::$app->cache->set($cacheIdCities, $value, 86400 * 24);
+        }
+        CMS::dump($value);
+        die;
 
         return $order;
     }
 
-    public function renderPaymentForm(Delivery $method, Order $order)
+    public function renderDeliveryForm(Delivery $method)
     {
-        $html = '
-            <form action="https://api.privatbank.ua/p24api/ishop" method="POST" accept-charset="UTF-8">
-                <input type="hidden" name="amt" value="{amount}"/>
-                <input type="hidden" name="ccy" value="UAH" />
-                <input type="hidden" name="merchant" value="{merchant_id}" />
-                <input type="hidden" name="order" value="{order}" />
-                <input type="hidden" name="details" value="{order_title}" />
-                <input type="hidden" name="ext_details" value="{order_title}" />
-                <input type="hidden" name="pay_way" value="privat24" />
-                <input type="hidden" name="return_url" value="{return_url}" />
-                <input type="hidden" name="server_url" value="{server_url}" />
-                {submit}
-            </form>';
+        $setting = $this->getSettings($method->id);
+        $postApi = new NovaPoshtaApi($setting->api_key);
 
 
-        $settings = $this->getSettings($method->id);
-
-        $html = strtr($html, [
-            // '{AMOUNT}' => 1,
-            '{amount}' => Yii::$app->currency->convert($order->full_price, $method->currency_id), //, $method->currency_id
-            '{order_id}' => $order->id,
-            '{order_title}' => Yii::t('cart/default', 'PAYMENT_ORDER', ['id' => $order->id]),
-            '{merchant_id}' => $settings->merchant_id,
-            '{order}' => CMS::gen(5) . '_' . $order->id, //CMS::gen(5) . '_'.
-            '{return_url}' => Url::toRoute(['/cart/payment/process', 'payment_id' => $method->id], true),
-            '{server_url}' => Url::toRoute(['/cart/payment/process', 'payment_id' => $method->id, 'result' => true], true),
-            '{submit}' => $this->renderSubmit(),
+        return Yii::$app->view->renderAjax("@cart/widgets/delivery/{$method->system}/_view", [
+            // 'form'=>$form,
+            'cities' => $postApi->getCities(),
+            'address' => $postApi->getAddressGeneral([
+                "methodProperties" => [
+                    "CityName" => Yii::$app->request->post('city')
+                ],
+            ]),
+            'method' => $method
         ]);
-
-        return ($order->paid) ? false : $html;
     }
-
-    /**
-     * This method will be triggered after payment method saved in admin panel
-     * @param $paymentMethodId
-     * @param $postData
-     */
-    public function saveAdminSettings($paymentMethodId, $postData)
+    public function renderDeliveryForm2(Delivery $method)
     {
-        $this->setSettings($paymentMethodId, $postData['NovaPoshtaConfigurationModel']);
+        $setting = $this->getSettings($method->id);
+        $postApi = new NovaPoshtaApi($setting->api_key);
+
+        return $postApi->getCities();
+
+    }
+    public function cities($method)
+    {
+
+
+        $cacheIdCities = 'cache_novaposhta_cities';
+        $value = Yii::$app->cache->get($cacheIdCities);
+        if ($method->system) {
+            if ($value === false) {
+                $response = $this->connect($method, ["modelName" => "Address", "calledMethod" => "getCities"]);
+
+                foreach ($response as $data) {
+                    $value[$data['DescriptionRu']] = $data['DescriptionRu'];
+                }
+
+                Yii::$app->cache->set($cacheIdCities, $value, 86400 * 346);
+            }
+        }
+        return $value;
+
     }
 
-    /**
-     * @param $paymentMethodId
-     * @return string
-     */
+
+    private function connect($method, $config = [])
+    {
+        $settings = $this->getSettings($method->id);
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://api.novaposhta.ua/v2.0/json/')
+            ->setData(ArrayHelper::merge([
+                'apiKey' => $settings->api_key,
+                'Language' => 'ru',
+            ], $config))
+            ->setOptions([
+                CURLOPT_CONNECTTIMEOUT => 5, // connection timeout
+                CURLOPT_TIMEOUT => 10, // data receiving timeout
+            ])
+            ->setFormat(Client::FORMAT_JSON)
+            ->addHeaders(['content-type' => 'application/json'])
+            ->send();
+
+        if ($response->isOk) {
+            if ($response->data['success']) {
+                return $response->data['data'];
+            }
+        }
+    }
+
+
     public function getSettingsKey($paymentMethodId)
     {
         return $paymentMethodId . '_NovaPoshtaDeliverySystem';
     }
-
-    /**
-     * Get configuration form to display in admin panel
-     * @param $paymentMethodId
-     * @return NovaPoshtaConfigurationModel
-     */
-    public function getConfigurationFormHtml($paymentMethodId)
-    {
-        $model = new NovaPoshtaConfigurationModel;
-        $model->load([basename(get_class($model)) => (array)$this->getSettings($paymentMethodId)]);
-
-        return $model;
-    }
-
 }

@@ -39,7 +39,7 @@ cart = {
             }
         }
 
-       // $(cart.selectorTotal).html(price_format(total.toFixed(2)));
+        // $(cart.selectorTotal).html(price_format(total.toFixed(2)));
         $(cart.selectorTotal).html(total);
     },
     renderBlockCart: function () {
@@ -227,6 +227,26 @@ cart = {
             }]
         });
     },*/
+
+    delivery222:function(){
+
+        if ($('#ordercreateform-delivery_id').val() == 1) {
+            console.log('init','delivery');
+            $('#user-city, #user-address').hide();
+            $.ajax({
+                url: common.url('/cart/processDelivery?delivery_id='+$('#ordercreateform-delivery_id').val()),
+                type: 'GET',
+                dataType:'html',
+                success: function (data) {
+                    $('#delivery-form').html(data);
+                }
+            });
+        }else{
+            $('#delivery-form').html('');
+            $('#user-city, #user-address').show();
+        }
+    },
+
     init: function () {
         console.log('cart.init');
         $(function () {
@@ -283,12 +303,70 @@ $(function () {
                     common.notify(data.message, 'success');
                     cart.renderBlockCart();
                     $(cart.selectorTotal).html(data.total_price);
-                }else{
+                } else {
                     common.notify('remove error', 'success');
                 }
             }
         });
         return false;
+    });
+
+    var select = $('#ordercreateform-city');
+    $(document).on('click', '.delivery_checkbox', function () {
+        var that = $(this);
+        if (that.data('system')) {
+            $.ajax({
+                url: common.url('/cart/delivery/process'),
+                type: 'GET',
+                data: {id: that.val()},
+                dataType: 'html',
+                success: function (data) {
+                    $('#test').html(data);
+
+
+                    /*select.html('');
+                    $.each(data, function (index, value) {
+                        console.log(value);
+                        select.append('<option id="' + value + '">' + value + '</option>');
+                    });
+                    select.selectpicker('refresh');*/
+
+                    //$('#ordercreateform-city').selectpicker('refresh');
+
+
+                },
+                complete:function () {
+                   // select.selectpicker('refresh');
+                }
+            });
+        }else{
+           // select.attr('');
+        }
+    });
+
+
+    select.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        console.log('CHNAGE?', clickedIndex, isSelected, previousValue, $(this).selectpicker('val'));
+
+
+        $.ajax({
+            url: common.url('/cart/delivery/process'),
+            type: 'GET',
+            data: {city: $(this).selectpicker('val')},
+            dataType: 'json',
+            success: function (data) {
+                select.html('');
+                // cada array del parametro tiene un elemento index(concepto) y un elemento value(el  valor de concepto)
+                $.each(data, function (index, value) {
+                    console.log(value);
+                    select.append('<option id="' + value + '">' + value + '</option>');
+                });
+                select.selectpicker('refresh');
+
+
+            }
+        });
+
     });
 
 

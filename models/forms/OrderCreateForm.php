@@ -29,6 +29,10 @@ class OrderCreateForm extends Model
     public $promocode_id;
     public $registerGuest = false;
 
+    //delivery
+    public $delivery_city; //for delivery systems;
+    public $delivery_address; //for delivery systems;
+    public $delivery_type; //for delivery systems;
     public function init()
     {
         $user = Yii::$app->user;
@@ -61,7 +65,7 @@ class OrderCreateForm extends Model
             [['delivery_id', 'payment_id', 'promocode_id'], 'integer'],//
             ['user_email', 'email'],
             ['user_comment', 'string'],
-            [['user_address'], 'string', 'max' => 255],
+            [['user_address','delivery_city','delivery_address'], 'string', 'max' => 255],
             [['user_phone'], 'string', 'max' => 30],
             ['registerGuest', 'boolean'],
             ['delivery_id', 'validateDelivery'],

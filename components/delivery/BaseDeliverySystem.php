@@ -5,14 +5,14 @@ namespace panix\mod\cart\components\delivery;
 use Yii;
 use panix\engine\Html;
 use yii\base\Component;
-
+// extends Component
 class BaseDeliverySystem extends Component
 {
 
     /**
      * @return string
      */
-    public function renderSubmit($options = array())
+    public function renderSubmit($options = [])
     {
         // return '<input type="submit" class="btn btn-success" value="' . Yii::t('app', 'Оплатить') . '">';
         if (!isset($options['class'])) {
