@@ -58,8 +58,14 @@
 <p><strong>{Yii::t('cart/default', 'DETAIL_ORDER_VIEW')}:</strong><br/>
     {Html::a(Url::to($order->getUrl(),true),Url::to($order->getUrl(),true),['target'=>'_blank'])}</p>
 <br/><br/><br/>
-{Yii::t('cart/default', 'DELIVERY_PRICE')}:
-<h2 style="display:inline">{$app->currency->number_format($order->delivery_price)} <sup>{$app->currency->active['symbol']}</sup></h2>
+{if $order.delivery_price}
+    {Yii::t('cart/default', 'DELIVERY_PRICE')}:
+    <h2 style="display:inline">{$app->currency->number_format($order->delivery_price)}
+        <sup>{$app->currency->active['symbol']}</sup>
+    </h2>
+{/if}
 
 {Yii::t('cart/default', 'TOTAL_PAY')}:
-<h1 style="display:inline">{$app->currency->number_format($order->total_price + $order->delivery_price)} <sup>{$app->currency->active['symbol']}</sup></h1>
+<h1 style="display:inline">{$app->currency->number_format($order->total_price + $order->delivery_price)}
+    <sup>{$app->currency->active['symbol']}</sup>
+</h1>
