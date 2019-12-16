@@ -59,7 +59,7 @@
     {Html::a(Url::to($order->getUrl(),true),Url::to($order->getUrl(),true),['target'=>'_blank'])}</p>
 <br/><br/><br/>
 {Yii::t('cart/default', 'DELIVERY_PRICE')}:
-<h1 style="display:inline">{$app->currency->number_format($order->delivery_price)} <sup>{$app->currency->active['symbol']}</sup></h1>
+<h2 style="display:inline">{$app->currency->number_format($order->delivery_price)} <sup>{$app->currency->active['symbol']}</sup></h2>
 
 {Yii::t('cart/default', 'TOTAL_PAY')}:
 <h1 style="display:inline">{$app->currency->number_format($order->total_price + $order->delivery_price)} <sup>{$app->currency->active['symbol']}</sup></h1>
