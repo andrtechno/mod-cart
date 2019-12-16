@@ -5,12 +5,15 @@ use panix\engine\grid\GridView;
 use panix\mod\cart\models\OrderProduct;
 use yii\helpers\Html;
 
+/**
+ * @var \panix\mod\cart\models\Order $model
+ */
 $symbol = Yii::$app->currency->active['symbol'];
 
 Pjax::begin([
     'id' => 'pjax-container-products',
-   // 'enablePushState' => false,
-   // 'linkSelector' => 'a:not(.linkTarget)'
+    // 'enablePushState' => false,
+    // 'linkSelector' => 'a:not(.linkTarget)'
 ]);
 
 echo GridView::widget([
@@ -34,10 +37,11 @@ echo GridView::widget([
         'image' => [
             'class' => 'panix\engine\grid\columns\ImageColumn',
             'attribute' => 'image',
+            'header' => Yii::t('cart/OrderProduct', 'IMAGE'),
             // 'filter'=>true,
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                return ($model->originalProduct) ? $model->originalProduct->renderGridImage() : Html::tag('span','удален',['class'=>'badge badge-danger']);
+                return ($model->originalProduct) ? $model->originalProduct->renderGridImage() : Html::tag('span', 'удален', ['class' => 'badge badge-danger']);
             },
         ],
         [
@@ -45,7 +49,7 @@ echo GridView::widget([
             'format' => 'raw',
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                return ($model->originalProduct) ? Html::a($model->name . ' ['.$model->product_id.']', $model->originalProduct->getUrl()) : $model->name;
+                return ($model->originalProduct) ? Html::a($model->name . ' [' . $model->product_id . ']', $model->originalProduct->getUrl()) : $model->name;
             },
         ],
         [
@@ -89,12 +93,19 @@ Pjax::end();
             <ul class="list-group">
                 <?php if ($model->delivery_price > 0) { ?>
                     <li class="list-group-item">
-                        <?= Yii::t('cart/Order', 'DELIVERY_PRICE') ?>: <strong class="pull-right"><?= Yii::$app->currency->number_format($model->delivery_price); ?> <?= $symbol; ?></strong>
-                    </li>
-                    <li class="list-group-item">
-                        <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong class="pull-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <?= $symbol ?></strong>
+                        <?= Yii::t('cart/Order', 'DELIVERY_PRICE') ?>: <strong
+                                class="pull-right"><?= Yii::$app->currency->number_format($model->delivery_price); ?> <?= $symbol; ?></strong>
                     </li>
                 <?php } ?>
+                <li class="list-group-item">
+                    <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong
+                            class="pull-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <?= $symbol ?></strong>
+                </li>
+                <li class="list-group-item">
+                    <?= Yii::t('cart/default', 'TOTAL_PAY') ?>: <strong
+                            class="pull-right"><?= Yii::$app->currency->number_format($model->total_price + $model->delivery_price) ?> <?= $symbol ?></strong>
+                </li>
+
             </ul>
         </div>
     </div>
