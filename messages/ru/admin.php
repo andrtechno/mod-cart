@@ -15,7 +15,7 @@ return [
     'STATS' => 'Статистика',
     'STATUSES' => 'Статусы заказов',
     'CREATE_STATUSES' => 'Создание статуса',
-    'UPDATE_STATUSES' => 'Создание статуса',
+    'UPDATE_STATUSES' => 'Редактирование статуса',
     'PROMOCODE' => 'Промо-код',
     'ORDER_PRINT' => 'Печать заказа',
     'ORDER_VIEW' => 'Просмотр заказа',

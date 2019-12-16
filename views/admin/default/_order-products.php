@@ -88,11 +88,11 @@ Pjax::end();
         <div class="panel-container">
             <ul class="list-group">
                 <?php if ($model->delivery_price > 0) { ?>
-                    <li class="list-group-item"><?php echo Yii::t('cart/Order', 'DELIVERY_PRICE') ?> <span
-                                class="badge pull-right"><?= Yii::$app->currency->number_format($model->delivery_price); ?> <?= $symbol; ?></span>
+                    <li class="list-group-item">
+                        <?= Yii::t('cart/Order', 'DELIVERY_PRICE') ?>: <strong class="pull-right"><?= Yii::$app->currency->number_format($model->delivery_price); ?> <?= $symbol; ?></strong>
                     </li>
-                    <li class="list-group-item"><?php echo Yii::t('cart/admin', 'Сумма товаров') ?> <span
-                                class="badge pull-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <?= $symbol ?></span>
+                    <li class="list-group-item">
+                        <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong class="pull-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <?= $symbol ?></strong>
                     </li>
                 <?php } ?>
             </ul>
