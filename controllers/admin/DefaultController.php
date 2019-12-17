@@ -116,7 +116,7 @@ class DefaultController extends AdminController
 
 
 
-            if ($old['ttn'] != $model->ttn) {
+            if ($old['ttn'] != $model->ttn || !empty($model->ttn)) {
                 $mailer = Yii::$app->mailer;
                 $mailer->htmlLayout = '@cart/mail/layouts/client';
                 $mailer->compose(['html' => '@cart/mail/ttn.tpl'], ['order' => $model])
