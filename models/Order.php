@@ -81,10 +81,12 @@ class Order extends ActiveRecord
     {
         return new query\OrderQuery(get_called_class());
     }
+
     public function getPromoCode()
     {
         return $this->hasOne(PromoCode::class, ['id' => 'promocode_id']);
     }
+
     /**
      * Relation
      * @return \yii\db\ActiveQuery
@@ -153,16 +155,17 @@ class Order extends ActiveRecord
             ['promocode_id', 'validatePromoCode'],
         ];
     }
+
     public function validatePromoCode($attribute)
     {
         $value = $this->{$attribute};
 
-        if(is_string($value)){
-            $f = PromoCode::find()->where(['code'=>$value])->one();
-            if($f){
-                $this->{$attribute} = $f->id;
-            }else{
-                $this->addError($attribute,'Error promocode');
+        if (is_string($value)) {
+            $promo = PromoCode::find()->where(['code' => $value])->one();
+            if ($promo) {
+                $this->{$attribute} = $promo->id;
+            } else {
+                $this->addError($attribute, 'Error promocode');
             }
         }
 

@@ -28,13 +28,14 @@ $form = ActiveForm::begin();
             'prompt' => html_entity_decode($model::t('SELECT_DELIVERY'))
         ]);
         ?>
-
+        <?= $form->field($model, 'paid')->checkbox(); ?>
         <?= $form->field($model, 'user_name')->textInput(); ?>
         <?= $form->field($model, 'user_address')->textInput(); ?>
+        <?= $form->field($model, 'user_email')->textInput(); ?>
         <?= $form->field($model, 'user_phone')->widget(\panix\ext\telinput\PhoneInput::class); ?>
         <?= $form->field($model, 'user_comment')->textArea(); ?>
         <?= $form->field($model, 'admin_comment')->textArea(); ?>
-        <?= $form->field($model, 'paid')->checkbox(); ?>
+
         <?= $form->field($model, 'discount')->textInput(); ?>
         <?= $form->field($model, 'invoice')->textInput(['maxlength' => 50]); ?>
     </div>
