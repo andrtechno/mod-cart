@@ -4,7 +4,7 @@
 {use class="panix\engine\CMS"}
 
 <p>Здраствуйте, {$order->user_name}</p>
-<p>Ваш <strong>{$order->ttn}</strong> заказа <strong>{CMS::idToNumber($order->id)}</strong></p>
+<p>Ваш {$order->getAttributeLabel('ttn')} <strong>{$order->ttn}</strong> заказа <strong>№{CMS::idToNumber($order->id)}</strong></p>
 
 <p>
     <strong>{Yii::t('cart/default', 'DETAIL_ORDER_VIEW')}:</strong><br/>
