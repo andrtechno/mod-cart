@@ -104,16 +104,15 @@ class DefaultController extends AdminController
         if ($model->load($post) && $model->validate()) {
             $model->save();
 
-
-            $mailer = Yii::$app->mailer;
-            $mailer->compose(['html' => '@cart/mail/changed_status.tpl'], ['order' => $model])
-                ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
-                ->setTo(['andrew.panix@gmail.com' => Yii::$app->name])
-                ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => CMS::idToNumber($model->id)]))
-                ->send();
-         //   return $mailer;
-
-
+            if ($model->oldAttributes['status_id'] != $model->status_id) {
+                $mailer = Yii::$app->mailer;
+                $mailer->htmlLayout = '@cart/mail/layouts/client';
+                $mailer->compose(['html' => '@cart/mail/changed_status.tpl'], ['order' => $model])
+                    ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
+                    ->setTo(['andrew.panix@gmail.com' => Yii::$app->name])
+                    ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => CMS::idToNumber($model->id)]))
+                    ->send();
+            }
 
 
             if (sizeof(Yii::$app->request->post('quantity', [])))
