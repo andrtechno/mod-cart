@@ -114,6 +114,19 @@ class DefaultController extends AdminController
                     ->send();
             }
 
+
+
+            if ($old['ttn'] != $model->ttn) {
+                $mailer = Yii::$app->mailer;
+                $mailer->htmlLayout = '@cart/mail/layouts/client';
+                $mailer->compose(['html' => '@cart/mail/ttn.tpl'], ['order' => $model])
+                    ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
+                    ->setTo([$model->user_email])
+                    ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($model->id)))
+                    ->send();
+            }
+
+
             if (sizeof(Yii::$app->request->post('quantity', [])))
                 $model->setProductQuantities(Yii::$app->request->post('quantity'));
 

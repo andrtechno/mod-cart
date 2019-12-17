@@ -10,6 +10,7 @@ return [
     'FULL_PRICE' => 'К оплате',
     'STATUS_ID' => 'Статус',
     'PAID' => 'Оплачен',
+    'TTN' => 'ТТН',
     'USER_NAME' => 'ФИО',
     'USER_EMAIL' => 'Email',
     'USER_ADDRESS' => 'Адрес доставки',

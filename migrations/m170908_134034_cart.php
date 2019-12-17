@@ -55,6 +55,7 @@ class m170908_134034_cart extends Migration
             'created_at' => $this->integer(11)->null(),
             'updated_at' => $this->integer(11)->null(),
             'paid' => $this->boolean()->defaultValue(0),
+            'ttn' => $this->string(100)->null(),
             'buyOneClick' => $this->boolean()->defaultValue(0),
         ], $this->tableOptions);
 

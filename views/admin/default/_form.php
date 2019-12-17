@@ -28,6 +28,7 @@ $form = ActiveForm::begin();
             'prompt' => html_entity_decode($model::t('SELECT_DELIVERY'))
         ]);
         ?>
+        <?= $form->field($model, 'ttn')->textInput()->hint('После заполнение ТТН, клиенту будет отправлено уведомление на почту.'); ?>
         <?= $form->field($model, 'paid')->checkbox(); ?>
         <?= $form->field($model, 'user_name')->textInput(); ?>
         <?= $form->field($model, 'user_address')->textInput(); ?>
