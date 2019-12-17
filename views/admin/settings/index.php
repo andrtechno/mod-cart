@@ -86,7 +86,7 @@ $form = ActiveForm::begin();
                 ->hint('Введите E-mail и нажмите Enter');
             ?>
 
-            <?php //echo $form->field($model, 'tpl_subject_user'); ?>
+            <?php echo $form->field($model, 'notify_changed_status')->checkbox(); ?>
             <?php //echo $form->field($model, 'tpl_subject_admin'); ?>
 
 

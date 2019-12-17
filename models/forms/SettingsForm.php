@@ -14,6 +14,7 @@ class SettingsForm extends \panix\engine\SettingsModel
     public $tpl_subject_user;
     public $tpl_subject_admin;
     public $tpl_body_admin;
+    public $notify_changed_status;
 
     public static function defaultSettings()
     {
@@ -53,6 +54,7 @@ class SettingsForm extends \panix\engine\SettingsModel
     public function rules()
     {
         return [
+            [['notify_changed_status'], 'boolean'],
             [['order_emails'], 'required'], //, 'tpl_body_user', 'tpl_body_admin', 'tpl_subject_user', 'tpl_subject_admin'
             //[['tpl_body_user', 'tpl_body_admin', 'tpl_subject_user', 'tpl_subject_admin'], 'string'],
         ];

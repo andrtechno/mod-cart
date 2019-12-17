@@ -99,12 +99,12 @@ class DefaultController extends AdminController
                 'options' => ['class' => 'btn btn-primary', 'target' => '_blank']
             ]
         ];
-
+        $old = $model->oldAttributes;
         $post = Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
             $model->save();
 
-            if ($model->oldAttributes['status_id'] != $model->status_id) {
+            if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
                 $mailer = Yii::$app->mailer;
                 $mailer->htmlLayout = '@cart/mail/layouts/client';
                 $mailer->compose(['html' => '@cart/mail/changed_status.tpl'], ['order' => $model])
@@ -113,7 +113,6 @@ class DefaultController extends AdminController
                     ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
                     ->send();
             }
-
 
             if (sizeof(Yii::$app->request->post('quantity', [])))
                 $model->setProductQuantities(Yii::$app->request->post('quantity'));
