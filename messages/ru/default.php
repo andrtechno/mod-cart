@@ -38,8 +38,9 @@ return [
     'SELECT_SYSTEM_DELIVERY' => '&mdash; Система доставки &mdash;',
     'SELECT_SYSTEM_PAYMENT' => '&mdash; Система оплаты &mdash;',
     'TOTAL_COST' => 'Общая стоимость',
-    'MAIL_ADMIN_SUBJECT' => 'Оформлен новый заказ №{id}',
-    'MAIL_CLIENT_SUBJECT' => 'Вы оформили заказ №{id}',
+    'MAIL_ADMIN_SUBJECT' => 'Оформлен новый заказ №{0}',
+    'MAIL_CHANGE_STATUS_SUBJECT' => 'Изменен статус Вашего заказа №{0}',
+    'MAIL_CLIENT_SUBJECT' => 'Вы оформили заказ №{0}',
     'NOTIFICATION_USER_TEXT' => 'Пользователь <b>{username}</b> оформил заказ.<br/> <b>{num, plural, =0{тусто} =1{Один товар} one{# товар} few{# товара} many{# товаров} other{# товар}}</b> на сумму <b>{total} {currency}</b>',
     'NOTIFICATION_GUEST_TEXT' => 'Посетитель <b>{username}</b> оформил заказ.<br/> <b>{num, plural, =0{тусто} =1{Один товар} one{# товар} few{# товара} many{# товаров} other{# товар}}</b> на сумму <b>{total} {currency}</b>',
 ];

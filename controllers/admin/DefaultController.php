@@ -110,7 +110,7 @@ class DefaultController extends AdminController
                 $mailer->compose(['html' => '@cart/mail/changed_status.tpl'], ['order' => $model])
                     ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
                     ->setTo(['andrew.panix@gmail.com' => Yii::$app->name])
-                    ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => CMS::idToNumber($model->id)]))
+                    ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
                     ->send();
             }
 

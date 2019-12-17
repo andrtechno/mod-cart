@@ -511,7 +511,7 @@ class Order extends ActiveRecord
         $mailer->compose(['html' => '@cart/mail/order.tpl'], ['order' => $this])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
-            ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $this->id]))
+            ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', $this->id))
             ->send();
         return $mailer;
     }
@@ -526,7 +526,7 @@ class Order extends ActiveRecord
         $mailer->compose('@cart/mail/order.tpl', ['order' => $this])
             ->setFrom('noreply@' . Yii::$app->request->serverName)
             ->setTo($this->user_email)
-            ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $this->id]))
+            ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))
             ->send();
 
         return $mailer;
