@@ -179,7 +179,7 @@ class Privat24PaymentSystem extends BasePaymentSystem
     public function getConfigurationFormHtml($paymentMethodId)
     {
         $model = new Privat24ConfigurationModel;
-        $model->load([basename(get_class($model)) => (array)$this->getSettings($paymentMethodId)]);
+        $model->load([(new \ReflectionClass($model))->getShortName() => (array)$this->getSettings($paymentMethodId)]);
 
         return $model;
     }

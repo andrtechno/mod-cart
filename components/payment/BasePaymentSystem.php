@@ -43,7 +43,7 @@ class BasePaymentSystem extends \yii\base\Component
      */
     public function log($message)
     {
-        Yii::info($this->getSettingsKey(basename(get_class($this))) . ': ' . $message);
+        Yii::info($this->getSettingsKey((new \ReflectionClass($this))->getShortName()) . ': ' . $message);
     }
 
 

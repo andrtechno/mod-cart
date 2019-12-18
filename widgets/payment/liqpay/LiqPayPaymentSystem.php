@@ -158,7 +158,8 @@ class LiqPayPaymentSystem extends BasePaymentSystem
     public function getConfigurationFormHtml($paymentMethodId)
     {
         $model = new LiqPayConfigurationModel;
-        $model->load([basename(get_class($model)) => (array)$this->getSettings($paymentMethodId)]);
+        $nameClass = (new \ReflectionClass($model))->getShortName();
+        $model->load([$nameClass => (array)$this->getSettings($paymentMethodId)]);
 
         return $model;
     }
