@@ -4,7 +4,7 @@ use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
 
 Pjax::begin([
-   // 'id' => 'pjax-container',
+    'dataProvider'=>$dataProvider
 ]);
 echo GridView::widget([
     'tableOptions' => ['class' => 'table table-striped'],

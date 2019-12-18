@@ -10,13 +10,9 @@ use panix\mod\cart\models\Order;
 <?php echo $this->render('_filter_pdf'); ?>
 <?php
 
-Pjax::begin([
-    'id' => 'pjax-grid-order',
-]);
-?>
-<?=
+Pjax::begin(['dataProvider'=>$dataProvider]);
 
-GridView::widget([
+echo GridView::widget([
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,

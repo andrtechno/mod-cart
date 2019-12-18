@@ -6,7 +6,7 @@ use panix\engine\grid\GridView;
 use panix\engine\CMS;
 
 Pjax::begin([
-    'id' => 'pjax-grid-statuses',
+    'dataProvider'=>$dataProvider
 ]);
 
 echo GridView::widget([

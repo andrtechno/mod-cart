@@ -5,7 +5,7 @@ use panix\engine\grid\GridView;
 use yii\helpers\Html;
 
 Pjax::begin([
-    'id' => 'pjax-container', 'enablePushState' => false,
+    'dataProvider'=>$dataProvider
 ]);
 ?>
 <?= GridView::widget([
