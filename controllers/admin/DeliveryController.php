@@ -93,7 +93,7 @@ class DeliveryController extends AdminController
                     $system->saveAdminSettings($model->id, $_POST);
                 }
 
-                $this->redirectPage($isNew, $post);
+                return $this->redirectPage($isNew, $post);
             }
 
         }

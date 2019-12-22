@@ -130,7 +130,7 @@ class DefaultController extends AdminController
             if (sizeof(Yii::$app->request->post('quantity', [])))
                 $model->setProductQuantities(Yii::$app->request->post('quantity'));
 
-            $this->redirectPage($isNew, $post);
+            return $this->redirectPage($isNew, $post);
         }
         return $this->render('update', [
             'model' => $model,

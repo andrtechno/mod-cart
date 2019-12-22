@@ -100,7 +100,7 @@ class PaymentController extends AdminController
                 // print_r($system);die;
             }
 
-            $this->redirectPage($isNew, $post);
+            return $this->redirectPage($isNew, $post);
         }
 
         return $this->render('update', [

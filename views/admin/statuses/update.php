@@ -2,13 +2,9 @@
 
 use yii\helpers\Html;
 use panix\engine\bootstrap\ActiveForm;
-use panix\ext\colorpicker\Colorpicker;
+use panix\ext\colorpicker\ColorPicker;
 
-?>
-<?php
-$form = ActiveForm::begin([
-    'options' => ['class' => 'form-horizontal']
-]);
+$form = ActiveForm::begin();
 ?>
 <div class="card">
     <div class="card-header">
@@ -16,8 +12,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="card-body">
         <?= $form->field($model, 'name')->textInput(['maxlength' => 100]) ?>
-        <?php //echo $form->field($model, 'color')->textInput(['maxlength' => 7]) ?>
-        <?= $form->field($model, 'color')->widget(Colorpicker::class)->textInput(['maxlength' => 7]); ?>
+        <?= $form->field($model, 'color')->widget(ColorPicker::class)->textInput(['maxlength' => 7]); ?>
     </div>
     <div class="card-footer text-center">
         <?= $model->submitButton(); ?>

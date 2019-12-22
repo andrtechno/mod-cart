@@ -84,7 +84,7 @@ class StatusesController extends AdminController
         $isNew = $model->isNewRecord;
         if ($model->load($post) && $model->validate()) {
             $model->save();
-            $this->redirectPage($isNew, $post);
+            return $this->redirectPage($isNew, $post);
         }
 
 

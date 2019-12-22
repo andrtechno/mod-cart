@@ -66,7 +66,7 @@ class PromoCodeController extends AdminController
             if ($model->validate()) {
                 //print_r($model->attributes);die;
                 $model->save();
-                $this->redirectPage($isNew, $post);
+                return $this->redirectPage($isNew, $post);
             }
         }
         return $this->render('update', ['model' => $model]);
