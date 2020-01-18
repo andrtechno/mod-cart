@@ -218,12 +218,12 @@ if (Yii::$app->session->hasFlash('success-promocode')) {
                     <?php if ($model->paid) { ?>
                         <?= Yii::t('cart/Order', 'PAID') ?>:
                         <div class="float-right">
-                            <span class="badge badge-success"><?= Yii::t('app', 'YES') ?></span>
+                            <span class="badge badge-success"><?= Yii::t('app/default', 'YES') ?></span>
                         </div>
                     <?php } else { ?>
                         <?= Yii::t('cart/Order', 'PAID') ?>:
                         <div class="float-right">
-                            <span class="badge badge-danger"><?= Yii::t('app', 'NO') ?></span>
+                            <span class="badge badge-danger"><?= Yii::t('app/default', 'NO') ?></span>
                         </div>
                     <?php } ?>
 

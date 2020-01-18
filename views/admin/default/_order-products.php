@@ -73,7 +73,7 @@ echo GridView::widget([
             'buttons' => [
                 'delete' => function ($url, $data, $key) {
                     return Html::a('<i class="icon-delete"></i>', '#', [
-                        'title' => Yii::t('app', 'DELETE'),
+                        'title' => Yii::t('app/default', 'DELETE'),
                         'class' => 'btn btn-sm btn-danger',
                         'onClick' => "return deleteOrderedProduct($data->id, $data->order_id);"
                     ]);

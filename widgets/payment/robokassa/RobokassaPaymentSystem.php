@@ -79,7 +79,7 @@ class RobokassaPaymentSystem extends BasePaymentSystem {
         // Order number
         $inv_id = $order->id;
         // Order description
-        $inv_desc = Yii::t('app', "Оплата заказа #") . $order->id;
+        $inv_desc = Yii::t('app/default', "Оплата заказа #") . $order->id;
         // Order sum
         $out_sum = Yii::$app->currency->convert($order->full_price, $method->currency_id);
         // currency

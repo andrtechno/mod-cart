@@ -50,5 +50,5 @@
         </tbody>
     </table>
 <?php } else { ?>
-    <center><?php echo Yii::t('app', 'NO_INFO'); ?></center>
+    <center><?php echo Yii::t('app/default', 'NO_INFO'); ?></center>
 <?php } ?>

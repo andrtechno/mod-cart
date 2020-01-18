@@ -40,7 +40,7 @@ class DeliveryController extends AdminController
         $this->buttons = [
             [
                 'icon' => 'add',
-                'label' => Yii::t('app', 'CREATE'),
+                'label' => Yii::t('app/default', 'CREATE'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-success']
             ],
@@ -76,7 +76,7 @@ class DeliveryController extends AdminController
             'url' => ['index']
         ];
 
-        $this->pageName = Yii::t('app', $isNew ? 'CREATE' : 'UPDATE');
+        $this->pageName = Yii::t('app/default', $isNew ? 'CREATE' : 'UPDATE');
 
         $this->breadcrumbs[] = $this->pageName;
 

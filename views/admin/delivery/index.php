@@ -16,7 +16,7 @@ echo GridView::widget([
         'buttons' => [
             [
                 'icon' => 'add',
-                'label' => Yii::t('app', 'CREATE'),
+                'label' => Yii::t('app/default', 'CREATE'),
                 'url' => ['create'],
                 'options' => ['class' => 'btn btn-sm btn-success']
             ]

@@ -13,11 +13,11 @@ class BasePaymentSystem extends \yii\base\Component
      */
     public function renderSubmit($options = [])
     {
-        // return '<input type="submit" class="btn btn-success" value="' . Yii::t('app', 'Оплатить') . '">';
+        // return '<input type="submit" class="btn btn-success" value="' . Yii::t('app/default', 'Оплатить') . '">';
         if (!isset($options['class'])) {
             $options['class'] = 'btn btn-success';
         }
-        return Html::submitButton(Yii::t('app', 'Оплатить'), $options);
+        return Html::submitButton(Yii::t('app/default', 'Оплатить'), $options);
     }
 
     /**

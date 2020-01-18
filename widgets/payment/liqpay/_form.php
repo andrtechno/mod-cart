@@ -17,7 +17,7 @@ $form = ActiveForm::begin([
 
 
 <div class="form-group text-center">
-    <?= Html::submitButton(Yii::t('app', 'UPDATE'), ['class' => 'btn btn-success']) ?>
+    <?= Html::submitButton(Yii::t('app/default', 'UPDATE'), ['class' => 'btn btn-success']) ?>
 </div>
 
 

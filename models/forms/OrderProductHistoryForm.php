@@ -19,8 +19,8 @@ class OrderProductHistoryForm extends CFormModel {
 
     public function attributeLabels() {
         return array(
-            'from_date' => Yii::t('app', 'с:'),
-            'to_date' => Yii::t('app', 'до:'),
+            'from_date' => Yii::t('app/default', 'с:'),
+            'to_date' => Yii::t('app/default', 'до:'),
         );
     }
 

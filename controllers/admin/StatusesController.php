@@ -35,7 +35,7 @@ class StatusesController extends AdminController
 
         $this->buttons = [
             [
-                'label' => Yii::t('app', 'CREATE'),
+                'label' => Yii::t('app/default', 'CREATE'),
                 'url' => ['create'],
                 'icon' => 'add',
                 'options' => ['class' => 'btn btn-success']

@@ -120,7 +120,7 @@ class OrderCreateForm extends Model
             if ($user->validate()) {
                 $user->save();
                 // $this->sendRegisterMail($user);
-                Yii::$app->session->setFlash('success_register', Yii::t('app', 'SUCCESS_REGISTER'));
+                Yii::$app->session->setFlash('success_register', Yii::t('app/default', 'SUCCESS_REGISTER'));
             } else {
                 $this->addError('registerGuest', 'Ошибка регистрации');
                 Yii::$app->session->setFlash('error_register', Yii::t('cart/default', 'ERROR_REGISTER'));

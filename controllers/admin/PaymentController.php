@@ -51,7 +51,7 @@ class PaymentController extends AdminController
         $this->buttons = [
             [
                 'icon' => 'add',
-                'label' => Yii::t('app', 'CREATE'),
+                'label' => Yii::t('app/default', 'CREATE'),
                 'url' => ['/admin/cart/payment/create'],
                 'options' => ['class' => 'btn btn-success']
             ]
@@ -85,7 +85,7 @@ class PaymentController extends AdminController
             'label' => $this->pageName,
             'url' => ['index']
         ];
-        $this->breadcrumbs[] = Yii::t('app', ($isNew) ? 'CREATE' : 'UPDATE');
+        $this->breadcrumbs[] = Yii::t('app/default', ($isNew) ? 'CREATE' : 'UPDATE');
         \panix\mod\cart\CartPaymentAsset::register($this->view);
 
         $post = Yii::$app->request->post();
@@ -148,7 +148,7 @@ class PaymentController extends AdminController
                 'icon' => Html::icon('history'),
             ),
             array(
-                'label' => Yii::t('app', 'SETTINGS'),
+                'label' => Yii::t('app/default', 'SETTINGS'),
                 'url' => array('/admin/cart/settings'),
                 'icon' => Html::icon('settings'),
             ),

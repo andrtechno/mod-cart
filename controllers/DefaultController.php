@@ -165,7 +165,7 @@ class DefaultController extends WebController
     public function actionAdd()
     {
         if (!Yii::$app->request->isAjax) {
-            throw new BadRequestHttpException(Yii::t('app', 'ACCESS_DENIED'));
+            throw new BadRequestHttpException(Yii::t('app/default', 'ACCESS_DENIED'));
         }
 
 
@@ -256,7 +256,7 @@ class DefaultController extends WebController
     public function actionRenderSmallCart()
     {
         if (!Yii::$app->request->isAjax) {
-            throw new BadRequestHttpException(Yii::t('app', 'ACCESS_DENIED'));
+            throw new BadRequestHttpException(Yii::t('app/default', 'ACCESS_DENIED'));
         }
         return \panix\mod\cart\widgets\cart\CartWidget::widget(['skin' => Yii::$app->request->post('skin')]);
     }

@@ -75,9 +75,9 @@ class OrderHistory extends ActiveRecord {
         foreach ($data as $key => $val) {
             if ($key === 'paid') {
                 if ($val)
-                    $val = Yii::t('app', 'YES');
+                    $val = Yii::t('app/default', 'YES');
                 else
-                    $val = Yii::t('app', 'NO');
+                    $val = Yii::t('app/default', 'NO');
             }
             $result[$order->getAttributeLabel($key)] = $val;
         }
