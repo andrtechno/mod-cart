@@ -10,7 +10,7 @@ use panix\engine\Html;
         <td width="60%">
             <h1><?= Yii::$app->name; ?></h1>
         </td>
-        <td width="30%" style="text-align: right"><strong>за период:</strong><br/>
+        <td width="30%" style="text-align: right"><strong><?= Yii::t('cart/admin','OVER_PERIOD'); ?>:</strong><br/>
             <p>c <strong><?= $start_date; ?></strong></p>
             <p>по <strong><?= $end_date; ?></strong></p>
         </td>

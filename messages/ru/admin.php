@@ -17,6 +17,7 @@ return [
     'CREATE_STATUSES' => 'Создание статуса',
     'UPDATE_STATUSES' => 'Редактирование статуса',
     'PROMOCODE' => 'Промо-код',
+    'OVER_PERIOD' => 'за период',
     'ORDER_PRINT' => 'Печать заказа',
     'ORDER_VIEW' => 'Просмотр заказа',
     'CREATE_PROMOCODE' => 'Добавить промо-код',

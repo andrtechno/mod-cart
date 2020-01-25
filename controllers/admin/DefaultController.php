@@ -250,10 +250,10 @@ class DefaultController extends AdminController
             'default_font_size' => 9,
             'default_font' => 'times',
             'margin_top' => 35,
-            'margin_bottom' => 9,
+            'margin_bottom' => 10,
             'margin_left' => 5,
             'margin_right' => 5,
-            'margin_footer' => 10,
+            'margin_footer' => 5,
             'margin_header' => 5,
         ]);
         if ($type) {
@@ -314,14 +314,17 @@ class DefaultController extends AdminController
                 'end_date' => CMS::date($dateEnd, false),
             ]));
         } else {
-            $view = 'pdf/products';
+
             $model->joinWith(['products p']);
             $model->between($dateStart, $dateEnd);
-            if(Yii::$app->request->get('manufacturer')){
+            if(Yii::$app->request->get('render') == 'manufacturer'){
+                $view = 'pdf/manufacturer';
                 $model->andWhere(['not', ['p.manufacturer_id' => null]]);
                 $model->orderBy(['p.manufacturer_id' => SORT_DESC]);
+
             }
-            if(Yii::$app->request->get('supplier')){
+            if(Yii::$app->request->get('render') == 'supplier'){
+                $view = 'pdf/supplier';
                 $model->andWhere(['not', ['p.supplier_id' => null]]);
                 $model->orderBy(['p.supplier_id' => SORT_DESC]);
             }
@@ -350,18 +353,18 @@ class DefaultController extends AdminController
             return $mpdf->Output($this->action->id . ".pdf", 'I');
         } else {
             $this->layout = 'mod.admin.views.layouts.print';
-            $this->render('pdf/products', array(
+            $this->render($view, [
                 'array' => $array,
                 'model' => $model,
                 'dateStart' => date('Y-m-d', strtotime($dateStart)),
                 'dateEnd' => date('Y-m-d', strtotime($dateEnd) - 86400)
-            ));
+            ]);
         }
 
     }
 
-    public function manufacturerSort($a, $b)
+    public function titleSort($a, $b)
     {
-        return strnatcmp($a['manufacturer'], $b['manufacturer']);
+        return strnatcmp($a['title'], $b['title']);
     }
 }
