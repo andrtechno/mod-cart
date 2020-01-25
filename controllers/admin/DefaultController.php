@@ -244,7 +244,18 @@ class DefaultController extends AdminController
         $dateStart = strtotime($start);
 
         $dateEnd = strtotime($end) + 86400;
-
+        $mpdf = new Mpdf([
+            // 'debug' => true,
+            //'mode' => 'utf-8',
+            'default_font_size' => 9,
+            'default_font' => 'times',
+            'margin_top' => 35,
+            'margin_bottom' => 9,
+            'margin_left' => 5,
+            'margin_right' => 5,
+            'margin_footer' => 10,
+            'margin_header' => 5,
+        ]);
         if ($type) {
             /*Yii::import('ext.tcpdf.TCPDF');
             $contact = Yii::app()->settings->get('contacts');
@@ -267,18 +278,7 @@ class DefaultController extends AdminController
             $pdf->setFontSubsetting(true);
             $pdf->SetFont('freeserif', '', 12);
             $pdf->Write(0, '', '', 0, 'L', true, 0, false, false, 0);*/
-            $mpdf = new Mpdf([
-                // 'debug' => true,
-                //'mode' => 'utf-8',
-                'default_font_size' => 9,
-                'default_font' => 'times',
-                'margin_top' => 35,
-                'margin_bottom' => 9,
-                'margin_left' => 5,
-                'margin_right' => 5,
-                'margin_footer' => 10,
-                'margin_header' => 5,
-            ]);
+
             $mpdf->use_kwt = true;
             $mpdf->SetCreator(Yii::$app->name);
             $mpdf->SetAuthor(Yii::$app->user->getDisplayName());
@@ -303,23 +303,30 @@ class DefaultController extends AdminController
 
         $model = Order::find()->with('products');
         // $model->where(['status_id' => 1]);
-        if ($render == 'brands') {
-            $view = 'pdf/products';
-            $model->joinWith(['products p']);
-            $model->between($dateStart, $dateEnd);
-            $model->andWhere(['not', ['p.manufacturer_id' => null]]);
-            $model->orderBy(['p.manufacturer_id' => SORT_DESC]);
+        if ($render == 'delivery') {
 
-            $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_products', [
-                'start_date' => CMS::date($dateStart, false),
-                'end_date' => CMS::date($dateEnd, false),
-            ]));
-        } else {
             $view = 'pdf/delivery';
             $model->between($dateStart, $dateEnd);
             $model->orderBy(['delivery_id' => SORT_DESC]);
 
             $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_delivery', [
+                'start_date' => CMS::date($dateStart, false),
+                'end_date' => CMS::date($dateEnd, false),
+            ]));
+        } else {
+            $view = 'pdf/products';
+            $model->joinWith(['products p']);
+            $model->between($dateStart, $dateEnd);
+            if(Yii::$app->request->get('manufacturer')){
+                $model->andWhere(['not', ['p.manufacturer_id' => null]]);
+                $model->orderBy(['p.manufacturer_id' => SORT_DESC]);
+            }
+            if(Yii::$app->request->get('supplier')){
+                $model->andWhere(['not', ['p.supplier_id' => null]]);
+                $model->orderBy(['p.supplier_id' => SORT_DESC]);
+            }
+
+            $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_products', [
                 'start_date' => CMS::date($dateStart, false),
                 'end_date' => CMS::date($dateEnd, false),
             ]));
