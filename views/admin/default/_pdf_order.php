@@ -89,11 +89,12 @@ $currency = Yii::$app->currency;
             /**
              * @var \panix\mod\cart\models\OrderProduct $product
              */
+            $originalProduct = $product->originalProduct;
             $totalCountQuantity += $product->quantity;
             $totalCountPrice += $product->price;
             $totalCountPriceAll += $product->price * $product->quantity;
-            if ($product->originalProduct) {
-                $image = $product->originalProduct->getMainImage('50x50')->url;
+            if ($originalProduct) {
+                $image = $originalProduct->getMainImage('50x50')->url;
             } else {
                 $image = '/uploads/no-image.png';
             }
@@ -106,19 +107,20 @@ $currency = Yii::$app->currency;
                     align="center"><?= Html::img(Url::to($image, true), ['width' => 50, 'height' => 50]); ?></td>
                 <td width="40%">
                     <?= $product->name; ?>
-
+                    <br/>
+                    <?= $product->getAttributeLabel('sku'); ?>: <strong><?= $product->sku; ?></strong>;
                     <?php
 
                     $query = \panix\mod\shop\models\Attribute::find();
-                    $query->where(['IN', 'name', array_keys($product['model']->eavAttributes)]);
+                    $query->where(['IN', 'name', array_keys($originalProduct->eavAttributes)]);
                     $query->displayOnPdf();
                     $query->sort();
                     $result = $query->all();
                     // print_r($query);
-                    $s = $product['model']->eavAttributes;
+                    $attributes = $originalProduct->eavAttributes;
                     foreach ($result as $q) {
-                        echo $q->title . ' ';
-                        echo $q->renderValue($s[$q->name]) . ' <br>';
+                        echo $q->title . ': ';
+                        echo '<strong>'.$q->renderValue($attributes[$q->name]) . '</strong>; ';
                     }
                     ?>
 
