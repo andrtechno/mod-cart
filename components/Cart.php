@@ -154,8 +154,8 @@ class Cart extends Component
     public function getTotalPrice()
     {
         $result = 0;
-       // $data = $this->getDataWithModels();
-        foreach ($this->data as $item) {
+        $data = $this->getDataWithModels();
+        foreach ($data as $item) {
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
             $result += Product::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
         }
@@ -202,8 +202,6 @@ class Cart extends Component
                 $quantity = 1;
 
 
-
-
             if (isset($currentData[$index])) {
 
                 $currentData[$index]['quantity'] = (int)$quantity;
@@ -218,13 +216,13 @@ class Cart extends Component
                     $rowTotal = $calcPrice * $data['quantity'];
                 } else {
                     //if ($productModel->appliedDiscount) {
-                        //$priceTotal = ;
+                    //$priceTotal = ;
                     //} else {
-                   //     $priceTotal = $data['price'];
+                    //     $priceTotal = $data['price'];
                     //}
 
-                   // if ($data['quantity'] > 1 && ($pr = $productModel->getPriceByQuantity($data['quantity']))) {
-                   //     $calcPrice = $pr->value;
+                    //if ($data['quantity'] > 1 && ($pr = $productModel->getPriceByQuantity($data['quantity']))) {
+                    //    $calcPrice = $pr->value;
                     //}
 
                     $rowTotal = $calcPrice * $data['quantity'];
