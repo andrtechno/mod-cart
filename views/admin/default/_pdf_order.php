@@ -75,7 +75,7 @@ $currency = Yii::$app->currency;
         <thead>
         <tr>
             <th width="35%" colspan="2" class="text-center"><?= Yii::t('cart/default', 'TABLE_PRODUCT'); ?></th>
-            <th width="10%" class="text-center"><?= Yii::t('cart/default', 'TABLE_NUM'); ?></th>
+            <th width="10%" class="text-center"><?= Yii::t('cart/default', 'QUANTITY'); ?></th>
             <th width="15%" class="text-center"><?= Yii::t('cart/default', 'PRICE_PER_UNIT'); ?></th>
             <th width="20%" class="text-center"><?= Yii::t('cart/default', 'TOTAL_COST'); ?></th>
         </tr>
@@ -104,7 +104,25 @@ $currency = Yii::$app->currency;
             <tr>
                 <td width="10%"
                     align="center"><?= Html::img(Url::to($image, true), ['width' => 50, 'height' => 50]); ?></td>
-                <td width="40%"><?= $product->name; ?></td>
+                <td width="40%">
+                    <?= $product->name; ?>
+
+                    <?php
+
+                    $query = \panix\mod\shop\models\Attribute::find();
+                    $query->where(['IN', 'name', array_keys($product['model']->eavAttributes)]);
+                    $query->displayOnPdf();
+                    $query->sort();
+                    $result = $query->all();
+                    // print_r($query);
+                    $s = $product['model']->eavAttributes;
+                    foreach ($result as $q) {
+                        echo $q->title . ' ';
+                        echo $q->renderValue($s[$q->name]) . ' <br>';
+                    }
+                    ?>
+
+                </td>
                 <td align="center"><?= $product->quantity; ?></td>
                 <td align="center"><?= $currency->number_format($price) ?>
                     <?= $currency->active['symbol'] ?></td>
