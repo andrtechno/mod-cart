@@ -108,9 +108,10 @@ $currency = Yii::$app->currency;
                 <td width="40%">
                     <?= $product->name; ?>
                     <br/>
-                    <?= $product->getAttributeLabel('sku'); ?>: <strong><?= $product->sku; ?></strong>;
                     <?php
-
+                    if($product->sku){
+                        echo $product->getAttributeLabel('sku').': <strong>'.$product->sku.'</strong>;';
+                    }
                     $query = \panix\mod\shop\models\Attribute::find();
                     $query->where(['IN', 'name', array_keys($originalProduct->eavAttributes)]);
                     $query->displayOnPdf();

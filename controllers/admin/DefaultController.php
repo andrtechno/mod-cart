@@ -4,6 +4,7 @@ namespace panix\mod\cart\controllers\admin;
 
 use panix\engine\CMS;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Response;
 use panix\engine\controllers\AdminController;
 use panix\mod\shop\models\Product;
@@ -314,7 +315,6 @@ class DefaultController extends AdminController
                 'end_date' => CMS::date($dateEnd, false),
             ]));
         } else {
-
             $model->joinWith(['products p']);
             $model->between($dateStart, $dateEnd);
             if(Yii::$app->request->get('render') == 'manufacturer'){
@@ -333,14 +333,12 @@ class DefaultController extends AdminController
                 'start_date' => CMS::date($dateStart, false),
                 'end_date' => CMS::date($dateEnd, false),
             ]));
-
         }
         $model = $model->all();
 
 
         $array = [];
         if ($type) {
-
             $mpdf->WriteHTML($this->renderPartial($view, [
                 'array' => $array,
                 'model' => $model,

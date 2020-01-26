@@ -28,17 +28,13 @@ foreach ($model as $order) {
                         $image = $original->getMainImage('50x50')->url;
                     } else {
                         $image = '/uploads/no-image.png';
-
                     }
-
                     $newprice = ($original->appliedDiscount) ? $original->discountPrice : $item->price;
-
 
                     ///$total_price = (Yii::app()->currency->convert($item->price, $item->currency_id) * $in * $item->quantity);
                     $total_price = ($newprice * $item->quantity);
                     $array[$title][] = [
-
-                        'order_id' => $item->order_id,
+                        'item'=>$item,
                         'order_date' => $order->created_at,
                         'order_url' => Url::to($order->getUpdateUrl(), true),
                         'image' => Url::to($image, true),
@@ -46,13 +42,9 @@ foreach ($model as $order) {
                         // 'price' => $item->prd->price,
                         'price' => $newprice,
                         // 'price' => Yii::app()->currency->convert($item->price,$item->currency_id),
-                        'name' => $item->name,
-                        'product_id' => $item->product_id,
-                        //'size' => $attrs->size->value,
                         'model' => $original,
                         'url' => Url::to($original->getUrl()),
                         'title' => $title,
-                        'quantity' => $item->quantity,
                         'price_total' => $total_price
                     ];
                 } else {
@@ -99,9 +91,9 @@ foreach ($array as $key => $items) {
         $num = 0;
         $i = 1;
         foreach ($items as $row) {
-            $brand_count += $row['quantity'];
+            $brand_count += $row['item']->quantity;
             $brand_price += $row['price_total'];
-            $num += $row['quantity'];
+            $num += $row['item']->quantity;
             ?>
             <tr>
                 <td align="center"><?= $i ?></td>
@@ -111,12 +103,31 @@ foreach ($array as $key => $items) {
                     </td>
                 <?php } ?>
                 <td>
-                    <?= $row['name'] ?><br/>
+                    <?= $row['item']->name ?><br/>
                     <strong><?= Yii::$app->currency->number_format($row['price']) ?></strong> <?= Yii::$app->currency->active['symbol'] ?>
                     / <?= $row['model']->units[$row['model']->unit]; ?>
+                    <br/>
+                    <?php
+                    if($row['model']->sku){
+                        echo $row['item']->getAttributeLabel('sku').': <strong>'.$row['model']->sku.'</strong>; ';
+                    }
+                    $query = \panix\mod\shop\models\Attribute::find();
+                    $query->where(['IN', 'name', array_keys($row['model']->eavAttributes)]);
+                    $query->displayOnPdf();
+                    $query->sort();
+                    $result = $query->all();
+                    // print_r($query);
+                    $attributes = $row['model']->eavAttributes;
+                    foreach ($result as $q) {
+                        echo $q->title . ': ';
+                        echo '<strong>'.$q->renderValue($attributes[$q->name]) . '</strong>; ';
+                    }
+                    ?>
+
+
                 </td>
                 <td align="center">
-                    <strong><?= $row['quantity'] ?></strong> <?= $row['model']->units[$row['model']->unit]; ?></td>
+                    <strong><?= $row['item']->quantity ?></strong> <?= $row['model']->units[$row['model']->unit]; ?></td>
                 <td align="center">
                     <strong><?= Yii::$app->currency->number_format($row['price_total']) ?></strong> <?= Yii::$app->currency->active['symbol'] ?>
                 </td>
