@@ -14,7 +14,7 @@
                 </td>
                 <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">
                     <a href="{*url*}"  target="_blank">{*name*}</a>
-                    {if*appliedDiscount*}
+                    {if*hasDiscount*}
                     <small><span style="text-decoration: line-through;color:#606060">{*originalPrice*}</span> <sup>{*currency*}</sup></small>
                     {endif}</td>
                 <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">{*quantity*}</td>

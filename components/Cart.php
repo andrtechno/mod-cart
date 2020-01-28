@@ -215,7 +215,7 @@ class Cart extends Component
 
                     $rowTotal = $calcPrice * $data['quantity'];
                 } else {
-                    //if ($productModel->appliedDiscount) {
+                    //if ($productModel->hasDiscount) {
                     //$priceTotal = ;
                     //} else {
                     //     $priceTotal = $data['price'];

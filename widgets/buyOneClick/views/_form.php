@@ -34,7 +34,7 @@ if ($sended) {
                         <sub><?= Yii::$app->currency->active['symbol'] ?></sub>
                     </span>
                     <?php
-                    if (Yii::$app->hasModule('discounts') && isset($productModel->appliedDiscount)) {
+                    if (Yii::$app->hasModule('discounts') && isset($productModel->hasDiscount)) {
                         ?>
                         <span class="price price-xs price-discount"><?= $productModel->toCurrentCurrency('originalPrice') ?> <sub><?= Yii::$app->currency->active['symbol'] ?></sub></span>
                         <?php

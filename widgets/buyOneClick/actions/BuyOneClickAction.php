@@ -97,7 +97,7 @@ class BuyOneClickAction extends CAction {
         // 
         // $category = ShopCategory::model()->findByPk($item['category_id']);
         //  $options = $item['options'];
-        if (isset($productModel->appliedDiscount)) {
+        if (isset($productModel->hasDiscount)) {
 
             $price += $productModel->toCurrentCurrency('discountPrice');
         } else {
@@ -141,10 +141,10 @@ class BuyOneClickAction extends CAction {
         } else {
             $params['originalPrice'] = false;
         }
-        if (isset($productModel->appliedDiscount)) {
-            $params['appliedDiscount'] = $productModel->appliedDiscount;
+        if (isset($productModel->hasDiscount)) {
+            $params['hasDiscount'] = $productModel->hasDiscount;
         } else {
-            $params['appliedDiscount'] = false;
+            $params['hasDiscount'] = false;
         }
 
         $config = Yii::$app->settings->get('app');

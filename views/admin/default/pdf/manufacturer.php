@@ -29,7 +29,7 @@ foreach ($model as $order) {
                     } else {
                         $image = '/uploads/no-image.png';
                     }
-                    $newprice = ($original->appliedDiscount) ? $original->discountPrice : $item->price;
+                    $newprice = ($original->hasDiscount) ? $original->discountPrice : $item->price;
 
                     ///$total_price = (Yii::app()->currency->convert($item->price, $item->currency_id) * $in * $item->quantity);
                     $total_price = ($newprice * $item->quantity);
