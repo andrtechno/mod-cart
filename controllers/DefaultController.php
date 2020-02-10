@@ -100,7 +100,7 @@ class DefaultController extends WebController
         // echo($deliveryMethods->prepare(Yii::$app->db->queryBuilder)->createCommand()->rawSql);die;
 
 
-        $paymenyMethods = Payment::find()->all();
+        $paymentMethods = Payment::find()->all();
 
         $this->view->registerJs("
             var penny = '" . Yii::$app->currency->active['penny'] . "';
@@ -112,7 +112,7 @@ class DefaultController extends WebController
             'items' => Yii::$app->cart->getDataWithModels(),
             'totalPrice' => Yii::$app->cart->getTotalPrice(),
             'deliveryMethods' => $deliveryMethods,
-            'paymenyMethods' => $paymenyMethods,
+            'paymentMethods' => $paymentMethods,
         ]);
     }
 

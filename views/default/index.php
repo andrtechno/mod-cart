@@ -239,7 +239,7 @@ $formOrder = ActiveForm::begin([
                 echo $this->render('_fields_payment', array(
                         'model' => $this->context->form,
                         'form' => $formOrder,
-                        'paymenyMethods' => $paymenyMethods)
+                        'paymentMethods' => $paymentMethods)
                 );
                 ?>
             </div>
