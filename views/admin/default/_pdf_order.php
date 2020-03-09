@@ -110,7 +110,7 @@ $currency = Yii::$app->currency;
                     <br/>
                     <?php
                     if($product->sku){
-                        echo $product->getAttributeLabel('sku').': <strong>'.$product->sku.'</strong>;';
+                        echo $product->getAttributeLabel('sku').': <strong>'.$product->sku.'</strong>; ';
                     }
                     $query = \panix\mod\shop\models\Attribute::find();
                     $query->where(['IN', 'name', array_keys($originalProduct->eavAttributes)]);
@@ -124,9 +124,11 @@ $currency = Yii::$app->currency;
                         echo '<strong>'.$q->renderValue($attributes[$q->name]) . '</strong>; ';
                     }
                     ?>
-
+                    <br/>
+                    <strong><?= $currency->number_format($price) ?></strong>
+                    <?= $currency->active['symbol'] ?> / <?= $originalProduct->units[$originalProduct->unit]; ?>
                 </td>
-                <td align="center"><?= $product->quantity; ?></td>
+                <td align="center"><strong><?= $product->quantity; ?></strong> <?= $originalProduct->units[$originalProduct->unit]; ?></td>
                 <td align="center"><?= $currency->number_format($price) ?>
                     <?= $currency->active['symbol'] ?></td>
                 <td align="center"><?= $currency->number_format($price * $product->quantity) ?>

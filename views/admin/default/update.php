@@ -37,12 +37,12 @@ use panix\ext\fancybox\Fancybox;
                 ?>
             </div>
 
+        <?php } else { ?>
+            <div class="alert alert-info">Товары можно будет добавить после создание заказа</div>
         <?php } ?>
-
-
     </div>
 </div>
-<div class="card bg-light">
+<div class="card">
     <div class="card-header">
         <h5>История действий заказа</h5>
     </div>

@@ -38,7 +38,7 @@ return [
     'SAVE_PDF' => 'Сохранить в PDF',
     'HISTORY_DELETE_PRODUCT' => 'Удалил товар',
     'HISTORY_CHANGE_PRODUCT' => 'Изменил товар',
-    'HISTORY_CREATE_PRODUCT' => 'Добавил товар {name}',
+    'HISTORY_CREATE_PRODUCT' => 'Добавил товар',
     'ERR_DEL_DELIVERY' => 'Ошибка удаления способа доставки. Он используется заказами.',
     'NO_FOUND_DELIVERY' => 'Способ доставки не найден.',
     'EDIT_USER' => 'Редактировать пользователя',

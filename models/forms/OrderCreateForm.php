@@ -70,6 +70,7 @@ class OrderCreateForm extends Model
             ['registerGuest', 'boolean'],
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
+			['user_phone', 'panix\ext\telinput\PhoneInputValidator'],
             //['promocode_id', 'validatePromoCode','on'=>['create-form-order']],
         ];
     }

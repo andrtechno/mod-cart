@@ -14,9 +14,7 @@ $form = ActiveForm::begin();
     <div class="card-body">
 
         <?=
-        $form->field($model, 'status_id')->dropDownList(ArrayHelper::map(OrderStatus::find()->all(), 'id', 'name'), [
-            'prompt' => html_entity_decode($model::t('SELECT_STATUS'))
-        ]);
+        $form->field($model, 'status_id')->dropDownList(ArrayHelper::map(OrderStatus::find()->all(), 'id', 'name'));
         ?>
         <?=
         $form->field($model, 'payment_id')->dropDownList(ArrayHelper::map(Payment::find()->all(), 'id', 'name'), [
@@ -27,7 +25,6 @@ $form = ActiveForm::begin();
         $form->field($model, 'delivery_id')->dropDownList(ArrayHelper::map(Delivery::find()->all(), 'id', 'name'), [
             'prompt' => html_entity_decode($model::t('SELECT_DELIVERY'))
         ]);
-        ?>
         <?= $form->field($model, 'ttn')->textInput()->hint('После заполнение ТТН, клиенту будет отправлено уведомление на почту.'); ?>
         <?= $form->field($model, 'paid')->checkbox(); ?>
         <?= $form->field($model, 'user_name')->textInput(); ?>

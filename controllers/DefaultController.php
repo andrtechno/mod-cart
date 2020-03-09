@@ -283,7 +283,7 @@ class DefaultController extends WebController
         $order->delivery_id = $this->form->delivery_id;
         $order->payment_id = $this->form->payment_id;
         $order->promocode_id = $this->form->promocode_id;
-
+		$order->status_id = 1;
         if ($order->validate()) {
             $order->save();
         } else {
@@ -471,10 +471,13 @@ class DefaultController extends WebController
         if (!Yii::$app->user->isGuest) {
             $searchModel = new OrderSearch();
 
+            $this->pageName = Yii::t('cart/default', 'MY_ORDERS');
+            $this->breadcrumbs[] = $this->pageName;
+
             //Yii::$app->request->getQueryParams()
             $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
             $dataProvider->query->andWhere(['user_id' => Yii::$app->user->id]);
-            $this->pageName = Yii::t('cart/default', 'MY_ORDERS');
+
             $this->view->title = $this->pageName;
             return $this->render('user_orders', [
                 'dataProvider' => $dataProvider,

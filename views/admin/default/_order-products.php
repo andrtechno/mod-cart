@@ -27,7 +27,7 @@ echo GridView::widget([
         'title' => Yii::t('cart/admin', 'ORDER_PRODUCTS'),
         'buttons' => [
             [
-                'label' => 'добавить товар',
+                'label' => Yii::t('shop/admin', 'CREATE_PRODUCT'),
                 'url' => 'javascript:openAddProductDialog(' . $model->id . ');',
                 'options' => ['class' => 'btn btn-success btn-sm']
             ]
@@ -49,7 +49,13 @@ echo GridView::widget([
             'format' => 'raw',
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                return ($model->originalProduct) ? Html::a($model->name . ' [' . $model->product_id . ']', $model->originalProduct->getUrl()) : $model->name;
+                if($model->currency_id){
+                    $priceValue = Yii::$app->currency->convert($model->price,$model->currency_id);
+                }else{
+                    $priceValue = $model->price;
+                }
+                $price = Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
+                return (($model->originalProduct) ? Html::a($model->name . ' [' . $model->product_id . ']', $model->originalProduct->getUrl()) : $model->name).'<br/>'.$price;
             },
         ],
         [

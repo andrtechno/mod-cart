@@ -1,7 +1,7 @@
 <?php
 
 use panix\engine\Html;
-use yii\widgets\Pjax;
+use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
 use panix\mod\shop\models\search\ProductSearch;
 use panix\mod\cart\models\search\OrderProductSearch;
@@ -15,9 +15,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
 
 Pjax::begin([
     'id' => 'pjax-container-productlist',
-   // 'clientOptions' => ['method' => 'POST'],
-   // 'enablePushState' => false,
-    //'linkSelector' => 'a:not(.linkTarget)'
+    'dataProvider' => $dataProvider,
 ]);
 
 echo GridView::widget([
@@ -26,7 +24,7 @@ echo GridView::widget([
     'dataProvider' => $dataProvider,
     'enableLayout'=>false,
     //'filterModel' => $searchModel,
-
+    'filterModel' => $searchModel,
     'columns' => [
         [
             'format' => 'raw',
@@ -36,8 +34,24 @@ echo GridView::widget([
                 return $model->renderGridImage();
             },
         ],
-        'name',
-        'sku',
+        [
+            'attribute' => 'name',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-left'],
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
+                return $model->name;
+            },
+        ],
+        [
+            'attribute' => 'sku',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-left'],
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
+                return $model->sku;
+            },
+        ],
         [
             'attribute' => 'price',
             'format' => 'raw',

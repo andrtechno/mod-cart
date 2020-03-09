@@ -522,15 +522,17 @@ class Order extends ActiveRecord
      */
     public function sendClientEmail()
     {
-        $mailer = Yii::$app->mailer;
-        $mailer->htmlLayout = '@cart/mail/layouts/client';
-        $mailer->compose('@cart/mail/order.tpl', ['order' => $this])
-            ->setFrom('noreply@' . Yii::$app->request->serverName)
-            ->setTo($this->user_email)
-            ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))
-            ->send();
+		if ($this->user_email) {
+			$mailer = Yii::$app->mailer;
+			$mailer->htmlLayout = '@cart/mail/layouts/client';
+			$mailer->compose('@cart/mail/order.tpl', ['order' => $this])
+				->setFrom('noreply@' . Yii::$app->request->serverName)
+				->setTo($this->user_email)
+				->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))
+				->send();
 
-        return $mailer;
+			return $mailer;
+		}
     }
 
 }

@@ -29,7 +29,7 @@ class CartWidget extends Widget
             'items' => $items
         ];
         if (!Yii::$app->request->isAjax)
-            echo Html::beginTag('div', ['id' => 'cart']);
+            echo Html::beginTag('div', ['class' => 'cart']);
         echo $this->render($this->skin, $dataRender);
         if (!Yii::$app->request->isAjax)
             echo Html::endTag('div');

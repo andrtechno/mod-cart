@@ -22,6 +22,9 @@ echo GridView::widget([
         ]
     ],
     'columns' => [
+        [
+            'class' => '\panix\engine\grid\sortable\Column',
+        ],
         'name',
         'description:html',
         [

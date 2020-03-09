@@ -5,6 +5,11 @@ use yii\jui\Spinner;
 use panix\engine\Html;
 use panix\mod\shop\models\Product;
 
+/**
+ * @var $deliveryMethods \panix\mod\cart\models\Delivery
+ * @var $paymentMethods \panix\mod\cart\models\Payment
+ */
+
 $this->registerJs("
 //cart.selectorTotal = '#total';
 var orderTotalPrice = '$totalPrice';

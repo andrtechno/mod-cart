@@ -94,6 +94,12 @@ class DefaultController extends AdminController
 
         $this->buttons = [
             [
+                'label' => Yii::t('cart/admin', 'ORDER_VIEW'),
+                'icon' => 'eye',
+                'url' => $model->getUrl(),
+                'options' => ['class' => 'btn btn-primary', 'target' => '_blank']
+            ],
+            [
                 'label' => Yii::t('cart/admin', 'PRINT_PDF'),
                 'icon' => 'print',
                 'url' => ['print', 'id' => $model->id],
@@ -106,25 +112,28 @@ class DefaultController extends AdminController
             $model->save();
 
             if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
-                $mailer = Yii::$app->mailer;
-                $mailer->htmlLayout = '@cart/mail/layouts/client';
-                $mailer->compose(['html' => '@cart/mail/changed_status.tpl'], ['order' => $model])
-                    ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
-                    ->setTo([$model->user_email])
-                    ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
-                    ->send();
+                if ($model->user_email) {
+                    $mailer = Yii::$app->mailer;
+                    $mailer->htmlLayout = '@cart/mail/layouts/client';
+                    $mailer->compose(['html' => '@cart/mail/changed_status.tpl'], ['order' => $model])
+                        ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
+                        ->setTo([$model->user_email])
+                        ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
+                        ->send();
+                }
             }
 
 
-
-            if ($old['ttn'] != $model->ttn && !empty($model->ttn)) {
-                $mailer = Yii::$app->mailer;
-                $mailer->htmlLayout = '@cart/mail/layouts/client';
-                $mailer->compose(['html' => '@cart/mail/ttn.tpl'], ['order' => $model])
-                    ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
-                    ->setTo([$model->user_email])
-                    ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($model->id)))
-                    ->send();
+            if (isset($old['ttn']) != $model->ttn && !empty($model->ttn)) {
+                if ($model->user_email) {
+                    $mailer = Yii::$app->mailer;
+                    $mailer->htmlLayout = '@cart/mail/layouts/client';
+                    $mailer->compose(['html' => '@cart/mail/ttn.tpl'], ['order' => $model])
+                        ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
+                        ->setTo([$model->user_email])
+                        ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($model->id)))
+                        ->send();
+                }
             }
 
 

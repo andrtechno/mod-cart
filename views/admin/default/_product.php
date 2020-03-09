@@ -28,7 +28,7 @@ $data_after = $data->getDataAfter();
         <td colspan="2">
             <?php if ($data_before['image']) { ?>
                 <div class="float-left mr-3">
-                    <?php echo Html::img($data_before['image'], ['height' => 50, 'class' => 'img-thumbnail']); ?>
+                    <?php echo Html::img($data_before['image'], ['height' => 50, 'class' => '']); ?>
                 </div>
             <?php } ?>
             <div class="float-left">
@@ -43,7 +43,7 @@ $data_after = $data->getDataAfter();
         <td colspan="2">
             <?php if ($data_before['image']) { ?>
                 <div class="float-left mr-3">
-                    <?php echo Html::img($data_before['image'], ['height' => 50, 'class' => 'img-thumbnail']); ?>
+                    <?php echo Html::img($data_before['image'], ['height' => 50, 'class' => '']); ?>
                 </div>
             <?php } ?>
             <div class="float-left">

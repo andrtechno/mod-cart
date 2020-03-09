@@ -34,6 +34,9 @@ class Cart extends Component
     private $session;
     public $data = [];
 
+    /** @var \panix\mod\shop\models\Product */
+    protected $productModel;
+
     public function init()
     {
         $this->session = Yii::$app->session;
@@ -42,6 +45,11 @@ class Cart extends Component
         $this->session->cookieParams = ['lifetime' => 60];
         if (!isset($this->session['cart_data']) || !is_array($this->session['cart_data']))
             $this->session['cart_data'] = [];
+
+
+        /** @var \panix\mod\shop\models\Product $productModel */
+        $this->productModel = Yii::$app->getModule('shop')->model('Product');
+
     }
 
     /**
@@ -123,19 +131,19 @@ class Cart extends Component
         foreach ($data as $index => &$item) {
 
             $item['variant_models'] = [];
-            $item['model'] = Product::findOne($item['product_id']);
+            $item['model'] = $this->productModel::findOne($item['product_id']);
             // Load configurable product
             if ($item['configurable_id'])
-                $item['configurable_model'] = Product::findOne($item['configurable_id']);
+                $item['configurable_model'] = $this->productModel::findOne($item['configurable_id']);
 
 
             // Process variants @todo PANIX need test
 
             if (!empty($item['variants']))
                 $item['variant_models'] = ProductVariant::find()
-                        ->joinWith(['productAttribute', 'option'])
-                        ->where([ProductVariant::tableName().'.id'=>$item['variants']])
-                        ->all();
+                    ->joinWith(['productAttribute', 'option'])
+                    ->where([ProductVariant::tableName() . '.id' => $item['variants']])
+                    ->all();
 
             // If product was deleted during user session!.
             if (!$item['model'])
@@ -157,7 +165,7 @@ class Cart extends Component
         $data = $this->getDataWithModels();
         foreach ($data as $item) {
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
-            $result += Product::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
+            $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
         }
         return $result;
     }
@@ -168,15 +176,15 @@ class Cart extends Component
     public function getTotalPriceAllCurrency()
     {
         $total = [];
-       // $data = $this->getDataWithModels();
+        // $data = $this->getDataWithModels();
         foreach ($this->data as $item) {
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
             if ($item['currency_id']) {
                 $currency = Currency::findOne($item['currency_id']);
                 // print_r($currency);
-                $total[$currency->iso] += (Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity']);
+                $total[$currency->iso] += ($this->productModel::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity']);
             } else {
-                $total[Yii::$app->currency->main['iso']] += Product::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
+                $total[Yii::$app->currency->main['iso']] += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
             }
         }
         return $total;
@@ -196,7 +204,6 @@ class Cart extends Component
         $rowTotal = 0;
         $calcPrice = 0;
 
-
         foreach ($data as $index => $quantity) {
             if ((int)$quantity < 1)
                 $quantity = 1;
@@ -208,9 +215,9 @@ class Cart extends Component
                 $data = $currentData[$index];
 
 
-                $productModel = Product::findOne($data['product_id']);
+                $productModel = $this->productModel::findOne($data['product_id']);
 
-                $calcPrice = Product::calculatePrices($productModel, $data['variants'], $data['configurable_id'], $data['quantity']);
+                $calcPrice = $this->productModel::calculatePrices($productModel, $data['variants'], $data['configurable_id'], $data['quantity']);
                 if ($data['configurable_id']) {
 
                     $rowTotal = $calcPrice * $data['quantity'];
@@ -236,7 +243,7 @@ class Cart extends Component
         return [
             'unit_price' => Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice)),
             'rowTotal' => Yii::$app->currency->number_format($rowTotal),
-            'totalPrice' => Yii::$app->currency->number_format(Yii::$app->cart->getTotalPrice()),
+            'totalPrice' => Yii::$app->currency->number_format($this->getTotalPrice()),
         ];
     }
 
