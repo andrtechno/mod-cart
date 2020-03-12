@@ -415,19 +415,20 @@ class DefaultController extends WebController
     }
 
     /**
-     * Process result and exit!
+     * Process result
+     * @param null $product
+     * @return Response
      */
     protected function _finish($product = null)
     {
-
-        echo Json::encode([
+        $data = [
             'errors' => $this->_errors,
             'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
-                'cart' => \yii\helpers\Html::a(Yii::t('cart/default', 'IN_CART'), '/cart'),
                 'product_name' => $product
             ]),
-        ]);
-        exit;
+            'url'=>Url::to(['/cart/default/index'])
+        ];
+        return $this->asJson($data);
     }
 
     /**

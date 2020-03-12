@@ -29,6 +29,6 @@ return [
     'ERROR_DELIVERY' => 'Необходимо выбрать способ доставки.',
     'NEW_ORDER_ID' => 'Номер заказа №{id}',
     'CREATE_ORDER' => 'Добавить заказ',
-    'SELECT_PAYMENT' => '&mdash; Оптала &mdash;',
+    'SELECT_PAYMENT' => '&mdash; Оплата &mdash;',
     'SELECT_DELIVERY' => '&mdash; Доставка &mdash;',
 ];

@@ -47,8 +47,8 @@ class DefaultController extends AdminController
         ]));
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
-        return $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]) . ".pdf", 'I');
-
+        echo $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]) . ".pdf", 'I');
+		die;
     }
 
     public function actionIndex()
@@ -357,7 +357,8 @@ class DefaultController extends AdminController
 
             ]), 2);
             $mpdf->Ln();
-            return $mpdf->Output($this->action->id . ".pdf", 'I');
+            echo $mpdf->Output($this->action->id . ".pdf", 'I');
+            die;
         } else {
             $this->layout = 'mod.admin.views.layouts.print';
             $this->render($view, [
