@@ -66,11 +66,11 @@ cart = {
      */
     add_set: function (set_id) {
         $.ajax({
-            url: '/cart/add-set',
+            url: common.url('/cart/add-set'),
             type: 'POST',
             dataType: 'json',
             data: form.serialize(),
-            success: function (data, textStatus, xhr) {
+            success: function (data) {
                 if (data.errors) {
                     common.notify(data.errors, 'error');
                 } else {
