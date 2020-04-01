@@ -82,12 +82,13 @@ class Module extends WebModule implements BootstrapInterface
                 'label' => Yii::t('cart/admin', 'ORDERS'),
                 'icon' => $this->icon,
                 'badge' => $this->count['num'],
-                'badgeOptions' => ['id' => 'navbar-badge-cart'],
+                'badgeOptions' => ['id' => 'navbar-badge-cart','class' => 'badge badge-success badge-pulse-success'],
                 'items' => [
                     [
                         'label' => Yii::t('cart/admin', 'ORDERS_LIST'),
                         'url' => ['/admin/cart'],
                         'badge' => $this->count['num'],
+                        'badgeOptions' => ['class' => 'badge badge-success badge-pulse'],
                         'icon' => $this->icon,
                     ],
                     [

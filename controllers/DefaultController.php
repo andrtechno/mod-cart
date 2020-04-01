@@ -368,6 +368,9 @@ class DefaultController extends WebController
         // Send email to admin.
         $order->sendAdminEmail();
         // $order->detachBehavior('notification');
+
+
+        \machour\yii2\notifications\components\Notification::notify(\machour\yii2\notifications\components\Notification::KEY_NEW_ORDER, 1,$order->primaryKey);
         return $order;
     }
 

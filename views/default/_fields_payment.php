@@ -5,7 +5,7 @@ use panix\engine\Html;
 /**
  * @var $form \yii\widgets\ActiveForm
  * @var $model \panix\mod\cart\models\forms\OrderCreateForm
- * @var array $paymenyMethods \panix\mod\cart\models\Payment
+ * @var array $paymentMethods \panix\mod\cart\models\Payment
  */
 ?>
 <div class="form-group">
@@ -28,7 +28,7 @@ use panix\engine\Html;
         echo '</div>';*/
   //  }
 
-    echo $form->field($model,'payment_id')->radioList(\yii\helpers\ArrayHelper::map($paymenyMethods,'id','name'),[
+    echo $form->field($model,'payment_id')->radioList(\yii\helpers\ArrayHelper::map($paymentMethods,'id','name'),[
         'item' => function($index, $label, $name, $checked, $value) {
             $return = '<div><label class="payment_checkbox" data-value="'.Html::encode($label).'">';
             $return .= '<input type="radio" name="' . $name . '" value="' . $value . '" tabindex="3"> ';
