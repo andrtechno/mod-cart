@@ -45,7 +45,7 @@ class m170908_134034_cart extends Migration
             'user_name' => $this->string(100),
             'user_email' => $this->string(100),
             'user_address' => $this->string(255),
-            'user_phone' => $this->string(30),
+            'user_phone' => $this->phone(),
             'user_comment' => $this->text(),
             'admin_comment' => $this->text()->comment('Admin Comment'),
             'invoice' => $this->string(100),
