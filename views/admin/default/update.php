@@ -5,6 +5,9 @@ use yii\helpers\Html;
 use panix\ext\fancybox\Fancybox;
 
 ?>
+<?php if(Yii::$app->hasModule('novaposhta')){ ?>
+<?= Html::a('create express',['/admin/novaposhta/express-invoice/create','order_id'=>$model->primaryKey],['class'=>'btn btn-outline-primary']); ?>
+<?php } ?>
 <div class="row">
     <div class="col-sm-6">
         <div class="card bg-light">

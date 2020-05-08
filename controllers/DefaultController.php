@@ -306,6 +306,7 @@ class DefaultController extends WebController
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
             $ordered_product->price_purchase = $item['model']->price_purchase;
+
             // if($item['currency_id']){
             //     $currency = Currency::model()->findByPk($item['currency_id']);
             //$ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
