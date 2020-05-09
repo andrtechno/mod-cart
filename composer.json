@@ -1,6 +1,6 @@
 {
     "name": "panix/mod-cart",
-    "description": "Коризина",
+    "description": "Корзина",
     "homepage": "https://github.com/andrtechno/mod-cart",
     "type": "yii2-extension",
     "license": "MIT",
