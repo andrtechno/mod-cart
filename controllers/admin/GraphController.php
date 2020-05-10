@@ -3,7 +3,9 @@
 namespace panix\mod\cart\controllers\admin;
 
 
+use panix\engine\CMS;
 use panix\mod\cart\models\Order;
+use panix\mod\cart\models\OrderStatus;
 use Yii;
 use yii\db\Query;
 use yii\web\NotFoundHttpException;
@@ -21,16 +23,20 @@ class GraphController extends AdminController
 
     public function actionIndex()
     {
-        $this->pageName = Yii::t('cart/admin', 'ORDERS');
-        $this->buttons = [
-            [
-                'label' => Yii::t('cart/default', 'CREATE_ORDER'),
-                'url' => ['/admin/cart/default/create'],
-                'options' => ['class' => 'btn btn-success']
-            ]
-        ];
+        $this->pageName = Yii::t('cart/admin', 'INCOME');
 
         $this->breadcrumbs[] = $this->pageName;
+
+
+        $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())
+            ->where(['use_in_stats' => 1])
+            ->select(['id']);
+        $queryStatusIds = $queryStatus->all();
+
+        $statusIds = [];
+        foreach ($queryStatusIds as $status) {
+            $statusIds[] = $status['id'];
+        }
 
 
         $data = [];
@@ -43,100 +49,133 @@ class GraphController extends AdminController
         $start_month = ($month) ? $month : '01';
         $end_month = ($month) ? $month : '12';
 
-        $orders = Order::find()
-            ->where(['between', 'updated_at', "{$year}-01-01 00:00:00", "{$year}-12-01 23:59:59"])
-            ->all();
-
-        //$query = new Query();
-        //$query->select('updated_at, total_price')
-        // $query->select(['order.updated_at', 'order.total_price', 'COUNT(products) AS productsCount'])
-        // ->from(['order'=>Order::tableName()])
-        // ->leftJoin(['products'=>OrderProduct::tableName()], 'order.id = products.order_id')
-        // ->where(['between', 'updated_at', "{$year}-01-01 00:00:00", "{$year}-12-01 23:59:59"]);
-//echo $query->createCommand()->rawSql;die;
-        //$orders = $query->all();
-
-
         $data = [];
-        $currentMonths = [];
-        $percent = [];
-        $highchartsDrill = [];
         $highchartsData = [];
-        foreach ($orders as $order) {
-            $index = date('n', strtotime($order->updated_at));
 
-            $currentMonths[$index][] = $order;
-            $percent[$index] = 0;
-            $data[$index] = [];
-            $data[$index]['total_price'] = 0;
-            $data[$index]['product_count'] = 0;
-            $data[$index]['order_count'] = count($currentMonths[$index]);
-            foreach ($currentMonths[$index] as $o) {
-
-                //$percent[$index] += $o->productsCount; //todo very many queries, need add table column countproducts
-                $percent[$index] += 11;
-                $data[$index]['total_price'] += $o->total_price;
-                $data[$index]['product_count'] = $percent[$index];
-            }
-
-        }
-
-
-        $counter = array_sum($percent);
+        $total = 0;
         for ($i = 0; $i < 12; $i++) {
             $index = $i + 1;
-            $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, $index, 2019);
-            $highchartsDrill[$i] = [];
-            $highchartsDrill[$i]['id'] = "Month_{$index}";
-            $highchartsDrill[$i]['name'] = date('F', strtotime("{$year}-{$index}"));
-
-
-            foreach (range(1, $monthDaysCount) as $day) {
-                $highchartsDrill[$i]['data'][] = [date('l', strtotime("{$year}-{$index}-{$day}")) . ' ' . $day . '', 4.4 + $index, '444'];
-                /* $highchartsDrill[$i]['data'][] = array(
-                     //'x' => $i,
-                     'y' => '213',
-                     'name' => $index,
-                     'value' => 12321132,
-                     'color' => $this->getSeasonColor($index),
-                 );*/
-            }
-
-
-            $total_price = (isset($data[$index]['total_price'])) ? $data[$index]['total_price'] : 0;
+            $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, $index, 2020);
             $product_count = (isset($data[$index]['product_count'])) ? $data[$index]['product_count'] : 0;
-            $order_count = (isset($data[$index]['order_count'])) ? $data[$index]['order_count'] : 0;
-            $val = (isset($percent[$index])) ? ($percent[$index] * 100) / $counter : 0;
 
+            $query = (new \yii\db\Query())->from(Order::tableName())
+                ->where(['between', 'created_at', strtotime("{$year}-{$index}-01 00:00:00"), strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59")])
+                ->andWhere(['status_id' => $statusIds])
+                ->select(['SUM(total_price_purchase - total_price) as sum']);
+
+
+            $queryData = $query->one();
+
+            $total += $queryData['sum'];
             $highchartsData[] = [
-                //'x' => $i,
-                'y' => $val,
-                'name' => date('F', strtotime("{$year}-{$index}")),
+
+                //'y' => (double)$queryData['sum'],
+                'y' => (double)$queryData['sum'],
+                'name' => Yii::t('cart/admin', date('F', strtotime("{$year}-{$index}"))),
+                'year' => $year,
+                'month' => $index,
                 'products' => $product_count,
-                'value' => $order_count,
-                'total_price' => Yii::$app->currency->number_format($total_price) . ' ' . Yii::$app->currency->active['symbol'],
+                'value' => number_format($queryData['sum'], 0, '.', ' '),
                 // 'color' => $this->getSeasonColor($index),
-                "drilldown" => "Month_{$index}"
+                //"drilldown" => "Month_{$index}"
+                'drilldown' => []
             ];
         }
 
 
         return $this->render('index', [
             'highchartsData' => $highchartsData,
-            'highchartsDrill' => $highchartsDrill,
             'data_total' => $data_total,
             'year' => $year,
-            'month' => $month
+            'month' => $month,
+            'total' => number_format($total, 0, '.', ' ')
         ]);
     }
 
 
-    public function actionTest(){
-        return $this->render('test', [
+    public function actionTest()
+    {
+        $data = [];
+        for ($x = 0; $x < 10000; $x++) {
+            $data[] = [
+                1,
+                1,
+                1,
+                rand(1500, 5000),
+                rand(2000, 6000),
+                //rand(1,2),
+                strtotime(rand(1, 28) . "-" . rand(1, 12) . "-2020 12:59:59")
+            ];
+        }
 
-        ]);
+
+        Yii::$app->db->createCommand()->batchInsert(Order::tableName(), [
+            'delivery_id',
+            'payment_id',
+            'status_id',
+            'total_price',
+            'total_price_purchase',
+           // 'status_id',
+            'created_at'
+        ], $data)->execute();
 
     }
 
+    public function actionTestajax()
+    {
+
+
+        $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())
+            ->where(['use_in_stats' => 1])
+            ->select(['id']);
+        $queryStatusIds = $queryStatus->all();
+        $statusIds = [];
+        foreach ($queryStatusIds as $status) {
+            $statusIds[] = $status['id'];
+        }
+
+
+        $year = Yii::$app->request->get('year');
+        $month = Yii::$app->request->get('month');
+        $name = Yii::$app->request->get('name');
+        $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+        $data = [];
+        $total = 0;
+        foreach (range(1, $monthDaysCount) as $k => $day) {
+
+            $query = (new \yii\db\Query())->from(Order::tableName())
+                ->where(['between', 'created_at', strtotime("{$year}-{$month}-{$day} 00:00:00"), strtotime("{$year}-{$month}-{$day} 23:59:59")])
+                ->andWhere(['status_id' => $statusIds])
+                ->select(['SUM(total_price_purchase - total_price) as sum']);
+
+
+            $queryData = $query->one();
+            $value = ($queryData['sum']) ? $queryData['sum'] : 0;
+            $total += $value;
+            $data[] = [
+                'name' => Yii::t('cart/admin', date('l', strtotime("{$year}-{$month}-{$day}"))) . ', ' . date('d', strtotime("{$year}-{$month}-{$day}")),
+                'y' => (double)$value,
+                'value' => number_format($value, 0, '.', ' '),
+                'products' => 10
+            ];
+
+
+        }
+
+
+        $response = [
+            'name' => Yii::$app->request->get('name'),
+            'value' => 'test',
+            'data' => $data
+        ];
+
+
+        return $this->asJson([
+            'data' => $response,
+            'subtitle' => 'Итого: ' . number_format($total, 0, '.', ' ') . ' ' . Yii::$app->currency->active['symbol'],
+            'title' => 'Доход за ' . $name . ' ' . $year . 'г.'
+        ]);
+    }
 
 }

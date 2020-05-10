@@ -1,4 +1,4 @@
-Module cart
+mod-cart
 ===========
 [Описание на Русском](README_RU.md)
 

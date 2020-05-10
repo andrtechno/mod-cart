@@ -8,6 +8,7 @@ namespace panix\mod\cart\migrations;
  *
  * Class m170908_134034_cart
  */
+
 use Yii;
 use panix\engine\db\Migration;
 use panix\mod\cart\models\Order;
@@ -64,6 +65,7 @@ class m170908_134034_cart extends Migration
             'id' => $this->primaryKey()->unsigned(),
             'name' => $this->string(100),
             'color' => $this->string(7),
+            'use_in_stats' => $this->boolean()->defaultValue(0),
             'ordern' => $this->integer(),
         ], $this->tableOptions);
 
@@ -155,9 +157,9 @@ class m170908_134034_cart extends Migration
         $this->addIndexes();
 
 
-        $this->batchInsert(OrderStatus::tableName(), ['name', 'color', 'ordern'], [
-            ['Новый', '#67bf3b', 1],
-            ['Отправлен', '#cссссс', 2],
+        $this->batchInsert(OrderStatus::tableName(), ['name', 'color', 'ordern','use_in_stats'], [
+            ['Новый', '#67bf3b', 1, 0],
+            ['Отправлен', '#cссссс', 2, 1],
         ]);
 
 
@@ -224,10 +226,14 @@ class m170908_134034_cart extends Migration
         $this->createIndex('secret_key', Order::tableName(), 'secret_key');
         $this->createIndex('delivery_id', Order::tableName(), 'delivery_id');
         $this->createIndex('payment_id', Order::tableName(), 'payment_id');
+        $this->createIndex('promocode_id', Order::tableName(), 'promocode_id');
         $this->createIndex('status_id', Order::tableName(), 'status_id');
+        $this->createIndex('created_at', Order::tableName(), 'created_at');
+        $this->createIndex('updated_at', Order::tableName(), 'updated_at');
 
         // order status indexes
         $this->createIndex('ordern', OrderStatus::tableName(), 'ordern');
+        $this->createIndex('use_in_stats', OrderStatus::tableName(), 'use_in_stats');
 
 
         // order products indexes
