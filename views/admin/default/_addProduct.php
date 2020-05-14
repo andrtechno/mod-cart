@@ -14,8 +14,9 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
 
 
 Pjax::begin([
-    'id' => 'pjax-container-productlist',
     'dataProvider' => $dataProvider,
+    'enablePushState'=>false,
+    'enableReplaceState'=>false
 ]);
 
 echo GridView::widget([

@@ -5,14 +5,16 @@ namespace panix\mod\cart\models\search;
 use panix\engine\data\ActiveDataProvider;
 use panix\mod\cart\models\OrderStatus;
 
-class OrderStatusSearch extends OrderStatus {
+class OrderStatusSearch extends OrderStatus
+{
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
-            [['id'], 'integer'],
+            [['id', 'use_in_stats'], 'integer'],
             [['name', 'slug'], 'safe'],
         ];
     }
@@ -20,7 +22,8 @@ class OrderStatusSearch extends OrderStatus {
     /**
      * @inheritdoc
      */
-    public function scenarios() {
+    public function scenarios()
+    {
         // bypass scenarios() implementation in the parent class
         return \yii\base\Model::scenarios();
     }
@@ -32,7 +35,8 @@ class OrderStatusSearch extends OrderStatus {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params)
+    {
         $query = OrderStatus::find();
 
         $dataProvider = new ActiveDataProvider([
@@ -53,6 +57,7 @@ class OrderStatusSearch extends OrderStatus {
 
 
         $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['use_in_stats' => $this->use_in_stats]);
 
         return $dataProvider;
     }

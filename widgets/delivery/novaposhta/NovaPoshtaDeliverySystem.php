@@ -4,6 +4,7 @@ namespace panix\mod\cart\widgets\delivery\novaposhta;
 
 use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\widgets\delivery\novaposhta\api\NovaPoshtaApi;
+use panix\mod\novaposhta\models\Cities;
 use Yii;
 use panix\engine\CMS;
 use panix\mod\cart\models\Delivery;
@@ -175,17 +176,19 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
     public function renderDeliveryForm(Delivery $method)
     {
         $setting = $this->getSettings($method->id);
-        $postApi = new NovaPoshtaApi($setting->api_key);
+      //  $postApi = new NovaPoshtaApi($setting->api_key);
 
 
         return Yii::$app->view->renderAjax("@cart/widgets/delivery/{$method->system}/_view", [
             // 'form'=>$form,
-            'cities' => $postApi->getCities(),
+            /*'cities' => $postApi->getCities(),
             'address' => $postApi->getAddressGeneral([
                 "methodProperties" => [
                     "CityName" => Yii::$app->request->post('city')
                 ],
-            ]),
+            ]),*/
+            'cities'=>Cities::getList(),
+            'address'=>[],
             'method' => $method
         ]);
     }
@@ -249,5 +252,9 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
     public function getSettingsKey($paymentMethodId)
     {
         return $paymentMethodId . '_NovaPoshtaDeliverySystem';
+    }
+
+    public function getModel(){
+        return new NovaPoshtaConfigurationModel();
     }
 }

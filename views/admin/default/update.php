@@ -1,12 +1,12 @@
 <?php
 
-use yii\helpers\Html;
+use panix\engine\Html;
 
 use panix\ext\fancybox\Fancybox;
 
 ?>
 <?php if(Yii::$app->hasModule('novaposhta')){ ?>
-<?= Html::a('create express',['/admin/novaposhta/express-invoice/create','order_id'=>$model->primaryKey],['class'=>'btn btn-outline-primary']); ?>
+<?= Html::a(Html::icon('novaposhta').' '.Yii::t('novaposhta/default','CREATE_EXPRESS_WAYBILL_CART'),['/admin/novaposhta/express-invoice/create','order_id'=>$model->primaryKey],['data-pjax'=>0,'class'=>'btn btn-danger']); ?>
 <?php } ?>
 <div class="row">
     <div class="col-sm-6">

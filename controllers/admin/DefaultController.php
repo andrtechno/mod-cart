@@ -151,7 +151,7 @@ class DefaultController extends AdminController
     {
 
         $request = Yii::$app->request;
-        $order_id = $request->post('id');
+        $order_id = $request->get('id');
 
         $model = Order::findModel($order_id, Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
 

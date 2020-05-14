@@ -4,6 +4,7 @@ use yii\helpers\Url;
 use yii\jui\Spinner;
 use panix\engine\Html;
 use panix\mod\shop\models\Product;
+use yii\widgets\ActiveForm;
 
 /**
  * @var $deliveryMethods \panix\mod\cart\models\Delivery
@@ -38,30 +39,48 @@ var orderTotalPrice = '$totalPrice';
             }
         });
     }
-    /*function submitform() {
-        if (document.cartform.onsubmit &&
-            !document.cartform.onsubmit()) {
-            return;
-        }
-        document.cartform.submit();
-    }*/
+    
+/*
 
+
+
+$('#contact-form').yiiActiveForm('add', {
+    id: 'address',
+    name: 'address',
+    container: '.field-address',
+    input: '#address',
+    error: '.help-block',
+    validate:  function (attribute, value, messages, deferred, form) {
+        yii.validation.required(value, messages, {message: \"Validation Message Here\"});
+    }
+});
+
+
+
+function submitform() {
+    if (document.cartForm.onsubmit && !document.cartForm.onsubmit()) {
+        return;
+    }
+    document.cartForm.submit();
+}
+$(document).on('click','#cartForm button[type=\"submit\"]', function(e){
+e.preventDefault();
+console.log($('#cartForm').yiiActiveForm('validate'));
+
+
+return false;
+});*/
 
 ", yii\web\View::POS_END);
-?>
-<?php
-use yii\widgets\ActiveForm;
 
 $formOrder = ActiveForm::begin([
     'enableClientValidation' => false,
-
     'enableAjaxValidation' => true,
     'action' => ['/cart'],
-    'id' => 'cart-form',
+    'id' => 'cartForm',
     'options' => ['class' => 'form-horizontal'],
 ]) ?>
 
-<?php //echo Html::beginForm(['/cart'], 'post', array('id' => 'cart-form', 'name' => 'cartform')) ?>
 <div class="row">
     <?php
     if (empty($items)) { ?>
@@ -239,6 +258,7 @@ $formOrder = ActiveForm::begin([
                         'deliveryMethods' => $deliveryMethods)
                 );
                 ?>
+
                 <h4 class="text-center2"><?= Yii::t('cart/default', 'PAYMENT'); ?></h4>
                 <?php
                 echo $this->render('_fields_payment', array(

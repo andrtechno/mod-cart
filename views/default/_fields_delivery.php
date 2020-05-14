@@ -6,7 +6,9 @@ use panix\engine\Html;
  * @var $form \yii\widgets\ActiveForm
  * @var $model \panix\mod\cart\models\forms\OrderCreateForm
  * @var $deliveryMethods \panix\mod\cart\models\Delivery
+ * @var $this \yii\web\View
  */
+
 ?>
 <?php if ($deliveryMethods) { ?>
     <div class="form-group required ">
@@ -25,7 +27,7 @@ use panix\engine\Html;
                 'value' => $delivery->id,
                 'data-price' => Yii::$app->currency->convert($delivery->price),
                 'data-free-from' => Yii::$app->currency->convert($delivery->free_from),
-                'onClick' => 'cart.recountTotalPrice(this); ',
+                'onClick' => 'cart.recountTotalPrice(this); cart.delivery();',
                 'data-value' => Html::encode($delivery->name),
                 //'id' => 'delivery_id_' . $delivery->id,
                 'class' => 'delivery_checkbox'
@@ -53,8 +55,8 @@ use panix\engine\Html;
 
 
         <?= Html::error($model, 'delivery_id', ['class' => 'help-block']); ?>
-
-        <?= $form->field($model, 'user_address') ?>
+        <div id="delivery-form"></div>
+        <div id="user-address-input"><?= $form->field($model, 'user_address') ?></div>
 
         <?php // Html::activeLabel($model, 'user_address', array('required' => true, 'class' => 'col-form-label')); ?>
         <?php // Html::activeTextInput($model, 'user_address', array('class' => 'form-control')); ?>

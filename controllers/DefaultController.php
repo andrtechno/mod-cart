@@ -283,9 +283,10 @@ class DefaultController extends WebController
         $order->delivery_id = $this->form->delivery_id;
         $order->payment_id = $this->form->payment_id;
         $order->promocode_id = $this->form->promocode_id;
-		$order->status_id = 1;
+        $order->status_id = 1;
         if ($order->validate()) {
             $order->save();
+
         } else {
             print_r($order->getErrors());
             die;
@@ -430,7 +431,7 @@ class DefaultController extends WebController
             'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
                 'product_name' => $product
             ]),
-            'url'=>Url::to(['/cart/default/index'])
+            'url' => Url::to(['/cart/default/index'])
         ];
         return $this->asJson($data);
     }

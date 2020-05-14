@@ -36,10 +36,14 @@ class m170908_134034_cart extends Migration
             'id' => $this->primaryKey()->unsigned(),
             'user_id' => $this->integer()->unsigned(),
             'secret_key' => $this->string(10)->notNull(),
-            'delivery_id' => $this->integer()->notNull()->unsigned(),
-            'payment_id' => $this->integer()->notNull()->unsigned(),
-            'status_id' => $this->integer()->notNull()->unsigned(),
-            'promocode_id' => $this->integer()->null()->unsigned(),
+            'delivery_id' => $this->integer()->unsigned()->notNull(),
+            'payment_id' => $this->integer()->unsigned()->notNull(),
+            'status_id' => $this->integer()->unsigned()->notNull(),
+            'promocode_id' => $this->integer()->unsigned()->null(),
+            'delivery_city' => $this->string(255),
+            'delivery_city_ref' => $this->string(32),
+            'delivery_warehouse' => $this->string(255),
+            'delivery_warehouse_ref' => $this->string(32),
             'delivery_price' => $this->money(10, 2),
             'total_price' => $this->money(10, 2),
             'total_price_purchase' => $this->money(10, 2),
@@ -49,7 +53,7 @@ class m170908_134034_cart extends Migration
             'user_phone' => $this->phone(),
             'user_comment' => $this->text(),
             'admin_comment' => $this->text()->comment('Admin Comment'),
-            'invoice' => $this->string(100),
+            'invoice' => $this->string(100)->comment('Счет'),
             'user_agent' => $this->string(255),
             'ip_create' => $this->string(50),
             'discount' => $this->string(10),
@@ -79,6 +83,8 @@ class m170908_134034_cart extends Migration
             'supplier_id' => $this->integer()->unsigned(),
             'manufacturer_id' => $this->integer()->unsigned(),
             'configurable_id' => $this->integer()->unsigned(),
+            'weight_class_id' => $this->integer(),
+            'weight' => $this->decimal(15, 4),
             'name' => $this->string(255),
             'discount' => $this->string(25)->null(),
             'configurable_name' => $this->text(),
@@ -157,9 +163,11 @@ class m170908_134034_cart extends Migration
         $this->addIndexes();
 
 
-        $this->batchInsert(OrderStatus::tableName(), ['name', 'color', 'ordern','use_in_stats'], [
+        $this->batchInsert(OrderStatus::tableName(), ['name', 'color', 'ordern', 'use_in_stats'], [
             ['Новый', '#67bf3b', 1, 0],
-            ['Отправлен', '#cссссс', 2, 1],
+            ['Удален', '#db6058', 2, 0],
+            ['Отправлен', '#b4b4c2', 2, 0],
+            ['Выполнен', '#e0e089', 2, 1],
         ]);
 
 
@@ -243,6 +251,7 @@ class m170908_134034_cart extends Migration
         $this->createIndex('supplier_id', OrderProduct::tableName(), 'supplier_id');
         $this->createIndex('configurable_id', OrderProduct::tableName(), 'configurable_id');
         $this->createIndex('manufacturer_id', OrderProduct::tableName(), 'manufacturer_id');
+        $this->createIndex('weight_class_id', OrderProduct::tableName(), 'weight_class_id');
 
         // order history indexes
         $this->createIndex('order_id', OrderHistory::tableName(), 'order_id');

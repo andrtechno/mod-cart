@@ -10,7 +10,7 @@ use panix\mod\cart\models\Order;
 <?php echo $this->render('_filter_pdf'); ?>
 <?php
 
-Pjax::begin(['dataProvider'=>$dataProvider]);
+Pjax::begin(['dataProvider' => $dataProvider]);
 
 echo GridView::widget([
     'tableOptions' => ['class' => 'table table-striped'],
@@ -45,7 +45,7 @@ echo GridView::widget([
             'contentOptions' => ['class' => 'text-center'],
             'value' => function ($model) {
                 /** @var $model Order */
-                return Html::tel($model->user_phone);
+                return ($model->user_phone) ? Html::tel($model->user_phone) : $model->user_phone;
             }
         ],
         [

@@ -8,7 +8,7 @@ use panix\engine\Html;
             <?= Html::img('/uploads/pres-logo.png', ['width' => 50]); ?>
         </td>
         <td width="60%">
-            <h1><?= Yii::$app->name; ?></h1>
+            <h1><?= Yii::$app->settings->get('app','sitename'); ?></h1>
         </td>
         <td width="30%" style="text-align: right"><strong>Доставка за период:</strong><br/>
             <p>c <strong><?= $start_date; ?></strong></p>

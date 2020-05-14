@@ -13,6 +13,7 @@ $form = ActiveForm::begin();
     <div class="card-body">
         <?= $form->field($model, 'name')->textInput(['maxlength' => 100]) ?>
         <?= $form->field($model, 'color')->widget(ColorPicker::class)->textInput(['maxlength' => 7]); ?>
+        <?= $form->field($model, 'use_in_stats')->checkbox(); ?>
     </div>
     <div class="card-footer text-center">
         <?= $model->submitButton(); ?>

@@ -8,7 +8,7 @@ class OrderStatus extends ActiveRecord
 {
 
     const MODULE_ID = 'cart';
-    public $disallow_delete = [1];
+    public $disallow_delete = [1, 2];
     const route = '/admin/cart/statuses';
 
     public static function tableName()
@@ -23,12 +23,12 @@ class OrderStatus extends ActiveRecord
             ['ordern', 'number'],
             ['name', 'string', 'max' => 100],
             ['color', 'string', 'min' => 7, 'max' => 7],
+            ['use_in_stats', 'boolean']
         ];
     }
 
-    public function countOrders()
+    public function getOrdersCount()
     {
-        return Order::find()->where(array('status_id' => $this->id))->count();
+        return $this->hasMany(Order::class, ['status_id' => 'id'])->count();
     }
-
 }

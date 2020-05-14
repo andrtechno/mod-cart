@@ -90,7 +90,7 @@ class DeliveryController extends AdminController
                 if ($model->system) {
                     $manager = new DeliverySystemManager;
                     $system = $manager->getSystemClass($model->system);
-                    $system->saveAdminSettings($model->id, $_POST);
+                    $system->setSettings($model->id, $_POST);
                 }
 
                 return $this->redirectPage($isNew, $post);
@@ -140,7 +140,7 @@ class DeliveryController extends AdminController
         $manager = new DeliverySystemManager();
         $system = $manager->getSystemClass($systemId);
 
-        return $this->renderPartial('@cart/widgets/delivery/' . $systemId . '/_form', ['model' => $system->getConfigurationFormHtml($delivery_id)]);
+        return $this->renderPartial('@cart/widgets/delivery/' . $systemId . '/_form', ['model' => $system->getModel()]);
     }
 
 

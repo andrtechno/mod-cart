@@ -27,6 +27,7 @@ cart = {
      * @param that
      */
     recountTotalPrice: function (that) {
+
         //var total = parseFloat(orderTotalPrice);
         var total = orderTotalPrice;
         var delivery_price = parseFloat($(that).attr('data-price'));
@@ -239,23 +240,23 @@ cart = {
         });
     },*/
 
-    delivery222:function(){
+    delivery:function(){
 
-        if ($('#ordercreateform-delivery_id').val() == 1) {
+        //if ($('#ordercreateform-delivery_id').val() == 1) {
             console.log('init','delivery');
             $('#user-city, #user-address').hide();
             $.ajax({
-                url: common.url('/cart/processDelivery?delivery_id='+$('#ordercreateform-delivery_id').val()),
+                url: common.url('/cart/delivery/process?id='+$('#ordercreateform-delivery_id').val()),
                 type: 'GET',
                 dataType:'html',
                 success: function (data) {
                     $('#delivery-form').html(data);
                 }
             });
-        }else{
-            $('#delivery-form').html('');
-            $('#user-city, #user-address').show();
-        }
+       // }else{
+       //     $('#delivery-form').html('');
+        //    $('#user-city, #user-address').show();
+        //}
     },
 
     init: function () {
