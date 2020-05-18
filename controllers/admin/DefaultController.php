@@ -48,7 +48,7 @@ class DefaultController extends AdminController
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
         echo $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]) . ".pdf", 'I');
-		die;
+        die;
     }
 
     public function actionIndex()
@@ -181,49 +181,27 @@ class DefaultController extends AdminController
      */
     public function actionAddProduct()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
         $result = [];
+        $result['success'] = false;
         $request = Yii::$app->request;
         if ($request->isPost) {
             if ($request->isAjax) {
                 $order = Order::findModel($request->post('order_id'), Yii::t('cart/admin', 'ORDER_NOT_FOUND'));
-
                 $product = Product::findModel($request->post('product_id'));
 
                 $find = OrderProduct::find()->where(['order_id' => $order->id, 'product_id' => $product->id])->one();
 
                 if ($find) {
-                    if ($request->isAjax) {
-                        $result = [
-                            'success' => false,
-                            'message' => Yii::t('cart/admin', 'ERR_ORDER_PRODUCT_EXISTS'),
-                        ];
-
-                    }
+                    $result['message'] = Yii::t('cart/admin', 'ERR_ORDER_PRODUCT_EXISTS');
+                } else {
+                    $order->addProduct($product, $request->post('quantity'), $request->post('price'));
+                    $result['success'] = true;
+                    $result['message'] = Yii::t('cart/admin', 'SUCCESS_ADD_PRODUCT_ORDER');
                 }
-
-                if ($request->isAjax) {
-                    $result = [
-                        'success' => false,
-                        'message' => Yii::t('cart/default', 'ERROR_PRODUCT_NO_FIND'),
-                    ];
-
-                }
-
-
-                $order->addProduct($product, $request->post('quantity'), $request->post('price'));
-                $result = [
-                    'success' => true,
-                    'message' => Yii::t('cart/admin', 'SUCCESS_ADD_PRODUCT_ORDER'),
-                ];
-            } else {
-                //throw new CHttpException(500, Yii::t('error', '500'));
             }
-        } else {
-            //throw new CHttpException(500, Yii::t('error', '500'));
         }
 
-        return $result;
+        return $this->asJson($result);
     }
 
     /**
@@ -326,13 +304,13 @@ class DefaultController extends AdminController
         } else {
             $model->joinWith(['products p']);
             $model->between($dateStart, $dateEnd);
-            if(Yii::$app->request->get('render') == 'manufacturer'){
+            if (Yii::$app->request->get('render') == 'manufacturer') {
                 $view = 'pdf/manufacturer';
                 $model->andWhere(['not', ['p.manufacturer_id' => null]]);
                 $model->orderBy(['p.manufacturer_id' => SORT_DESC]);
 
             }
-            if(Yii::$app->request->get('render') == 'supplier'){
+            if (Yii::$app->request->get('render') == 'supplier') {
                 $view = 'pdf/supplier';
                 $model->andWhere(['not', ['p.supplier_id' => null]]);
                 $model->orderBy(['p.supplier_id' => SORT_DESC]);

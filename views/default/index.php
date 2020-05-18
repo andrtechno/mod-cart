@@ -113,21 +113,35 @@ $formOrder = ActiveForm::begin([
                 <tbody>
                 <?php foreach ($items as $index => $product) { ?>
                     <?php
+
+
                     $price = Product::calculatePrices($product['model'], $product['variant_models'], $product['configurable_id']);
                     ?>
                     <tr id="product-<?= $index ?>">
                         <td width="110px" align="center">
 
-                            <?php
-
-                            echo Html::img(Url::to($product['model']->getMainImage('100x')->url), ['alt' => $product['model']->name]);
-
-                            ?>
+                            <?= Html::img(Url::to($product['model']->getMainImage('100x')->url), ['alt' => $product['model']->name]); ?>
 
                         </td>
                         <td>
                             <h5><?= Html::a(Html::encode($product['model']->name), $product['model']->getUrl()); ?></h5>
+                            <?php
+//\panix\engine\CMS::dump($product['attributes_data']->attrbiutes);
+                          //  print_r($product['attributes_data']['attributes']);
 
+                            $query = \panix\mod\shop\models\Attribute::find();
+                            $query->where(['IN', 'name', array_keys((array)$product['attributes_data']->attrbiutes)]);
+                            $query->displayOnCart();
+                            $query->sort();
+                            $result = $query->all();
+                            // print_r($query);
+                            $s = (array) $product['attributes_data']->attrbiutes;
+                            foreach ($result as $q) {
+                                echo $q->title . ' ';
+                                echo $q->renderValue($s[$q->name]) . ' <br>';
+                            }
+
+                            ?>
                             <?php
                             // Display variant options
                             if (!empty($product['variant_models'])) {

@@ -111,6 +111,7 @@ class DefaultController extends WebController
         return $this->render('index', [
             'items' => Yii::$app->cart->getDataWithModels(),
             'totalPrice' => Yii::$app->cart->getTotalPrice(),
+            //'totalPrice' => Yii::$app->cart->totalPrice,
             'deliveryMethods' => $deliveryMethods,
             'paymentMethods' => $paymentMethods,
         ]);
@@ -205,15 +206,19 @@ class DefaultController extends WebController
             $configurable_id = 0;
 
 
-        Yii::$app->cart->add(array(
+        Yii::$app->cart->add([
             'product_id' => $model->id,
             'variants' => $variants,
+            'attributes_data' => json_encode([
+                'data' => $model->eavData['data'],
+                'attrbiutes' => $model->eavAttributes
+            ]),
             'currency_id' => $model->currency_id,
             'supplier_id' => $model->supplier_id,
             'configurable_id' => $configurable_id,
             'quantity' => (int)Yii::$app->request->post('quantity', 1),
             'price' => $model->price,
-        ));
+        ]);
 
         $this->_finish($model->name);
     }
@@ -307,6 +312,7 @@ class DefaultController extends WebController
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
             $ordered_product->price_purchase = $item['model']->price_purchase;
+            $ordered_product->attributes_data = json_encode($item['model']->eavAttributes);
 
             // if($item['currency_id']){
             //     $currency = Currency::model()->findByPk($item['currency_id']);

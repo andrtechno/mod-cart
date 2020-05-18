@@ -75,7 +75,7 @@ class GraphController extends AdminController
                 'year' => $year,
                 'month' => $index,
                 'products' => $product_count,
-                'value' => number_format($queryData['sum'], 0, '.', ' '),
+                'value' => Yii::$app->currency->number_format($queryData['sum']),
                 // 'color' => $this->getSeasonColor($index),
                 //"drilldown" => "Month_{$index}"
                 'drilldown' => []
@@ -88,7 +88,7 @@ class GraphController extends AdminController
             'data_total' => $data_total,
             'year' => $year,
             'month' => $month,
-            'total' => number_format($total, 0, '.', ' ')
+            'total' => Yii::$app->currency->number_format($total)
         ]);
     }
 
@@ -109,7 +109,7 @@ class GraphController extends AdminController
         }
 
 
-        Yii::$app->db->createCommand()->batchInsert(Order::tableName(), [
+        Order::getDb()->createCommand()->batchInsert(Order::tableName(), [
             'delivery_id',
             'payment_id',
             'status_id',
@@ -156,7 +156,7 @@ class GraphController extends AdminController
             $data[] = [
                 'name' => Yii::t('cart/admin', date('l', strtotime("{$year}-{$month}-{$day}"))) . ', ' . date('d', strtotime("{$year}-{$month}-{$day}")),
                 'y' => (double)$value,
-                'value' => number_format($value, 0, '.', ' '),
+                'value' => Yii::$app->currency->number_format($value),
                 'products' => 10
             ];
 
@@ -173,7 +173,7 @@ class GraphController extends AdminController
 
         return $this->asJson([
             'data' => $response,
-            'subtitle' => 'Итого: ' . number_format($total, 0, '.', ' ') . ' ' . Yii::$app->currency->active['symbol'],
+            'subtitle' => 'Итого: ' . Yii::$app->currency->number_format($total) . ' ' . Yii::$app->currency->active['symbol'],
             'title' => 'Доход за ' . $name . ' ' . $year . 'г.'
         ]);
     }

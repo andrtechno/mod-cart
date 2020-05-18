@@ -103,7 +103,7 @@ class Module extends WebModule implements BootstrapInterface
                         'icon' => 'check'
                     ],
                     [
-                        'label' => Yii::t('cart/admin', 'Доходы'),
+                        'label' => Yii::t('cart/admin', 'INCOME'),
                         "url" => ['/admin/cart/graph'],
                         'icon' => 'stats'
                     ],

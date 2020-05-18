@@ -15,16 +15,15 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
 
 Pjax::begin([
     'dataProvider' => $dataProvider,
-    'enablePushState'=>false,
-    'enableReplaceState'=>false
+    'enablePushState' => false,
+    'enableReplaceState' => false
 ]);
 
 echo GridView::widget([
     'filterUrl' => ['/admin/cart/default/add-product-list', 'id' => $model->id],
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $dataProvider,
-    'enableLayout'=>false,
-    //'filterModel' => $searchModel,
+    'enableLayout' => false,
     'filterModel' => $searchModel,
     'columns' => [
         [

@@ -23,6 +23,7 @@ use panix\engine\db\ActiveRecord;
  * @property string $variants
  * @property Product $originalProduct
  * @property Order $order
+ * @property string $attributes_data
  *
  * @package panix\mod\cart\models
  */

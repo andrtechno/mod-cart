@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\components;
 
+use panix\engine\CMS;
 use panix\mod\shop\models\ProductVariant;
 use Yii;
 use yii\base\Component;
@@ -27,7 +28,7 @@ class Cart extends Component
      */
     private $_items = [];
 
-    protected $_total_price = 0;
+    public $totalPrice = 0;
     /**
      * @var Session
      */
@@ -41,8 +42,8 @@ class Cart extends Component
     {
         $this->session = Yii::$app->session;
         //$this->session->id = 'cart';
-        $this->session->setTimeout(100);
-        $this->session->cookieParams = ['lifetime' => 60];
+        $this->session->setTimeout(86000);
+        $this->session->cookieParams = ['lifetime' => 86000];
         if (!isset($this->session['cart_data']) || !is_array($this->session['cart_data']))
             $this->session['cart_data'] = [];
 
@@ -127,18 +128,24 @@ class Cart extends Component
         if (empty($data))
             return [];
 
-
         foreach ($data as $index => &$item) {
 
             $item['variant_models'] = [];
             $item['model'] = $this->productModel::findOne($item['product_id']);
+
+            $model = $item['model'];
             // Load configurable product
             if ($item['configurable_id'])
                 $item['configurable_model'] = $this->productModel::findOne($item['configurable_id']);
 
+            $item['attributes_data'] = json_decode($item['attributes_data']);
+
+
+            $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
+            $this->totalPrice += $model::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']);
+
 
             // Process variants @todo PANIX need test
-
             if (!empty($item['variants']))
                 $item['variant_models'] = ProductVariant::find()
                     ->joinWith(['productAttribute', 'option'])
@@ -150,7 +157,9 @@ class Cart extends Component
                 unset($data[$index]);
 
         }
+
         unset($item);
+
         $this->data = $data;
         return $this->data;
     }
@@ -168,26 +177,6 @@ class Cart extends Component
             $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
         }
         return $result;
-    }
-
-    /**
-     * Count total price
-     */
-    public function getTotalPriceAllCurrency()
-    {
-        $total = [];
-        // $data = $this->getDataWithModels();
-        foreach ($this->data as $item) {
-            $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
-            if ($item['currency_id']) {
-                $currency = Currency::findOne($item['currency_id']);
-                // print_r($currency);
-                $total[$currency->iso] += ($this->productModel::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity']);
-            } else {
-                $total[Yii::$app->currency->main['iso']] += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable) * $item['quantity'];
-            }
-        }
-        return $total;
     }
 
     /**
@@ -244,6 +233,7 @@ class Cart extends Component
             'unit_price' => Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice)),
             'rowTotal' => Yii::$app->currency->number_format($rowTotal),
             'totalPrice' => Yii::$app->currency->number_format($this->getTotalPrice()),
+            //'totalPrice' => Yii::$app->currency->number_format($this->totalPrice),
         ];
     }
 
