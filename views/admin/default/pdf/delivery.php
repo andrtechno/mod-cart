@@ -39,7 +39,7 @@
                             <p>Оплата: <?= $row['payment'] ?></p>
                         </td>
                         <td align="center" style="vertical-align:middle"><?= $row['city'] ?><?= $row['user_address'] ?></td>
-                        <td align="center" style="vertical-align:middle"><?= \panix\engine\CMS::phone_number_format($row['user_phone']) ?></td>
+                        <td align="center" style="vertical-align:middle"><?= \panix\engine\CMS::phone_format($row['user_phone']) ?></td>
                         <td align="center" style="vertical-align:middle"><?= $row['productsCount'] ?></td>
                     </tr>
                     <?php

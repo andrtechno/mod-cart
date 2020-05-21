@@ -114,8 +114,8 @@ class DefaultController extends AdminController
             if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
                 if ($model->user_email) {
                     $mailer = Yii::$app->mailer;
-                    $mailer->htmlLayout = '@cart/mail/layouts/client';
-                    $mailer->compose(['html' => '@cart/mail/changed_status.tpl'], ['order' => $model])
+                    $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+                    $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/changed_status.tpl'], ['order' => $model])
                         ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
                         ->setTo([$model->user_email])
                         ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
@@ -127,8 +127,8 @@ class DefaultController extends AdminController
             if (isset($old['ttn']) != $model->ttn && !empty($model->ttn)) {
                 if ($model->user_email) {
                     $mailer = Yii::$app->mailer;
-                    $mailer->htmlLayout = '@cart/mail/layouts/client';
-                    $mailer->compose(['html' => '@cart/mail/ttn.tpl'], ['order' => $model])
+                    $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+                    $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/ttn.tpl'], ['order' => $model])
                         ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
                         ->setTo([$model->user_email])
                         ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($model->id)))
@@ -229,6 +229,7 @@ class DefaultController extends AdminController
     {
 
 
+        $selection = Yii::$app->request->get('selection');
         $dateStart = strtotime($start);
 
         $dateEnd = strtotime($end) + 86400;
@@ -289,31 +290,33 @@ class DefaultController extends AdminController
        ]);*/
 
 
-        $model = Order::find()->with('products');
+        $query = Order::find();
+        if ($selection) {
+            $query->andWhere([Order::tableName() . '.id' => $selection]);
+        }
+        if (!$selection && $dateStart && $dateEnd) {
+            $query->between($dateStart, $dateEnd);
+        }
         // $model->where(['status_id' => 1]);
         if ($render == 'delivery') {
-
             $view = 'pdf/delivery';
-            $model->between($dateStart, $dateEnd);
-            $model->orderBy(['delivery_id' => SORT_DESC]);
-
+            $query->orderBy(['delivery_id' => SORT_DESC]);
             $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_delivery', [
                 'start_date' => CMS::date($dateStart, false),
                 'end_date' => CMS::date($dateEnd, false),
             ]));
         } else {
-            $model->joinWith(['products p']);
-            $model->between($dateStart, $dateEnd);
-            if (Yii::$app->request->get('render') == 'manufacturer') {
+            $query->joinWith(['products p']);
+            if ($render == 'manufacturer') {
                 $view = 'pdf/manufacturer';
-                $model->andWhere(['not', ['p.manufacturer_id' => null]]);
-                $model->orderBy(['p.manufacturer_id' => SORT_DESC]);
-
-            }
-            if (Yii::$app->request->get('render') == 'supplier') {
+                $query->andWhere(['not', ['p.manufacturer_id' => null]]);
+                $query->orderBy(['p.manufacturer_id' => SORT_DESC]);
+            } elseif ($render == 'supplier') {
                 $view = 'pdf/supplier';
-                $model->andWhere(['not', ['p.supplier_id' => null]]);
-                $model->orderBy(['p.supplier_id' => SORT_DESC]);
+                $query->andWhere(['not', ['p.supplier_id' => null]]);
+                $query->orderBy(['p.supplier_id' => SORT_DESC]);
+            } else {
+                $this->error404();
             }
 
             $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_products', [
@@ -321,10 +324,11 @@ class DefaultController extends AdminController
                 'end_date' => CMS::date($dateEnd, false),
             ]));
         }
-        $model = $model->all();
+        $model = $query->all();
 
 
         $array = [];
+
         if ($type) {
             $mpdf->WriteHTML($this->renderPartial($view, [
                 'array' => $array,
@@ -338,8 +342,8 @@ class DefaultController extends AdminController
             echo $mpdf->Output($this->action->id . ".pdf", 'I');
             die;
         } else {
-            $this->layout = 'mod.admin.views.layouts.print';
-            $this->render($view, [
+            $this->layout = '@admin/views/admin/print';
+            return $this->render($view, [
                 'array' => $array,
                 'model' => $model,
                 'dateStart' => date('Y-m-d', strtotime($dateStart)),

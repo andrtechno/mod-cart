@@ -3,7 +3,6 @@
 {use class="panix\engine\Html"}
 {use class="panix\mod\shop\models\Product"}
 
-
 {if $order.user_name}
     <p><strong>{$order->getAttributeLabel('user_name')}:</strong> {$order->user_name}</p>
 {/if}

@@ -466,10 +466,10 @@ class Order extends ActiveRecord
         foreach ($this->products as $product) {
             if (isset($data[$product->id])) {
                 if ((int)$product->quantity !== (int)$data[$product->id]) {
-                    $event = new ModelEvent($this, array(
+                    $event = new ModelEvent($this, [
                         'ordered_product' => $product,
                         'new_quantity' => (int)$data[$product->id]
-                    ));
+                    ]);
                     $this->onProductQuantityChanged($event);
                     //$this->trigger('onProductQuantityChanged');
                 }
@@ -509,7 +509,7 @@ class Order extends ActiveRecord
     public function sendAdminEmail()
     {
         $mailer = Yii::$app->mailer;
-        $mailer->compose(['html' => '@cart/mail/order.tpl'], ['order' => $this])
+        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath.'/order.tpl'], ['order' => $this])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', $this->id))
@@ -524,8 +524,8 @@ class Order extends ActiveRecord
     {
 		if ($this->user_email) {
 			$mailer = Yii::$app->mailer;
-			$mailer->htmlLayout = '@cart/mail/layouts/client';
-			$mailer->compose('@cart/mail/order.tpl', ['order' => $this])
+			$mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath.'/layouts/client';
+			$mailer->compose(Yii::$app->getModule('cart')->mailPath.'/order.tpl', ['order' => $this])
 				->setFrom('noreply@' . Yii::$app->request->serverName)
 				->setTo($this->user_email)
 				->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))

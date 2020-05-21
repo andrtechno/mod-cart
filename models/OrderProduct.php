@@ -65,19 +65,19 @@ class OrderProduct extends ActiveRecord
 
         if ($this->isNewRecord) {
             $product = Product::findOne($this->product_id);
+
+            if ($product->added_to_cart_count == Yii::$app->settings->get('shop', 'added_to_cart_count')) {
+                $product->added_to_cart_date = time();
+                $product->save(false);
+            }
+
             $product->decreaseQuantity();
+
         }
 
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function afterFind2()
-    {
-        parent::afterFind();
-        if (!$this->originalProduct) {
-            $this->price = 0;
-        }
-    }
 
     public function afterDelete()
     {
@@ -136,6 +136,12 @@ class OrderProduct extends ActiveRecord
             $content[] = $c->name;
         }
         return implode(', ', $content);
+    }
+
+
+    public function getProductAttributes()
+    {
+        return json_decode($this->attributes_data);
     }
 
 }

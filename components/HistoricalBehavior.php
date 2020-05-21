@@ -76,7 +76,7 @@ class HistoricalBehavior extends Behavior
                 'deleted' => true,
                 'name' => $event->ordered_product->getRenderFullName(),
                 'price' => $event->ordered_product->price,
-                'image' => $event->ordered_product->originalProduct->getMainImage('50x50')->url,
+                'image' => ($event->ordered_product->originalProduct)?$event->ordered_product->originalProduct->getMainImage('50x50')->url:'no image',
                 'quantity' => $event->ordered_product->quantity
             ]),
             'data_after' => '',
@@ -93,7 +93,7 @@ class HistoricalBehavior extends Behavior
             'data_before' => serialize([
                 'changed' => true,
                 'name' => $event->ordered_product->name,
-                'image' => $event->ordered_product->originalProduct->getMainImage('50x50')->url,
+                'image' => ($event->ordered_product->originalProduct)?$event->ordered_product->originalProduct->getMainImage('50x50')->url:'no image',
                 'quantity' => $event->ordered_product->quantity
             ]),
             'data_after' => serialize([

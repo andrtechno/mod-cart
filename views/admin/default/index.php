@@ -6,7 +6,7 @@ use panix\engine\grid\GridView;
 use panix\mod\cart\models\Order;
 
 ?>
-
+<?= Html::beginForm('/admin/cart/default/pdf-orders','GET'); ?>
 <?php echo $this->render('_filter_pdf'); ?>
 <?php
 
@@ -23,6 +23,9 @@ echo GridView::widget([
     //},
     'layoutOptions' => ['title' => $this->context->pageName],
     'columns' => [
+        [
+            'class' => 'panix\engine\grid\columns\CheckboxColumn',
+        ],
         [
             'attribute' => 'id',
             'header' => Yii::t('cart/Order', 'ORDER_ID'),
@@ -95,3 +98,4 @@ echo GridView::widget([
 ]);
 ?>
 <?php Pjax::end(); ?>
+<?= Html::endForm(); ?>

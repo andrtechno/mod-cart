@@ -12,7 +12,7 @@ class Module extends WebModule implements BootstrapInterface
 {
 
     public $icon = 'cart';
-
+    public $mailPath = '@cart/mail';
     public function init()
     {
         if (!(Yii::$app instanceof yii\console\Application) && !Yii::$app->user->isGuest) {

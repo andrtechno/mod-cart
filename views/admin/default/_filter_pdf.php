@@ -9,7 +9,7 @@ use panix\engine\jui\DatePicker;
         <h5>Фильтры</h5>
     </div>
     <div class="card-body">
-        <?= Html::beginForm('/admin/cart/default/pdf-orders','GET'); ?>
+
         <div class="p-3">
             <div class="form-group">
                 <div class="input-group">
@@ -56,7 +56,7 @@ use panix\engine\jui\DatePicker;
                 </div>
             </div>
         </div>
-        <?= Html::endForm(); ?>
+
     </div>
 </div>
 

@@ -128,17 +128,18 @@ $formOrder = ActiveForm::begin([
                             <?php
 //\panix\engine\CMS::dump($product['attributes_data']->attrbiutes);
                           //  print_r($product['attributes_data']['attributes']);
+                            $attributesData = (array) $product['attributes_data']->attributes;
 
                             $query = \panix\mod\shop\models\Attribute::find();
-                            $query->where(['IN', 'name', array_keys((array)$product['attributes_data']->attrbiutes)]);
+                            $query->where(['IN', 'name', array_keys($attributesData)]);
                             $query->displayOnCart();
                             $query->sort();
                             $result = $query->all();
                             // print_r($query);
-                            $s = (array) $product['attributes_data']->attrbiutes;
+
                             foreach ($result as $q) {
                                 echo $q->title . ' ';
-                                echo $q->renderValue($s[$q->name]) . ' <br>';
+                                echo $q->renderValue($attributesData[$q->name]) . ' <br>';
                             }
 
                             ?>

@@ -112,16 +112,16 @@ $currency = Yii::$app->currency;
                     if($product->sku){
                         echo $product->getAttributeLabel('sku').': <strong>'.$product->sku.'</strong>; ';
                     }
+                    $attributesData = (array) $product->productAttributes->attributes;
+                  // \panix\engine\CMS::dump($attributesData);die;
                     $query = \panix\mod\shop\models\Attribute::find();
-                    $query->where(['IN', 'name', array_keys($originalProduct->eavAttributes)]);
+                    $query->where(['IN', 'name', array_keys($attributesData)]);
                     $query->displayOnPdf();
                     $query->sort();
                     $result = $query->all();
-                    // print_r($query);
-                    $attributes = $originalProduct->eavAttributes;
                     foreach ($result as $q) {
                         echo $q->title . ': ';
-                        echo '<strong>'.$q->renderValue($attributes[$q->name]) . '</strong>; ';
+                        echo '<strong>'.$q->renderValue($attributesData[$q->name]) . '</strong>; ';
                     }
                     ?>
                     <br/>

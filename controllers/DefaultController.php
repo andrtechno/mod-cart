@@ -211,7 +211,7 @@ class DefaultController extends WebController
             'variants' => $variants,
             'attributes_data' => json_encode([
                 'data' => $model->eavData['data'],
-                'attrbiutes' => $model->eavAttributes
+                'attributes' => $model->eavAttributes
             ]),
             'currency_id' => $model->currency_id,
             'supplier_id' => $model->supplier_id,
@@ -302,6 +302,7 @@ class DefaultController extends WebController
         $productsCount = 0;
         foreach (Yii::$app->cart->getDataWithModels() as $item) {
 
+
             $ordered_product = new OrderProduct;
             $ordered_product->order_id = $order->id;
             $ordered_product->product_id = $item['model']->id;
@@ -312,7 +313,7 @@ class DefaultController extends WebController
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
             $ordered_product->price_purchase = $item['model']->price_purchase;
-            $ordered_product->attributes_data = json_encode($item['model']->eavAttributes);
+            $ordered_product->attributes_data = json_encode($item['attributes_data']);
 
             // if($item['currency_id']){
             //     $currency = Currency::model()->findByPk($item['currency_id']);
@@ -450,7 +451,7 @@ class DefaultController extends WebController
     {
 
         $mailer = Yii::$app->mailer;
-        $mailer->compose(['html' => '@cart/mail/order.tpl'], ['order' => $order])
+        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath.'/order.tpl'], ['order' => $order])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
@@ -465,8 +466,8 @@ class DefaultController extends WebController
     private function sendClientEmail(Order $order)
     {
         $mailer = Yii::$app->mailer;
-        $mailer->htmlLayout = '@cart/mail/layouts/client';
-        $mailer->compose('@cart/mail/order.tpl', ['order' => $order])
+        $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath.'/layouts/client';
+        $mailer->compose(Yii::$app->getModule('cart')->mailPath.'/order.tpl', ['order' => $order])
             ->setFrom('noreply@' . Yii::$app->request->serverName)
             ->setTo($order->user_email)
             ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $order->id]))

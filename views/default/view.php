@@ -72,13 +72,29 @@ if (Yii::$app->session->hasFlash('success-promocode')) {
                                 echo Html::tag('span', 'удален', ['class' => 'badge badge-danger']);
                             }
 
+
                             ?>
                         </td>
                         <td>
 
                             <h5><?= $product->getRenderFullName(false); ?> </h5>
-
-
+                            <?php
+                            if($product->sku){
+                                echo $product->getAttributeLabel('sku').': <strong>'.$product->sku.'</strong>; ';
+                            }
+                            $attributesData = (array) $product->productAttributes->attributes;
+                            // \panix\engine\CMS::dump($attributesData);die;
+                            $query = \panix\mod\shop\models\Attribute::find();
+                            $query->where(['IN', 'name', array_keys($attributesData)]);
+                            $query->displayOnCart();
+                            $query->sort();
+                            $result = $query->all();
+                            foreach ($result as $q) {
+                                echo $q->title . ': ';
+                                echo '<strong>'.$q->renderValue($attributesData[$q->name]) . '</strong>; ';
+                            }
+                            ?>
+                            <br/>
                             <span class="price price-sm text-warning">
                                 <?= $currency->number_format($currency->convert($product->price)) ?>
                                 <sub><?= $currency->active['symbol']; ?>/шт.</sub>
