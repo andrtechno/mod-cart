@@ -83,8 +83,12 @@ class m170908_134034_cart extends Migration
             'supplier_id' => $this->integer()->unsigned(),
             'manufacturer_id' => $this->integer()->unsigned(),
             'configurable_id' => $this->integer()->unsigned(),
-            'weight_class_id' => $this->integer(),
+            'weight_class_id' => $this->integer()->null(),
+            'length_class_id' => $this->integer()->null(),
             'weight' => $this->decimal(15, 4),
+            'length' => $this->decimal(15, 4),
+            'width' => $this->decimal(15, 4),
+            'height' => $this->decimal(15, 4),
             'name' => $this->string(255),
             'discount' => $this->string(25)->null(),
             'configurable_name' => $this->text()->null(),
@@ -253,6 +257,7 @@ class m170908_134034_cart extends Migration
         $this->createIndex('configurable_id', OrderProduct::tableName(), 'configurable_id');
         $this->createIndex('manufacturer_id', OrderProduct::tableName(), 'manufacturer_id');
         $this->createIndex('weight_class_id', OrderProduct::tableName(), 'weight_class_id');
+        $this->createIndex('length_class_id', OrderProduct::tableName(), 'length_class_id');
 
         // order history indexes
         $this->createIndex('order_id', OrderHistory::tableName(), 'order_id');

@@ -215,6 +215,12 @@ class DefaultController extends WebController
             ]),
             'currency_id' => $model->currency_id,
             'supplier_id' => $model->supplier_id,
+            'weight' => $model->weight,
+            'height' => $model->height,
+            'length' => $model->length,
+            'width' => $model->width,
+            'weight_class_id' => $model->weight_class_id,
+            'length_class_id' => $model->length_class_id,
             'configurable_id' => $configurable_id,
             'quantity' => (int)Yii::$app->request->post('quantity', 1),
             'price' => $model->price,
@@ -314,6 +320,13 @@ class DefaultController extends WebController
             $ordered_product->sku = $item['model']->sku;
             $ordered_product->price_purchase = $item['model']->price_purchase;
             $ordered_product->attributes_data = json_encode($item['attributes_data']);
+            $ordered_product->weight = $item['weight'];
+            $ordered_product->height = $item['height'];
+            $ordered_product->length = $item['length'];
+            $ordered_product->width = $item['width'];
+            $ordered_product->weight_class_id = $item['weight_class_id'];
+            $ordered_product->length_class_id = $item['length_class_id'];
+
 
             // if($item['currency_id']){
             //     $currency = Currency::model()->findByPk($item['currency_id']);

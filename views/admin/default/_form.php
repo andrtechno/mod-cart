@@ -34,17 +34,18 @@ $form = ActiveForm::begin();
         <?= $form->field($model, 'user_email')->textInput(); ?>
         <?php
         if (!$model->isNewRecord && $model->user_phone) { ?>
-            <div class="form-group row">
-                <div class="col-sm-4 col-lg-2">
-                    <?= Html::activeLabel($model, 'user_phone',['class'=>'col-form-label']); ?>
-                </div>
-                <div class="col-sm-8 col-lg-10">
-                    <?php
-                    echo PhoneInput::widget(['model' => $model, 'attribute' => 'user_phone']);
-                    ?>
-                    <?= Html::a(Html::icon('phone').' Позвонить','tel:'.$model->user_phone,['class'=>'ml-lg-3 mt-lg-0 mt-2 d-lg-inline-block d-block text-center text-lg-center']); ?>
-                </div>
-            </div>
+
+
+
+
+            <?= $form->field($model, 'user_phone', [
+                'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-2\">{label}</div>\n{hint}\n{beginWrapper}{input}{call}\n{error}{endWrapper}",
+                'parts' => [
+                    '{call}' => Html::a(Html::icon('phone') . ' Позвонить &mdash; <strong>' . CMS::phoneOperator($model->user_phone) . '</strong>', 'tel:' . $model->user_phone, ['class' => 'mt-2 mt-lg-0 float-none float-lg-right btn btn-light'])
+                ]
+            ])->widget(PhoneInput::class); ?>
+
+
         <?php } else {
             echo $form->field($model, 'user_phone')->widget(PhoneInput::class);
         }

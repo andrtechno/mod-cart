@@ -5,19 +5,23 @@ use panix\engine\Html;
 use panix\ext\fancybox\Fancybox;
 
 ?>
-<?php if(Yii::$app->hasModule('novaposhta')){ ?>
-<?= Html::a(Html::icon('novaposhta').' '.Yii::t('novaposhta/default','CREATE_EXPRESS_WAYBILL_CART'),['/admin/novaposhta/express-invoice/create','order_id'=>$model->primaryKey],['data-pjax'=>0,'class'=>'btn btn-danger']); ?>
-<?php } ?>
+<?php if (Yii::$app->hasModule('novaposhta') && $model->deliveryMethod) { ?>
+    <?php if ($model->deliveryMethod->system == 'novaposhta') { ?>
+        <div class="text-right">
+            <?= Html::a(Html::icon('novaposhta') . ' ' . Yii::t('novaposhta/default', 'CREATE_EXPRESS_WAYBILL_CART'), ['/admin/novaposhta/express-invoice/create', 'order_id' => $model->primaryKey], ['data-pjax' => 0, 'class' => 'btn btn-danger mb-3']); ?>
+        </div>
+    <?php }
+} ?>
 <div class="row">
-    <div class="col-sm-6">
-        <div class="card bg-light">
+    <div class="col-md-6">
+        <div class="card">
             <div class="card-header">
                 <h5><?= Html::encode($this->context->pageName) ?></h5>
             </div>
             <?= $this->render('_form', ['model' => $model]) ?>
         </div>
     </div>
-    <div class="col-sm-6">
+    <div class="col-md-6">
         <?= Fancybox::widget(['target' => '.image a']); ?>
         <?php
 
@@ -47,7 +51,7 @@ use panix\ext\fancybox\Fancybox;
 </div>
 <div class="card">
     <div class="card-header">
-        <h5>История действий заказа</h5>
+        <h5><?= Yii::t('cart/admin', 'ORDER_HISTORY'); ?></h5>
     </div>
     <div class="card-body">
         <?php
