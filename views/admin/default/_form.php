@@ -8,9 +8,17 @@ use panix\mod\cart\models\Delivery;
 use panix\engine\bootstrap\ActiveForm;
 use panix\ext\telinput\PhoneInput;
 use panix\engine\CMS;
-?>
-<?php
-$form = ActiveForm::begin();
+
+
+$form = ActiveForm::begin([
+    'fieldConfig' => [
+        'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-4\">{label}</div>\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
+        'horizontalCssClasses' => [
+            'offset' => 'offset-sm-4 offset-lg-3 offset-xl-4',
+            'wrapper' => 'col-sm-8 col-md-8 col-lg-9 col-xl-8',
+        ],
+    ]
+]);
 ?>
     <div class="card-body">
 
@@ -34,12 +42,8 @@ $form = ActiveForm::begin();
         <?= $form->field($model, 'user_email')->textInput(); ?>
         <?php
         if (!$model->isNewRecord && $model->user_phone) { ?>
-
-
-
-
             <?= $form->field($model, 'user_phone', [
-                'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-2\">{label}</div>\n{hint}\n{beginWrapper}{input}{call}\n{error}{endWrapper}",
+                'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-4\">{label}</div>\n{hint}\n{beginWrapper}{input}{call}\n{error}{endWrapper}",
                 'parts' => [
                     '{call}' => Html::a(Html::icon('phone') . ' Позвонить &mdash; <strong>' . CMS::phoneOperator($model->user_phone) . '</strong>', 'tel:' . $model->user_phone, ['class' => 'mt-2 mt-lg-0 float-none float-lg-right btn btn-light'])
                 ]

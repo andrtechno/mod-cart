@@ -11,8 +11,10 @@ use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\components\delivery\BaseDeliverySystem;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\httpclient\Client;
+use yii\web\Response;
 
 /**
  * NovaPoshta delivery system
@@ -173,10 +175,27 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         return $order;
     }
 
+    public function renderDeliveryForm2222(Delivery $method)
+    {
+        $setting = $this->getSettings($method->id);
+        //  $postApi = new NovaPoshtaApi($setting->api_key);
+
+        $address = [];
+        if (Yii::$app->request->post('city')) {
+            $address = \panix\mod\novaposhta\models\Warehouses::getList(Yii::$app->request->post('city'));
+        }
+
+        return Yii::$app->controller->asJson([
+            'cities' => Cities::getList(),
+            'address' => $address,
+        ]);
+    }
+
+
     public function renderDeliveryForm(Delivery $method)
     {
         $setting = $this->getSettings($method->id);
-      //  $postApi = new NovaPoshtaApi($setting->api_key);
+        //  $postApi = new NovaPoshtaApi($setting->api_key);
 
 
         return Yii::$app->view->renderAjax("@cart/widgets/delivery/{$method->system}/_view", [
@@ -187,11 +206,12 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
                     "CityName" => Yii::$app->request->post('city')
                 ],
             ]),*/
-            'cities'=>Cities::getList(),
-            'address'=>[],
+            'cities' => Cities::getList(),
+            'address' => [],
             'method' => $method
         ]);
     }
+
     public function renderDeliveryForm2(Delivery $method)
     {
         $setting = $this->getSettings($method->id);
@@ -200,6 +220,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         return $postApi->getCities();
 
     }
+
     public function cities($method)
     {
 
@@ -254,7 +275,8 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         return $paymentMethodId . '_NovaPoshtaDeliverySystem';
     }
 
-    public function getModel(){
+    public function getModel()
+    {
         return new NovaPoshtaConfigurationModel();
     }
 }

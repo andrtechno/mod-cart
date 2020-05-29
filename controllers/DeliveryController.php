@@ -40,8 +40,6 @@ class DeliveryController extends WebController
                 'method' => $model
             ]);*/
 
-        } else {
-            $this->error404();
         }
     }
 

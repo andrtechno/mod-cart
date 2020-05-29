@@ -218,17 +218,25 @@ cart = {
         });
     },*/
 
-    delivery:function(){
+    delivery:function(that){
 
         //if ($('#ordercreateform-delivery_id').val() == 1) {
             console.log('init','delivery');
-            $('#user-city, #user-address').hide();
+            //$('#user-city, #user-address').hide();
             $.ajax({
-                url: common.url('/cart/delivery/process?id='+$('#ordercreateform-delivery_id').val()),
+                url: common.url('/cart/delivery/process?id='+$(that).val()),
                 type: 'GET',
+                // dataType:'json',
                 dataType:'html',
                 success: function (data) {
                     $('#delivery-form').html(data);
+                    //console.log(data);
+                    /*if(data.cities){
+                        $('#delivery-form').append('<select id="ordercreateform-delivery_city" name="OrderCreateForm[delivery_city]" class="form-control">' +
+                            '<option value="address">Доставка на адрес</option>' +
+                            '<option value="warehouse">Доставка на отделение</option>' +
+                            '</select>');
+                    }*/
                 }
             });
        // }else{

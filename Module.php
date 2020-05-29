@@ -13,11 +13,12 @@ class Module extends WebModule implements BootstrapInterface
 
     public $icon = 'cart';
     public $mailPath = '@cart/mail';
+
     public function init()
     {
         if (!(Yii::$app instanceof yii\console\Application) && !Yii::$app->user->isGuest) {
             $count = Order::find()->where(['status_id' => 1])->count();
-            $this->count['num'] = $count;
+            $this->count['num'] = (int)$count;
             $this->count['label'] = Yii::t('cart/default', 'WP_COUNT', ['num' => $this->count['num']]);
             $this->count['url'] = ['/admin/cart', 'OrderSearch[status_id]' => 1];
         }
@@ -56,7 +57,8 @@ class Module extends WebModule implements BootstrapInterface
             true
         );
         if (!(Yii::$app instanceof yii\console\Application)) {
-            $app->counters[$this->id] = (int)$this->count['num'];
+            if ($this->count)
+                $app->counters[$this->id] = $this->count['num'];
         }
         $app->setComponents([
             'cart' => ['class' => 'panix\mod\cart\components\Cart'],
@@ -81,13 +83,13 @@ class Module extends WebModule implements BootstrapInterface
             'cart' => [
                 'label' => Yii::t('cart/admin', 'ORDERS'),
                 'icon' => $this->icon,
-                'badge' => $this->count['num'],
-                'badgeOptions' => ['id' => 'navbar-badge-cart','class' => 'badge badge-success badge-pulse-success'],
+                'badge' => (isset($this->count['num'])) ? $this->count['num'] : 0,
+                'badgeOptions' => ['id' => 'navbar-badge-cart', 'class' => 'badge badge-success badge-pulse-success'],
                 'items' => [
                     [
                         'label' => Yii::t('cart/admin', 'ORDERS_LIST'),
                         'url' => ['/admin/cart'],
-                        'badge' => $this->count['num'],
+                        'badge' => (isset($this->count['num'])) ? $this->count['num'] : 0,
                         'badgeOptions' => ['class' => 'badge badge-success badge-pulse'],
                         'icon' => $this->icon,
                     ],
@@ -95,7 +97,7 @@ class Module extends WebModule implements BootstrapInterface
                         'label' => Yii::t('cart/admin', 'PROMOCODE'),
                         'url' => ['/admin/cart/promo-code'],
                         'icon' => $this->icon,
-                        'visible'=>false,
+                        'visible' => false,
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'STATUSES'),

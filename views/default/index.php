@@ -39,21 +39,18 @@ var orderTotalPrice = '$totalPrice';
             }
         });
     }
-    
 /*
-
-
-
-$('#contact-form').yiiActiveForm('add', {
-    id: 'address',
-    name: 'address',
-    container: '.field-address',
-    input: '#address',
-    error: '.help-block',
-    validate:  function (attribute, value, messages, deferred, form) {
-        yii.validation.required(value, messages, {message: \"Validation Message Here\"});
-    }
-});
+   $(\"#ordercreateform-user_address\")
+    .replaceWith('<select id=\"ordercreateform-user_address\" name=\"txtQuantity\" class=\"form-control\">' +
+          '<option value=\"1\">1</option>' +
+          '<option value=\"2\">2</option>' +
+          '<option value=\"3\">3</option>' +
+          '<option value=\"4\">4</option>' +
+          '<option value=\"5\">5</option>' +
+        '</select>');
+        
+        $('#ordercreateform-user_address').selectpicker('refresh');*/
+/*
 
 
 
