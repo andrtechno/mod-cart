@@ -85,6 +85,7 @@ class Module extends WebModule implements BootstrapInterface
                 'icon' => $this->icon,
                 'badge' => (isset($this->count['num'])) ? $this->count['num'] : 0,
                 'badgeOptions' => ['id' => 'navbar-badge-cart', 'class' => 'badge badge-success badge-pulse-success'],
+                'visible' => Yii::$app->user->can('/cart/admin/default/index') || Yii::$app->user->can('/cart/admin/default/*'),
                 'items' => [
                     [
                         'label' => Yii::t('cart/admin', 'ORDERS_LIST'),
@@ -92,37 +93,44 @@ class Module extends WebModule implements BootstrapInterface
                         'badge' => (isset($this->count['num'])) ? $this->count['num'] : 0,
                         'badgeOptions' => ['class' => 'badge badge-success badge-pulse'],
                         'icon' => $this->icon,
+                        'visible' => Yii::$app->user->can('/cart/admin/default/index') || Yii::$app->user->can('/cart/admin/default/*')
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'PROMOCODE'),
                         'url' => ['/admin/cart/promo-code'],
                         'icon' => $this->icon,
                         'visible' => false,
+                        //'visible' => Yii::$app->user->can('/cart/admin/promo-code/index') || Yii::$app->user->can('/cart/admin/promo-code/*')
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'STATUSES'),
                         "url" => ['/admin/cart/statuses'],
-                        'icon' => 'check'
+                        'icon' => 'check',
+                        'visible' => Yii::$app->user->can('/cart/admin/statuses/index') || Yii::$app->user->can('/cart/admin/statuses/*')
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'INCOME'),
                         "url" => ['/admin/cart/graph'],
-                        'icon' => 'stats'
+                        'icon' => 'stats',
+                        'visible' => Yii::$app->user->can('/cart/admin/graph/index') || Yii::$app->user->can('/cart/admin/graph/*')
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'DELIVERY'),
                         "url" => ['/admin/cart/delivery'],
-                        'icon' => 'delivery'
+                        'icon' => 'delivery',
+                        'visible' => Yii::$app->user->can('/cart/admin/delivery/index') || Yii::$app->user->can('/cart/admin/delivery/*')
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'PAYMENTS'),
                         "url" => ['/admin/cart/payment'],
-                        'icon' => 'creditcard'
+                        'icon' => 'creditcard',
+                        'visible' => Yii::$app->user->can('/cart/admin/payment/index') || Yii::$app->user->can('/cart/admin/payment/*')
                     ],
                     [
                         'label' => Yii::t('app/default', 'SETTINGS'),
                         "url" => ['/admin/cart/settings'],
-                        'icon' => 'settings'
+                        'icon' => 'settings',
+                        'visible' => Yii::$app->user->can('/cart/admin/settings/index') || Yii::$app->user->can('/cart/admin/settings/*')
                     ]
                 ],
             ],
