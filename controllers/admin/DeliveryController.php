@@ -36,16 +36,16 @@ class DeliveryController extends AdminController
     public function actionIndex()
     {
         $this->pageName = Yii::t('cart/admin', 'DELIVERY');
-
-        $this->buttons = [
-            [
-                'icon' => 'add',
-                'label' => Yii::t('app/default', 'CREATE'),
-                'url' => ['create'],
-                'options' => ['class' => 'btn btn-success']
-            ],
-
-        ];
+        if (Yii::$app->user->can("/{$this->module->id}/{$this->id}/*") || Yii::$app->user->can("/{$this->module->id}/{$this->id}/create")) {
+            $this->buttons = [
+                [
+                    'icon' => 'add',
+                    'label' => Yii::t('app/default', 'CREATE'),
+                    'url' => ['create'],
+                    'options' => ['class' => 'btn btn-success']
+                ],
+            ];
+        }
         $this->breadcrumbs[] = [
             'label' => Yii::t('cart/default', 'MODULE_NAME'),
             'url' => ['/admin/cart']

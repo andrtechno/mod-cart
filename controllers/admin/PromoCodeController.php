@@ -14,14 +14,15 @@ class PromoCodeController extends AdminController
     public function actionIndex()
     {
         $this->pageName = Yii::t('cart/admin', 'PROMOCODE');
-        $this->buttons = [
-            [
-                'label' => Yii::t('cart/admin', 'CREATE_PROMOCODE'),
-                'url' => ['create'],
-                'options' => ['class' => 'btn btn-success', 'target' => '_blank']
-            ]
-        ];
-
+        if (Yii::$app->user->can("/{$this->module->id}/{$this->id}/*") || Yii::$app->user->can("/{$this->module->id}/{$this->id}/create")) {
+            $this->buttons = [
+                [
+                    'label' => Yii::t('cart/admin', 'CREATE_PROMOCODE'),
+                    'url' => ['create'],
+                    'options' => ['class' => 'btn btn-success', 'target' => '_blank']
+                ]
+            ];
+        }
         $this->breadcrumbs[] = $this->pageName;
 
         $searchModel = new PromoCodeSearch();
@@ -39,13 +40,15 @@ class PromoCodeController extends AdminController
         $this->breadcrumbs = [
             $this->pageName
         ];
-        $this->buttons = [
-            [
-                'label' => Yii::t('cart/admin', 'CREATE_PROMOCODE'),
-                'url' => ['create'],
-                'options' => ['class' => 'btn btn-success', 'target' => '_blank']
-            ]
-        ];
+        if (Yii::$app->user->can("/{$this->module->id}/{$this->id}/*") || Yii::$app->user->can("/{$this->module->id}/{$this->id}/create")) {
+            $this->buttons = [
+                [
+                    'label' => Yii::t('cart/admin', 'CREATE_PROMOCODE'),
+                    'url' => ['create'],
+                    'options' => ['class' => 'btn btn-success', 'target' => '_blank']
+                ]
+            ];
+        }
         $isNew = $model->isNewRecord;
         $post = Yii::$app->request->post();
 

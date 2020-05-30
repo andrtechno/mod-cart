@@ -54,15 +54,16 @@ class DefaultController extends AdminController
     public function actionIndex()
     {
         $this->pageName = Yii::t('cart/admin', 'ORDERS');
-        $this->buttons = [
-            [
-                'label' => Yii::t('cart/admin', 'CREATE_ORDER'),
-                'url' => ['create'],
-                'icon' => 'add',
-                'options' => ['class' => 'btn btn-success']
-            ]
-        ];
-
+        if (Yii::$app->user->can("/{$this->module->id}/{$this->id}/*") || Yii::$app->user->can("/{$this->module->id}/{$this->id}/create")) {
+            $this->buttons = [
+                [
+                    'label' => Yii::t('cart/admin', 'CREATE_ORDER'),
+                    'url' => ['create'],
+                    'icon' => 'add',
+                    'options' => ['class' => 'btn btn-success']
+                ]
+            ];
+        }
         $this->breadcrumbs[] = $this->pageName;
 
         $searchModel = new OrderSearch();
@@ -92,20 +93,21 @@ class DefaultController extends AdminController
         );
 
 
-        $this->buttons = [
-            [
-                'label' => Yii::t('cart/admin', 'ORDER_VIEW'),
-                'icon' => 'eye',
-                'url' => $model->getUrl(),
-                'options' => ['class' => 'btn btn-primary', 'target' => '_blank']
-            ],
-            [
+        $this->buttons[] = [
+            'label' => Yii::t('cart/admin', 'ORDER_VIEW'),
+            'icon' => 'eye',
+            'url' => $model->getUrl(),
+            'options' => ['class' => 'btn btn-primary', 'target' => '_blank']
+        ];
+
+        if (Yii::$app->user->can("/{$this->module->id}/{$this->id}/*") || Yii::$app->user->can("/{$this->module->id}/{$this->id}/print")) {
+            $this->buttons[] = [
                 'label' => Yii::t('cart/admin', 'PRINT_PDF'),
                 'icon' => 'print',
                 'url' => ['print', 'id' => $model->id],
                 'options' => ['class' => 'btn btn-primary', 'target' => '_blank']
-            ]
-        ];
+            ];
+        }
         $old = $model->oldAttributes;
         $post = Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
