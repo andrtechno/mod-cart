@@ -143,5 +143,9 @@ class DeliveryController extends AdminController
         return $this->renderPartial('@cart/widgets/delivery/' . $systemId . '/_form', ['model' => $system->getModel()]);
     }
 
+    public function actionCreate()
+    {
+        return $this->actionUpdate(false);
+    }
 
 }

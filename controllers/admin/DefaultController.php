@@ -359,4 +359,10 @@ class DefaultController extends AdminController
     {
         return strnatcmp($a['title'], $b['title']);
     }
+
+
+    public function actionCreate()
+    {
+        return $this->actionUpdate(false);
+    }
 }
