@@ -38,6 +38,7 @@ class OrderProductSearch extends OrderProduct {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+			'pagination'=>['pageSize'=>999999]
         ]);
 
         $this->load($params);
