@@ -46,11 +46,11 @@ class DeliveryController extends AdminController
                 ],
             ];
         }
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('cart/default', 'MODULE_NAME'),
             'url' => ['/admin/cart']
         ];
-        $this->breadcrumbs[] = $this->pageName;
+        $this->view->params['breadcrumbs'][] = $this->pageName;
 
         $searchModel = new DeliverySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
@@ -67,18 +67,18 @@ class DeliveryController extends AdminController
         $isNew = $model->isNewRecord;
         \panix\mod\cart\CartDeliveryAsset::register($this->view);
 
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('cart/admin', 'ORDERS'),
             'url' => ['/admin/cart']
         ];
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('cart/admin', 'DELIVERY'),
             'url' => ['index']
         ];
 
         $this->pageName = Yii::t('app/default', $isNew ? 'CREATE' : 'UPDATE');
 
-        $this->breadcrumbs[] = $this->pageName;
+        $this->view->params['breadcrumbs'][] = $this->pageName;
 
         $post = Yii::$app->request->post();
 

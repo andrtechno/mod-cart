@@ -25,7 +25,7 @@ class GraphController extends AdminController
     {
         $this->pageName = Yii::t('cart/admin', 'INCOME');
 
-        $this->breadcrumbs[] = $this->pageName;
+        $this->view->params['breadcrumbs'][] = $this->pageName;
 
 
         $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())

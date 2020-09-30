@@ -27,11 +27,11 @@ class StatusesController extends AdminController
     public function actionIndex()
     {
         $this->pageName = Yii::t('cart/admin', 'STATUSES');
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('cart/admin', 'ORDERS'),
             'url' => ['/admin/cart']
         ];
-        $this->breadcrumbs[] = $this->pageName;
+        $this->view->params['breadcrumbs'][] = $this->pageName;
         if (Yii::$app->user->can("/{$this->module->id}/{$this->id}/*") || Yii::$app->user->can("/{$this->module->id}/{$this->id}/create")) {
             $this->buttons = [
                 [
@@ -67,17 +67,17 @@ class StatusesController extends AdminController
 
         $this->pageName = $title;
 
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('cart/admin', 'ORDERS'),
             'url' => ['/admin/cart']
         ];
 
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('cart/admin', 'STATUSES'),
             'url' => ['index']
         ];
 
-        $this->breadcrumbs[] = $this->pageName;
+        $this->view->params['breadcrumbs'][] = $this->pageName;
 
         $post = Yii::$app->request->post();
 

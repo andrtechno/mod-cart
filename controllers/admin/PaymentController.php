@@ -58,11 +58,11 @@ class PaymentController extends AdminController
                 ]
             ];
         }
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('cart/default', 'MODULE_NAME'),
             'url' => ['/admin/cart']
         ];
-        $this->breadcrumbs[] = $this->pageName;
+        $this->view->params['breadcrumbs'][] = $this->pageName;
 
         $searchModel = new PaymentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
@@ -79,15 +79,15 @@ class PaymentController extends AdminController
         $isNew = $model->isNewRecord;
         $this->pageName = Yii::t('cart/admin', 'PAYMENTS');
 
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => Yii::t('cart/admin', 'ORDERS'),
             'url' => ['/admin/cart']
         ];
-        $this->breadcrumbs[] = [
+        $this->view->params['breadcrumbs'][] = [
             'label' => $this->pageName,
             'url' => ['index']
         ];
-        $this->breadcrumbs[] = Yii::t('app/default', ($isNew) ? 'CREATE' : 'UPDATE');
+        $this->view->params['breadcrumbs'][] = Yii::t('app/default', ($isNew) ? 'CREATE' : 'UPDATE');
         \panix\mod\cart\CartPaymentAsset::register($this->view);
 
         $post = Yii::$app->request->post();

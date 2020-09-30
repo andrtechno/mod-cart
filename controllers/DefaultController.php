@@ -68,7 +68,7 @@ class DefaultController extends WebController
     {
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
         $this->view->title = $this->pageName;
-        $this->breadcrumbs = [$this->pageName];
+        $this->view->params['breadcrumbs'] = [$this->pageName];
 
         if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
             $this->processRecount();
@@ -153,7 +153,7 @@ class DefaultController extends WebController
         }
 
         $this->pageName = Yii::t('cart/default', 'VIEW_ORDER', ['id' => CMS::idToNumber($model->id)]);
-        $this->breadcrumbs[] = $this->pageName;
+        $this->view->params['breadcrumbs'][] = $this->pageName;
         return $this->render('view', [
             'model' => $model,
         ]);
@@ -498,7 +498,7 @@ class DefaultController extends WebController
             $searchModel = new OrderSearch();
 
             $this->pageName = Yii::t('cart/default', 'MY_ORDERS');
-            $this->breadcrumbs[] = $this->pageName;
+            $this->view->params['breadcrumbs'][] = $this->pageName;
 
             //Yii::$app->request->getQueryParams()
             $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
