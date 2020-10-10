@@ -45,6 +45,9 @@ class DefaultController extends WebController
             'promoCode' => [
                 'class' => 'panix\mod\cart\widgets\promocode\PromoCodeAction',
             ],
+            'buyOneClick' => [
+                'class' => 'panix\mod\cart\widgets\buyOneClick\actions\BuyOneClickAction',
+            ],
         ];
     }
 

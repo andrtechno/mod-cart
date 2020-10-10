@@ -1,7 +1,14 @@
 <?php
 
-Yii::import('mod.cart.widgets.buyOneClick.BuyOneClickForm');
-Yii::import('mod.cart.widgets.buyOneClick.BuyOneClickWidget');
+namespace panix\mod\cart\widgets\buyOneClick\actions;
+
+use panix\mod\cart\models\Order;
+use panix\mod\cart\models\OrderProduct;
+use yii\base\Action;
+use panix\mod\shop\models\Product;
+use panix\mod\cart\widgets\buyOneClick\BuyOneClickForm;
+use Yii;
+use yii\web\HttpException;
 
 /**
  * Форма купить в один клик.
@@ -15,17 +22,17 @@ Yii::import('mod.cart.widgets.buyOneClick.BuyOneClickWidget');
  * @property array $receiverMail Массив почты на которые будут отправлены уведомление
  * @todo Нужно доработать, добавление в админку заказа.
  */
-class BuyOneClickAction extends CAction {
+class BuyOneClickAction extends Action {
 
     public $receiverMail = array('notify@pixelion.com.ua');
 
     public function run() {
 
-        $quantity = Yii::$app->request->getParam('quantity');
+        $quantity = Yii::$app->request->get('quantity');
         if (Yii::$app->request->isAjax) {
-            $productModel = Product::model()->findByPk(Yii::$app->request->getParam('id'));
+            $productModel = Product::findOne(Yii::$app->request->get('id'));
             if (!$productModel) {
-                throw new CHttpException(404);
+                throw new HttpException(404);
             }
 
             $model = new BuyOneClickForm();
@@ -39,20 +46,19 @@ class BuyOneClickAction extends CAction {
                     $model->unsetAttributes();
                 }
             }
-            $this->controller->render('mod.cart.widgets.buyOneClick.views._form', array(
+            return Yii::$app->controller->render('@cart/widgets/buyOneClick/views/_form', [
                 'model' => $model,
                 'sended' => $sended,
                 'productModel' => $productModel,
                 'quantity' => (is_numeric($quantity)) ? $quantity : 1
-            ),false,true);
+            ],false,true);
         } else {
-            throw new CHttpException(403);
+            throw new HttpException(403);
         }
     }
 
     public function createOrder($model, $productModel) {
-        Yii::import('mod.cart.models.Order');
-        Yii::import('mod.cart.models.OrderProduct');
+
         $order = new Order();
 
         $user = Yii::$app->user;
@@ -76,7 +82,7 @@ class BuyOneClickAction extends CAction {
 
 
         $price = 0;
-        $ordered_product = new OrderProduct;
+        $ordered_product = new OrderProduct();
         $ordered_product->order_id = $order->id;
         $ordered_product->product_id = $productModel->id;
         //$ordered_product->category_id = $item['category_id'];

@@ -1,4 +1,8 @@
 <?php
+namespace panix\mod\cart\widgets\buyOneClick;
+
+use yii\base\Model;
+use Yii;
 
 /**
  * Форма купить в один клик.
@@ -12,7 +16,7 @@
  * @property string $phone Телефон
  * @property int $quantity Количество
  */
-class BuyOneClickForm extends FormModel {
+class BuyOneClickForm extends Model {
 
     const MODULE_ID = 'cart';
 
@@ -27,15 +31,15 @@ class BuyOneClickForm extends FormModel {
     }
 
     public function rules() {
-        return array(
-            array('phone, quantity', 'required'),
-            array('phone', 'length', 'max' => 20, 'min' => 7),
+        return [
+            [['phone','quantity'], 'required'],
+           // array('phone', 'length', 'max' => 20, 'min' => 7),
                 /*  array(
                   'phone',
                   'match', 'not' => true, 'pattern' => '/^[-\s0-9-]/i',
                   'message' => Yii::t('ByOnClickWidget.default','ERR_VALID'),
                   ), */
-        );
+        ];
     }
 
 }
