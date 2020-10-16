@@ -63,7 +63,27 @@ class DefaultController extends WebController
             throw new ForbiddenHttpException(Yii::t('app/error', 403));
         }
     }
+    public function actionPreCheckout()
+    {
+        $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
+        $this->view->title = $this->pageName;
+        $this->view->params['breadcrumbs'] = [$this->pageName];
 
+        if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
+            $this->processRecount();
+        }
+
+       $this->view->registerJs("
+            var penny = '" . Yii::$app->currency->active['penny'] . "';
+            var separator_thousandth = '" . Yii::$app->currency->active['separator_thousandth'] . "';
+            var separator_hundredth = '" . Yii::$app->currency->active['separator_hundredth'] . "';
+        ", yii\web\View::POS_HEAD, 'numberformat');
+
+        return $this->render('pre-chekout', [
+            'items' => Yii::$app->cart->getDataWithModels(),
+            'totalPrice' => Yii::$app->cart->getTotalPrice(),
+        ]);
+    }
     /**
      * Display list of product added to cart
      */

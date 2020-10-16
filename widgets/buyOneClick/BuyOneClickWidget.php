@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\widgets\buyOneClick;
 
+use panix\engine\data\Widget;
 use Yii;
 /**
  * Виджет купить в один клик.
@@ -21,7 +22,7 @@ use Yii;
  * @subpackage commerce.cart.widgets.buyOneClick
  * @uses CWidget
  */
-class BuyOneClickWidget extends \panix\engine\data\Widget {
+class BuyOneClickWidget extends Widget {
 
     public $pk;
 
