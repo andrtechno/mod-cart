@@ -32,6 +32,7 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property integer $created_at
  * @property integer $updated_at
  * @property boolean $paid
+ * @property boolean $call_confirm
  * @property OrderStatus $status
  * @property OrderProduct[] $products
  * @property Delivery $deliveryMethod

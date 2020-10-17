@@ -107,8 +107,9 @@ class DefaultController extends WebController
                 return ActiveForm::validate($this->form);
             }
             if ($this->form->load($post) && $this->form->validate()) {
-                $this->form->registerGuest();
+
                 $order = $this->createOrder();
+                $this->form->registerGuest($order);
                 Yii::$app->cart->clear();
                 Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                 return $this->redirect(['view', 'secret_key' => $order->secret_key]);
@@ -317,6 +318,9 @@ class DefaultController extends WebController
         $order->delivery_id = $this->form->delivery_id;
         $order->payment_id = $this->form->payment_id;
         $order->promocode_id = $this->form->promocode_id;
+        $order->call_confirm = $this->form->call_confirm;
+
+
         $order->status_id = 1;
         if ($order->validate()) {
             $order->save();

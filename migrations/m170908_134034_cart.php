@@ -47,6 +47,7 @@ class m170908_134034_cart extends Migration
             'delivery_price' => $this->money(10, 2),
             'total_price' => $this->money(10, 2),
             'total_price_purchase' => $this->money(10, 2),
+            'user_lastname' => $this->string(100),
             'user_name' => $this->string(100),
             'user_email' => $this->string(100),
             'user_address' => $this->string(255),
@@ -60,6 +61,7 @@ class m170908_134034_cart extends Migration
             'created_at' => $this->integer(11)->null(),
             'updated_at' => $this->integer(11)->null(),
             'paid' => $this->boolean()->defaultValue(0),
+            'call_confirm' => $this->boolean()->defaultValue(0),
             'ttn' => $this->string(100)->null(),
             'buyOneClick' => $this->boolean()->defaultValue(0),
         ], $this->tableOptions);
