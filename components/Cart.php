@@ -32,7 +32,7 @@ class Cart extends Component
     /**
      * @var Session
      */
-    private $session;
+    public $session;
     public $data = [];
 
     /** @var \panix\mod\shop\models\Product */
@@ -44,10 +44,13 @@ class Cart extends Component
         //$this->session->id = 'cart';
         $this->session->setTimeout(86000);
         $this->session->cookieParams = ['lifetime' => 86000];
-        if (!isset($this->session['cart_data']) || !is_array($this->session['cart_data']))
+        if (!isset($this->session['cart_data']) || !is_array($this->session['cart_data'])) {
             $this->session['cart_data'] = [];
+        }
 
-
+        if (!isset($this->session['test']) || !is_array($this->session['test'])) {
+            $this->session['test'] = [];
+        }
         /** @var \panix\mod\shop\models\Product $productModel */
         $this->productModel = Yii::$app->getModule('shop')->model('Product');
 
@@ -71,21 +74,28 @@ class Cart extends Component
         $itemIndex = $this->getItemIndex($data);
 
         $currentData = $this->getData();
-
-        if (isset($currentData[$itemIndex])) {
+        if (isset($currentData['items'][$itemIndex])) {
             //echo $currentData[$itemIndex]['quantity'];
             //die();
-            if ($currentData[$itemIndex]['quantity']) {
-                $currentData[$itemIndex]['quantity'] += (int)$data['quantity'];
-                if ($currentData[$itemIndex]['quantity'] > 999) {
-                    $currentData[$itemIndex]['quantity'] = 999;
+            if ($currentData['items'][$itemIndex]['quantity']) {
+                $currentData['items'][$itemIndex]['quantity'] += (int)$data['quantity'];
+                if ($currentData['items'][$itemIndex]['quantity'] > 999) {
+                    $currentData['items'][$itemIndex]['quantity'] = 999;
                 }
             }
         } else {
-            $currentData[$itemIndex] = $data;
+            $currentData['items'][$itemIndex] = $data;
         }
-
         $this->session['cart_data'] = $currentData;
+    }
+
+    public function acceptPoint($bonus = 0)
+    {
+        $data = $this->getData();
+        $this->session['cart_data'] = [
+            'items' => $data['items'],
+            'bonus' => $bonus
+        ];
     }
 
     /**
@@ -95,8 +105,9 @@ class Cart extends Component
     public function remove($index)
     {
         $currentData = $this->getData();
-        if (isset($currentData[$index])) {
-            unset($currentData[$index]);
+        if (isset($currentData['items'][$index])) {
+            unset($currentData['items'][$index]);
+            //$this->session['cart_data'] = $currentData;
             $this->session['cart_data'] = $currentData;
         }
     }
@@ -125,10 +136,11 @@ class Cart extends Component
     {
         $data = $this->getData();
 
-        if (empty($data))
+        if (empty($data['items']))
             return [];
 
-        foreach ($data as $index => &$item) {
+        //print_r($data);die;
+        foreach ($data['items'] as $index => &$item) {
 
             $item['variant_models'] = [];
             $item['model'] = $this->productModel::findOne($item['product_id']);
@@ -172,11 +184,37 @@ class Cart extends Component
     {
         $result = 0;
         $data = $this->getDataWithModels();
-        foreach ($data as $item) {
+
+        foreach ($data['items'] as $item) {
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
             $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
         }
+        //if(isset($data['bonus'])){
+       //     $result -= $data['bonus'];
+       // }
         return $result;
+    }
+
+    public function ss($orderTotal)
+    {
+
+        //$result=[];
+        // $result['success']=false;
+        $config = Yii::$app->settings->get('user');
+        $totalPrice = 100000;
+        $points = (Yii::$app->user->identity->points * (int)$config->bonus_value);
+
+
+        // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
+        $profit = (($orderTotal - $points) / $orderTotal) * 100;
+        if ($profit >= (int)$config->bonus_max_use_order) {
+            $points2 = Yii::$app->request->post('bonus');
+            $this->acceptPoint($points2);
+            return true;
+        } else {
+            $this->acceptPoint(0);
+            return false;
+        }
     }
 
     /**
@@ -198,10 +236,10 @@ class Cart extends Component
                 $quantity = 1;
 
 
-            if (isset($currentData[$index])) {
+            if (isset($currentData['items'][$index])) {
 
-                $currentData[$index]['quantity'] = (int)$quantity;
-                $data = $currentData[$index];
+                $currentData['items'][$index]['quantity'] = (int)$quantity;
+                $data = $currentData['items'][$index];
 
 
                 $productModel = $this->productModel::findOne($data['product_id']);
@@ -227,14 +265,58 @@ class Cart extends Component
             }
         }
 
-        $this->session['cart_data'] = $currentData;
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        return [
-            'unit_price' => Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice)),
-            'rowTotal' => Yii::$app->currency->number_format($rowTotal),
-            'totalPrice' => Yii::$app->currency->number_format($this->getTotalPrice()),
-            //'totalPrice' => Yii::$app->currency->number_format($this->totalPrice),
+        // $this->session['cart_data'] = $currentData;
+
+        $total = $this->getTotalPrice();
+
+        $points2 = Yii::$app->request->post('OrderCreateForm')['points'];
+        $bonusData=[];
+        $config = Yii::$app->settings->get('user');
+        $points = ($points2 * (int)$config->bonus_value);
+        // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
+        $profit = (($total - $points) / $total) * 100;
+       // echo $total;die;
+        if($points2 > 0) {
+            if ($points2 <= Yii::$app->user->identity->points) {
+                if ($profit >= (int)$config->bonus_max_use_order) {
+                    $bonusData['message'] = Yii::t('default', 'BONUS_ACTIVE', $points2);
+                    $bonusData['success'] = true;
+                    $bonusData['value'] = $points2;
+                    $total -= $points2;
+                } else {
+                    $points2 = 0;
+                    $bonusData['message'] = Yii::t('default', 'BONUS_NOT_ENOUGH');
+                    $bonusData['success'] = false;
+                }
+
+            } else {
+                $points2 = 0;
+                $bonusData['message'] = Yii::t('default', 'BONUS_NOT_ENOUGH');
+                $bonusData['success'] = false;
+            }
+        }else{
+            $points2 = 0;
+                $bonusData['message'] = 'Вы отменили бонусы';
+                $bonusData['success'] = false;
+
+        }
+
+
+        // $ss = $this->ss($total);
+        $this->session['cart_data'] = [
+            'items' => $currentData['items'],
+            'bonus' => $points2
         ];
+
+
+        //      $this->session['cart_data'] = $currentData;
+
+
+        $response['unit_price'] = Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice));
+        $response['rowTotal'] = Yii::$app->currency->number_format($rowTotal);
+        $response['total_price'] = Yii::$app->currency->number_format($total);
+        $response['bonus'] = $bonusData;
+        return $response;
     }
 
     /**
@@ -247,13 +329,15 @@ class Cart extends Component
             return;
 
         $currentData = $this->getData();
-        foreach ($data as $index => $quantity) {
+        foreach ($data['items'] as $index => $quantity) {
             if ((int)$quantity < 1)
                 $quantity = 1;
 
             if (isset($currentData[$index]))
-                $currentData[$index]['quantity'] = (int)$quantity;
+                $currentData['items'][$index]['quantity'] = (int)$quantity;
         }
+
+
         $this->session['cart_data'] = $currentData;
 
     }
@@ -265,9 +349,10 @@ class Cart extends Component
     {
         $result = 0;
 
-        foreach ($this->session['cart_data'] as $row)
-            $result += $row['quantity'];
-
+        if (isset($this->session['cart_data']['items'])) {
+            foreach ($this->session['cart_data']['items'] as $row)
+                $result += $row['quantity'];
+        }
         return $result;
     }
 
@@ -278,6 +363,7 @@ class Cart extends Component
      */
     public function getItemIndex($data)
     {
+
         return $data['product_id'] . implode('_', $data['variants']) . $data['configurable_id'];
     }
 

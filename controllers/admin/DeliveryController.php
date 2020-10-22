@@ -3,6 +3,7 @@
 namespace panix\mod\cart\controllers\admin;
 
 
+use panix\engine\CMS;
 use panix\mod\cart\components\delivery\DeliverySystemManager;
 use Yii;
 use panix\mod\cart\models\search\DeliverySearch;
@@ -90,7 +91,8 @@ class DeliveryController extends AdminController
                 if ($model->system) {
                     $manager = new DeliverySystemManager;
                     $system = $manager->getSystemClass($model->system);
-                    $system->setSettings($model->id, $_POST);
+                   // CMS::dump($system->getModel());die;
+                    $system->setSettings($model->id, Yii::$app->request->post(basename(get_class($system->getModel()))));
                 }
 
                 return $this->redirectPage($isNew, $post);
@@ -139,8 +141,11 @@ class DeliveryController extends AdminController
             exit;
         $manager = new DeliverySystemManager();
         $system = $manager->getSystemClass($systemId);
+        $model = $system->getModel();
+        $model->attributes = (array) $system->getSettings($delivery_id);
 
-        return $this->renderPartial('@cart/widgets/delivery/' . $systemId . '/_form', ['model' => $system->getModel()]);
+
+        return $this->renderPartial('@cart/widgets/delivery/' . $systemId . '/_form', ['model' => $model]);
     }
 
     public function actionCreate()

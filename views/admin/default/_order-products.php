@@ -49,13 +49,13 @@ echo GridView::widget([
             'format' => 'raw',
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                if($model->currency_id){
-                    $priceValue = Yii::$app->currency->convert($model->price,$model->currency_id);
-                }else{
+                if ($model->currency_id) {
+                    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
+                } else {
                     $priceValue = $model->price;
                 }
                 $price = Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
-                return (($model->originalProduct) ? Html::a($model->name . ' [' . $model->product_id . ']', $model->originalProduct->getUrl()) : $model->name).'<br/>'.$price;
+                return (($model->originalProduct) ? Html::a($model->name . ' [' . $model->product_id . ']', $model->originalProduct->getUrl()) : $model->name) . '<br/>' . $price;
             },
         ],
         [
@@ -93,26 +93,37 @@ Pjax::end();
 ?>
 
 
-<div class="card">
-    <div class="card-body">
-        <div class="panel-container">
-            <ul class="list-group">
-                <?php if ($model->delivery_price > 0) { ?>
-                    <li class="list-group-item">
-                        <?= Yii::t('cart/Order', 'DELIVERY_PRICE') ?>: <strong
-                                class="pull-right"><?= Yii::$app->currency->number_format($model->delivery_price); ?> <?= $symbol; ?></strong>
-                    </li>
+<div class="panel-container">
+    <ul class="list-group">
+        <?php if ($model->delivery_price > 0) { ?>
+            <li class="list-group-item">
+                <?= Yii::t('cart/Order', 'DELIVERY_PRICE') ?>: <strong
+                        class="float-right"><?= Yii::$app->currency->number_format($model->delivery_price); ?> <?= $symbol; ?></strong>
+            </li>
+        <?php } ?>
+        <li class="list-group-item">
+            <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong
+                    class="float-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <span class="text-muted"><?= $symbol ?></span></strong>
+        </li>
+        <?php if ($model->delivery_price > 0) { ?>
+            <li class="list-group-item">
+                <?= Yii::t('cart/default', 'DELIVERY_PRICE') ?>: <strong
+                        class="float-right"><?= Yii::$app->currency->number_format($model->delivery_price) ?> <span class="text-muted"><?= $symbol ?></span></strong>
+            </li>
+        <?php } ?>
+        <?php if ($model->discount) { ?>
+            <li class="list-group-item">
+                <?= $model::t('DISCOUNT') ?>:
+                <?php if ('%' === substr($model->discount, -1, 1)) { ?>
+                    <strong class="float-right"><?= $model->discount; ?></strong>
+                <?php } else { ?>
+                    <strong class="float-right"><?= Yii::$app->currency->number_format($model->discount) ?> <span class="text-muted"><?= $symbol ?></span></strong>
                 <?php } ?>
-                <li class="list-group-item">
-                    <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong
-                            class="pull-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <?= $symbol ?></strong>
-                </li>
-                <li class="list-group-item">
-                    <?= Yii::t('cart/default', 'TOTAL_PAY') ?>: <strong
-                            class="pull-right"><?= Yii::$app->currency->number_format($model->total_price + $model->delivery_price) ?> <?= $symbol ?></strong>
-                </li>
-
-            </ul>
-        </div>
-    </div>
+            </li>
+        <?php } ?>
+        <li class="list-group-item d-flex justify-content-between">
+            <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>
+            <h4 class="m-0"><?= Yii::$app->currency->number_format($model->full_price); ?> <small class="text-muted"><?= $symbol; ?></small></h4>
+        </li>
+    </ul>
 </div>

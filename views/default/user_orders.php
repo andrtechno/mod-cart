@@ -55,7 +55,7 @@ echo \panix\engine\grid\GridView::widget([
             'format' => 'html',
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
-                return $model->deliveryMethod->name . '<br/>' . Yii::t('cart/OrderCreateForm', 'USER_ADDRESS') . ': ' . $model->user_address;
+                return $model->deliveryMethod->name . '<br/>' . Yii::t('cart/OrderCreateForm', 'DELIVERY_ADDRESS') . ': ' . $model->delivery_address;
             }
         ],
         [

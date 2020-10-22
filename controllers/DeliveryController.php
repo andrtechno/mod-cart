@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\controllers;
 
+use panix\engine\CMS;
 use Yii;
 use panix\mod\cart\components\delivery\BaseDeliverySystem;
 use panix\mod\cart\models\Delivery;
@@ -20,11 +21,14 @@ class DeliveryController extends WebController
 
     public function actionProcess($id)
     {
-        $model = Delivery::findOne($id);
 
+       // if(is_int($id)){
+            $model = Delivery::findOne($id);
+       // }else{
+       //     $model = Delivery::findOne(['system'=>$id]);
+       // }
         if (!$model)
             $this->error404();
-
 
         $system = $model->getDeliverySystemClass();
 
@@ -41,6 +45,43 @@ class DeliveryController extends WebController
             ]);*/
 
         }
+    }
+
+
+    public function actionProcess2($id)
+    {
+
+        //if(is_int($id)){
+            $model = Delivery::findOne($id);
+        //}else{
+        //    $model = Delivery::findOne(['system'=>$id]);
+        //}
+        if (!$model)
+            $this->error404();
+
+        $system = $model->getDeliverySystemClass();
+
+        if ($system instanceof BaseDeliverySystem) {
+            //return $system->processRequest($model);
+
+
+            return $this->asJson($system->processRequest($model));
+           // return $system->renderDeliveryForm($model);
+
+            // return $this->asJson($system->renderDeliveryForm($model));
+
+            /*return $this->render("@cart/widgets/delivery/novaposhta/_view", [
+                'cities' => ['test'],
+                'address' => ['test'],
+                'method' => $model
+            ]);*/
+
+        }
+    }
+
+
+    public function actionTest(){
+
     }
 
 }

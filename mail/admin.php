@@ -26,8 +26,8 @@ $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
 <?php if ($order->paymentMethod->name) { ?>
     <p><strong><?= $order->getAttributeLabel('payment_id') ?>:</strong> <?= $order->paymentMethod->name; ?></p>
 <?php } ?>
-<?php if ($order->user_address) { ?>
-    <p><strong><?= $order->getAttributeLabel('user_address') ?>:</strong> <?= $order->user_address; ?></p>
+<?php if ($order->delivery_address) { ?>
+    <p><strong><?= $order->getAttributeLabel('delivery_address') ?>:</strong> <?= $order->delivery_address; ?></p>
 <?php } ?>
 
 

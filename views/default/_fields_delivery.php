@@ -70,10 +70,10 @@ use panix\engine\Html;
 
     <?php //echo Html::error($model, 'delivery_id', ['class' => 'help-block']); ?>
     <div id="delivery-form"></div>
-    <div id="user-address-input"><?= $form->field($model, 'user_address') ?></div>
+    <div id="user-address-input"><?= $form->field($model, 'delivery_address') ?></div>
 
-    <?php // Html::activeLabel($model, 'user_address', array('required' => true, 'class' => 'col-form-label')); ?>
-    <?php // Html::activeTextInput($model, 'user_address', array('class' => 'form-control')); ?>
+    <?php // Html::activeLabel($model, 'delivery_address', array('required' => true, 'class' => 'col-form-label')); ?>
+    <?php // Html::activeTextInput($model, 'delivery_address', array('class' => 'form-control')); ?>
 
 
     <?php

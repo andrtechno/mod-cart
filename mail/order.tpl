@@ -3,8 +3,12 @@
 {use class="panix\engine\Html"}
 {use class="panix\mod\shop\models\Product"}
 
+
 {if $order.user_name}
     <p><strong>{$order->getAttributeLabel('user_name')}:</strong> {$order->user_name}</p>
+{/if}
+{if $order.user_lastname}
+    <p><strong>{$order->getAttributeLabel('user_lastname')}:</strong> {$order->user_lastname}</p>
 {/if}
 {if $order.user_phone}
     <p><strong>{$order->getAttributeLabel('user_phone')}:</strong> {Html::tel($order->user_phone)}</p>
@@ -18,8 +22,9 @@
 {if $order.paymentMethod.name}
     <p><strong>{$order->getAttributeLabel('payment_id')}:</strong> {$order.paymentMethod.name}</p>
 {/if}
-{if $order.user_address}
-    <p><strong>{$order->getAttributeLabel('user_address')}:</strong> {$order.user_address}</p>
+
+{if $order.delivery_address}
+    <p><strong>{$order->getAttributeLabel('delivery_address')}:</strong> {if $order.delivery_city}{$order.delivery_city},{/if} {$order.delivery_address}</p>
 {/if}
 {if $order.user_comment}
     <p><strong>{$order->getAttributeLabel('user_comment')}:</strong> {$order.user_comment}</p>
@@ -35,7 +40,7 @@
     </tr>
     {foreach from=$order.products item=product}
         <tr>
-            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">
+            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 5%" align="center">
                 {Html::a(Html::img(Url::to($product->originalProduct->getMainImage('x100')->url,true), [
                 'alt' => $product->name,
                 'title' => $product->name
@@ -44,10 +49,10 @@
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Html::a($product->originalProduct->name, Url::to($product->originalProduct->getUrl(), true), ['target' => '_blank'])}</td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;"
                 align="center">{$product->quantity}</td>
-            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">
+            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 15%" align="center">
                 <strong>{$app->currency->number_format($app->currency->convert($product->price))}</strong>
                 <sup>{$app->currency->active['symbol']}</sup></td>
-            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;" align="center">
+            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 15%" align="center">
                 <strong>{$app->currency->number_format($app->currency->convert($product->price * $product->quantity))}</strong>
                 <sup>{$app->currency->active['symbol']}</sup></td>
         </tr>
@@ -66,5 +71,5 @@
 
 {Yii::t('cart/default', 'TOTAL_PAY')}:
 <h1 style="display:inline">{$app->currency->number_format($order->total_price + $order->delivery_price)}
-    <sup>{$app->currency->active['symbol']}</sup>
+    <small>{$app->currency->active['symbol']}</small>
 </h1>

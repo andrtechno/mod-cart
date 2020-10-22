@@ -2,33 +2,33 @@
 
 namespace panix\mod\cart\widgets\cart;
 
-use panix\engine\CMS;
+
 use Yii;
 use yii\helpers\Html;
+use yii\web\View;
 use panix\mod\shop\models\Product;
 use panix\engine\data\Widget;
-use yii\web\View;
+use panix\engine\CMS;
 
 class CartWidget extends Widget
 {
 
-
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
 
         $this->getView()->registerJs("cart.skin = '{$this->skin}';", View::POS_END);
 
+        /** @var \panix\mod\cart\components\Cart $cart */
         $cart = Yii::$app->cart;
         $currency = Yii::$app->currency->active;
         $items = $cart->getDataWithModels();
-        //$items = $cart->data;
-       // CMS::dump($cart->totalPrice);die;
-        $total = Yii::$app->currency->number_format($cart->getTotalPrice());
-       // $total = Yii::$app->currency->number_format($cart->totalPrice);
         $dataRender = [
             'count' => $cart->countItems(),
             'currency' => $currency,
-            'total' => $total,
+            'total' => $cart->totalPrice,
             'items' => $items
         ];
         if (!Yii::$app->request->isAjax)

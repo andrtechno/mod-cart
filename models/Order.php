@@ -24,13 +24,16 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property float $full_price
  * @property string $user_name
  * @property string $user_email
- * @property string $user_address
+ * @property string $delivery_address
  * @property string $user_phone
+ * @property string $delivery_city
  * @property string $user_comment
  * @property string $admin_comment
  * @property string $user_agent
+ * @property string $discount
  * @property integer $created_at
  * @property integer $updated_at
+ * @property integer $points
  * @property boolean $paid
  * @property boolean $call_confirm
  * @property OrderStatus $status
@@ -144,8 +147,8 @@ class Order extends ActiveRecord
             ['user_phone', 'panix\ext\telinput\PhoneInputValidator'],
             [['user_name', 'user_email', 'delivery_id', 'payment_id', 'user_phone'], 'required'],
             ['user_email', 'email'],
-            [['user_comment', 'admin_comment'], 'string', 'max' => 500],
-            [['user_address'], 'string', 'max' => 255],
+            [['user_comment', 'admin_comment', 'delivery_city'], 'string', 'max' => 500],
+            [['delivery_address'], 'string', 'max' => 255],
             [['user_phone'], 'string', 'max' => 30],
             [['user_name', 'user_email', 'discount', 'ttn'], 'string', 'max' => 100],
             [['ttn'], 'default'],
@@ -354,7 +357,7 @@ class Order extends ActiveRecord
     /**
      * @return mixed
      */
-    public function getFull_price()
+    public function getFull_Price()
     {
         if (!$this->isNewRecord) {
             $result = $this->total_price + $this->delivery_price;
@@ -510,7 +513,7 @@ class Order extends ActiveRecord
     public function sendAdminEmail()
     {
         $mailer = Yii::$app->mailer;
-        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath.'/order.tpl'], ['order' => $this])
+        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/order.tpl'], ['order' => $this])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', $this->id))
@@ -523,17 +526,17 @@ class Order extends ActiveRecord
      */
     public function sendClientEmail()
     {
-		if ($this->user_email) {
-			$mailer = Yii::$app->mailer;
-			$mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath.'/layouts/client';
-			$mailer->compose(Yii::$app->getModule('cart')->mailPath.'/order.tpl', ['order' => $this])
-				->setFrom('noreply@' . Yii::$app->request->serverName)
-				->setTo($this->user_email)
-				->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))
-				->send();
+        if ($this->user_email) {
+            $mailer = Yii::$app->mailer;
+            $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+            $mailer->compose(Yii::$app->getModule('cart')->mailPath . '/order.tpl', ['order' => $this])
+                ->setFrom('noreply@' . Yii::$app->request->serverName)
+                ->setTo($this->user_email)
+                ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))
+                ->send();
 
-			return $mailer;
-		}
+            return $mailer;
+        }
     }
 
 }

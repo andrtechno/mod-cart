@@ -225,7 +225,7 @@ class HistoricalBehavior extends Behavior
             'paid',
             'user_name',
             'user_email',
-            'user_address',
+            'delivery_address',
             'user_phone',
             'user_comment',
             'admin_comment',

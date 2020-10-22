@@ -41,11 +41,11 @@ $currency = Yii::$app->currency;
         </td>
         <td width="50%" valign="top">
             <table border="0" cellspacing="0" cellpadding="5" style="width:100%;">
-                <?php if ($model->user_address) { ?>
+                <?php if ($model->delivery_address) { ?>
                     <tr>
                         <td align="left" class="text-left" style="border-bottom: 1px dotted #777;">
-                            <?= $model->getAttributeLabel('user_address'); ?>:
-                            <strong><?= $model->user_address; ?></strong>
+                            <?= $model->getAttributeLabel('delivery_address'); ?>:
+                            <strong><?= $model->delivery_address; ?></strong>
                         </td>
                     </tr>
                 <?php } ?>

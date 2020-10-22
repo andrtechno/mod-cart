@@ -40,8 +40,8 @@ var orderTotalPrice = '$totalPrice';
         });
     }
 /*
-   $(\"#ordercreateform-user_address\")
-    .replaceWith('<select id=\"ordercreateform-user_address\" name=\"txtQuantity\" class=\"form-control\">' +
+   $(\"#ordercreateform-delivery_address\")
+    .replaceWith('<select id=\"ordercreateform-delivery_address\" name=\"txtQuantity\" class=\"form-control\">' +
           '<option value=\"1\">1</option>' +
           '<option value=\"2\">2</option>' +
           '<option value=\"3\">3</option>' +
@@ -49,7 +49,7 @@ var orderTotalPrice = '$totalPrice';
           '<option value=\"5\">5</option>' +
         '</select>');
         
-        $('#ordercreateform-user_address').selectpicker('refresh');*/
+        $('#ordercreateform-delivery_address').selectpicker('refresh');*/
 /*
 
 
@@ -142,13 +142,17 @@ $formOrder = ActiveForm::begin([
                             ?>
                             <?php
                             // Display variant options
-                            if (!empty($product['variant_models'])) {
-                                echo Html::beginTag('small', array('class' => 'cartProductOptions'));
-                                foreach ($product['variant_models'] as $variant)
-                                    echo ' - ' . $variant->productAttribute->title . ': <strong>' . $variant->option->value . '</strong><br/>';
-                                echo Html::endTag('small');
-                            }
-                            ?>
+                            if (!empty($product['variant_models'])) { ?>
+                                <div class="cartProductOptions">
+                                    <small>
+                                        <?php foreach ($product['variant_models'] as $variant) {
+                                            /** @var $variant \panix\mod\shop\models\ProductVariant */
+                                            echo ' &mdash; ' . $variant->productAttribute->title . ': <strong>' . $variant->option->value . '</strong>' . $variant->productAttribute->abbreviation . '<br/>';
+                                        }
+                                        ?>
+                                    </small>
+                                </div>
+                            <?php } ?>
                             <span class="price price-sm  text-warning">
                                 <?= Yii::$app->currency->number_format($price); ?>
                                 <sub><?= Yii::$app->currency->active['symbol']; ?>

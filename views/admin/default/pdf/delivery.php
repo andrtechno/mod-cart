@@ -16,10 +16,10 @@
             foreach ($model as $order) {
                 $array[$order->deliveryMethod->name][] = array(
                     'payment' => $order->paymentMethod->name,
-                    'city' => $order->user_address,
+                    'city' => $order->delivery_address,
                     'user_phone' => $order->user_phone,
                     'user_name' => $order->user_name,
-                    'user_address'=>$order->user_address,
+                    'delivery_address'=>$order->delivery_address,
                     'productsCount' => count($order->products),
                 );
             }
@@ -38,7 +38,7 @@
                             <?= $row['user_name'] ?>
                             <p>Оплата: <?= $row['payment'] ?></p>
                         </td>
-                        <td align="center" style="vertical-align:middle"><?= $row['city'] ?><?= $row['user_address'] ?></td>
+                        <td align="center" style="vertical-align:middle"><?= $row['city'] ?><?= $row['delivery_address'] ?></td>
                         <td align="center" style="vertical-align:middle"><?= \panix\engine\CMS::phone_format($row['user_phone']) ?></td>
                         <td align="center" style="vertical-align:middle"><?= $row['productsCount'] ?></td>
                     </tr>

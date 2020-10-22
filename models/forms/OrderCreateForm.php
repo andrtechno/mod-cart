@@ -24,7 +24,7 @@ class OrderCreateForm extends Model
     public $user_lastname;
     public $user_email;
     public $user_phone;
-    public $user_address;
+    public $delivery_address;
     public $user_comment;
     public $delivery_id;
     public $payment_id;
@@ -34,7 +34,11 @@ class OrderCreateForm extends Model
     //delivery
     public $delivery_city; //for delivery systems;
     public $delivery_warehouse; //for delivery systems;
-    public $delivery_type; //for delivery systems;
+    public $delivery_type = 'warehouse'; //for delivery systems;
+    public $delivery_city_ref;
+    public $delivery_warehouse_ref;
+
+    public $points;
 
     public function init()
     {
@@ -43,11 +47,12 @@ class OrderCreateForm extends Model
             // NEED CONFINGURE
             $this->user_name = $user->getDisplayName();
             $this->user_phone = $user->phone;
-            //$this->user_address = Yii::app()->user->address; //comment for april
+            //$this->delivery_address = Yii::app()->user->address; //comment for april
             $this->user_email = $user->getEmail();
             $this->user_lastname = $user->lastname;
-
+            $this->points = Yii::$app->cart->session['cart_data']['bonus'];
         } else {
+
             //  $this->_password = User::encodePassword(CMS::gen((int) Yii::$app->settings->get('users', 'min_password') + 2));
         }
 
@@ -64,20 +69,42 @@ class OrderCreateForm extends Model
     public function rules()
     {
         return [
-            [['user_name', 'user_email', 'user_phone', 'user_address'], 'required'],
+            [['user_name', 'user_email', 'user_phone'], 'required'],
             [['delivery_id', 'payment_id'], 'required'],
-            [['delivery_id', 'payment_id', 'promocode_id'], 'integer'],
+            [['delivery_id', 'payment_id', 'promocode_id', 'points'], 'integer'],
             ['user_email', 'email'],
             ['user_comment', 'string'],
             [['user_lastname', 'user_name'], 'string', 'max' => 100],
-            [['user_address', 'delivery_city', 'delivery_warehouse'], 'string', 'max' => 255],
+            [['delivery_address', 'delivery_city', 'delivery_type', 'delivery_city_ref', 'delivery_warehouse_ref', 'delivery_warehouse'], 'string'],
             [['user_phone'], 'string', 'max' => 30],
             [['register', 'call_confirm'], 'boolean'],
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
             ['user_phone', 'panix\ext\telinput\PhoneInputValidator'],
+
+            ['points', 'pointsValidate'],
             //['promocode_id', 'validatePromoCode','on'=>['create-form-order']],
         ];
+    }
+
+    public function pointsValidate($attribute)
+    {
+        if($this->{$attribute} <= Yii::$app->user->identity->points){
+            $total=Yii::$app->cart->getTotalPrice();
+            $config = Yii::$app->settings->get('user');
+            $profit = (($total - $this->{$attribute}) / $total) * 100;
+            if ($profit >= (int)$config->bonus_max_use_order) {
+               // $bonusData['message'] = "Вы успешно применили {$points2} бонусов";
+               // $bonusData['success'] = true;
+               // $total -= $this->{$attribute};
+                return true;
+            } else {
+                $this->addError($attribute,'У Вас недостаточно бонусов');
+            }
+           // return true;
+        }else{
+            $this->addError($attribute,'У Вас недостаточно бонусов');
+        }
     }
 
     public function beforeValidate()
@@ -115,7 +142,7 @@ class OrderCreateForm extends Model
             $buffer_pwd = $user->password;
             $user->username = $this->user_name;
             $user->email = $this->user_email;
-            //$user->address = $this->user_address;
+            //$user->address = $this->delivery_address;
             $user->phone = $this->user_phone;
             // $user->group_id = 2;
             if ($user->validate()) {

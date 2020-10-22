@@ -13,7 +13,8 @@ return [
     'TTN' => 'ТТН',
     'USER_NAME' => 'ФИО',
     'USER_EMAIL' => 'Email',
-    'USER_ADDRESS' => 'Адрес доставки',
+    'DELIVERY_ADDRESS' => 'Адрес доставки',
+    'DELIVERY_CITY' => 'Город доставки',
     'USER_PHONE' => 'Телефон',
     'USER_COMMENT' => 'Комментарий пользователя',
     'ADMIN_COMMENT' => 'Комментарий администратора',
@@ -31,5 +32,5 @@ return [
     'CREATE_ORDER' => 'Добавить заказ',
     'SELECT_PAYMENT' => '&mdash; Оплата &mdash;',
     'SELECT_DELIVERY' => '&mdash; Доставка &mdash;',
-    'CALL_CONFIRM'=>'Не звонить для подтверждения заказа'
+    'CALL_CONFIRM' => 'Не звонить для подтверждения заказа'
 ];

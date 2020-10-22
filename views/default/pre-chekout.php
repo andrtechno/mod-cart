@@ -40,8 +40,8 @@ var orderTotalPrice = '$totalPrice';
         });
     }
 /*
-   $(\"#ordercreateform-user_address\")
-    .replaceWith('<select id=\"ordercreateform-user_address\" name=\"txtQuantity\" class=\"form-control\">' +
+   $(\"#ordercreateform-delivery_address\")
+    .replaceWith('<select id=\"ordercreateform-delivery_address\" name=\"txtQuantity\" class=\"form-control\">' +
           '<option value=\"1\">1</option>' +
           '<option value=\"2\">2</option>' +
           '<option value=\"3\">3</option>' +
@@ -49,7 +49,7 @@ var orderTotalPrice = '$totalPrice';
           '<option value=\"5\">5</option>' +
         '</select>');
         
-        $('#ordercreateform-user_address').selectpicker('refresh');*/
+        $('#ordercreateform-delivery_address').selectpicker('refresh');*/
 /*
 
 

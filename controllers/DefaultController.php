@@ -6,7 +6,10 @@ namespace panix\mod\cart\controllers;
 use panix\engine\bootstrap\ActiveForm;
 use panix\engine\CMS;
 use panix\mod\cart\CartAsset;
+use panix\mod\novaposhta\models\Cities;
+use panix\mod\novaposhta\models\Warehouses;
 use panix\mod\shop\models\Attribute;
+use panix\mod\user\models\forms\LoginForm;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\Json;
@@ -55,14 +58,15 @@ class DefaultController extends WebController
     {
         if (Yii::$app->request->isAjax) {
             if (Yii::$app->request->isPost && !empty($_POST['quantities'])) {
-                $test = [];
-                $test[Yii::$app->request->post('product_id')] = Yii::$app->request->post('quantities');
-                return Yii::$app->cart->ajaxRecount($test);
+                $params = [];
+                $params[Yii::$app->request->post('product_id')] = Yii::$app->request->post('quantities');
+                return $this->asJson(Yii::$app->cart->ajaxRecount($params));
             }
         } else {
             throw new ForbiddenHttpException(Yii::t('app/error', 403));
         }
     }
+
     public function actionPreCheckout()
     {
         $this->pageName = Yii::t('cart/default', 'MODULE_NAME');
@@ -73,7 +77,7 @@ class DefaultController extends WebController
             $this->processRecount();
         }
 
-       $this->view->registerJs("
+        $this->view->registerJs("
             var penny = '" . Yii::$app->currency->active['penny'] . "';
             var separator_thousandth = '" . Yii::$app->currency->active['separator_thousandth'] . "';
             var separator_hundredth = '" . Yii::$app->currency->active['separator_hundredth'] . "';
@@ -81,9 +85,10 @@ class DefaultController extends WebController
 
         return $this->render('pre-chekout', [
             'items' => Yii::$app->cart->getDataWithModels(),
-            'totalPrice' => Yii::$app->cart->getTotalPrice(),
+            'totalPrice' => Yii::$app->cart->totalPrice,
         ]);
     }
+
     /**
      * Display list of product added to cart
      */
@@ -101,25 +106,40 @@ class DefaultController extends WebController
         // Make order
         $post = Yii::$app->request->post();
 
-        if ($post) {
-            if (Yii::$app->request->isAjax && $this->form->load($post)) {
-                Yii::$app->response->format = Response::FORMAT_JSON;
-                return ActiveForm::validate($this->form);
-            }
-            if ($this->form->load($post) && $this->form->validate()) {
+        /*if (Yii::$app->user->isGuest) {
+             $modelLogin = new LoginForm();
+             $config = Yii::$app->settings->get('user');
 
-                $order = $this->createOrder();
-                $this->form->registerGuest($order);
-                Yii::$app->cart->clear();
-                Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
-                return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+             if (Yii::$app->request->isAjax) {
+                 Yii::$app->response->format = Response::FORMAT_JSON;
+                 return ActiveForm::validate($modelLogin);
+             }
+
+             if ($modelLogin->load(Yii::$app->request->post()) && $modelLogin->login($config->login_duration * 86400)) {
+                 return $this->goBack(['/cart/default/index']);
+             }
+         }*/
+
+        if ($post) {
+
+            if ($this->form->load($post)) {
+                if (Yii::$app->request->isAjax) {
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return ActiveForm::validate($this->form);
+                }
+                if ($this->form->validate()) {
+                    $order = $this->createOrder();
+                    $this->form->registerGuest($order);
+                    die;//Yii::$app->cart->clear();
+                    Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                    return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+                }
             }
         }
 
 
         $deliveryMethods = Delivery::find()
             ->published()
-            ->orderByName()
             ->all();
         // echo($deliveryMethods->prepare(Yii::$app->db->queryBuilder)->createCommand()->rawSql);die;
 
@@ -132,10 +152,11 @@ class DefaultController extends WebController
             var separator_hundredth = '" . Yii::$app->currency->active['separator_hundredth'] . "';
         ", yii\web\View::POS_HEAD, 'numberformat');
 
+
+
         return $this->render('index', [
             'items' => Yii::$app->cart->getDataWithModels(),
             'totalPrice' => Yii::$app->cart->getTotalPrice(),
-            //'totalPrice' => Yii::$app->cart->totalPrice,
             'deliveryMethods' => $deliveryMethods,
             'paymentMethods' => $paymentMethods,
         ]);
@@ -229,7 +250,6 @@ class DefaultController extends WebController
         } else
             $configurable_id = 0;
 
-
         Yii::$app->cart->add([
             'product_id' => $model->id,
             'variants' => $variants,
@@ -268,7 +288,7 @@ class DefaultController extends WebController
             return [
                 'id' => $id,
                 'success' => true,
-                'total_price' => Yii::$app->currency->number_format(Yii::$app->cart->totalPrice),
+                'total_price' => Yii::$app->currency->number_format(Yii::$app->cart->getTotalPrice()),
                 'message' => Yii::t('cart/default', 'SUCCESS_PRODUCT_CART_DELETE')
             ];
         }
@@ -313,16 +333,34 @@ class DefaultController extends WebController
         $order->user_name = $this->form->user_name;
         $order->user_email = $this->form->user_email;
         $order->user_phone = $this->form->user_phone;
-        $order->user_address = $this->form->user_address;
+        $order->delivery_address = $this->form->delivery_address;
         $order->user_comment = $this->form->user_comment;
         $order->delivery_id = $this->form->delivery_id;
         $order->payment_id = $this->form->payment_id;
         $order->promocode_id = $this->form->promocode_id;
         $order->call_confirm = $this->form->call_confirm;
+        $order->points = $this->form->points;
+
+
+
+        $s = Delivery::findOne($order->delivery_id);
+        if ($s->system) {
+
+            $order->delivery_city_ref = $this->form->delivery_city_ref;
+            $order->delivery_warehouse_ref = $this->form->delivery_warehouse;
+            $warehouse = Warehouses::findOne($order->delivery_warehouse_ref);
+            if ($warehouse) {
+                $order->delivery_city = $warehouse->getCityDescription();
+                $order->delivery_address = $warehouse->getDescription();
+            }
+        }
 
 
         $order->status_id = 1;
         if ($order->validate()) {
+            if($order->points > 0){
+                $order->discount = $order->points;
+            }
             $order->save();
 
         } else {
@@ -333,7 +371,8 @@ class DefaultController extends WebController
 
         // Process products
         $productsCount = 0;
-        foreach (Yii::$app->cart->getDataWithModels() as $item) {
+        $cartItems = Yii::$app->cart->getDataWithModels();
+        foreach ($cartItems['items'] as $item) {
 
 
             $ordered_product = new OrderProduct;
@@ -418,7 +457,7 @@ class DefaultController extends WebController
         $order->sendAdminEmail();
         // $order->detachBehavior('notification');
 
-
+        Yii::$app->user->unsetPoints($order->points);
         //\machour\yii2\notifications\components\Notification::notify(\machour\yii2\notifications\components\Notification::KEY_NEW_ORDER, 1,$order->primaryKey);
         return $order;
     }
@@ -448,6 +487,37 @@ class DefaultController extends WebController
 
         if (!Yii::$app->request->isAjax)
             return $this->redirect($this->createUrl('index'));
+    }
+
+
+    public function actionAcceptPoints()
+    {
+        $cart = Yii::$app->cart;
+        $result=[];
+        $result['success']=false;
+        $config = Yii::$app->settings->get('user');
+        $totalPrice = 100000;
+        $points = 5000;
+        $pc = ($points * (int)$config->bonus_value);
+
+
+        // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
+        $profit = (($totalPrice - $pc) / $totalPrice) * 100;
+        if ($profit >= (int)$config->bonus_max_use_order) {
+            $points2 = Yii::$app->request->post('bonus');
+            $cart->acceptPoint($points2);
+            $result['success']=true;
+        } else {
+            $cart->acceptPoint(0);
+        }
+
+        return $this->asJson($result);
+    }
+
+    public function actionTest()
+    {
+
+        die;
     }
 
     /**
@@ -491,7 +561,7 @@ class DefaultController extends WebController
     {
 
         $mailer = Yii::$app->mailer;
-        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath.'/order.tpl'], ['order' => $order])
+        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/order.tpl'], ['order' => $order])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
@@ -506,8 +576,8 @@ class DefaultController extends WebController
     private function sendClientEmail(Order $order)
     {
         $mailer = Yii::$app->mailer;
-        $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath.'/layouts/client';
-        $mailer->compose(Yii::$app->getModule('cart')->mailPath.'/order.tpl', ['order' => $order])
+        $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+        $mailer->compose(Yii::$app->getModule('cart')->mailPath . '/order.tpl', ['order' => $order])
             ->setFrom('noreply@' . Yii::$app->request->serverName)
             ->setTo($order->user_email)
             ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $order->id]))
@@ -540,5 +610,6 @@ class DefaultController extends WebController
             $this->error404();
         }
     }
+
 
 }

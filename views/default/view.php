@@ -194,8 +194,8 @@ if (Yii::$app->session->hasFlash('success-promocode')) {
                 <div class="form-group"><?= $model->getAttributeLabel('delivery_id') ?>:
                     <div class="float-right font-weight-bold"><?= Html::encode($model->delivery_name); ?></div>
                 </div>
-                <div class="form-group"><?= $model->getAttributeLabel('user_address') ?>:
-                    <div class="float-right font-weight-bold"><?= Html::encode($model->user_address); ?></div>
+                <div class="form-group"><?= $model->getAttributeLabel('delivery_address') ?>:
+                    <div class="float-right font-weight-bold"><?= Html::encode($model->delivery_address); ?></div>
                 </div>
                 <h4 class="mt-5">Оплата</h4>
                 <div class="form-group"><?= $model->getAttributeLabel('payment_id') ?>:

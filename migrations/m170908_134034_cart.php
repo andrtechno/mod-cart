@@ -41,16 +41,16 @@ class m170908_134034_cart extends Migration
             'status_id' => $this->integer()->unsigned()->notNull(),
             'promocode_id' => $this->integer()->unsigned()->null(),
             'delivery_city' => $this->string(255),
-            'delivery_city_ref' => $this->string(32),
-            'delivery_warehouse' => $this->string(255),
-            'delivery_warehouse_ref' => $this->string(32),
+            'delivery_city_ref' => $this->string(36),
+            'delivery_address' => $this->string(255),
+            'delivery_warehouse_ref' => $this->string(36),
             'delivery_price' => $this->money(10, 2),
             'total_price' => $this->money(10, 2),
             'total_price_purchase' => $this->money(10, 2),
             'user_lastname' => $this->string(100),
             'user_name' => $this->string(100),
             'user_email' => $this->string(100),
-            'user_address' => $this->string(255),
+            //'user_address' => $this->string(255),
             'user_phone' => $this->phone(),
             'user_comment' => $this->text(),
             'admin_comment' => $this->text()->comment('Admin Comment'),
@@ -63,6 +63,7 @@ class m170908_134034_cart extends Migration
             'paid' => $this->boolean()->defaultValue(0),
             'call_confirm' => $this->boolean()->defaultValue(0),
             'ttn' => $this->string(100)->null(),
+            'points' => $this->integer()->defaultValue(0),
             'buyOneClick' => $this->boolean()->defaultValue(0),
         ], $this->tableOptions);
 
@@ -204,6 +205,7 @@ class m170908_134034_cart extends Migration
         }
 
         if ($this->db->driverName != "sqlite") {
+
             $this->addForeignKey('{{%fk_order_status}}', Order::tableName(), 'status_id', OrderStatus::tableName(), 'id', "NO ACTION", "NO ACTION");
             $this->addForeignKey('{{%fk_order_payment}}', Order::tableName(), 'payment_id', Payment::tableName(), 'id', "NO ACTION", "NO ACTION");
             $this->addForeignKey('{{%fk_order_delivery}}', Order::tableName(), 'delivery_id', Delivery::tableName(), 'id', "NO ACTION", "NO ACTION");
@@ -246,6 +248,9 @@ class m170908_134034_cart extends Migration
         $this->createIndex('created_at', Order::tableName(), 'created_at');
         $this->createIndex('updated_at', Order::tableName(), 'updated_at');
 
+        $this->createIndex('delivery_city_ref', Order::tableName(), 'delivery_city_ref');
+        $this->createIndex('delivery_warehouse_ref', Order::tableName(), 'delivery_warehouse_ref');
+
         // order status indexes
         $this->createIndex('ordern', OrderStatus::tableName(), 'ordern');
         $this->createIndex('use_in_stats', OrderStatus::tableName(), 'use_in_stats');
@@ -265,6 +270,7 @@ class m170908_134034_cart extends Migration
         $this->createIndex('order_id', OrderHistory::tableName(), 'order_id');
         $this->createIndex('user_id', OrderHistory::tableName(), 'user_id');
         $this->createIndex('date_create', OrderHistory::tableName(), 'date_create');
+
 
 
         // order history product indexes

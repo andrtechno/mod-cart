@@ -13,7 +13,7 @@ $request = Yii::$app->request;
             <?= file_get_contents(Yii::getAlias('@app/mail/assets').'/style.css'); ?>
         </style>
     </head>
-    <body style="width: 600px">
+    <body style="width: 650px;margin: 15px auto">
     <?php $this->beginBody() ?>
     <?= $content ?>
 

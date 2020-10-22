@@ -18,8 +18,11 @@
 {if $order.paymentMethod.name}
     <p><strong>{$order->getAttributeLabel('payment_id')}:</strong> {$order.paymentMethod.name}</p>
 {/if}
-{if $order.user_address}
-    <p><strong>{$order->getAttributeLabel('user_address')}:</strong> {$order.user_address}</p>
+{if $order.delivery_city}
+    <p><strong>{$order->getAttributeLabel('delivery_city')}:</strong> {$order.delivery_city}</p>
+{/if}
+{if $order.delivery_address}
+    <p><strong>{$order->getAttributeLabel('delivery_address')}:</strong> {$order.delivery_address}</p>
 {/if}
 {if $order.user_comment}
     <p><strong>{$order->getAttributeLabel('user_comment')}:</strong> {$order.user_comment}</p>

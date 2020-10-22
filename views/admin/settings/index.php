@@ -101,8 +101,8 @@ $form = ActiveForm::begin();
             ]);*/
             ?>
             <?php
-            echo $form->field($model, 'mail_tpl_order')->widget(\panix\engine\widgets\CodeMirrorInput::class, [
-                'modes' => ['php', 'css', 'xml', 'javascript', 'smarty'],
+            echo $form->field($model, 'mail_tpl_order')->widget(\panix\ext\codemirror\CodeMirrorTextArea::class, [
+              //  'modes' => ['php', 'css', 'xml', 'javascript', 'smarty'],
                 'mode' => ['name' => 'smarty', 'version' => 3, 'baseMode' => 'text/html'],
                 'theme'=>'elegant',//'solarized', ttcn
                 'options' => [

@@ -154,13 +154,13 @@ cart = {
                 //if ($('.delivery-choose').prop("checked")) { //for april
                 //    delprice = parseInt($('.delivery-choose:checked').attr("data-price"));
                 //}
-                var total = data.totalPrice;
+                var total = data.total_price;
                 //var total = parseInt(test.replace(separator_thousandth, '').replace(separator_hundredth, '')) + delprice;
                 // }
 
 
                 // $('#balance').text(data.balance);
-                //$('#balance').text((Number(data.totalPrice) * disum / 100));
+                //$('#balance').text((Number(data.total_price) * disum / 100));
 
                 common.removeLoader();
                 //$(cart.selectorTotal).text(price_format(total));
@@ -290,7 +290,7 @@ cart.init();
 
 
 $(function () {
-    $(document).on('click', '#cart-table a.remove', function () {
+    $(document).on('click', 'a.remove', function () {
         $.ajax({
             url: $(this).attr('href'),
             type: 'GET',
