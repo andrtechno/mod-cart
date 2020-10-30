@@ -139,7 +139,7 @@ class Cart extends Component
         if (empty($data['items']))
             return [];
 
-        //print_r($data);die;
+
         foreach ($data['items'] as $index => &$item) {
 
             $item['variant_models'] = [];
@@ -184,14 +184,15 @@ class Cart extends Component
     {
         $result = 0;
         $data = $this->getDataWithModels();
-
-        foreach ($data['items'] as $item) {
-            $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
-            $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
+        if (isset($data['items'])) {
+            foreach ($data['items'] as $item) {
+                $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
+                $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
+            }
         }
         //if(isset($data['bonus'])){
-       //     $result -= $data['bonus'];
-       // }
+        //     $result -= $data['bonus'];
+        // }
         return $result;
     }
 
@@ -270,13 +271,13 @@ class Cart extends Component
         $total = $this->getTotalPrice();
 
         $points2 = Yii::$app->request->post('OrderCreateForm')['points'];
-        $bonusData=[];
+        $bonusData = [];
         $config = Yii::$app->settings->get('user');
         $points = ($points2 * (int)$config->bonus_value);
         // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
         $profit = (($total - $points) / $total) * 100;
-       // echo $total;die;
-        if($points2 > 0) {
+        // echo $total;die;
+        if ($points2 > 0) {
             if ($points2 <= Yii::$app->user->identity->points) {
                 if ($profit >= (int)$config->bonus_max_use_order) {
                     $bonusData['message'] = Yii::t('default', 'BONUS_ACTIVE', $points2);
@@ -294,10 +295,10 @@ class Cart extends Component
                 $bonusData['message'] = Yii::t('default', 'BONUS_NOT_ENOUGH');
                 $bonusData['success'] = false;
             }
-        }else{
+        } else {
             $points2 = 0;
-                $bonusData['message'] = 'Вы отменили бонусы';
-                $bonusData['success'] = false;
+            $bonusData['message'] = 'Вы отменили бонусы';
+            $bonusData['success'] = false;
 
         }
 

@@ -222,10 +222,8 @@ class DefaultController extends WebController
 
         // Check product
         if (!isset($model))
-            $this->_addError(Yii::t('cart/default', 'ERROR_PRODUCT_NO_FIND'), true);
+            return $this->_addError(Yii::t('cart/default', 'ERROR_PRODUCT_NO_FIND'), true);
 
-        // Update counter
-        $model->updateCounters(['added_to_cart_count' => 1]);
 
         // Process variants
         if (!empty($_POST['eav'])) {
@@ -233,7 +231,7 @@ class DefaultController extends WebController
                 if (!empty($variant_id)) {
                     // Check if attribute/option exists
                     if (!$this->_checkVariantExists($_POST['product_id'], $attribute_id, $variant_id))
-                        $this->_addError(Yii::t('cart/default', 'ERROR_VARIANT_NO_FIND'));
+                        return $this->_addError(Yii::t('cart/default', 'ERROR_VARIANT_NO_FIND'));
                     else
                         array_push($variants, $variant_id);
                 }
@@ -241,14 +239,20 @@ class DefaultController extends WebController
         }
 
         // Process configurable products
-        if ($model->use_configurations) {
+      //  if ($model->use_configurations) {
             // Get last configurable item
             $configurable_id = Yii::$app->request->post('configurable_id', 0);
 
-            if (!$configurable_id || !in_array($configurable_id, $model->configurations))
-                $this->_addError(Yii::t('cart/default', 'ERROR_SELECT_VARIANT'), true);
-        } else
-            $configurable_id = 0;
+//if($configurable_id != $model->id){
+           // if (!$configurable_id || !in_array($configurable_id, $model->configurations))
+           //     return $this->_addError(Yii::t('cart/default', 'ERROR_SELECT_VARIANT'), true);
+//}
+      //  } else
+      //      $configurable_id = 0;
+
+
+        // Update counter
+        $model->updateCounters(['added_to_cart_count' => 1]);
 
         Yii::$app->cart->add([
             'product_id' => $model->id,
@@ -282,7 +286,7 @@ class DefaultController extends WebController
     {
         Yii::$app->cart->remove($id);
         if (!Yii::$app->request->isAjax || !Yii::$app->cart->countItems()) {
-            return $this->redirect(['index']);
+            return $this->redirect($this->module->homeUrl);
         } else {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return [
@@ -548,7 +552,7 @@ class DefaultController extends WebController
             'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
                 'product_name' => $product
             ]),
-            'url' => Url::to(['/cart/default/index'])
+            'url' => Url::to($this->module->homeUrl)
         ];
         return $this->asJson($data);
     }

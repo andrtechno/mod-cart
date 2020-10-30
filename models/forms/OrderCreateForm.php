@@ -50,7 +50,7 @@ class OrderCreateForm extends Model
             //$this->delivery_address = Yii::app()->user->address; //comment for april
             $this->user_email = $user->getEmail();
             $this->user_lastname = $user->lastname;
-            $this->points = Yii::$app->cart->session['cart_data']['bonus'];
+            $this->points = (isset(Yii::$app->cart->session['cart_data']['bonus']))?Yii::$app->cart->session['cart_data']['bonus']:0;
         } else {
 
             //  $this->_password = User::encodePassword(CMS::gen((int) Yii::$app->settings->get('users', 'min_password') + 2));

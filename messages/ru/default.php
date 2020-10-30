@@ -23,6 +23,7 @@ return [
     'TABLE_PRODUCT' => 'Товар',
     'PAYMENT' => 'Оплата',
     'COST' => 'Стоимость',
+    'ERROR_SELECT_VARIANT' => 'Необходимо выбрать вариант',
     'ORDER_PRICE' => 'Сумма заказа',
     'DELIVERY_PRICE' => 'Цена доставки',
     'DELIVERY_PAYMENT' => 'Доставки и оплаты',

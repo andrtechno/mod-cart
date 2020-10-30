@@ -92,8 +92,11 @@ cart = {
         });
 
     },
-    add: function (product_id) {
-        var form = $("#form-add-cart-" + product_id);
+    add: function (that) {
+        //var form = $("#form-add-cart-" + product_id);
+
+        var form = $(that).closest('form');
+console.log('zzz',form);
         $.ajax({
             url: form.attr('action'),
             type: 'POST',

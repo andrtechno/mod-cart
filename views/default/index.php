@@ -163,11 +163,11 @@ $formOrder = ActiveForm::begin([
 
                             // Display configurable options
                             if (isset($product['configurable_model'])) {
-                                $attributeModels = \panix\mod\shop\models\Attribute::model()->findAllByPk($product['model']->configurable_attributes);
-                                echo Html::beginTag('span', array('class' => 'cartProductOptions'));
+                                $attributeModels = \panix\mod\shop\models\Attribute::findAll(['id' => $product['model']->configurable_attributes]);
+                                echo Html::beginTag('span', ['class' => 'cartProductOptions']);
                                 foreach ($attributeModels as $attribute) {
                                     $method = 'eav_' . $attribute->name;
-                                    echo ' - ' . $attribute->title . ': ' . $product['configurable_model']->$method . '<br/>';
+                                    echo ' - ' . $attribute->title . ': ' . $product['configurable_model']->$method->value . '<br/>';
                                 }
                                 echo Html::endTag('span');
                             }
