@@ -24,6 +24,7 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property float $full_price
  * @property string $user_name
  * @property string $user_email
+ * @property string $user_lastname
  * @property string $delivery_address
  * @property string $user_phone
  * @property string $delivery_city

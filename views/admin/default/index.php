@@ -4,13 +4,13 @@ use panix\engine\Html;
 use panix\engine\widgets\Pjax;
 use panix\engine\grid\GridView;
 use panix\mod\cart\models\Order;
-
+Pjax::begin(['dataProvider' => $dataProvider]);
 ?>
 <?= Html::beginForm('/admin/cart/default/pdf-orders','GET'); ?>
 <?php echo $this->render('_filter_pdf'); ?>
 <?php
 
-Pjax::begin(['dataProvider' => $dataProvider]);
+
 
 echo GridView::widget([
     'tableOptions' => ['class' => 'table table-striped'],
@@ -97,5 +97,6 @@ echo GridView::widget([
     ]
 ]);
 ?>
-<?php Pjax::end(); ?>
+
 <?= Html::endForm(); ?>
+<?php Pjax::end(); ?>

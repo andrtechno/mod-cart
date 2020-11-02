@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\models;
 
+use panix\engine\CMS;
 use panix\mod\shop\models\Product;
 use panix\engine\db\ActiveRecord;
 
@@ -138,6 +139,39 @@ class OrderProduct extends ActiveRecord
         return implode(', ', $content);
     }
 
+    public function getVariantsConfigure()
+    {
+        //if (!empty($this->configurable_name) && $appendConfigurableName)
+        //    $result .= '<br/>' . $this->configurable_name;
+
+        $variants = unserialize($this->variants);
+
+        if ($this->configurable_data !== '' && is_string($this->configurable_data))
+            $this->configurable_data = unserialize($this->configurable_data);
+
+        if (!is_array($variants))
+            $variants = [];
+
+        if (!is_array($this->configurable_data))
+            $this->configurable_data = [];
+
+        $variants = array_merge($variants, $this->configurable_data);
+
+       // if (!empty($variants)) {
+          //  foreach ($variants as $key => $value)
+               // $result .= "<br/> - {$key}: {$value}";
+       // }
+//CMS::dump($variants);die;
+        return $variants;
+    }
+
+    public function getConfiguration()
+    {
+        if ($this->configurable_data !== '' && is_string($this->configurable_data))
+            $this->configurable_data = unserialize($this->configurable_data);
+
+        return $this->configurable_data;
+    }
 
     public function getProductAttributes()
     {

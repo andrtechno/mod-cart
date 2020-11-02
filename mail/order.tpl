@@ -24,7 +24,8 @@
 {/if}
 
 {if $order.delivery_address}
-    <p><strong>{$order->getAttributeLabel('delivery_address')}:</strong> {if $order.delivery_city}{$order.delivery_city},{/if} {$order.delivery_address}</p>
+    <p><strong>{$order->getAttributeLabel('delivery_address')}
+            :</strong> {if $order.delivery_city}{$order.delivery_city},{/if} {$order.delivery_address}</p>
 {/if}
 {if $order.user_comment}
     <p><strong>{$order->getAttributeLabel('user_comment')}:</strong> {$order.user_comment}</p>
@@ -46,7 +47,13 @@
                 'title' => $product->name
                 ]),$product->originalProduct->getUrl(),['target'=>'_blank'])}
             </td>
-            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Html::a($product->originalProduct->name, Url::to($product->originalProduct->getUrl(), true), ['target' => '_blank'])}</td>
+            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Html::a($product->originalProduct->name, Url::to($product->originalProduct->getUrl(), true), ['target' => '_blank'])}
+                {if $product.variantsConfigure}
+                    {foreach from=$product.variantsConfigure key=key item=configure}
+                        <div>{$configure->name}: <strong>{$configure->value}</strong></div>
+                    {/foreach}
+                {/if}
+            </td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;"
                 align="center">{$product->quantity}</td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 15%" align="center">
@@ -54,7 +61,8 @@
                 <sup>{$app->currency->active['symbol']}</sup></td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 15%" align="center">
                 <strong>{$app->currency->number_format($app->currency->convert($product->price * $product->quantity))}</strong>
-                <sup>{$app->currency->active['symbol']}</sup></td>
+                <sup>{$app->currency->active['symbol']}</sup>
+            </td>
         </tr>
     {/foreach}
 </table>
@@ -69,7 +77,12 @@
     </h2>
 {/if}
 
+<div style="text-align: center">
+    {Html::a('Бонусная программа',Url::to(['/page/default/view','slug'=>'bonusnaa-programma'],true),['target'=>'_blank'])}
+</div>
+
 {Yii::t('cart/default', 'TOTAL_PAY')}:
 <h1 style="display:inline">{$app->currency->number_format($order->total_price + $order->delivery_price)}
     <small>{$app->currency->active['symbol']}</small>
 </h1>
+11111

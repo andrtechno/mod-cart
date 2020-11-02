@@ -41,6 +41,10 @@ echo GridView::widget([
             // 'filter'=>true,
             'value' => function ($model) {
                 /** @var $model OrderProduct */
+
+              //  \panix\engine\CMS::dump($model->variantsConfigure);die;
+
+
                 return ($model->originalProduct) ? $model->originalProduct->renderGridImage() : Html::tag('span', 'удален', ['class' => 'badge badge-danger']);
             },
         ],

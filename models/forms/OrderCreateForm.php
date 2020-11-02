@@ -13,6 +13,11 @@ use panix\mod\user\models\User;
 
 /**
  * Class OrderCreateForm
+ * @property string $user_name
+ * @property string $user_lastname
+ * @property string $user_comment
+ * @property string $user_email
+ * @property string $user_phone
  * @package panix\mod\cart\models\forms
  */
 class OrderCreateForm extends Model

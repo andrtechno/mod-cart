@@ -130,7 +130,8 @@ class DefaultController extends WebController
                 if ($this->form->validate()) {
                     $order = $this->createOrder();
                     $this->form->registerGuest($order);
-                    die;//Yii::$app->cart->clear();
+                    Yii::$app->cart->clear();
+                    //die();
                     Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                     return $this->redirect(['view', 'secret_key' => $order->secret_key]);
                 }
@@ -327,6 +328,7 @@ class DefaultController extends WebController
      */
     public function createOrder()
     {
+        /** @var $this->form OrderCreateForm */
         if (Yii::$app->cart->countItems() == 0)
             return false;
 
@@ -336,6 +338,7 @@ class DefaultController extends WebController
         $order->user_id = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
         $order->user_name = $this->form->user_name;
         $order->user_email = $this->form->user_email;
+        $order->user_lastname = $this->form->user_lastname;
         $order->user_phone = $this->form->user_phone;
         $order->delivery_address = $this->form->delivery_address;
         $order->user_comment = $this->form->user_comment;

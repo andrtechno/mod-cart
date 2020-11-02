@@ -11,6 +11,7 @@ return [
     'STATUS_ID' => 'Статус',
     'PAID' => 'Оплачен',
     'TTN' => 'ТТН',
+    'USER_LASTNAME' => 'Фамилия',
     'USER_NAME' => 'ФИО',
     'USER_EMAIL' => 'Email',
     'DELIVERY_ADDRESS' => 'Адрес доставки',
