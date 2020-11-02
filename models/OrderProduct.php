@@ -5,6 +5,7 @@ namespace panix\mod\cart\models;
 use panix\engine\CMS;
 use panix\mod\shop\models\Product;
 use panix\engine\db\ActiveRecord;
+use yii\helpers\Html;
 
 /**
  * Class OrderProduct
@@ -139,6 +140,11 @@ class OrderProduct extends ActiveRecord
         return implode(', ', $content);
     }
 
+    public function getConfigureProduct()
+    {
+        return $this->hasOne(Product::class, ['id' => 'configurable_id']);
+    }
+
     public function getVariantsConfigure()
     {
         //if (!empty($this->configurable_name) && $appendConfigurableName)
@@ -157,10 +163,10 @@ class OrderProduct extends ActiveRecord
 
         $variants = array_merge($variants, $this->configurable_data);
 
-       // if (!empty($variants)) {
-          //  foreach ($variants as $key => $value)
-               // $result .= "<br/> - {$key}: {$value}";
-       // }
+        // if (!empty($variants)) {
+        //  foreach ($variants as $key => $value)
+        // $result .= "<br/> - {$key}: {$value}";
+        // }
 //CMS::dump($variants);die;
         return $variants;
     }
@@ -176,6 +182,28 @@ class OrderProduct extends ActiveRecord
     public function getProductAttributes()
     {
         return json_decode($this->attributes_data);
+    }
+
+
+    public function getProductName()
+    {
+        if ($this->id != $this->configurable_id) {
+            return Html::a($this->configurable_name, $this->configureProduct->getUrl());
+        } elseif ($this->originalProduct) {
+            return Html::a($this->originalProduct->name, $this->originalProduct->getUrl());
+        }
+        return $this->name;
+    }
+
+
+    public function getProductImage()
+    {
+        if ($this->id != $this->configurable_id) {
+            return $this->configureProduct->renderGridImage();
+        } elseif ($this->originalProduct) {
+            return $this->originalProduct->renderGridImage();
+        }
+        return Html::tag('span', 'удален', ['class' => 'badge badge-danger']);
     }
 
 }

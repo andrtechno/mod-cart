@@ -41,11 +41,7 @@ echo GridView::widget([
             // 'filter'=>true,
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-
-              //  \panix\engine\CMS::dump($model->variantsConfigure);die;
-
-
-                return ($model->originalProduct) ? $model->originalProduct->renderGridImage() : Html::tag('span', 'удален', ['class' => 'badge badge-danger']);
+                return $model->getProductImage();
             },
         ],
         [
@@ -58,8 +54,23 @@ echo GridView::widget([
                 } else {
                     $priceValue = $model->price;
                 }
+
+                $variantsConfigure = '';
+                if ($model->variantsConfigure) {
+                    foreach ($model->variantsConfigure as $configure) {
+                        $variantsConfigure .= "<div>{$configure->name}: <strong>{$configure->value}</strong></div>";
+                    }
+                }
+                /*$productName = $model->name;
+                if ($model->configurable_name) {
+                    $productName = $model->configurable_name;
+                    if($model->id != $model->configurable_id){
+                        $productName.= $model->configureProduct->id;
+                    }
+
+                }*/
                 $price = Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
-                return (($model->originalProduct) ? Html::a($model->name . ' [' . $model->product_id . ']', $model->originalProduct->getUrl()) : $model->name) . '<br/>' . $price;
+                return $model->getProductName() . '<br/>' . $variantsConfigure . $price;
             },
         ],
         [
@@ -107,12 +118,14 @@ Pjax::end();
         <?php } ?>
         <li class="list-group-item">
             <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong
-                    class="float-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <span class="text-muted"><?= $symbol ?></span></strong>
+                    class="float-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <span
+                        class="text-muted"><?= $symbol ?></span></strong>
         </li>
         <?php if ($model->delivery_price > 0) { ?>
             <li class="list-group-item">
                 <?= Yii::t('cart/default', 'DELIVERY_PRICE') ?>: <strong
-                        class="float-right"><?= Yii::$app->currency->number_format($model->delivery_price) ?> <span class="text-muted"><?= $symbol ?></span></strong>
+                        class="float-right"><?= Yii::$app->currency->number_format($model->delivery_price) ?> <span
+                            class="text-muted"><?= $symbol ?></span></strong>
             </li>
         <?php } ?>
         <?php if ($model->discount) { ?>
@@ -121,13 +134,16 @@ Pjax::end();
                 <?php if ('%' === substr($model->discount, -1, 1)) { ?>
                     <strong class="float-right"><?= $model->discount; ?></strong>
                 <?php } else { ?>
-                    <strong class="float-right"><?= Yii::$app->currency->number_format($model->discount) ?> <span class="text-muted"><?= $symbol ?></span></strong>
+                    <strong class="float-right"><?= Yii::$app->currency->number_format($model->discount) ?> <span
+                                class="text-muted"><?= $symbol ?></span></strong>
                 <?php } ?>
             </li>
         <?php } ?>
         <li class="list-group-item d-flex justify-content-between">
             <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>
-            <h4 class="m-0"><?= Yii::$app->currency->number_format($model->full_price); ?> <small class="text-muted"><?= $symbol; ?></small></h4>
+            <h4 class="m-0"><?= Yii::$app->currency->number_format($model->full_price); ?>
+                <small class="text-muted"><?= $symbol; ?></small>
+            </h4>
         </li>
     </ul>
 </div>

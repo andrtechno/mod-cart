@@ -47,7 +47,7 @@
                 'title' => $product->name
                 ]),$product->originalProduct->getUrl(),['target'=>'_blank'])}
             </td>
-            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Html::a($product->originalProduct->name, Url::to($product->originalProduct->getUrl(), true), ['target' => '_blank'])}
+            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Html::a($product->productName, Url::to($product->originalProduct->getUrl(), true), ['target' => '_blank'])}
                 {if $product.variantsConfigure}
                     {foreach from=$product.variantsConfigure key=key item=configure}
                         <div>{$configure->name}: <strong>{$configure->value}</strong></div>
