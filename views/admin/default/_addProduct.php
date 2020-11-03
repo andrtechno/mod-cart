@@ -13,82 +13,106 @@ $dataProvider->pagination->pageSize = 10;
 $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
 
 
-Pjax::begin([
-    'dataProvider' => $dataProvider,
-    'enablePushState' => false,
-    'enableReplaceState' => false
-]);
+?>
 
-echo GridView::widget([
-    'filterUrl' => ['/admin/cart/default/add-product-list', 'id' => $model->id],
-    'tableOptions' => ['class' => 'table table-striped'],
-    'dataProvider' => $dataProvider,
-    'enableLayout' => false,
-    'filterModel' => $searchModel,
-    'columns' => [
-        [
-            'format' => 'raw',
-            'contentOptions' => ['class' => 'text-center image'],
-            'value' => function ($model) {
-                /** @var \panix\mod\shop\models\Product $model */
-                return $model->renderGridImage();
-            },
-        ],
-        [
-            'attribute' => 'name',
-            'format' => 'raw',
-            'contentOptions' => ['class' => 'text-left'],
-            'value' => function ($model) {
-                /** @var \panix\mod\shop\models\Product $model */
-                return $model->name;
-            },
-        ],
-        [
-            'attribute' => 'sku',
-            'format' => 'raw',
-            'contentOptions' => ['class' => 'text-left'],
-            'value' => function ($model) {
-                /** @var \panix\mod\shop\models\Product $model */
-                return $model->sku;
-            },
-        ],
-        [
-            'attribute' => 'price',
-            'format' => 'raw',
-            'contentOptions' => ['class' => 'text-center'],
-            'value' => function ($model) {
-                /** @var \panix\mod\shop\models\Product $model */
-                return Html::textInput("price_{$model->id}", $model->price, ['id' => "price_{$model->id}", 'class' => 'form-control']);
-            }
-        ],
-        [
-            'attribute' => 'quantity',
-            'format' => 'raw',
-            'contentOptions' => ['class' => 'text-center'],
-            'value' => function ($model) {
-                /** @var \panix\mod\shop\models\Product $model */
-                return \yii\jui\Spinner::widget([
-                    'id' => "count_{$model->id}",
-                    'name' => "count_{$model->id}",
-                    'value' => 1,
-                    'clientOptions' => ['max' => 999],
-                    'options' => ['class' => 'cart-spinner']
+
+<div class="modal fade" id="cart-add-product" tabindex="-1" aria-labelledby="cart-add-productLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width:1000px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cart-add-productLabel"><?= Yii::t('shop/admin', 'CREATE_PRODUCT') ?></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <?php
+                Pjax::begin([
+                    'dataProvider' => $dataProvider,
+                    'enablePushState' => false,
+                    'enableReplaceState' => false
                 ]);
-            }
-        ],
-        [
-            'class' => 'panix\engine\grid\columns\ActionColumn',
-            'template' => '{add}',
-            'buttons' => [
-                'add' => function ($url, $data, $key) {
-                    return Html::a(Html::icon('add'), $data->id, [
-                        'title' => Yii::t('yii', 'VIEW'),
-                        'class' => 'btn btn-sm btn-success addProductToOrder',
-                        'onClick' => 'return addProductToOrder(this, ' . Yii::$app->request->get('id') . ');'
-                    ]);
-                }
-            ]
-        ]
-    ]
-]);
-Pjax::end();
+
+                echo GridView::widget([
+                    'filterUrl' => ['/admin/cart/default/add-product-list', 'id' => $model->id],
+                    'tableOptions' => ['class' => 'table table-striped'],
+                    'dataProvider' => $dataProvider,
+                    'enableLayout' => false,
+                    'filterModel' => $searchModel,
+                    'pager' => [
+                        'options' => ['class' => 'pagination justify-content-center'],
+                        'class' => 'panix\engine\widgets\LinkPager'
+                    ],
+                    'columns' => [
+                        [
+                            'format' => 'raw',
+                            'contentOptions' => ['class' => 'text-center image'],
+                            'value' => function ($model) {
+                                /** @var \panix\mod\shop\models\Product $model */
+                                return $model->renderGridImage();
+                            },
+                        ],
+                        [
+                            'attribute' => 'name',
+                            'format' => 'raw',
+                            'contentOptions' => ['class' => 'text-left'],
+                            'value' => function ($model) {
+                                /** @var \panix\mod\shop\models\Product $model */
+                                return $model->name;
+                            },
+                        ],
+                        [
+                            'attribute' => 'sku',
+                            'format' => 'raw',
+                            'contentOptions' => ['class' => 'text-left'],
+                            'value' => function ($model) {
+                                /** @var \panix\mod\shop\models\Product $model */
+                                return $model->sku;
+                            },
+                        ],
+                        [
+                            'attribute' => 'price',
+                            'format' => 'raw',
+                            'contentOptions' => ['class' => 'text-center'],
+                            'value' => function ($model) {
+                                /** @var \panix\mod\shop\models\Product $model */
+                                return Html::textInput("price_{$model->id}", $model->price, ['id' => "price_{$model->id}", 'class' => 'form-control']);
+                            }
+                        ],
+                        [
+                            'attribute' => 'quantity',
+                            'format' => 'raw',
+                            'contentOptions' => ['class' => 'text-center'],
+                            'value' => function ($model) {
+                                /** @var \panix\mod\shop\models\Product $model */
+                                return \yii\jui\Spinner::widget([
+                                    'id' => "count_{$model->id}",
+                                    'name' => "count_{$model->id}",
+                                    'value' => 1,
+                                    'clientOptions' => ['max' => 999],
+                                    'options' => ['class' => 'cart-spinner']
+                                ]);
+                            }
+                        ],
+                        [
+                            'class' => 'panix\engine\grid\columns\ActionColumn',
+                            'template' => '{add}',
+                            'filter' => false,
+                            'buttons' => [
+                                'add' => function ($url, $data, $key) {
+                                    return Html::a(Html::icon('add'), $data->id, [
+                                        'title' => Yii::t('yii', 'VIEW'),
+                                        'class' => 'btn btn-sm btn-success addProductToOrder',
+                                        'onClick' => 'return addProductToOrder(this, ' . Yii::$app->request->get('id') . ');'
+                                    ]);
+                                }
+                            ]
+                        ]
+                    ]
+                ]);
+                Pjax::end();
+                ?>
+            </div>
+        </div>
+    </div>
+</div>

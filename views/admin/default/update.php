@@ -39,13 +39,13 @@ use panix\ext\fancybox\Fancybox;
         if (!$model->isNewRecord) {
             ?>
 
-            <div id="dialog-modal" style="display: none;" title="<?php echo Yii::t('cart/admin', 'CREATE_PRODUCT') ?>">
+
                 <?php
-                echo $this->render('_addProduct', array(
+                echo $this->render('_addProduct', [
                     'model' => $model,
-                ));
+                ]);
                 ?>
-            </div>
+
             <div id="orderedProducts">
                 <?php
                 if (!$model->isNewRecord) {

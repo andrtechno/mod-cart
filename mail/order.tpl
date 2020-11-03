@@ -40,14 +40,15 @@
         <th style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Yii::t('cart/default', 'TOTAL_PRICE')}</th>
     </tr>
     {foreach from=$order.products item=product}
+
         <tr>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 5%" align="center">
-                {Html::a(Html::img(Url::to($product->originalProduct->getMainImage('x100')->url,true), [
+                {Html::a(Html::img(Url::to($product->getProductImage('x100'),true), [
                 'alt' => $product->name,
                 'title' => $product->name
-                ]),$product->originalProduct->getUrl(),['target'=>'_blank'])}
+                ]),{Url::to($product->getProductUrl(),true)},['target'=>'_blank'])}
             </td>
-            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Html::a($product->productName, Url::to($product->originalProduct->getUrl(), true), ['target' => '_blank'])}
+            <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{$product->getProductName(true,['target' => '_blank'])}
                 {if $product.variantsConfigure}
                     {foreach from=$product.variantsConfigure key=key item=configure}
                         <div>{$configure->name}: <strong>{$configure->value}</strong></div>
@@ -85,4 +86,3 @@
 <h1 style="display:inline">{$app->currency->number_format($order->total_price + $order->delivery_price)}
     <small>{$app->currency->active['symbol']}</small>
 </h1>
-11111

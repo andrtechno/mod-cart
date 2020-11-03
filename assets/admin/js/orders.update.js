@@ -1,7 +1,7 @@
 /**
  * Show dialog
  * @param order_id
- */
+
 function openAddProductDialog(order_id) {
     $("#dialog-modal").dialog({
         width: '80%',
@@ -25,7 +25,7 @@ function openAddProductDialog(order_id) {
         of: window,
         collision: 'fit'
     });
-}
+}*/
 
 /**
  * Add product to order

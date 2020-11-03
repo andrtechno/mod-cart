@@ -6,6 +6,7 @@ use panix\engine\CMS;
 use panix\mod\shop\models\Product;
 use panix\engine\db\ActiveRecord;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /**
  * Class OrderProduct
@@ -24,6 +25,7 @@ use yii\helpers\Html;
  * @property string $sku Article product
  * @property string $variants
  * @property Product $originalProduct
+ * @property Product $configureProduct
  * @property Order $order
  * @property string $attributes_data
  *
@@ -185,23 +187,40 @@ class OrderProduct extends ActiveRecord
     }
 
 
-    public function getProductName()
+    public function getProductName($absoluteUrl = false, $linkOptions = array())
     {
-        if ($this->id != $this->configurable_id) {
-            return Html::a($this->configurable_name, $this->configureProduct->getUrl());
+        if ($this->configurable_id) {
+            if ($this->id != $this->configurable_id) {
+                return Html::a($this->configureProduct->name, Url::to($this->configureProduct->getUrl(), $absoluteUrl), $linkOptions);
+            }
         } elseif ($this->originalProduct) {
-            return Html::a($this->originalProduct->name, $this->originalProduct->getUrl());
+            return Html::a($this->originalProduct->name, Url::to($this->originalProduct->getUrl(), $absoluteUrl), $linkOptions);
         }
         return $this->name;
     }
 
 
-    public function getProductImage()
+    public function getProductUrl()
     {
-        if ($this->id != $this->configurable_id) {
-            return $this->configureProduct->renderGridImage();
+        if ($this->configurable_id) {
+            if ($this->id != $this->configurable_id) {
+                return $this->configureProduct->getUrl();
+            }
         } elseif ($this->originalProduct) {
-            return $this->originalProduct->renderGridImage();
+            return $this->originalProduct->getUrl();
+        }
+        return [];
+    }
+
+
+    public function getProductImage($size = '50x50')
+    {
+        if ($this->configurable_id) {
+            if ($this->id != $this->configurable_id) {
+                return $this->configureProduct->getMainImage($size)->url;
+            }
+        } elseif ($this->originalProduct) {
+            return $this->originalProduct->getMainImage($size)->url;
         }
         return Html::tag('span', 'удален', ['class' => 'badge badge-danger']);
     }

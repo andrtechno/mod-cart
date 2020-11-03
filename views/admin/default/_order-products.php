@@ -26,10 +26,15 @@ echo GridView::widget([
     'layoutOptions' => [
         'title' => Yii::t('cart/admin', 'ORDER_PRODUCTS'),
         'buttons' => [
-            [
+           /* [
                 'label' => Yii::t('shop/admin', 'CREATE_PRODUCT'),
                 'url' => 'javascript:openAddProductDialog(' . $model->id . ');',
                 'options' => ['class' => 'btn btn-success btn-sm']
+            ],*/
+            [
+                'label' => Yii::t('shop/admin', 'CREATE_PRODUCT'),
+                'url' => '#',
+                'options' => ['class' => 'btn btn-success btn-sm', 'data-toggle'=>"modal", 'data-target'=>"#cart-add-product"]
             ]
         ]
     ],
@@ -41,7 +46,7 @@ echo GridView::widget([
             // 'filter'=>true,
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                return $model->getProductImage();
+                return Html::a(Html::img($model->getProductImage()),$model->getProductUrl());
             },
         ],
         [
