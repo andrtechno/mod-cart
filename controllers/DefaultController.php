@@ -130,8 +130,8 @@ class DefaultController extends WebController
                 if ($this->form->validate()) {
                     $order = $this->createOrder();
                     $this->form->registerGuest($order);
-                    //Yii::$app->cart->clear();
-                    die();
+                    Yii::$app->cart->clear();
+                    //die();
                     Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                     return $this->redirect(['view', 'secret_key' => $order->secret_key]);
                 }
