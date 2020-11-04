@@ -55,7 +55,7 @@ class OrderCreateForm extends Model
             //$this->delivery_address = Yii::app()->user->address; //comment for april
             $this->user_email = $user->getEmail();
             $this->user_lastname = $user->lastname;
-            $this->points = (isset(Yii::$app->cart->session['cart_data']['bonus']))?Yii::$app->cart->session['cart_data']['bonus']:0;
+            $this->points = (isset(Yii::$app->cart->session['cart_data']['bonus'])) ? Yii::$app->cart->session['cart_data']['bonus'] : 0;
         } else {
 
             //  $this->_password = User::encodePassword(CMS::gen((int) Yii::$app->settings->get('users', 'min_password') + 2));
@@ -73,6 +73,27 @@ class OrderCreateForm extends Model
 
     public function rules()
     {
+
+        $rules = [];
+        if (YII_DEBUG) {
+            $rules[] = [['user_name', 'user_email', 'user_phone'], 'required'];
+            $rules[] = [['delivery_id', 'payment_id'], 'required'];
+            $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points'], 'integer'];
+            $rules[] = ['user_email', 'email'];
+            $rules[] = ['user_comment', 'string'];
+            $rules[] = [['user_lastname', 'user_name'], 'string', 'max' => 100];
+            $rules[] = [['delivery_address', 'delivery_city', 'delivery_type', 'delivery_city_ref', 'delivery_warehouse_ref', 'delivery_warehouse'], 'string'];
+            $rules[] = [['user_phone'], 'string', 'max' => 30];
+            $rules[] = [['register', 'call_confirm'], 'boolean'];
+            $rules[] = ['delivery_id', 'validateDelivery'];
+            $rules[] = ['payment_id', 'validatePayment'];
+            $rules[] = ['user_phone', 'panix\ext\telinput\PhoneInputValidator'];
+            $rules[] = ['points', 'pointsValidate'];
+            if (Yii::$app->user->isGuest) {
+                $rules[] = [['register'], 'validateRegisterEmail'];
+            }
+            return $rules;
+        }
         return [
             [['user_name', 'user_email', 'user_phone'], 'required'],
             [['delivery_id', 'payment_id'], 'required'],
@@ -92,23 +113,34 @@ class OrderCreateForm extends Model
         ];
     }
 
+    public function validateRegisterEmail($attribute)
+    {
+        if ($this->{$attribute}) {
+            $find = User::find()->where(['username' => $this->user_email])->count();
+            if ($find) {
+                $this->addError($attribute, 'TEST');
+            }
+        }
+        $this->addError($attribute, 'TEST');
+    }
+
     public function pointsValidate($attribute)
     {
-        if($this->{$attribute} <= Yii::$app->user->identity->points){
-            $total=Yii::$app->cart->getTotalPrice();
+        if ($this->{$attribute} <= Yii::$app->user->identity->points) {
+            $total = Yii::$app->cart->getTotalPrice();
             $config = Yii::$app->settings->get('user');
             $profit = (($total - $this->{$attribute}) / $total) * 100;
             if ($profit >= (int)$config->bonus_max_use_order) {
-               // $bonusData['message'] = "Вы успешно применили {$points2} бонусов";
-               // $bonusData['success'] = true;
-               // $total -= $this->{$attribute};
+                // $bonusData['message'] = "Вы успешно применили {$points2} бонусов";
+                // $bonusData['success'] = true;
+                // $total -= $this->{$attribute};
                 return true;
             } else {
-                $this->addError($attribute,'У Вас недостаточно бонусов');
+                $this->addError($attribute, 'У Вас недостаточно бонусов');
             }
-           // return true;
-        }else{
-            $this->addError($attribute,'У Вас недостаточно бонусов');
+            // return true;
+        } else {
+            $this->addError($attribute, 'У Вас недостаточно бонусов');
         }
     }
 
@@ -157,8 +189,8 @@ class OrderCreateForm extends Model
             } else {
                 $this->addError('register', 'Ошибка регистрации');
                 Yii::$app->session->addFlash('error', Yii::t('cart/default', 'ERROR_REGISTER'));
-               // print_r($user->getErrors());
-               // die('error register');
+                // print_r($user->getErrors());
+                // die('error register');
             }
         }
     }

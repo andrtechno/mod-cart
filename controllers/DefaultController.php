@@ -272,7 +272,6 @@ class DefaultController extends WebController
             'length_class_id' => $model->length_class_id,
             'configurable_id' => $configurable_id,
             'quantity' => (int)Yii::$app->request->post('quantity', 1),
-           // 'price' => ($model->hasDiscount)?$model->discountPrice:$model->price,
             'price' => $model->price
         ]);
 

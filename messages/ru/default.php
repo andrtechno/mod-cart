@@ -11,6 +11,7 @@ return [
     'SUCCESS_ADDCART' => 'Товар <strong>{product_name}</strong> успешно добавлен в корзину.',
     'ERROR_PRODUCT_NO_FIND' => 'Ошибка. Продукт не найден.',
     'BUY' => 'Купить',
+    'ERROR_REGISTER' => 'Ошибка регистрации',
     'BUY_SET' => 'Купить комплект',
     'DETAIL_ORDER_VIEW' => 'Детали заказа Вы можете просмотреть на странице',
     'PAYMENT_ORDER' => 'Оплата заказа №{id}',
