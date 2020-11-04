@@ -85,7 +85,7 @@ class DefaultController extends WebController
 
         return $this->render('pre-chekout', [
             'items' => Yii::$app->cart->getDataWithModels(),
-            'totalPrice' => Yii::$app->cart->totalPrice,
+            'totalPrice' => Yii::$app->cart->getTotalPrice(),
         ]);
     }
 
@@ -272,7 +272,8 @@ class DefaultController extends WebController
             'length_class_id' => $model->length_class_id,
             'configurable_id' => $configurable_id,
             'quantity' => (int)Yii::$app->request->post('quantity', 1),
-            'price' => $model->price,
+           // 'price' => ($model->hasDiscount)?$model->discountPrice:$model->price,
+            'price' => $model->price
         ]);
 
         $this->_finish($model->name);

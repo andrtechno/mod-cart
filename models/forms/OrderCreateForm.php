@@ -142,34 +142,34 @@ class OrderCreateForm extends Model
     public function registerGuest(Order $order)
     {
         if (Yii::$app->user->isGuest && $this->register) {
+            $pass = mb_strtoupper(CMS::gen(3)) . rand(1000, 9999);
             $user = new User(['scenario' => 'register_fast']);
-            $user->password = mb_strtoupper(CMS::gen(3)) . rand(1000, 9999);
-            $buffer_pwd = $user->password;
-            $user->username = $this->user_name;
+            $user->password = $pass;
+            $user->username = $this->user_email;
+            $user->first_name = $this->user_name;
             $user->email = $this->user_email;
-            //$user->address = $this->delivery_address;
             $user->phone = $this->user_phone;
             // $user->group_id = 2;
             if ($user->validate()) {
                 $user->save();
-                $this->sendRegisterEmail($order, $user, $buffer_pwd);
+                $this->sendRegisterEmail($order, $user, $pass);
                 Yii::$app->session->addFlash('success', Yii::t('cart/default', 'SUCCESS_REGISTER'));
             } else {
                 $this->addError('register', 'Ошибка регистрации');
                 Yii::$app->session->addFlash('error', Yii::t('cart/default', 'ERROR_REGISTER'));
-                print_r($user->getErrors());
-                die('error register');
+               // print_r($user->getErrors());
+               // die('error register');
             }
         }
     }
 
-    private function sendRegisterEmail(Order $order, User $user, $buffer_pwd)
+    private function sendRegisterEmail(Order $order, User $user, $password)
     {
         $mailer = Yii::$app->mailer;
         $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/register.tpl'], [
             'user' => $user,
             'order' => $order,
-            'password' => $buffer_pwd,
+            'password' => $password,
             'form' => $this,
         ])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])

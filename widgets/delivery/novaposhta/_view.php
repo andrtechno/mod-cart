@@ -101,6 +101,7 @@ if (!Yii::$app->request->post('city')) {
 $this->registerJs("
 
 
+
 $('#cartForm').yiiActiveForm('add', {
     id: 'ordercreateform-user_city',
     name: 'delivery_city',
@@ -137,13 +138,8 @@ $('#warehouse-input').addClass('d-none');
     $(document).on('change', '#{$delivery_type_selector}', function(e, clickedIndex, isSelected, previousValue) {
     
     
-    console.log($('#cartForm').serialize());
-    
         if($(this).val() == 'warehouse'){
             $('#warehouse-input').removeClass('d-none');
-            //$('#user-address-input').addClass('d-none');
-
-//console.log(addressList);
             $('#{$address_selector}').replaceWith('<select id=\"{$address_selector}\" name=\"OrderCreateForm[delivery_address]\" class=\"form-control\">' +
                 '<option value=\"1\">1</option>' +
                 '<option value=\"2\">2</option>' +

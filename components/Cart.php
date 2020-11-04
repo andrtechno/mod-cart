@@ -269,39 +269,42 @@ class Cart extends Component
         // $this->session['cart_data'] = $currentData;
 
         $total = $this->getTotalPrice();
+        $points2 = 0;
+        if (isset(Yii::$app->request->post('OrderCreateForm')['points'])) {
+            $points2 = Yii::$app->request->post('OrderCreateForm')['points'];
 
-        $points2 = Yii::$app->request->post('OrderCreateForm')['points'];
-        $bonusData = [];
-        $config = Yii::$app->settings->get('user');
-        $points = ($points2 * (int)$config->bonus_value);
-        // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
-        $profit = (($total - $points) / $total) * 100;
-        // echo $total;die;
-        if ($points2 > 0) {
-            if ($points2 <= Yii::$app->user->identity->points) {
-                if ($profit >= (int)$config->bonus_max_use_order) {
-                    $bonusData['message'] = Yii::t('default', 'BONUS_ACTIVE', $points2);
-                    $bonusData['success'] = true;
-                    $bonusData['value'] = $points2;
-                    $total -= $points2;
+            $bonusData = [];
+            $config = Yii::$app->settings->get('user');
+            $points = ($points2 * (int)$config->bonus_value);
+            // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
+            $profit = (($total - $points) / $total) * 100;
+            // echo $total;die;
+            if ($points2 > 0) {
+                if ($points2 <= Yii::$app->user->identity->points) {
+                    if ($profit >= (int)$config->bonus_max_use_order) {
+                        $bonusData['message'] = Yii::t('default', 'BONUS_ACTIVE', $points2);
+                        $bonusData['success'] = true;
+                        $bonusData['value'] = $points2;
+                        $total -= $points2;
+                    } else {
+                        $points2 = 0;
+                        $bonusData['message'] = Yii::t('default', 'BONUS_NOT_ENOUGH');
+                        $bonusData['success'] = false;
+                    }
+
                 } else {
                     $points2 = 0;
                     $bonusData['message'] = Yii::t('default', 'BONUS_NOT_ENOUGH');
                     $bonusData['success'] = false;
                 }
-
             } else {
                 $points2 = 0;
-                $bonusData['message'] = Yii::t('default', 'BONUS_NOT_ENOUGH');
+                $bonusData['message'] = 'Вы отменили бонусы';
                 $bonusData['success'] = false;
+
             }
-        } else {
-            $points2 = 0;
-            $bonusData['message'] = 'Вы отменили бонусы';
-            $bonusData['success'] = false;
-
+            $response['bonus'] = $bonusData;
         }
-
 
         // $ss = $this->ss($total);
         $this->session['cart_data'] = [
@@ -316,7 +319,7 @@ class Cart extends Component
         $response['unit_price'] = Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice));
         $response['rowTotal'] = Yii::$app->currency->number_format($rowTotal);
         $response['total_price'] = Yii::$app->currency->number_format($total);
-        $response['bonus'] = $bonusData;
+
         return $response;
     }
 

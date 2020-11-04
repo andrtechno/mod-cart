@@ -151,8 +151,8 @@ console.log('zzz',form);
             },
             dataType: 'json',
             success: function (data) {
-                $('#row-total-price' + product_id).html(data.rowTotal);
-                $('#price-unit-' + product_id).html(data.unit_price);
+                $('#row-total-price' + product_id).find('span:first-child').html(data.rowTotal);
+                $('#price-unit-' + product_id).find('span:first-child').html(data.unit_price);
                 //var delprice = 0;
                 //if ($('.delivery-choose').prop("checked")) { //for april
                 //    delprice = parseInt($('.delivery-choose:checked').attr("data-price"));
