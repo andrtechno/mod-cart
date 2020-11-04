@@ -195,7 +195,7 @@ class Cart extends Component
         // }
         return $result;
     }
-
+/*
     public function ss($orderTotal)
     {
 
@@ -217,7 +217,7 @@ class Cart extends Component
             return false;
         }
     }
-
+*/
     /**
      * @param $data
      * @return array
@@ -264,13 +264,15 @@ class Cart extends Component
 
                 }
             }
+            //$total+=$rowTotal;
         }
 
         // $this->session['cart_data'] = $currentData;
 
-        $total = $this->getTotalPrice();
+
         $points2 = 0;
         if (isset(Yii::$app->request->post('OrderCreateForm')['points'])) {
+            $total = $this->getTotalPrice();
             $points2 = Yii::$app->request->post('OrderCreateForm')['points'];
 
             $bonusData = [];
@@ -304,21 +306,22 @@ class Cart extends Component
 
             }
             $response['bonus'] = $bonusData;
+
         }
 
-        // $ss = $this->ss($total);
+
         $this->session['cart_data'] = [
             'items' => $currentData['items'],
             'bonus' => $points2
         ];
 
 
-        //      $this->session['cart_data'] = $currentData;
+        //$this->session['cart_data'] = $currentData;
 
 
         $response['unit_price'] = Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice));
         $response['rowTotal'] = Yii::$app->currency->number_format($rowTotal);
-        $response['total_price'] = Yii::$app->currency->number_format($total);
+        $response['total_price'] = Yii::$app->currency->number_format((isset($total)) ? $total : $this->getTotalPrice());
 
         return $response;
     }
