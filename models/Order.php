@@ -32,6 +32,7 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property string $admin_comment
  * @property string $user_agent
  * @property string $discount
+ * @property string $ttn
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $points
