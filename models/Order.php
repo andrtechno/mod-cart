@@ -370,6 +370,7 @@ class Order extends ActiveRecord
             }
             return $result;
         }
+        return 0;
     }
 
     /**
@@ -513,6 +514,7 @@ class Order extends ActiveRecord
      */
     public function sendAdminEmail()
     {
+        /** @var \yii\swiftmailer\Mailer $mailer */
         $mailer = Yii::$app->mailer;
         $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/order.tpl'], ['order' => $this])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
@@ -523,11 +525,12 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\mail\MailerInterface
+     * @return bool|\yii\mail\MailerInterface
      */
     public function sendClientEmail()
     {
         if ($this->user_email) {
+            /** @var \yii\swiftmailer\Mailer $mailer */
             $mailer = Yii::$app->mailer;
             $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
             $mailer->compose(Yii::$app->getModule('cart')->mailPath . '/order.tpl', ['order' => $this])
@@ -538,6 +541,110 @@ class Order extends ActiveRecord
 
             return $mailer;
         }
+        return false;
+    }
+
+    public function getGridColumns()
+    {
+
+        //  $price_max = self::find()->aggregatePrice('MAX')->asArray()->one();
+        //  $price_min = self::find()->aggregatePrice('MIN')->asArray()->one();
+
+        $columns = [];
+
+
+        $columns['id'] = [
+            'attribute' => 'id',
+            'header' => Yii::t('cart/Order', 'ORDER_ID'),
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-left'],
+            'value' => function ($model) {
+                /** @var $model static */
+
+                return $model->getGridStatus() . ' ' . \panix\engine\CMS::idToNumber($model->id);
+
+            },
+        ];
+        $columns['user_name'] = [
+            'attribute' => 'user_name',
+            'header' => Yii::t('cart/Order', 'CONTACT'),
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-left'],
+            'value' => function ($model) {
+                /** @var $model self */
+                $phone = ($model->user_phone) ? Html::tel($model->user_phone) : $model->user_phone;
+                return $model->user_name . '<br/>' . $phone . '<br/>' . Yii::$app->formatter->asEmail($model->user_email);
+
+            },
+        ];
+
+
+        $columns['delivery_id'] = [
+            'attribute' => 'delivery_id',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-left'],
+            'value' => function ($model) {
+                /** @var static $model */
+                $city = '';
+                $address = $model->delivery_address;
+                if ($model->deliveryMethod->system) {
+                    $city = 'г. ' . $model->delivery_city;
+                }
+                return $model->deliveryMethod->name . '<br/>' . $city . '<br>' . $address;
+            }
+        ];
+
+        $columns['payment_id'] = [
+            'attribute' => 'payment_id',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center'],
+            'value' => function ($model) {
+                /** @var static $model */
+                return $model->paymentMethod->name;
+            }
+        ];
+
+        $columns['total_price'] = [
+            'attribute' => 'total_price',
+            'format' => 'raw',
+            'class' => 'panix\engine\grid\columns\jui\SliderColumn',
+            'max' => (int)Order::find()->aggregateTotalPrice('MAX'),
+            'min' => (int)Order::find()->aggregateTotalPrice('MIN'),
+            'prefix' => '<small>' . Yii::$app->currency->main['symbol'] . '</small>',
+            'contentOptions' => ['class' => 'text-center', 'style' => 'position:relative'],
+            'minCallback' => function ($value) {
+                return Yii::$app->currency->number_format($value);
+            },
+            'maxCallback' => function ($value) {
+                return Yii::$app->currency->number_format($value);
+            },
+            'value' => function ($model) {
+
+                $priceHtml = Yii::$app->currency->number_format(Yii::$app->currency->convert($model->total_price));
+                $symbol = Html::tag('small', Yii::$app->currency->main['symbol']);
+                return Html::tag('span', $priceHtml, ['class' => 'text-success font-weight-bold h6']) . ' ' . $symbol;
+            }
+        ];
+
+
+        $columns['created_at'] = [
+            'attribute' => 'created_at',
+            'class' => 'panix\engine\grid\columns\jui\DatepickerColumn',
+        ];
+        $columns['updated_at'] = [
+            'attribute' => 'updated_at',
+            'class' => 'panix\engine\grid\columns\jui\DatepickerColumn',
+        ];
+
+        $columns['DEFAULT_CONTROL'] = [
+            'class' => 'panix\engine\grid\columns\ActionColumn',
+        ];
+        $columns['DEFAULT_COLUMNS'] = [
+            ['class' => 'panix\engine\grid\sortable\Column'],
+            ['class' => 'panix\engine\grid\columns\CheckboxColumn']
+        ];
+
+        return $columns;
     }
 
 }

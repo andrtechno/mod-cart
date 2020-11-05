@@ -22,7 +22,7 @@ echo GridView::widget([
     //    return ['style' => 'background-color:' . $model->status->color . ';'];
     //},
     'layoutOptions' => ['title' => $this->context->pageName],
-    'columns' => [
+  /*  'columns' => [
         [
             'class' => 'panix\engine\grid\columns\CheckboxColumn',
         ],
@@ -32,7 +32,6 @@ echo GridView::widget([
             'format' => 'html',
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
-                /** @var $model Order */
                 return $model->getGridStatus() . ' ' . $model::t('NEW_ORDER_ID', ['id' => \panix\engine\CMS::idToNumber($model->id)]);
             }
         ],
@@ -47,7 +46,7 @@ echo GridView::widget([
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
             'value' => function ($model) {
-                /** @var $model Order */
+
                 return ($model->user_phone) ? Html::tel($model->user_phone) : $model->user_phone;
             }
         ],
@@ -66,7 +65,7 @@ echo GridView::widget([
                 return Yii::$app->currency->number_format($value);
             },
             'value' => function ($model) {
-                /** @var $model Order */
+
                 $priceHtml = Yii::$app->currency->number_format(Yii::$app->currency->convert($model->total_price));
                 $symbol = Html::tag('sup', Yii::$app->currency->main['symbol']);
                 return Html::tag('span', $priceHtml, ['class' => 'text-success font-weight-bold']) . ' ' . $symbol;
@@ -94,7 +93,7 @@ echo GridView::widget([
                 }
             ]
         ]
-    ]
+    ]*/
 ]);
 ?>
 
