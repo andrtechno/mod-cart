@@ -2,6 +2,8 @@
 
 namespace panix\mod\cart\controllers\admin;
 
+use panix\engine\CMS;
+use panix\mod\cart\models\Order;
 use Yii;
 use panix\engine\controllers\AdminController;
 use panix\mod\cart\models\forms\SettingsForm;
@@ -10,6 +12,16 @@ class SettingsController extends AdminController
 {
 
     public $icon = 'settings';
+
+    public function actions()
+    {
+        return [
+            'preview-mail' => [
+                'class' => 'panix\engine\actions\PreviewMailAction',
+                'data' => ['order' => Order::find()->limit(1)->one()]
+            ],
+        ];
+    }
 
     public function actionIndex()
     {

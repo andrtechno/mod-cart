@@ -1,5 +1,6 @@
 <?php
 
+use panix\engine\bootstrap\Modal;
 use panix\engine\Html;
 use panix\engine\bootstrap\ActiveForm;
 use panix\ext\taginput\TagInput;
@@ -117,6 +118,22 @@ $form = ActiveForm::begin();
         </div>
         <div class="card-footer text-center">
             <?= $model->submitButton(); ?>
+            <?php
+            Modal::begin([
+                'title' => 'Предварительный просмотр',
+                'size'=>Modal::SIZE_LARGE,
+                'toggleButton' => ['label' => 'Пред. просмотр шаблона','class'=>'btn btn-outline-secondary'],
+            ]);
+            ?>
+            <div class="embed-responsive embed-responsive-4by3">
+                <iframe class="embed-responsive-item" src="<?= \yii\helpers\Url::to(['preview-mail','view'=>'@cart/mail/order.tpl']); ?>"></iframe>
+            </div>
+            <?php Modal::end(); ?>
         </div>
     </div>
 <?php ActiveForm::end(); ?>
+
+
+
+
+
