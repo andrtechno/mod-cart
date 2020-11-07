@@ -144,8 +144,15 @@ class Cart extends Component
 
             $item['variant_models'] = [];
             $item['model'] = $this->productModel::findOne($item['product_id']);
-
             $model = $item['model'];
+            // If product was deleted during user session!.
+            if (!$model) {
+                unset($data['items'][$index]);
+                $this->remove($index);
+
+                continue;
+            }
+
             // Load configurable product
             if ($item['configurable_id'])
                 $item['configurable_model'] = $this->productModel::findOne($item['configurable_id']);
@@ -154,7 +161,7 @@ class Cart extends Component
 
 
             $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
-            $this->totalPrice += $model::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']);
+            $this->totalPrice += $this->productModel::calculatePrices($model, $item['variants'], $configurable, $item['quantity']);
 
 
             // Process variants @todo PANIX need test
@@ -164,9 +171,6 @@ class Cart extends Component
                     ->where([ProductVariant::tableName() . '.id' => $item['variants']])
                     ->all();
 
-            // If product was deleted during user session!.
-            if (!$item['model'])
-                unset($data[$index]);
 
         }
 
@@ -195,29 +199,29 @@ class Cart extends Component
         // }
         return $result;
     }
-/*
-    public function ss($orderTotal)
-    {
+    /*
+        public function ss($orderTotal)
+        {
 
-        //$result=[];
-        // $result['success']=false;
-        $config = Yii::$app->settings->get('user');
-        $totalPrice = 100000;
-        $points = (Yii::$app->user->identity->points * (int)$config->bonus_value);
+            //$result=[];
+            // $result['success']=false;
+            $config = Yii::$app->settings->get('user');
+            $totalPrice = 100000;
+            $points = (Yii::$app->user->identity->points * (int)$config->bonus_value);
 
 
-        // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
-        $profit = (($orderTotal - $points) / $orderTotal) * 100;
-        if ($profit >= (int)$config->bonus_max_use_order) {
-            $points2 = Yii::$app->request->post('bonus');
-            $this->acceptPoint($points2);
-            return true;
-        } else {
-            $this->acceptPoint(0);
-            return false;
+            // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
+            $profit = (($orderTotal - $points) / $orderTotal) * 100;
+            if ($profit >= (int)$config->bonus_max_use_order) {
+                $points2 = Yii::$app->request->post('bonus');
+                $this->acceptPoint($points2);
+                return true;
+            } else {
+                $this->acceptPoint(0);
+                return false;
+            }
         }
-    }
-*/
+    */
     /**
      * @param $data
      * @return array
