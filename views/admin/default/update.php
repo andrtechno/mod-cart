@@ -6,10 +6,10 @@ use panix\ext\fancybox\Fancybox;
 /**
  * @var $this \yii\web\View
  */#ordercreateform-delivery_id
-$js2 = <<<JS
+$js = <<<JS
 
-$(document).on('change','#order-delivery_city_ref',function(e, clickedIndex, isSelected, previousValue){
-    console.log('delivery_city_ref');
+
+function ajax() {
         $.ajax({
             type:'POST',
             url:$('#order-form').attr('action'),
@@ -20,96 +20,39 @@ $(document).on('change','#order-delivery_city_ref',function(e, clickedIndex, isS
             },
             success:function(data){
                 $('#delivery-form').removeClass('pjax-loading').html(data);
+                $('.field-order-delivery_address').hide();
+                $('.field-order-delivery_address').find('input').val('');
             }
         });
+}
+ajax();
+
+$(document).on('change','#order-delivery_type',function(e, clickedIndex, isSelected, previousValue){
+
+    if($(this).val() == 'warehouse'){
+        ajax();
+    }else{
+        $('#delivery-form').html('');
+        $('.field-order-delivery_address').show();
+    }
 });
 
-JS;
-$this->registerJs($js2,\yii\web\View::POS_END,'delivery_city_ref');
-$js = <<<JS
 
-
-function buildFields(data){
-    $('#delivery-form').html('');
-    $.each(data.field,function(key,dat){
-        var group = $('<div class="form-group field-'+dat.id+'"><div class="invalid-feedback-cart"></div></div>');
-
-        if(dat.type === 'dropdownlist'){
-            var field = $('<select name="'+dat.name+'" id="'+dat.id+'" class="form-control" /></select>');
-            
-            group.prepend(field);
-            $.each(dat.items, function(key2, value) {
-                var option = $('<option></option>');
-                option.attr('value', key2);
-                if(dat.value !== undefined){
-                    if(dat.value == key2){
-                        option.attr('selected', true);
-                    }
-                }
-
-                option.text(value);
-                field.append(option);
-            });
-
-            if(dat.error){
-                //$(attribute.container).removeClass('field-is-invalid');
-                $('#cartForm').yiiActiveForm('add', {
-                    id: dat.id,
-                    name: dat.name,
-                    container: '.field-'+dat.id+'',
-                    input: '#'+dat.id,
-                    error: '.invalid-feedback-cart',
-                    validate:  function (attribute, value, messages, deferred, form) {
-                        yii.validation.required(value, messages, {message: dat.error});
-                        console.log('validate',attribute,value);
-                        if(value){
-                        $(attribute.container).removeClass('field-is-invalid');
-                        }else{
-                        $(attribute.container).addClass('field-is-invalid');
-                        }
-
-                    }
-                });
-            }
-            $('#delivery-form').append(group);
-           // $('#'+dat.id).selectpicker(dat.jsOptions);
-         
-        }
-    });
-
-}
+$(document).on('change','#order-delivery_city_ref',function(e, clickedIndex, isSelected, previousValue){
+        ajax();
+});
 
 
 $(document).on('change','#order-delivery_id',function(e, clickedIndex, isSelected, previousValue){
-    //delivery_id = $(this,'option:selected').val();
     delivery_id = $(this).val();
-    console.log($(this).val());
     var checkSystem  = Number.parseInt(delivery_id);
     if($(this).val() == 2){
-        console.log('system', delivery_id);
-
-        $.ajax({
-            type:'POST',
-            url:$('#order-form').attr('action'),
-            data:$('#order-form').serialize()+'&onChangeDelivery=true',
-            dataType:'html',
-            success:function(data){
-                        $('#delivery-form').html(data);
-                //buildFields(data);
-                //if(data.show_address){
-                //    $('#user-address-input').show();
-                //}else{
-                //    $('#user-address-input').hide();
-                //}
-            }
-        });
+        ajax();
     }else{
-        $('#user-address-input').show();
+        $('.field-order-delivery_address').show();
         $('#delivery-form').html('');
     }
-//.selectpicker('destroy')
-        $('#order-delivery_address').replaceWith('<input id="order-delivery_address" name="Order[delivery_address]" class="form-control" />');
-        $('#order-form').yiiActiveForm('remove', 'delivery_city_ref');
+
 });
 
 JS;
@@ -121,12 +64,12 @@ $this->registerJs($js);
 <?php } ?>
 
 <?php if ($model->buyOneClick) { ?>
-    <div class="alert alert-info"><?= Yii::t('cart/admin','MSG_BUYONECLICK');?></div>
+    <div class="alert alert-info"><?= Yii::t('cart/admin', 'MSG_BUYONECLICK'); ?></div>
 <?php } ?>
 
 
 <?php if ($model->points > 0) { ?>
-    <div class="alert alert-info"><?= Yii::t('default','BONUS_ACTIVE',$model->points);?></div>
+    <div class="alert alert-info"><?= Yii::t('default', 'BONUS_ACTIVE', $model->points); ?></div>
 <?php } ?>
 <?php if (Yii::$app->hasModule('novaposhta') && $model->deliveryMethod) { ?>
     <?php if ($model->deliveryMethod->system == 'novaposhta') { ?>
@@ -153,11 +96,11 @@ $this->registerJs($js);
             ?>
 
 
-                <?php
-                echo $this->render('_addProduct', [
-                    'model' => $model,
-                ]);
-                ?>
+            <?php
+            echo $this->render('_addProduct', [
+                'model' => $model,
+            ]);
+            ?>
 
             <div id="orderedProducts">
                 <?php

@@ -165,7 +165,7 @@ class Order extends ActiveRecord
             [['ttn'], 'default'],
             [['invoice'], 'string', 'max' => 50],
             ['paid', 'boolean'],
-            [['delivery_city_ref','delivery_warehouse_ref'],'string'],
+            [['delivery_city_ref', 'delivery_warehouse_ref', 'delivery_type'], 'string'],
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
             ['status_id', 'validateStatus'],
@@ -594,9 +594,9 @@ class Order extends ActiveRecord
                 margin:0 auto;
                 }
                 
-                ",[],'css-mouse');
-$ss = '<span class="mouse"></span>';
-                return $model->getGridStatus() . ' ' . \panix\engine\CMS::idToNumber($model->id).''.Html::icon('warning',['class'=>'text-danger']);
+                ", [], 'css-mouse');
+                $ss = '<span class="mouse"></span>';
+                return $model->getGridStatus() . ' ' . \panix\engine\CMS::idToNumber($model->id) . '' . Html::icon('warning', ['class' => 'text-danger']);
 
             },
         ];

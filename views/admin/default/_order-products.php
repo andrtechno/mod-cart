@@ -4,6 +4,7 @@ use yii\widgets\Pjax;
 use panix\engine\grid\GridView;
 use panix\mod\cart\models\OrderProduct;
 use yii\helpers\Html;
+use panix\engine\CMS;
 
 /**
  * @var \panix\mod\cart\models\Order $model
@@ -26,15 +27,15 @@ echo GridView::widget([
     'layoutOptions' => [
         'title' => Yii::t('cart/admin', 'ORDER_PRODUCTS'),
         'buttons' => [
-           /* [
-                'label' => Yii::t('shop/admin', 'CREATE_PRODUCT'),
-                'url' => 'javascript:openAddProductDialog(' . $model->id . ');',
-                'options' => ['class' => 'btn btn-success btn-sm']
-            ],*/
+            /* [
+                 'label' => Yii::t('shop/admin', 'CREATE_PRODUCT'),
+                 'url' => 'javascript:openAddProductDialog(' . $model->id . ');',
+                 'options' => ['class' => 'btn btn-success btn-sm']
+             ],*/
             [
                 'label' => Yii::t('shop/admin', 'CREATE_PRODUCT'),
                 'url' => '#',
-                'options' => ['class' => 'btn btn-success btn-sm', 'data-toggle'=>"modal", 'data-target'=>"#cart-add-product"]
+                'options' => ['class' => 'btn btn-success btn-sm', 'data-toggle' => "modal", 'data-target' => "#cart-add-product"]
             ]
         ]
     ],
@@ -46,7 +47,7 @@ echo GridView::widget([
             // 'filter'=>true,
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                return Html::a(Html::img($model->getProductImage()),$model->getProductUrl());
+                return Html::a(Html::img($model->getProductImage()), $model->getProductUrl());
             },
         ],
         [
@@ -151,4 +152,38 @@ Pjax::end();
             </h4>
         </li>
     </ul>
+</div>
+
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5><?= Yii::t('cart/admin', 'Доп информация'); ?></h5>
+    </div>
+    <div class="card-body">
+
+        <?php
+        $browser = new \panix\engine\components\Browser($model->user_agent);
+        ?>
+
+        <div class="list-group-item d-flex justify-content-between">
+            <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('ip_create'); ?>:</span>
+            <span class="m-0"><?= CMS::ip($model->ip_create); ?></span>
+        </div>
+        <div class="list-group-item d-flex justify-content-between">
+            <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('created_at'); ?>:</span>
+            <span class="m-0"><?= CMS::date($model->created_at); ?></span>
+        </div>
+        <div class="list-group-item d-flex justify-content-between">
+            <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('updated_at'); ?>:</span>
+            <span class="m-0"><?= CMS::date($model->updated_at); ?></span>
+        </div>
+        <div class="list-group-item d-flex justify-content-between">
+            <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('user_agent'); ?>:</span>
+            <span class="m-0 text-right">
+                    <?= $browser->getBrowser(); ?> (v <?= $browser->getVersion(); ?>)
+                    <br/>
+                <?= $browser->getPlatformIcon(); ?> <?= $browser->getPlatform(); ?>
+                </span>
+        </div>
+    </div>
 </div>
