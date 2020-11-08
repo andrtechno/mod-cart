@@ -1,26 +1,40 @@
 <?php
 use panix\engine\Html;
 
-?>
-<?php
-echo \panix\ext\fancybox\Fancybox::widget([
-    'target' => 'a[data-fancybox]',
-    'options' => [
-        'onInit' => new \yii\web\JsExpression('function(){
-            console.log("init buy one click");
-        }'),
-        'touch' => [
-            'vertical' => false, // Allow to drag content vertically
-            'momentum' => false // Continue movement after releasing mouse/touch when panning
-        ],
-    ]
+/**
+ * @var $this \yii\web\View;
+ * @var $model \panix\mod\shop\models\Product;
+ */
+
+\panix\ext\fancybox\FancyboxAsset::register($this);
+
+echo Html::a(Yii::t('cart/Order','BUYONECLICK'), ['/cart/default/buyOneClick', 'id' => $model->primaryKey], [
+    'id' => 'buyOneClick-button',
+    'class' => 'mt-4 btn btn-lg btn-block btn-outline-secondary',
 ]);
 
-echo Html::a('asdasd', 'javascript:;', [
-    'data-fancybox' => true,
-    'data-type' => 'ajax',
-    'data-src' => \yii\helpers\Url::to(['/cart/default/buyOneClick', 'id' => $this->context->pk, 'quantity' => 1]),
-
-])
+$this->registerJs("
+$(document).on('click','#buyOneClick-button',function(){
+    var that = $(this);
+    var form = that.closest('form');
+    $.fancybox.open({
+        src: that.attr('href'),
+        type: 'ajax',
+        opts: {
+            touch: {
+                vertical: false,
+                momentum: false
+            },
+            ajax: {
+                settings: {
+                    method:'POST',
+                    data: form.serialize()
+                }
+            }
+        }
+    });
+	return false;
+});
+")
 ?>
 

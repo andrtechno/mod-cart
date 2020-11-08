@@ -42,7 +42,7 @@ class OrderCreateForm extends Model
     public $delivery_type = 'warehouse'; //for delivery systems;
     public $delivery_city_ref;
     public $delivery_warehouse_ref;
-
+    public $quantity; //for buy one click
     public $points;
 
     public function init()
@@ -67,7 +67,7 @@ class OrderCreateForm extends Model
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        //$scenarios['create-form-order'] = ['payment_id', 'user_phone', 'delivery_id', 'promocode_id', 'user_comment'];
+        $scenarios['buyOneClick'] = ['user_phone','quantity'];
         return $scenarios;
     }
 
@@ -75,10 +75,10 @@ class OrderCreateForm extends Model
     {
 
         $rules = [];
-        if (YII_DEBUG) {
+       // if (YII_DEBUG) {
             $rules[] = [['user_name', 'user_email', 'user_phone'], 'required'];
             $rules[] = [['delivery_id', 'payment_id'], 'required'];
-            $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points'], 'integer'];
+            $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points','quantity'], 'integer'];
             $rules[] = ['user_email', 'email'];
             $rules[] = ['user_comment', 'string'];
             $rules[] = [['user_lastname', 'user_name'], 'string', 'max' => 100];
@@ -87,14 +87,19 @@ class OrderCreateForm extends Model
             $rules[] = [['register', 'call_confirm'], 'boolean'];
             $rules[] = ['delivery_id', 'validateDelivery'];
             $rules[] = ['payment_id', 'validatePayment'];
+
+            //$rules[] = ['user_phone', 'panix\ext\telinput\PhoneInputValidator', 'on' => self::SCENARIO_DEFAULT];
             $rules[] = ['user_phone', 'panix\ext\telinput\PhoneInputValidator'];
+           // $rules[] = ['user_phone', 'string', 'on' => 'buyOneClick'];
+
+
             $rules[] = ['points', 'pointsValidate'];
             if (Yii::$app->user->isGuest) {
                 $rules[] = [['register'], 'validateRegisterEmail'];
             }
             return $rules;
-        }
-        return [
+        //}
+       /* return [
             [['user_name', 'user_email', 'user_phone'], 'required'],
             [['delivery_id', 'payment_id'], 'required'],
             [['delivery_id', 'payment_id', 'promocode_id', 'points'], 'integer'],
@@ -110,7 +115,7 @@ class OrderCreateForm extends Model
 
             ['points', 'pointsValidate'],
             //['promocode_id', 'validatePromoCode','on'=>['create-form-order']],
-        ];
+        ];*/
     }
 
     public function validateRegisterEmail($attribute)

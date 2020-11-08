@@ -37,6 +37,7 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property integer $updated_at
  * @property integer $points
  * @property boolean $paid
+ * @property boolean $buyOneClick
  * @property boolean $call_confirm
  * @property OrderStatus $status
  * @property OrderProduct[] $products
@@ -143,10 +144,19 @@ class Order extends ActiveRecord
         return ['/cart/default/view', 'secret_key' => $this->secret_key];
     }
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+
+        $scenarios['buyOneClick'] = ['user_phone'];
+        return $scenarios;
+    }
+
     public function rules()
     {
         return [
-            ['user_phone', 'panix\ext\telinput\PhoneInputValidator'],
+            ['user_phone', 'panix\ext\telinput\PhoneInputValidator', 'on' => self::SCENARIO_DEFAULT],
+            ['user_phone', 'string', 'on' => 'buyOneClick'],
             [['user_name', 'user_email', 'delivery_id', 'payment_id', 'user_phone'], 'required'],
             ['user_email', 'email'],
             [['user_comment', 'admin_comment', 'delivery_city'], 'string', 'max' => 500],
@@ -517,7 +527,7 @@ class Order extends ActiveRecord
     {
         /** @var \yii\swiftmailer\Mailer $mailer */
         $mailer = Yii::$app->mailer;
-        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/order.tpl'], ['order' => $this])
+        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/order.tpl'], ['order' => $this, 'is_admin' => true])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', $this->id))
@@ -534,7 +544,7 @@ class Order extends ActiveRecord
             /** @var \yii\swiftmailer\Mailer $mailer */
             $mailer = Yii::$app->mailer;
             $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
-            $mailer->compose(Yii::$app->getModule('cart')->mailPath . '/order.tpl', ['order' => $this])
+            $mailer->compose(Yii::$app->getModule('cart')->mailPath . '/order.tpl', ['order' => $this, 'is_admin' => false])
                 ->setFrom('noreply@' . Yii::$app->request->serverName)
                 ->setTo($this->user_email)
                 ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))
@@ -586,12 +596,16 @@ class Order extends ActiveRecord
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
                 /** @var static $model */
-                $city = '';
-                $address = $model->delivery_address;
-                if ($model->deliveryMethod->system) {
-                    $city = 'г. ' . $model->delivery_city;
+
+
+                if ($model->deliveryMethod) {
+                    $city = '';
+                    $address = $model->delivery_address;
+                    if ($model->deliveryMethod->system) {
+                        $city = 'г. ' . $model->delivery_city;
+                    }
+                    return $model->deliveryMethod->name . '<br/>' . $city . '<br>' . $address;
                 }
-                return $model->deliveryMethod->name . '<br/>' . $city . '<br>' . $address;
             }
         ];
 
@@ -601,7 +615,7 @@ class Order extends ActiveRecord
             'contentOptions' => ['class' => 'text-center'],
             'value' => function ($model) {
                 /** @var static $model */
-                return $model->paymentMethod->name;
+                return ($model->paymentMethod) ? $model->paymentMethod->name : null;
             }
         ];
 

@@ -3,6 +3,7 @@
 namespace panix\mod\cart\widgets\buyOneClick;
 
 use panix\engine\data\Widget;
+use panix\mod\shop\models\Product;
 use Yii;
 /**
  * Виджет купить в один клик.
@@ -11,25 +12,40 @@ use Yii;
  * <code>
  * public function actions() {
  *      return array(
- *          'buyOneClick.' => 'mod.cart.widgets.BuyOneClickWidget'
+ *          'buyOneClick' => 'panix\mod\widgets\buyOneClick\BuyOneClickAction'
  *      );
  * }
  * </code>
  * 
  * @author PIXELION CMS development team <dev@pixelion.com.ua>
  * @link http://pixelion.com.ua PIXELION CMS
- * @package modules
- * @subpackage commerce.cart.widgets.buyOneClick
- * @uses CWidget
  */
 class BuyOneClickWidget extends Widget {
 
-    public $pk;
-
- 
+    /** @var Product */
+    public $model;
 
     public function init() {
 
+        $this->view->registerJs("
+            $(document).on('beforeSubmit', '#buyOneClick-form', function () {
+                console.log(this);
+                var form = $(this);
+                $.ajax({
+                    url:form.attr('action'),
+                    type:form.attr('method'),
+                    data:form.serialize(),
+                    success:function(data){
+                        console.log(data);
+                        if(data.success){
+                            $.fancybox.close();
+                            common.notify(data.message,'success');
+                        }
+                       
+                    }
+                })
+                return false; // Cancel form submitting.
+            });");
 
         //$this->registerClientScript();
         parent::init();
@@ -37,16 +53,8 @@ class BuyOneClickWidget extends Widget {
 
     public function run() {
 
-        return $this->render($this->skin);
+        return $this->render($this->skin,['model'=>$this->model]);
     }
 
-    protected function registerClientScript() {
-        $cs = Yii::$app->clientScript;
-        if (is_dir($this->assetsPath)) {
-            $cs->registerScriptFile($this->assetsUrl . '/js/buyOneClick.js', CClientScript::POS_END);
-        } else {
-            throw new Exception(__CLASS__ . ' - Error: Couldn\'t find assets to publish.');
-        }
-    }
 
 }

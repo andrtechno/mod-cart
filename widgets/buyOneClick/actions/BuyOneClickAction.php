@@ -2,13 +2,15 @@
 
 namespace panix\mod\cart\widgets\buyOneClick\actions;
 
+use panix\engine\CMS;
+use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderProduct;
 use yii\base\Action;
 use panix\mod\shop\models\Product;
-use panix\mod\cart\widgets\buyOneClick\BuyOneClickForm;
 use Yii;
 use yii\web\HttpException;
+use yii\web\Response;
 
 /**
  * Форма купить в один клик.
@@ -18,62 +20,73 @@ use yii\web\HttpException;
  * @package modules
  * @subpackage commerce.cart.widgets.buyOneClick.actions
  * @uses CAction
- * 
+ *
  * @property array $receiverMail Массив почты на которые будут отправлены уведомление
  * @todo Нужно доработать, добавление в админку заказа.
  */
-class BuyOneClickAction extends Action {
+class BuyOneClickAction extends Action
+{
 
-    public $receiverMail = array('notify@pixelion.com.ua');
-
-    public function run() {
-
-        $quantity = Yii::$app->request->get('quantity');
+    public function run()
+    {
+        $result['success']=false;
+        $quantity = Yii::$app->request->post('quantity');
         if (Yii::$app->request->isAjax) {
+
             $productModel = Product::findOne(Yii::$app->request->get('id'));
             if (!$productModel) {
                 throw new HttpException(404);
             }
-
-            $model = new BuyOneClickForm();
-            $sended = false;
-            if (isset($_POST['BuyOneClickForm'])) {
-                $model->attributes = $_POST['BuyOneClickForm'];
+            //
+            $model = new OrderCreateForm();
+            $model->setScenario('buyOneClick');
+            $post = Yii::$app->request->post();
+            if ($model->load($post)) {
                 if ($model->validate()) {
-                    $sended = true;
-                    $this->sendMessage($model, $productModel);
-                    $this->createOrder($model, $productModel);
-                    $model->unsetAttributes();
+                    $order = $this->createOrder($model, $productModel);
+                    $order->sendAdminEmail();
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    $result['success'] = true;
+                    $result['message'] = Yii::t('cart/default', 'SUCCESS_ORDER');
+                    return $result;
                 }
             }
-            return Yii::$app->controller->render('@cart/widgets/buyOneClick/views/_form', [
+            $path = Yii::$app->assetManager->getPublishedUrl('@bower/intl-tel-input/build');
+
+            $this->controller->view->registerJsFile($path.'/js/utils.js');
+            return $this->controller->render('@cart/widgets/buyOneClick/views/_form', [
                 'model' => $model,
-                'sended' => $sended,
                 'productModel' => $productModel,
                 'quantity' => (is_numeric($quantity)) ? $quantity : 1
-            ],false,true);
+            ]);
         } else {
-            throw new HttpException(403);
+            throw new HttpException(404);
         }
     }
 
-    public function createOrder($model, $productModel) {
+    /**
+     * @param $model OrderCreateForm
+     * @param $productModel Product
+     * @return Order
+     */
+    public function createOrder($model, $productModel)
+    {
 
         $order = new Order();
-
+        $order->setScenario('buyOneClick');
         $user = Yii::$app->user;
         // Set main data
         $order->user_id = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
         $order->user_name = $user->getUsername();
         $order->user_email = $user->email;
-        $order->user_phone = $model->phone;
+        $order->user_phone = $model->user_phone;
         $order->status_id = 1;
         $order->buyOneClick = 1;
         //  $order->user_address = $this->form->user_address;
 
 
-        if ($order->validate(false)) {
-            $order->save();
+        if ($order->validate()) {
+            $order->save(false);
         } else {
             print_r($order->getErrors());
             die;
@@ -85,9 +98,6 @@ class BuyOneClickAction extends Action {
         $ordered_product = new OrderProduct();
         $ordered_product->order_id = $order->id;
         $ordered_product->product_id = $productModel->id;
-        //$ordered_product->category_id = $item['category_id'];
-
-
 
 
         $ordered_product->currency_id = $productModel->currency_id;
@@ -95,7 +105,6 @@ class BuyOneClickAction extends Action {
         $ordered_product->name = $productModel->name;
         $ordered_product->quantity = $model->quantity;
         $ordered_product->sku = $productModel->sku;
-        $ordered_product->date_create = $order->date_create;
         // if($item['currency_id']){
         //     $currency = Currency::model()->findByPk($item['currency_id']);
         //$ordered_product->price = ShopProduct::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
@@ -105,71 +114,15 @@ class BuyOneClickAction extends Action {
         //  $options = $item['options'];
         if (isset($productModel->hasDiscount)) {
 
-            $price += $productModel->toCurrentCurrency('discountPrice');
+            $price += $productModel->discountPrice;
         } else {
-            $price += $productModel->priceRange();
+            $price += $productModel->price;
         }
-
-
-
 
 
         $ordered_product->price = $price;
         $ordered_product->save();
-    }
-
-    /**
-     * Оптравка письма на почту получателей.
-     * @param ByOnClickForm $model
-     */
-    private function sendMessage($model, $productModel) {
-        $currency = Yii::$app->currency->active['symbol'];
-        $request = Yii::$app->request;
-
-
-
-        $params = array();
-
-        $params['th_name'] = Yii::t('CartModule.default', 'TABLE_TH_MAIL_NAME');
-        $params['th_quantity'] = Yii::t('CartModule.default', 'TABLE_TH_MAIL_QUANTITY', 1);
-        $params['th_price'] = Yii::t('CartModule.default', 'TABLE_TH_MAIL_PRICE');
-
-
-        $params['quantity'] = $model->quantity;
-        $params['phone'] = $model->phone;
-        $params['name'] = $productModel->name;
-        $params['image'] = Yii::$app->controller->createAbsoluteUrl($productModel->getMainImageUrl('50x50'));
-        $params['url'] = $productModel->getAbsoluteUrl();
-        $params['price'] = $productModel->priceRange();
-        $params['currency'] = $currency;
-        if (isset($productModel->originalPrice)) {
-            $params['originalPrice'] = Yii::$app->currency->number_format($productModel->toCurrentCurrency('originalPrice'));
-        } else {
-            $params['originalPrice'] = false;
-        }
-        if (isset($productModel->hasDiscount)) {
-            $params['hasDiscount'] = $productModel->hasDiscount;
-        } else {
-            $params['hasDiscount'] = false;
-        }
-
-        $config = Yii::$app->settings->get('app');
-        $mailer = Yii::$app->mail;
-        $mailer->From = 'noreply@' . $request->serverName;
-        $mailer->FromName = $config['site_name'];
-        $mailer->Subject = Yii::t('BuyOneClickWidget.default', 'MAIL_SUBJECT');
-        $mailer->Body = Yii::$app->etpl->template_path($params, Yii::getPathOfAlias('mod.cart.widgets.buyOneClick.views') . DS . '_email_template.tpl');
-
-        $configCart = Yii::$app->settings->get('cart');
-        $this->receiverMail = explode(',', $configCart['order_emails']);
-
-        foreach ($this->receiverMail as $mail) {
-            $mailer->AddAddress($mail);
-        }
-        $mailer->AddReplyTo('noreply@' . $request->serverName);
-        $mailer->isHtml(true);
-        $mailer->Send();
-        $mailer->ClearAddresses();
+        return $order;
     }
 
 }

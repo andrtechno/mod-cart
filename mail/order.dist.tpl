@@ -3,6 +3,14 @@
 {use class="panix\engine\Html"}
 {use class="panix\mod\shop\models\Product"}
 
+{if $is_admin}
+    {if $order.buyOneClick}
+        <h4>{Yii::t('cart/admin', 'MSG_BUYONECLICK')}</h4>
+    {/if}
+    {if $order.call_confirm}
+        <h4>{Yii::t('cart/Order', 'CALL_CONFIRM')}</h4>
+    {/if}
+{/if}
 
 {if $order.user_name}
     <p><strong>{$order->getAttributeLabel('user_name')}:</strong> {$order->user_name}</p>
@@ -16,10 +24,10 @@
 {if $order.user_email}
     <p><strong>{$order->getAttributeLabel('user_email')}:</strong> {$order->user_email}</p>
 {/if}
-{if $order.deliveryMethod.name}
+{if $order.deliveryMethod}
     <p><strong>{$order->getAttributeLabel('delivery_id')}:</strong> {$order.deliveryMethod.name}</p>
 {/if}
-{if $order.paymentMethod.name}
+{if $order.paymentMethod}
     <p><strong>{$order->getAttributeLabel('payment_id')}:</strong> {$order.paymentMethod.name}</p>
 {/if}
 
