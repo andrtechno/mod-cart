@@ -1,183 +1,94 @@
 <?php
 use panix\engine\Html;
+use panix\engine\CMS;
 use panix\ext\bootstrapselect\BootstrapSelect;
 use panix\mod\cart\models\forms\OrderCreateForm;
 
 /**
  * @var \yii\web\View $this
  */
+//CMS::dump($model);
 
-$this->registerCss('.bootstrap-select .dropdown-menu{max-height:300px;}');
-$model = new OrderCreateForm();
-$id = ($method->system)?$method->system:$method->id;
-$delivery_city_selector =  Html::getInputId($model,'user_city');
-$delivery_type_selector =  Html::getInputId($model,'delivery_type');
-$address_selector =  Html::getInputId($model,'delivery_address');
-if (!Yii::$app->request->post('city')) {
-    ?>
-    <div class="form-group field-ordercreateform-delivery_city required">
+$js2 = <<<JS
+
+                $('#order-form').yiiActiveForm('add', {
+                    id: 'order-delivery_city_ref',
+                    name: 'delivery_city_ref',
+                    container: '.field-order-delivery_city_ref',
+                    input: '#order-delivery_city_ref',
+                    error: '.invalid-feedback-cart',
+                    validate:  function (attribute, value, messages, deferred, form) {
+                        yii.validation.required(value, messages, {message: dat.error});
+                        console.log('validate',attribute,value);
+                        if(value){
+                        $(attribute.container).removeClass('field-is-invalid');
+                        }else{
+                        $(attribute.container).addClass('field-is-invalid');
+                        }
+
+                    }
+                });
+
+JS;
+$this->registerJs($js2,\yii\web\View::POS_END,'rrrr');
+
+
+$this->registerCss('.bootstrap-select .inner{max-height: 300px;}');
+?>
+
+<div class="form-group row field-order-delivery_city_ref">
+    <div class="col-sm-4 col-md-4 col-lg-3 col-xl-4">
+        <?= Html::activeLabel($model, 'delivery_city_ref', ['class' => 'col-form-label']); ?>
+    </div>
+    <div class="col-sm-8 col-md-8 col-lg-9 col-xl-8">
         <?php
-
 
         echo BootstrapSelect::widget([
             'model' => $model,
-            'attribute' => 'user_city',
-            'items' => $cities,
+            'attribute' => 'delivery_city_ref',
+            'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Cities::find()->orderBy(['Description'=>SORT_ASC])->all(), 'Ref', function($model){
+                return $model->getDescription();
+            }),
             'jsOptions' => [
-                'width' => '100%',
                 'liveSearch' => true,
+                'width' => '100%',
+                'liveSearchPlaceholder'=>'Найти город',
+                'dropdownAlignRight'=>'auto',
+                'size'=>'300px',
+            ],
+            'options' => [
+                'class' => ''
             ]
         ]);
-
-
-       // echo Html::activeLabel($model, 'user_city',['class'=>'control-label']);
-      //  echo Html::activeDropDownList($model,'user_city',$cities,['class'=>'form-control','prompt'=>'___']);
-      //  echo Html::error($model,'user_city');
         ?>
+
     </div>
-    <?php
+</div>
+<?php
 
 
+if($model->delivery_city_ref){ ?>
 
-    echo BootstrapSelect::widget([
-        'model' => $model,
-        'attribute' => 'delivery_type',
-        'items' => ['address' => 'Доставка на адрес', 'warehouse' => 'Доставка на отделение'],
-        'jsOptions' => [
-            //'liveSearch' => true,
-            'width' => '100%',
-
-        ]
-    ]);
-
-
-    //echo Html::activeLabel($model, 'delivery_type',['class'=>'control-label']);
-   // echo Html::activeDropDownList($model,'delivery_type',['address' => 'Доставка на адрес', 'warehouse' => 'Доставка на отделение'],['class'=>'form-control','prompt'=>'___']);
-    //echo Html::error($model,'delivery_type');
-    /*echo BootstrapSelect::widget([
-        'model' => $model,
-        'attribute' => 'delivery_city',
-        'items' => $cities,
-        'jsOptions' => [
-            'liveSearch' => true,
-            'width' => '100%',
-
-        ]
-    ]);*/
-
-
-
-   /* echo BootstrapSelect::widget([
-        'model' => $model,
-        'attribute' => 'delivery_type',
-        'items' => ['address' => 'Доставка на адрес', 'warehouse' => 'Доставка на отделение'],
-        'jsOptions' => [
-            'width' => '100%',
-
-        ]
-    ]);*/
-}else{
-    $address = \panix\mod\novaposhta\models\Warehouses::getList(Yii::$app->request->post('city'));
-    //print_r($address);die;
-   // Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-   // echo json_encode($address);Yii::$app->end();
-    $ss = json_encode($address);
-    $this->registerJs("var addressList = {$ss};");
-
-
-    echo BootstrapSelect::widget([
-        'model' => $model,
-        'attribute' => 'delivery_address',
-        'items' => $address,
-        'jsOptions' => [
-            'liveSearch' => true,
-            'width' => '100%',
-
-        ]
-    ]);
-
-  //  echo Html::activeDropDownList($model,'delivery_address',$address);
-}
-$this->registerJs("
-
-
-
-$('#cartForm').yiiActiveForm('add', {
-    id: 'ordercreateform-user_city',
-    name: 'delivery_city',
-    container: '#field-ordercreateform-user_city',
-    input: '#ordercreateform-user_city',
-    error: '.help-block',
-    validate:  function (attribute, value, messages, deferred) {
-        yii.validation.required(value, messages, {message: \"Validation Message Here\"});
-    }
-});
-
-//$('#contact-form').yiiActiveForm('remove', 'address');
-
-
-//$('#user-address-input').addClass('d-none');
-$('#warehouse-input').addClass('d-none');
-        /*        
-    $('#{$delivery_city_selector}').on('change', function(e, clickedIndex, isSelected, previousValue) {
-        $.ajax({
-            url: common.url('/cart/delivery/process?id={$id}'),
-            type: 'POST',
-            data: {city: $(this).val()},
-            dataType: 'json',
-            success: function (data) {
-                $('#delivery-data').html(data);
-                $('#user-address-input').removeClass('d-none');
-                $('#warehouse-input').addClass('d-none');
-
-            }
-        });
-    });
-    */
-    
-    $(document).on('change', '#{$delivery_type_selector}', function(e, clickedIndex, isSelected, previousValue) {
-    
-    
-        if($(this).val() == 'warehouse'){
-            $('#warehouse-input').removeClass('d-none');
-            $('#{$address_selector}').replaceWith('<select id=\"{$address_selector}\" name=\"OrderCreateForm[delivery_address]\" class=\"form-control\">' +
-                '<option value=\"1\">1</option>' +
-                '<option value=\"2\">2</option>' +
-                '<option value=\"3\">3</option>' +
-                '<option value=\"4\">4</option>' +
-                '<option value=\"5\">5</option>' +
-            '</select>');
-
-            $('#{$address_selector}').selectpicker('refresh');
-
-        }else{
-            $('#warehouse-input').addClass('d-none');
-           // $('#user-address-input').removeClass('d-none');
-           
-            $('#{$address_selector}').selectpicker('destroy');
-            $('#{$address_selector}').replaceWith('<input id=\"{$address_selector}\" name=\"OrderCreateForm[delivery_address]\" class=\"form-control\" />');
-
-        }
-     });
-");
-?>
-<div id="delivery-data">
-    <?php
-    if (Yii::$app->request->post('city')) {
-
-
-
-        ?>
-        <div id="warehouse-input" class="d-none">
+    <div class="form-group row">
+        <div class="col-sm-4 col-md-4 col-lg-3 col-xl-4">
+            <?= Html::activeLabel($model, 'delivery_warehouse_ref', ['class' => 'col-form-label']); ?>
+        </div>
+        <div class="col-sm-8 col-md-8 col-lg-9 col-xl-8">
             <?php
-            echo Html::activeLabel($model, 'delivery_address');
+
             echo BootstrapSelect::widget([
                 'model' => $model,
-                'attribute' => 'delivery_address',
-                'items' => $address,
+                'attribute' => 'delivery_warehouse_ref',
+                //'items' => \panix\mod\novaposhta\models\Warehouses::getList($model->delivery_city_ref),
+                'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Warehouses::find()->where(['CityRef'=>$model->delivery_city_ref])->orderBy(['number'=>SORT_ASC])->all(), 'Ref', function($model){
+                    return $model->getDescription();
+                }),
                 'jsOptions' => [
                     'liveSearch' => true,
                     'width' => '100%',
+                    'liveSearchPlaceholder'=>'Найти отделение',
+                    'dropdownAlignRight'=>'auto',
+                    'size'=>'300px',
 
                 ],
                 'options' => [
@@ -185,10 +96,10 @@ $('#warehouse-input').addClass('d-none');
                 ]
             ]);
             ?>
-        </div>
-        <?php
-        // echo Html::activeTextInput($model, 'delivery_warehouse', ['class' => 'form-control address-input d-none','placeholder'=>'Адрес']);
 
-    }
-    ?>
-</div>
+        </div>
+    </div>
+<?php } ?>
+
+
+

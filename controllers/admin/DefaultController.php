@@ -3,6 +3,7 @@
 namespace panix\mod\cart\controllers\admin;
 
 use panix\engine\CMS;
+use panix\mod\cart\components\delivery\BaseDeliverySystem;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Response;
@@ -110,39 +111,65 @@ class DefaultController extends AdminController
         }
         $old = $model->oldAttributes;
         $post = Yii::$app->request->post();
-        if ($model->load($post) && $model->validate()) {
-            $model->save();
 
-            if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
-                if ($model->user_email) {
-                    $mailer = Yii::$app->mailer;
-                    $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
-                    $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/changed_status.tpl'], ['order' => $model])
-                        ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
-                        ->setTo([$model->user_email])
-                        ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
-                        ->send();
+
+
+
+        if ($model->load($post)) {
+
+
+
+            if (Yii::$app->request->post('onChangeDelivery')) {
+             //   print_r($model);
+                if($model->deliveryMethod){
+                   // if($model->deliveryMethod->system){
+                        $system = $model->deliveryMethod->getDeliverySystemClass();
+                        if ($system instanceof BaseDeliverySystem) {
+                            return $system->renderDeliveryFormHtml($model);
+                        }
+
+                   // }
                 }
+               return false;
             }
 
 
-            if (isset($old['ttn']) != $model->ttn && !empty($model->ttn)) {
-                if ($model->user_email) {
-                    $mailer = Yii::$app->mailer;
-                    $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
-                    $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/ttn.tpl'], ['order' => $model])
-                        ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
-                        ->setTo([$model->user_email])
-                        ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($model->id)))
-                        ->send();
+
+
+            if ($model->validate()) {
+                $model->save();
+
+                if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
+                    if ($model->user_email) {
+                        $mailer = Yii::$app->mailer;
+                        $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+                        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/changed_status.tpl'], ['order' => $model])
+                            ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
+                            ->setTo([$model->user_email])
+                            ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
+                            ->send();
+                    }
                 }
+
+
+                if (isset($old['ttn']) != $model->ttn && !empty($model->ttn)) {
+                    if ($model->user_email) {
+                        $mailer = Yii::$app->mailer;
+                        $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+                        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/ttn.tpl'], ['order' => $model])
+                            ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
+                            ->setTo([$model->user_email])
+                            ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($model->id)))
+                            ->send();
+                    }
+                }
+
+
+                if (sizeof(Yii::$app->request->post('quantity', [])))
+                    $model->setProductQuantities(Yii::$app->request->post('quantity'));
+
+                return $this->redirectPage($isNew, $post);
             }
-
-
-            if (sizeof(Yii::$app->request->post('quantity', [])))
-                $model->setProductQuantities(Yii::$app->request->post('quantity'));
-
-            return $this->redirectPage($isNew, $post);
         }
         return $this->render('update', [
             'model' => $model,

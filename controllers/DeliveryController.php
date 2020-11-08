@@ -46,7 +46,33 @@ class DeliveryController extends WebController
 
         }
     }
+    public function actionProcessHtml($id)
+    {
 
+        // if(is_int($id)){
+        $model = Delivery::findOne($id);
+        // }else{
+        //     $model = Delivery::findOne(['system'=>$id]);
+        // }
+        if (!$model)
+            $this->error404();
+
+        $system = $model->getDeliverySystemClass();
+
+        if ($system instanceof BaseDeliverySystem) {
+            //return $system->processRequest($model);
+            return $system->renderDeliveryFormHtml($model);
+
+            // return $this->asJson($system->renderDeliveryForm($model));
+
+            /*return $this->render("@cart/widgets/delivery/novaposhta/_view", [
+                'cities' => ['test'],
+                'address' => ['test'],
+                'method' => $model
+            ]);*/
+
+        }
+    }
 
     public function actionProcess2($id)
     {

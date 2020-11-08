@@ -15,6 +15,8 @@ return [
     'USER_LASTNAME' => 'Фамилия',
     'USER_NAME' => 'ФИО',
     'USER_EMAIL' => 'Email',
+    'DELIVERY_CITY_REF' => 'Город доставки',
+    'DELIVERY_WAREHOUSE_REF' => 'Отделение доставки',
     'DELIVERY_ADDRESS' => 'Адрес доставки',
     'DELIVERY_CITY' => 'Город доставки',
     'USER_PHONE' => 'Телефон',

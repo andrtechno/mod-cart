@@ -31,10 +31,12 @@ $(document).on('click','#buyOneClick-button',function(){
                     data: form.serialize()
                 }
             }
-        }
+        },
+
     });
 	return false;
 });
+
 ")
 ?>
 

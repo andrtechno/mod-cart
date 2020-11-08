@@ -11,6 +11,7 @@ use panix\engine\CMS;
 
 
 $form = ActiveForm::begin([
+    'id' => 'order-form',
     'fieldConfig' => [
         'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-4\">{label}</div>\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
         'horizontalCssClasses' => [
@@ -35,10 +36,11 @@ $form = ActiveForm::begin([
             'prompt' => html_entity_decode($model::t('SELECT_DELIVERY'))
         ]);
         ?>
+        <div id="delivery-form"></div>
+        <?= $form->field($model, 'delivery_address')->textInput(); ?>
         <?= $form->field($model, 'ttn')->textInput()->hint('После заполнение ТТН, клиенту будет отправлено уведомление на почту.'); ?>
         <?= $form->field($model, 'paid')->checkbox(); ?>
         <?= $form->field($model, 'user_name')->textInput(); ?>
-        <?= $form->field($model, 'delivery_address')->textInput(); ?>
         <?= $form->field($model, 'user_email')->textInput(); ?>
         <?php
         if (!$model->isNewRecord && $model->user_phone) { ?>

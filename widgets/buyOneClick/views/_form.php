@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 /**
  * @var $this \yii\web\View
  */
-
+$this->registerJs('formatter_price();');
 ?>
 <div style="display: inline-block;width: 400px">
 
@@ -21,8 +21,8 @@ use yii\widgets\ActiveForm;
                 <td>
                     <strong><?= Html::encode($productModel->name) ?></strong>
                     <div class="product-price">
-                    <span class="price price-md">
-                        <?= $productModel->priceRange() ?> <?= Yii::$app->currency->active['symbol'] ?>
+                    <span class="price price-md" data-currency="<?= Yii::$app->currency->active['symbol'] ?>">
+                        <span><?= $productModel->priceRange() ?></span>
                     </span>
                         <?php
                         if (Yii::$app->hasModule('discounts') && isset($productModel->hasDiscount)) {
@@ -49,16 +49,18 @@ use yii\widgets\ActiveForm;
     $form = ActiveForm::begin([
         'id' => 'buyOneClick-form',
         'options' => [],
-       // 'enableAjaxValidation' => true,
+        // 'enableAjaxValidation' => true,
     ]);
 
     echo $form->field($model, 'quantity')->hiddenInput(['value' => $quantity])->error(false)->label(false);
-   // echo $form->field($model, 'user_phone');
+    // echo $form->field($model, 'user_phone');
     echo $form->field($model, 'user_phone', ['options' => ['class' => 'form-group form-group-auto2']])->widget(\panix\ext\telinput\PhoneInput::class);
-?>
+    ?>
+    <div class="text-center">
+        <?php echo Html::submitButton(Yii::t('cart/default', 'BUY'), ['class' => 'btn btn-danger btn-buy']); ?>
+    </div>
 
 
-    <?php echo Html::submitButton(Yii::t('cart/default', 'BUY'), ['class' => 'btn btn-danger d-block btn-buy']); ?>
     <?php ActiveForm::end() ?>
 </div>
 

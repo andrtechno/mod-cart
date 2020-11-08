@@ -296,23 +296,12 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
     }
 
 
-    public function renderDeliveryForm(Delivery $method)
+    public function renderDeliveryFormHtml($model)
     {
-        $setting = $this->getSettings($method->id);
-        //  $postApi = new NovaPoshtaApi($setting->api_key);
 
+        return Yii::$app->view->renderAjax("@cart/widgets/delivery/{$model->deliveryMethod->system}/_view", [
 
-        return Yii::$app->view->renderAjax("@cart/widgets/delivery/{$method->system}/_view", [
-            // 'form'=>$form,
-            /*'cities' => $postApi->getCities(),
-            'address' => $postApi->getAddressGeneral([
-                "methodProperties" => [
-                    "CityName" => Yii::$app->request->post('city')
-                ],
-            ]),*/
-            'cities' => Cities::getList(),
-            'address' => [],
-            'method' => $method
+            'model' => $model
         ]);
     }
 

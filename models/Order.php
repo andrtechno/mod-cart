@@ -147,7 +147,6 @@ class Order extends ActiveRecord
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-
         $scenarios['buyOneClick'] = ['user_phone'];
         return $scenarios;
     }
@@ -166,6 +165,7 @@ class Order extends ActiveRecord
             [['ttn'], 'default'],
             [['invoice'], 'string', 'max' => 50],
             ['paid', 'boolean'],
+            [['delivery_city_ref','delivery_warehouse_ref'],'string'],
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
             ['status_id', 'validateStatus'],
@@ -571,8 +571,32 @@ class Order extends ActiveRecord
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
                 /** @var $model static */
-
-                return $model->getGridStatus() . ' ' . \panix\engine\CMS::idToNumber($model->id);
+                Yii::$app->controller->view->registerCss("
+                
+                .mouse{
+                border:1px solid red;
+                width:13px;
+                height:20px;
+                position:relative;
+                display: inline-block;
+                border-radius: 7px;
+               
+                }
+                .mouse:before{
+                background-color:red;
+                top:3px
+                position:absolute;
+                content:'';
+                width:1px;
+                height:5px;
+                left:0;
+                right:0;
+                margin:0 auto;
+                }
+                
+                ",[],'css-mouse');
+$ss = '<span class="mouse"></span>';
+                return $model->getGridStatus() . ' ' . \panix\engine\CMS::idToNumber($model->id).''.Html::icon('warning',['class'=>'text-danger']);
 
             },
         ];
