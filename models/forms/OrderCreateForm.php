@@ -13,11 +13,17 @@ use panix\mod\user\models\User;
 
 /**
  * Class OrderCreateForm
+ * @property integer $delivery_id
+ * @property integer $payment_id
  * @property string $user_name
  * @property string $user_lastname
  * @property string $user_comment
  * @property string $user_email
  * @property string $user_phone
+ * @property string $call_confirm
+ * @property integer $promocode_id
+ * @property integer $points
+ *
  * @package panix\mod\cart\models\forms
  */
 class OrderCreateForm extends Model

@@ -6,6 +6,7 @@ use panix\engine\CMS;
 use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderProduct;
+use panix\mod\shop\models\Attribute;
 use yii\base\Action;
 use panix\mod\shop\models\Product;
 use Yii;
@@ -33,7 +34,12 @@ class BuyOneClickAction extends Action
         $quantity = Yii::$app->request->post('quantity');
         if (Yii::$app->request->isAjax) {
 
-            $productModel = Product::findOne(Yii::$app->request->get('id'));
+            if(Yii::$app->request->post('configurable_id')){
+                $productModel = Product::findOne(Yii::$app->request->post('configurable_id'));
+            }else{
+                $productModel = Product::findOne(Yii::$app->request->get('id'));
+            }
+
             if (!$productModel) {
                 throw new HttpException(404);
             }
@@ -44,7 +50,7 @@ class BuyOneClickAction extends Action
             if ($model->load($post)) {
                 if ($model->validate()) {
                     $order = $this->createOrder($model, $productModel);
-                    $order->sendAdminEmail();
+
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     $result['success'] = true;
                     $result['message'] = Yii::t('cart/default', 'SUCCESS_ORDER');
@@ -82,7 +88,6 @@ class BuyOneClickAction extends Action
         $order->user_phone = $model->user_phone;
         $order->status_id = 1;
         $order->buyOneClick = 1;
-        //  $order->user_address = $this->form->user_address;
 
 
         if ($order->validate()) {
@@ -98,13 +103,12 @@ class BuyOneClickAction extends Action
         $ordered_product = new OrderProduct();
         $ordered_product->order_id = $order->id;
         $ordered_product->product_id = $productModel->id;
-
-
         $ordered_product->currency_id = $productModel->currency_id;
         $ordered_product->supplier_id = $productModel->supplier_id;
         $ordered_product->name = $productModel->name;
         $ordered_product->quantity = $model->quantity;
         $ordered_product->sku = $productModel->sku;
+        $ordered_product->price_purchase = $productModel->price_purchase;
         // if($item['currency_id']){
         //     $currency = Currency::model()->findByPk($item['currency_id']);
         //$ordered_product->price = ShopProduct::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
@@ -120,8 +124,46 @@ class BuyOneClickAction extends Action
         }
 
 
+
+       /* if (isset($productModel) && $productModel instanceof Product) {
+            $configurable_data = [];
+
+            $ordered_product->configurable_name = $productModel->name;
+            // Use configurable product sku
+            $ordered_product->sku = $productModel->sku;
+            // Save configurable data
+
+            $attributeModels = Attribute::find()
+                ->where(['id' => $productModel->configurable_attributes])->all();
+            //->findAllByPk($item['model']->configurable_attributes);
+            foreach ($attributeModels as $attribute) {
+                $method = 'eav_' . $attribute->name;
+                $configurable_data[$attribute->title] = $productModel->$method;
+            }
+            $ordered_product->configurable_data = serialize($configurable_data);
+        }
+
+        // Save selected variants as key/value array
+        if (!empty($item['variant_models'])) {
+            $variants = [];
+            foreach ($item['variant_models'] as $variant)
+                $variants[$variant->productAttribute->title] = $variant->option->value;
+            $ordered_product->variants = serialize($variants);
+        }*/
+
+
+
+
+
         $ordered_product->price = $price;
         $ordered_product->save();
+
+
+        $order->refresh();
+        $order->updateDeliveryPrice();
+
+        $order->sendAdminEmail();
+
         return $order;
     }
 

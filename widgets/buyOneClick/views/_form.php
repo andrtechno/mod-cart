@@ -6,19 +6,11 @@ use yii\widgets\ActiveForm;
  * @var $this \yii\web\View
  */
 
-if ($sended) { ?>
-    <div class="alert alert-success">
-        <?= Yii::t('BuyOneClickWidget/default', 'SUCCESS'); ?>
-    </div>
-    <?php
-    return false;
-}
-
 ?>
 <div style="display: inline-block;width: 400px">
 
 
-    <div class="table-responsive">
+    <div class="table-responsive2">
         <table class="table">
             <tr>
                 <td class="text-left">

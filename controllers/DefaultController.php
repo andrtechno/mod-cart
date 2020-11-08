@@ -328,7 +328,7 @@ class DefaultController extends WebController
      */
     public function createOrder()
     {
-        /** @var $this->form OrderCreateForm */
+        /** @var $form OrderCreateForm */
         if (Yii::$app->cart->countItems() == 0)
             return false;
 
