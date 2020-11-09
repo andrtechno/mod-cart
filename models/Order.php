@@ -52,6 +52,7 @@ class Order extends ActiveRecord
 
     const MODULE_ID = 'cart';
     const route = '/admin/cart/default';
+    public $delivery_type;
 
     /**
      * @inheritdoc
@@ -171,6 +172,10 @@ class Order extends ActiveRecord
             ['status_id', 'validateStatus'],
             ['promocode_id', 'validatePromoCode'],
         ];
+    }
+    public function attributeLabels()
+    {
+        return array_merge(['delivery_type'=>self::t('DELIVERY_TYPE')],parent::attributeLabels());
     }
 
     public function validatePromoCode($attribute)
@@ -677,10 +682,11 @@ class Order extends ActiveRecord
 
         $columns['DEFAULT_CONTROL'] = [
             'class' => 'panix\engine\grid\columns\ActionColumn',
+            'template'=>'{update}'
         ];
         $columns['DEFAULT_COLUMNS'] = [
             ['class' => 'panix\engine\grid\sortable\Column'],
-            ['class' => 'panix\engine\grid\columns\CheckboxColumn']
+            //['class' => 'panix\engine\grid\columns\CheckboxColumn']
         ];
 
         return $columns;

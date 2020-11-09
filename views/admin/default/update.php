@@ -10,18 +10,23 @@ $js = <<<JS
 
 
 function ajax() {
+    var form = $('#order-form');
         $.ajax({
             type:'POST',
-            url:$('#order-form').attr('action'),
-            data:$('#order-form').serialize()+'&onChangeDelivery=true',
+            url:form.attr('action'),
+            data:form.serialize()+'&onChangeDelivery=true',
             dataType:'html',
             beforeSend:function(){
                 $('#delivery-form').addClass('pjax-loading');
             },
             success:function(data){
                 $('#delivery-form').removeClass('pjax-loading').html(data);
-                $('.field-order-delivery_address').hide();
-                $('.field-order-delivery_address').find('input').val('');
+                if($('#order-delivery_type').val() === 'warehouse'){
+                    $('.field-order-delivery_address').hide();
+                    $('.field-order-delivery_address').find('input').val('');
+                }else{
+                    $('.field-order-delivery_address').show();
+                }
             }
         });
 }
@@ -29,12 +34,12 @@ ajax();
 
 $(document).on('change','#order-delivery_type',function(e, clickedIndex, isSelected, previousValue){
 
-    if($(this).val() == 'warehouse'){
+    //if($(this).val() == 'warehouse'){
         ajax();
-    }else{
-        $('#delivery-form').html('');
-        $('.field-order-delivery_address').show();
-    }
+   // }else{
+     //   ajax();
+        //$('.field-order-delivery_address').show();
+    //}
 });
 
 

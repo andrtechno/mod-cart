@@ -11,23 +11,22 @@ use panix\mod\cart\models\forms\OrderCreateForm;
 
 $js2 = <<<JS
 
-                $('#order-form').yiiActiveForm('add', {
-                    id: 'order-delivery_city_ref',
-                    name: 'delivery_city_ref',
-                    container: '.field-order-delivery_city_ref',
-                    input: '#order-delivery_city_ref',
-                    error: '.invalid-feedback-cart',
-                    validate:  function (attribute, value, messages, deferred, form) {
-                        yii.validation.required(value, messages, {message: 'errr'});
-                        console.log('validate',attribute,value);
-                        if(value){
-                            $(attribute.container).removeClass('field-is-invalid');
-                        }else{
-                            $(attribute.container).addClass('field-is-invalid');
-                        }
-
-                    }
-                });
+$('#order-form').yiiActiveForm('add', {
+    id: 'order-delivery_type',
+    name: 'delivery_type',
+    container: '.field-order-delivery_type',
+    input: '#order-delivery_type',
+    error: '.invalid-feedback',
+    validate:  function (attribute, value, messages, deferred, form) {
+        yii.validation.required(value, messages, {message: 'errr'});
+        console.log('validate',attribute,value);
+        if(value){
+            $(attribute.container).removeClass('field-is-invalid');
+        }else{
+            $(attribute.container).addClass('field-is-invalid');
+        }
+    }
+});
 
 JS;
 $this->registerJs($js2, \yii\web\View::POS_END, 'rrrr');
@@ -36,13 +35,15 @@ $this->registerJs($js2, \yii\web\View::POS_END, 'rrrr');
 $this->registerCss('.bootstrap-select .inner{max-height: 300px;}');
 ?>
 
-<div class="form-group row">
+<div class="form-group row field-order-delivery_type">
     <div class="col-sm-4 col-md-4 col-lg-3 col-xl-4">
         <?= Html::activeLabel($model, 'delivery_type', ['class' => 'col-form-label']); ?>
     </div>
     <div class="col-sm-8 col-md-8 col-lg-9 col-xl-8">
         <?php
-
+        if($model->delivery_type == 'warehouse' &&$model->delivery_warehouse_ref){
+            $model->delivery_type = 'warehouse';
+        }
         echo BootstrapSelect::widget([
             'model' => $model,
             'attribute' => 'delivery_type',
@@ -91,7 +92,7 @@ $this->registerCss('.bootstrap-select .inner{max-height: 300px;}');
 <?php
 
 
-if ($model->delivery_city_ref) { ?>
+if ($model->delivery_city_ref && $model->delivery_type == 'warehouse') { ?>
 
 
 

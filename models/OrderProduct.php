@@ -217,7 +217,7 @@ class OrderProduct extends ActiveRecord
     {
         if ($this->configurable_id) {
             if ($this->id != $this->configurable_id) {
-                return $this->configureProduct->getMainImage($size)->url;
+                return ($this->configureProduct)?$this->configureProduct->getMainImage($size)->url:CMS::placeholderUrl(['size'=>$size]);
             }
         } elseif ($this->originalProduct) {
             return $this->originalProduct->getMainImage($size)->url;

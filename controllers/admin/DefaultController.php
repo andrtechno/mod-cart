@@ -17,6 +17,15 @@ use Mpdf\Mpdf;
 
 class DefaultController extends AdminController
 {
+    public function actions()
+    {
+        return [
+            /*'delete' => [
+                'class' => 'panix\engine\actions\DeleteAction',
+                'modelClass' => Order::class,
+            ],*/
+        ];
+    }
 
     public function actionPrint($id)
     {
@@ -113,27 +122,22 @@ class DefaultController extends AdminController
         $post = Yii::$app->request->post();
 
 
-
-
         if ($model->load($post)) {
 
 
-
             if (Yii::$app->request->post('onChangeDelivery')) {
-             //   print_r($model);
-                if($model->deliveryMethod){
-                   // if($model->deliveryMethod->system){
-                        $system = $model->deliveryMethod->getDeliverySystemClass();
-                        if ($system instanceof BaseDeliverySystem) {
-                            return $system->renderDeliveryFormHtml($model);
-                        }
+                //   print_r($model);
+                if ($model->deliveryMethod) {
+                    // if($model->deliveryMethod->system){
+                    $system = $model->deliveryMethod->getDeliverySystemClass();
+                    if ($system instanceof BaseDeliverySystem) {
+                        return $system->renderDeliveryFormHtml($model);
+                    }
 
-                   // }
+                    // }
                 }
-               return false;
+                return false;
             }
-
-
 
 
             if ($model->validate()) {
