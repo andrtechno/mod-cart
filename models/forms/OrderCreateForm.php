@@ -129,10 +129,10 @@ class OrderCreateForm extends Model
         if ($this->{$attribute}) {
             $find = User::find()->where(['username' => $this->user_email])->count();
             if ($find) {
-                $this->addError($attribute, 'TEST');
+                $this->addError($attribute, 'Ошибка регистрации, данный E-mail уже зарегистрирован');
             }
         }
-        $this->addError($attribute, 'TEST');
+
     }
 
     public function pointsValidate($attribute)
