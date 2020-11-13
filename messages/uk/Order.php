@@ -37,6 +37,6 @@ return [
     'NEW_ORDER_ID' => 'Номер замовлення № {id}',
     'CREATE_ORDER' => 'Додати замовлення',
     'SELECT_PAYMENT' => '&mdash; Оплата &mdash;',
-    'SELECT_DELIVERY' => '&mdash; Доставка &mdash; ',
+    'SELECT_DELIVERY' => '&mdash; Доставка &mdash;',
     'CALL_CONFIRM' => 'Не дзвонити для підтвердження замовлення'
 ];
