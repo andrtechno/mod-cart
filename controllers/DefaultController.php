@@ -63,7 +63,7 @@ class DefaultController extends WebController
                 return $this->asJson(Yii::$app->cart->ajaxRecount($params));
             }
         } else {
-            throw new ForbiddenHttpException(Yii::t('app/error', 403));
+            throw new ForbiddenHttpException(Yii::t('app/error', '403'));
         }
     }
 
