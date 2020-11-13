@@ -23,7 +23,7 @@ return [
     'MSG_ORDER_DELETED' => 'The order has been marked as deleted. This order is visible only to the Site Administrator. ',
     'ORDER_ISDELETED' => 'Order deleted.',
     'STATUS_NEW_NOTIFY' => 'This status is being assigned to a new order',
-    'ORDER_TITLE_UPDATE' => 'Editing order no. {Id}',
+    'ORDER_TITLE_UPDATE' => 'Editing order no. {id}',
     'ORDER_TITLE_CREATE' => 'Create order',
     'MSG_BUYONECLICK' => 'The order was placed through the buy button in 1 click.',
     'CREATE_ORDER' => 'Add order',
