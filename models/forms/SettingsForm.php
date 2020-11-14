@@ -28,6 +28,7 @@ class SettingsForm extends \panix\engine\SettingsModel
         return [
             [['notify_changed_status'], 'boolean'],
             [['order_emails', 'mail_tpl_order'], 'required'],
+            [['order_emails'], '\panix\engine\validators\EmailListValidator'],
             [['mail_tpl_order'], 'string'],
         ];
     }

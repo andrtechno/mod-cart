@@ -18,7 +18,7 @@ class SettingsController extends AdminController
         return [
             'preview-mail' => [
                 'class' => 'panix\engine\actions\PreviewMailAction',
-                'data' => ['order' => Order::find()->limit(1)->one()]
+                'data' => ['order' => Order::find()->limit(1)->one(), 'is_admin' => true]
             ],
         ];
     }
@@ -41,9 +41,10 @@ class SettingsController extends AdminController
             if ($model->validate()) {
                 $model->save();
                 Yii::$app->session->setFlash("success", Yii::t('app/default', 'SUCCESS_UPDATE'));
+                return $this->refresh();
             }
-            return $this->refresh();
         }
+
         return $this->render('index', [
             'model' => $model
         ]);
