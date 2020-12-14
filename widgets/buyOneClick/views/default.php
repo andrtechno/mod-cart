@@ -10,7 +10,7 @@ use panix\engine\Html;
 
 echo Html::a(Yii::t('cart/Order','BUYONECLICK'), ['/cart/default/buyOneClick', 'id' => $model->primaryKey], [
     'id' => 'buyOneClick-button',
-    'class' => 'mt-4 btn btn-lg btn-block btn-outline-secondary',
+    'class' => 'mt-4 btn btn-block btn-outline-secondary',
 ]);
 
 $this->registerJs("

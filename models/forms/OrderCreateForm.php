@@ -137,7 +137,7 @@ class OrderCreateForm extends Model
 
     public function pointsValidate($attribute)
     {
-        if ($this->{$attribute} <= Yii::$app->user->identity->points) {
+        //if ($this->{$attribute} <= Yii::$app->user->identity->points) {
             $total = Yii::$app->cart->getTotalPrice();
             $config = Yii::$app->settings->get('user');
             $profit = (($total - $this->{$attribute}) / $total) * 100;
@@ -150,9 +150,9 @@ class OrderCreateForm extends Model
                 $this->addError($attribute, 'У Вас недостаточно бонусов');
             }
             // return true;
-        } else {
-            $this->addError($attribute, 'У Вас недостаточно бонусов');
-        }
+       // } else {
+        //    $this->addError($attribute, 'У Вас недостаточно бонусов');
+       // }
     }
 
     public function beforeValidate()

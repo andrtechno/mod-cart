@@ -47,7 +47,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'user_phone', [
                 'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-4\">{label}</div>\n{hint}\n{beginWrapper}{input}{call}\n{error}{endWrapper}",
                 'parts' => [
-                    '{call}' => Html::a(Html::icon('phone') . ' Позвонить &mdash; <strong>' . CMS::phoneOperator($model->user_phone) . '</strong>', 'tel:' . $model->user_phone, ['class' => 'mt-2 mt-lg-0 float-none float-lg-right btn btn-light'])
+                    '{call}' => Html::a(Html::icon('phone') . ' Позвонить', 'tel:' . $model->user_phone, ['class' => 'mt-2 mt-lg-0 float-none float-lg-right btn btn-light'])
                 ]
             ])->widget(PhoneInput::class); ?>
 

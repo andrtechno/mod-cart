@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\models;
 
+use panix\engine\CMS;
 use Yii;
 use yii\base\ModelEvent;
 use yii\helpers\ArrayHelper;
@@ -38,6 +39,7 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property integer $points
  * @property boolean $paid
  * @property boolean $buyOneClick
+ * @property boolean $apply_user_points
  * @property boolean $call_confirm
  * @property OrderStatus $status
  * @property OrderProduct[] $products
@@ -133,6 +135,15 @@ class Order extends ActiveRecord
 
     /**
      * Relation
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(Yii::$app->user->identityClass, ['id' => 'user_id']);
+    }
+
+    /**
+     * Relation
      * @return int|string
      */
     public function getProductsCount()
@@ -165,7 +176,7 @@ class Order extends ActiveRecord
             [['user_name', 'user_email', 'discount', 'ttn'], 'string', 'max' => 100],
             [['ttn'], 'default'],
             [['invoice'], 'string', 'max' => 50],
-            ['paid', 'boolean'],
+            [['paid', 'apply_user_points'], 'boolean'],
             [['delivery_city_ref', 'delivery_warehouse_ref', 'delivery_type'], 'string'],
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
@@ -173,9 +184,10 @@ class Order extends ActiveRecord
             ['promocode_id', 'validatePromoCode'],
         ];
     }
+
     public function attributeLabels()
     {
-        return array_merge(['delivery_type'=>self::t('DELIVERY_TYPE')],parent::attributeLabels());
+        return array_merge(['delivery_type' => self::t('DELIVERY_TYPE')], parent::attributeLabels());
     }
 
     public function validatePromoCode($attribute)
@@ -237,6 +249,22 @@ class Order extends ActiveRecord
         if (!$this->status_id)
             $this->status_id = 1;
 
+
+        // CMS::dump($this->oldAttributes);
+        //CMS::dump($this->attributes);die;
+        if (isset($this->oldAttributes['status_id']) && $this->attributes['status_id']) {
+            if ($this->oldAttributes['status_id'] == 3 && $this->attributes['status_id'] != 3) {
+
+                $this->user->unsetPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
+                $this->apply_user_points = false;
+            }
+        }
+        if ($this->status_id == 3 && $this->user_id && !$this->apply_user_points) {
+            $this->user->setPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
+            $this->apply_user_points = true;
+        }
+
+
         return parent::beforeSave($insert);
     }
 
@@ -245,6 +273,8 @@ class Order extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
+
+
         parent::afterSave($insert, $changedAttributes);
     }
 
@@ -682,7 +712,7 @@ class Order extends ActiveRecord
 
         $columns['DEFAULT_CONTROL'] = [
             'class' => 'panix\engine\grid\columns\ActionColumn',
-            'template'=>'{update}'
+            'template' => '{update}'
         ];
         $columns['DEFAULT_COLUMNS'] = [
             ['class' => 'panix\engine\grid\sortable\Column'],

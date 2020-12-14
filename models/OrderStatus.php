@@ -8,7 +8,7 @@ class OrderStatus extends ActiveRecord
 {
 
     const MODULE_ID = 'cart';
-    public $disallow_delete = [1, 2];
+    public $disallow_delete = [1, 2, 3];
     const route = '/admin/cart/statuses';
 
     public static function tableName()

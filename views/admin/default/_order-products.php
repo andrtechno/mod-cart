@@ -116,6 +116,13 @@ Pjax::end();
 
 <div class="panel-container">
     <ul class="list-group">
+        <?php if ($model->user_id) { ?>
+            <li class="list-group-item">
+                Бонусы к зачаслению:
+                <h5 class="m-0 float-right"><?= floor($model->total_price * Yii::$app->settings->get('user', 'bonus_ratio')) ?>
+                    <span class="text-muted"><?= $symbol ?></span></h5>
+            </li>
+        <?php } ?>
         <?php if ($model->delivery_price > 0) { ?>
             <li class="list-group-item">
                 <?= Yii::t('cart/Order', 'DELIVERY_PRICE') ?>: <strong
@@ -145,6 +152,7 @@ Pjax::end();
                 <?php } ?>
             </li>
         <?php } ?>
+
         <li class="list-group-item d-flex justify-content-between">
             <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>
             <h4 class="m-0"><?= Yii::$app->currency->number_format($model->full_price); ?>
