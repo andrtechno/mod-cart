@@ -631,7 +631,7 @@ class Order extends ActiveRecord
                 
                 ", [], 'css-mouse');
                 $ss = '<span class="mouse"></span>';
-                return $model->getGridStatus() . ' ' . \panix\engine\CMS::idToNumber($model->id) . '' . Html::icon('warning', ['class' => 'text-danger']);
+                return $model->getGridStatus() . ' ' . \panix\engine\CMS::idToNumber($model->id);
 
             },
         ];

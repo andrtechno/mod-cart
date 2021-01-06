@@ -19,7 +19,7 @@ echo GridView::widget([
         [
             'attribute' => 'ordersCount',
             'format' => 'html',
-            'header' => 'Заказов',
+            'header' => Yii::t('cart/OrderStatus', 'COUNT'),
             'contentOptions' => ['class' => 'text-center'],
             'value' => function ($model) {
                 return Html::a($model->ordersCount, ['/admin/cart/default/index', 'OrderSearch[status_id]' => $model->id]);
