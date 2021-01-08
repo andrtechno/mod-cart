@@ -564,7 +564,7 @@ class Order extends ActiveRecord
         $mailer = Yii::$app->mailer;
         $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/order.tpl'], ['order' => $this, 'is_admin' => true])
             ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
-            ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
+            ->setTo(explode(',', Yii::$app->settings->get('cart', 'order_emails')))
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', $this->id))
             ->send();
         return $mailer;
