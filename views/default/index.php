@@ -202,7 +202,7 @@ $formOrder = ActiveForm::begin([
                             ?>
                         </td>
                         <td width="20px" class="remove-item">
-                            <?= Html::a(Html::icon('delete'), ['/cart/default/remove', 'id' => $index], ['class' => 'btn btn-sm text-danger remove']) ?>
+                            <?= Html::a(Html::icon('delete'), ['/cart/default/remove', 'id' => $index], ['class' => 'btn btn-sm text-danger cart-remove']) ?>
                         </td>
                     </tr>
                 <?php } ?>

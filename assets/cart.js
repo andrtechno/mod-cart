@@ -293,7 +293,7 @@ cart.init();
 
 
 $(function () {
-    $(document).on('click', 'a.remove', function () {
+    $(document).on('click', '.cart-remove', function () {
         $.ajax({
             url: $(this).attr('href'),
             type: 'GET',
