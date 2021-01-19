@@ -3,6 +3,9 @@
 use yii\db\Query;
 use panix\mod\cart\models\Order;
 
+/**
+ * @var $this \yii\web\View
+ */
 ?>
 
 
@@ -15,7 +18,7 @@ use panix\mod\cart\models\Order;
 
         <?php
         $title = 'Доход за 2020г.';
-        $subTitle = 'Итого: '.$total.' '.Yii::$app->currency->active['symbol'];
+        $subTitle = 'Итого: ' . $total . ' ' . Yii::$app->currency->active['symbol'];
 
         echo \panix\ext\highcharts\Highcharts::widget([
             'scripts' => [
@@ -26,7 +29,7 @@ use panix\mod\cart\models\Order;
             'options' => [
                 'chart' => [
                     'type' => 'bar',
-                    'height'=>800,
+                    'height' => 800,
                     'plotBackgroundColor' => null,
                     'plotBorderWidth' => null,
                     'plotShadow' => false,
@@ -42,12 +45,10 @@ use panix\mod\cart\models\Order;
                         '),
                         'drilldown' => new \yii\web\JsExpression('
                             function (e) {
-
                                 if (!e.seriesOptions) {
-
                                     $.ajax({
                                         type:"GET",
-                                        url:"/admin/cart/graph/testajax",
+                                        url:"' . \yii\helpers\Url::toRoute(['testajax']) . '",
                                         data:{
                                             name:e.point.name,
                                             year:e.point.year,
@@ -93,7 +94,7 @@ use panix\mod\cart\models\Order;
                 'yAxis' => [
                     'min' => 0,
                     'title' => false,
-                      'labels' => [
+                    'labels' => [
                         'overflow' => 'justify'
                     ],
 

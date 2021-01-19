@@ -63,7 +63,6 @@ class GraphController extends AdminController
                 ->andWhere(['status_id' => $statusIds])
                 ->select(['SUM(total_price_purchase - total_price) as sum']);
 
-
             $queryData = $query->one();
 
             $total += $queryData['sum'];
