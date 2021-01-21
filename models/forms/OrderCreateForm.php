@@ -89,7 +89,8 @@ class OrderCreateForm extends Model
             'delivery_type',
             'delivery_city_ref',
             'delivery_warehouse_ref',
-            'delivery_warehouse'
+            'delivery_warehouse',
+            'points',
         ];
 
         return $scenarios;
@@ -101,7 +102,6 @@ class OrderCreateForm extends Model
         $rules = [];
 
         $rules[] = [['user_lastname'], 'required', 'on' => 'guest'];
-        // if (YII_DEBUG) {
         $rules[] = [['user_name', 'user_email', 'user_phone'], 'required'];
         $rules[] = [['delivery_id', 'payment_id'], 'required'];
         $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points', 'quantity'], 'integer'];
@@ -124,24 +124,6 @@ class OrderCreateForm extends Model
             $rules[] = [['register'], 'validateRegisterEmail'];
         }
         return $rules;
-        //}
-        /* return [
-             [['user_name', 'user_email', 'user_phone'], 'required'],
-             [['delivery_id', 'payment_id'], 'required'],
-             [['delivery_id', 'payment_id', 'promocode_id', 'points'], 'integer'],
-             ['user_email', 'email'],
-             ['user_comment', 'string'],
-             [['user_lastname', 'user_name'], 'string', 'max' => 100],
-             [['delivery_address', 'delivery_city', 'delivery_type', 'delivery_city_ref', 'delivery_warehouse_ref', 'delivery_warehouse'], 'string'],
-             [['user_phone'], 'string', 'max' => 30],
-             [['register', 'call_confirm'], 'boolean'],
-             ['delivery_id', 'validateDelivery'],
-             ['payment_id', 'validatePayment'],
-             ['user_phone', 'panix\ext\telinput\PhoneInputValidator'],
-
-             ['points', 'pointsValidate'],
-             //['promocode_id', 'validatePromoCode','on'=>['create-form-order']],
-         ];*/
     }
 
     public function validateRegisterEmail($attribute)
