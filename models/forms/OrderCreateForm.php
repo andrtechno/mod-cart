@@ -91,6 +91,7 @@ class OrderCreateForm extends Model
             'delivery_warehouse_ref',
             'delivery_warehouse',
             'points',
+            'call_confirm'
         ];
 
         return $scenarios;
