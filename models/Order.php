@@ -563,7 +563,7 @@ class Order extends ActiveRecord
         /** @var \yii\swiftmailer\Mailer $mailer */
         $mailer = Yii::$app->mailer;
         $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/order.tpl'], ['order' => $this, 'is_admin' => true])
-            ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
+            //->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo(explode(',', Yii::$app->settings->get('cart', 'order_emails')))
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', $this->id))
             ->send();
@@ -580,7 +580,7 @@ class Order extends ActiveRecord
             $mailer = Yii::$app->mailer;
             $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
             $mailer->compose(Yii::$app->getModule('cart')->mailPath . '/order.tpl', ['order' => $this, 'is_admin' => false])
-                ->setFrom('noreply@' . Yii::$app->request->serverName)
+                //->setFrom('noreply@' . Yii::$app->request->serverName)
                 ->setTo($this->user_email)
                 ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))
                 ->send();
