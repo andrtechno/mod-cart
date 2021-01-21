@@ -73,7 +73,25 @@ class OrderCreateForm extends Model
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios['buyOneClick'] = ['user_phone','quantity'];
+        $scenarios['buyOneClick'] = ['user_phone', 'quantity'];
+
+
+        $scenarios['guest'] = [
+            'register',
+            'delivery_id',
+            'payment_id',
+            'user_lastname',
+            'user_name',
+            'user_email',
+            'user_phone',
+            'delivery_address',
+            'delivery_city',
+            'delivery_type',
+            'delivery_city_ref',
+            'delivery_warehouse_ref',
+            'delivery_warehouse'
+        ];
+
         return $scenarios;
     }
 
@@ -81,47 +99,49 @@ class OrderCreateForm extends Model
     {
 
         $rules = [];
-       // if (YII_DEBUG) {
-            $rules[] = [['user_name', 'user_email', 'user_phone'], 'required'];
-            $rules[] = [['delivery_id', 'payment_id'], 'required'];
-            $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points','quantity'], 'integer'];
-            $rules[] = ['user_email', 'email'];
-            $rules[] = ['user_comment', 'string'];
-            $rules[] = [['user_lastname', 'user_name'], 'string', 'max' => 100];
-            $rules[] = [['delivery_address', 'delivery_city', 'delivery_type', 'delivery_city_ref', 'delivery_warehouse_ref', 'delivery_warehouse'], 'string'];
-            $rules[] = [['user_phone'], 'string', 'max' => 30];
-            $rules[] = [['register', 'call_confirm'], 'boolean'];
-            $rules[] = ['delivery_id', 'validateDelivery'];
-            $rules[] = ['payment_id', 'validatePayment'];
 
-            //$rules[] = ['user_phone', 'panix\ext\telinput\PhoneInputValidator', 'on' => self::SCENARIO_DEFAULT];
-            $rules[] = ['user_phone', 'panix\ext\telinput\PhoneInputValidator'];
-           // $rules[] = ['user_phone', 'string', 'on' => 'buyOneClick'];
+        $rules[] = [['user_lastname'], 'required', 'on' => 'guest'];
+        // if (YII_DEBUG) {
+        $rules[] = [['user_name', 'user_email', 'user_phone'], 'required'];
+        $rules[] = [['delivery_id', 'payment_id'], 'required'];
+        $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points', 'quantity'], 'integer'];
+        $rules[] = ['user_email', 'email'];
+        $rules[] = ['user_comment', 'string'];
+        $rules[] = [['user_lastname', 'user_name'], 'string', 'max' => 100];
+        $rules[] = [['delivery_address', 'delivery_city', 'delivery_type', 'delivery_city_ref', 'delivery_warehouse_ref', 'delivery_warehouse'], 'string'];
+        $rules[] = [['user_phone'], 'string', 'max' => 30];
+        $rules[] = [['register', 'call_confirm'], 'boolean'];
+        $rules[] = ['delivery_id', 'validateDelivery'];
+        $rules[] = ['payment_id', 'validatePayment'];
+
+        //$rules[] = ['user_phone', 'panix\ext\telinput\PhoneInputValidator', 'on' => self::SCENARIO_DEFAULT];
+        $rules[] = ['user_phone', 'panix\ext\telinput\PhoneInputValidator'];
+        // $rules[] = ['user_phone', 'string', 'on' => 'buyOneClick'];
 
 
-            $rules[] = ['points', 'pointsValidate'];
-            if (Yii::$app->user->isGuest) {
-                $rules[] = [['register'], 'validateRegisterEmail'];
-            }
-            return $rules;
+        $rules[] = ['points', 'pointsValidate'];
+        if (Yii::$app->user->isGuest) {
+            $rules[] = [['register'], 'validateRegisterEmail'];
+        }
+        return $rules;
         //}
-       /* return [
-            [['user_name', 'user_email', 'user_phone'], 'required'],
-            [['delivery_id', 'payment_id'], 'required'],
-            [['delivery_id', 'payment_id', 'promocode_id', 'points'], 'integer'],
-            ['user_email', 'email'],
-            ['user_comment', 'string'],
-            [['user_lastname', 'user_name'], 'string', 'max' => 100],
-            [['delivery_address', 'delivery_city', 'delivery_type', 'delivery_city_ref', 'delivery_warehouse_ref', 'delivery_warehouse'], 'string'],
-            [['user_phone'], 'string', 'max' => 30],
-            [['register', 'call_confirm'], 'boolean'],
-            ['delivery_id', 'validateDelivery'],
-            ['payment_id', 'validatePayment'],
-            ['user_phone', 'panix\ext\telinput\PhoneInputValidator'],
+        /* return [
+             [['user_name', 'user_email', 'user_phone'], 'required'],
+             [['delivery_id', 'payment_id'], 'required'],
+             [['delivery_id', 'payment_id', 'promocode_id', 'points'], 'integer'],
+             ['user_email', 'email'],
+             ['user_comment', 'string'],
+             [['user_lastname', 'user_name'], 'string', 'max' => 100],
+             [['delivery_address', 'delivery_city', 'delivery_type', 'delivery_city_ref', 'delivery_warehouse_ref', 'delivery_warehouse'], 'string'],
+             [['user_phone'], 'string', 'max' => 30],
+             [['register', 'call_confirm'], 'boolean'],
+             ['delivery_id', 'validateDelivery'],
+             ['payment_id', 'validatePayment'],
+             ['user_phone', 'panix\ext\telinput\PhoneInputValidator'],
 
-            ['points', 'pointsValidate'],
-            //['promocode_id', 'validatePromoCode','on'=>['create-form-order']],
-        ];*/
+             ['points', 'pointsValidate'],
+             //['promocode_id', 'validatePromoCode','on'=>['create-form-order']],
+         ];*/
     }
 
     public function validateRegisterEmail($attribute)
@@ -138,21 +158,21 @@ class OrderCreateForm extends Model
     public function pointsValidate($attribute)
     {
         //if ($this->{$attribute} <= Yii::$app->user->identity->points) {
-            $total = Yii::$app->cart->getTotalPrice();
-            $config = Yii::$app->settings->get('user');
-            $profit = (($total - $this->{$attribute}) / $total) * 100;
-            if ($profit >= (int)$config->bonus_max_use_order) {
-                // $bonusData['message'] = "Вы успешно применили {$points2} бонусов";
-                // $bonusData['success'] = true;
-                // $total -= $this->{$attribute};
-                return true;
-            } else {
-                $this->addError($attribute, 'У Вас недостаточно бонусов');
-            }
-            // return true;
-       // } else {
+        $total = Yii::$app->cart->getTotalPrice();
+        $config = Yii::$app->settings->get('user');
+        $profit = (($total - $this->{$attribute}) / $total) * 100;
+        if ($profit >= (int)$config->bonus_max_use_order) {
+            // $bonusData['message'] = "Вы успешно применили {$points2} бонусов";
+            // $bonusData['success'] = true;
+            // $total -= $this->{$attribute};
+            return true;
+        } else {
+            $this->addError($attribute, 'У Вас недостаточно бонусов');
+        }
+        // return true;
+        // } else {
         //    $this->addError($attribute, 'У Вас недостаточно бонусов');
-       // }
+        // }
     }
 
     public function beforeValidate()
