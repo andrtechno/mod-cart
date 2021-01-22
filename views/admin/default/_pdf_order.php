@@ -109,26 +109,30 @@ $currency = Yii::$app->currency;
                     <?= $product->name; ?>
                     <br/>
                     <?php
-                    if($product->sku){
-                        echo $product->getAttributeLabel('sku').': <strong>'.$product->sku.'</strong>; ';
+                    if ($product->sku) {
+                        echo $product->getAttributeLabel('sku') . ': <strong>' . $product->sku . '</strong>; ';
                     }
-                    $attributesData = (array) $product->productAttributes->attributes;
-                  // \panix\engine\CMS::dump($attributesData);die;
-                    $query = \panix\mod\shop\models\Attribute::find();
-                    $query->where(['IN', 'name', array_keys($attributesData)]);
-                    $query->displayOnPdf();
-                    $query->sort();
-                    $result = $query->all();
-                    foreach ($result as $q) {
-                        echo $q->title . ': ';
-                        echo '<strong>'.$q->renderValue($attributesData[$q->name]) . '</strong>; ';
+                    if (isset($product->productAttributes->attributes)) {
+                        $attributesData = (array)$product->productAttributes->attributes;
+                        // \panix\engine\CMS::dump($attributesData);die;
+                        $query = \panix\mod\shop\models\Attribute::find();
+                        $query->where(['IN', 'name', array_keys($attributesData)]);
+                        $query->displayOnPdf();
+                        $query->sort();
+                        $result = $query->all();
+                        foreach ($result as $q) {
+                            echo $q->title . ': ';
+                            echo '<strong>' . $q->renderValue($attributesData[$q->name]) . '</strong>; ';
+                        }
                     }
                     ?>
                     <br/>
                     <strong><?= $currency->number_format($price) ?></strong>
                     <?= $currency->active['symbol'] ?> / <?= $originalProduct->units[$originalProduct->unit]; ?>
                 </td>
-                <td align="center"><strong><?= $product->quantity; ?></strong> <?= $originalProduct->units[$originalProduct->unit]; ?></td>
+                <td align="center">
+                    <strong><?= $product->quantity; ?></strong> <?= $originalProduct->units[$originalProduct->unit]; ?>
+                </td>
                 <td align="center"><?= $currency->number_format($price) ?>
                     <?= $currency->active['symbol'] ?></td>
                 <td align="center"><?= $currency->number_format($price * $product->quantity) ?>
