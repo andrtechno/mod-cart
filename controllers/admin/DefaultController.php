@@ -323,7 +323,7 @@ class DefaultController extends AdminController
        ]);*/
 
 
-        $query = Order::find();
+        $query = Order::find()->where(['buyOneClick'=>0]);
         if ($selection) {
             $query->andWhere([Order::tableName() . '.id' => $selection]);
         }
