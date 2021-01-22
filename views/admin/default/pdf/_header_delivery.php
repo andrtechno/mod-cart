@@ -5,7 +5,7 @@ use panix\engine\Html;
 <table width="100%">
     <tr>
         <td width="10%">
-            <?= Html::img('/uploads/pres-logo.png', ['width' => 50]); ?>
+            <?= Html::img('/uploads/pdf-logo.png'); ?>
         </td>
         <td width="60%">
             <h1><?= Yii::$app->settings->get('app','sitename'); ?></h1>

@@ -9,7 +9,7 @@ use panix\engine\CMS;
 <table width="100%">
     <tr>
         <td width="10%">
-            <?= Html::img('/uploads/pres-logo.png', ['width' => 50]); ?>
+            <?= Html::img('/uploads/pdf-logo.png'); ?>
         </td>
         <td width="50%">
             <h1>№<?= CMS::idToNumber($model->id); ?></h1>
