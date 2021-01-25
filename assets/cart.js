@@ -96,7 +96,7 @@ cart = {
         //var form = $("#form-add-cart-" + product_id);
 
         var form = $(that).closest('form');
-console.log('zzz',form);
+
         $.ajax({
             url: form.attr('action'),
             type: 'POST',
@@ -113,6 +113,8 @@ console.log('zzz',form);
                     }, {
                         type: 'success',
                         allow_dismiss: false,
+                        delay:1,
+                        timer:($(document).width() > 768)?700:500,
                         placement: {
                             from: "top",
                             align: "right"
