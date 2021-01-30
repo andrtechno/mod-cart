@@ -31,6 +31,7 @@ class DefaultController extends AdminController
     {
         $currentDate = CMS::date(time());
         $model = Order::findModel($id);
+        $config = Yii::$app->settings->get('cart','pdf_tpl_order');
         $title = $model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]);
         $mpdf = new Mpdf([
             // 'debug' => true,
@@ -56,7 +57,8 @@ class DefaultController extends AdminController
             'model' => $model
         ]));
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
-        $mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
+        //$mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
+        $mpdf->WriteHTML($this->renderPartial($config, ['model' => $model]), 2);
         echo $mpdf->Output($model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]) . ".pdf", 'I');
         die;
     }

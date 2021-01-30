@@ -217,12 +217,33 @@ class OrderProduct extends ActiveRecord
     {
         if ($this->configurable_id) {
             if ($this->id != $this->configurable_id) {
-                return ($this->configureProduct)?$this->configureProduct->getMainImage($size)->url:CMS::placeholderUrl(['size'=>$size]);
+                return ($this->configureProduct) ? $this->configureProduct->getMainImage($size)->url : CMS::placeholderUrl(['size' => $size]);
             }
         } elseif ($this->originalProduct) {
             return $this->originalProduct->getMainImage($size)->url;
         }
         return Html::tag('span', 'удален', ['class' => 'badge badge-danger']);
+    }
+
+    public function getAttributesProduct()
+    {
+        $items=[];
+        if (isset($this->productAttributes->attributes)) {
+            $attributesData = (array)$this->productAttributes->attributes;
+            $query = \panix\mod\shop\models\Attribute::find();
+            $query->where(['IN', 'name', array_keys($attributesData)]);
+            $query->displayOnPdf();
+            $query->sort();
+            $result = $query->all();
+
+            foreach ($result as $q) {
+                $items[]=[
+                    'title'=>$q->title,
+                    'value'=>$q->renderValue($attributesData[$q->name])
+                ];
+            }
+        }
+        return $items;
     }
 
 }

@@ -20,6 +20,10 @@ class SettingsController extends AdminController
                 'class' => 'panix\engine\actions\PreviewMailAction',
                 'data' => ['order' => Order::find()->limit(1)->one(), 'is_admin' => true]
             ],
+            'preview-pdf' => [
+                'class' => 'panix\engine\actions\PreviewMailAction',
+                'data' => ['model' => Order::find()->limit(1)->one(), 'is_admin' => true]
+            ],
         ];
     }
 
@@ -37,6 +41,7 @@ class SettingsController extends AdminController
         $this->view->params['breadcrumbs'][] = $this->pageName;
 
         $model = new SettingsForm();
+
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 $model->save();
