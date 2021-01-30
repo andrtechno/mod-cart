@@ -86,10 +86,6 @@
     </h2>
 {/if}
 
-<div style="text-align: center">
-    {Html::a('Бонусная программа',Url::to(['/page/default/view','slug'=>'bonusnaa-programma'],true),['target'=>'_blank'])}
-</div>
-
 {Yii::t('cart/default', 'TOTAL_PAY')}:
 <h1 style="display:inline">{$app->currency->number_format($order->total_price + $order->delivery_price)}
     <small>{$app->currency->active['symbol']}</small>
