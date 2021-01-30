@@ -168,7 +168,7 @@ class Order extends ActiveRecord
         return [
             ['user_phone', 'panix\ext\telinput\PhoneInputValidator', 'on' => self::SCENARIO_DEFAULT],
             ['user_phone', 'string', 'on' => 'buyOneClick'],
-            [['user_name', 'user_email', 'delivery_id', 'payment_id', 'user_phone'], 'required'],
+            [['user_name', 'user_email', 'delivery_id', 'payment_id', 'user_phone', 'user_lastname'], 'required'],
             ['user_email', 'email'],
             [['user_comment', 'admin_comment', 'delivery_city'], 'string', 'max' => 500],
             [['delivery_address'], 'string', 'max' => 255],
@@ -562,7 +562,7 @@ class Order extends ActiveRecord
     {
         /** @var \yii\swiftmailer\Mailer $mailer */
 
-        $tplPath = Yii::$app->settings->get('cart','mail_tpl_order');
+        $tplPath = Yii::$app->settings->get('cart', 'mail_tpl_order');
         $mailer = Yii::$app->mailer;
         $mailer->compose(['html' => $tplPath], ['order' => $this, 'is_admin' => true])
             //->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
@@ -578,7 +578,7 @@ class Order extends ActiveRecord
     public function sendClientEmail()
     {
         if ($this->user_email) {
-            $tplPath = Yii::$app->settings->get('cart','mail_tpl_order');
+            $tplPath = Yii::$app->settings->get('cart', 'mail_tpl_order');
             /** @var \yii\swiftmailer\Mailer $mailer */
             $mailer = Yii::$app->mailer;
             $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
