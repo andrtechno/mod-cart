@@ -91,7 +91,7 @@ class OrderCreateForm extends Model
             'delivery_warehouse_ref',
             'delivery_warehouse',
             'points',
-            'call_confirm'
+            'call_confirm',
         ];
 
         return $scenarios;
@@ -103,7 +103,7 @@ class OrderCreateForm extends Model
         $rules = [];
 
         $rules[] = [['user_lastname'], 'required', 'on' => 'guest'];
-        $rules[] = [['user_name', 'user_email', 'user_phone'], 'required'];
+        $rules[] = [['user_name', 'user_email', 'user_phone', 'user_lastname'], 'required'];
         $rules[] = [['delivery_id', 'payment_id'], 'required'];
         $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points', 'quantity'], 'integer'];
         $rules[] = ['user_email', 'email'];
