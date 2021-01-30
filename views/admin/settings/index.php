@@ -109,7 +109,7 @@ $form = ActiveForm::begin();
             'options' => [
                 'rows' => 6,
                 'class' => 'form-control',
-                'value' => file_get_contents(Yii::getAlias($model->mail_tpl_order))
+                'value' => file_get_contents(file_exists(Yii::getAlias($model->mail_tpl_order))?Yii::getAlias($model->mail_tpl_order):Yii::getAlias('@cart/mail') . '/order.dist.tpl')
             ],
 
         ]);
@@ -123,7 +123,7 @@ $form = ActiveForm::begin();
             'options' => [
                 'rows' => 6,
                 'class' => 'form-control',
-                'value' => file_get_contents(Yii::getAlias($model->pdf_tpl_order))
+                'value' => file_get_contents(file_exists(Yii::getAlias($model->pdf_tpl_order))?Yii::getAlias($model->pdf_tpl_order):Yii::getAlias('@cart') . '/pdf-order.dist.tpl')
             ],
 
         ]);

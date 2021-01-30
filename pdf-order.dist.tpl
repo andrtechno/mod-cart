@@ -3,7 +3,6 @@
 {use class="panix\engine\Html"}
 {use class="panix\engine\CMS"}
 
-
 <table border="0" cellspacing="0" cellpadding="0" style="width:100%;" class="table2">
     <tr>
         <td width="50%" valign="top">
