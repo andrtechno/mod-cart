@@ -2,7 +2,7 @@
     "name": "panix/mod-cart",
     "description": "Коризина",
     "homepage": "https://github.com/andrtechno/mod-cart",
-    "type": "yii2-extension",
+    "type": "pixelion-module",
     "license": "MIT",
     "authors": [
         {
