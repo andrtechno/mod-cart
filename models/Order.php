@@ -582,7 +582,7 @@ class Order extends ActiveRecord
             /** @var \yii\swiftmailer\Mailer $mailer */
             $mailer = Yii::$app->mailer;
             $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
-            $mailer->compose($tplPath, ['order' => $this, 'is_admin' => false])
+            $mailer->compose($tplPath, ['model' => $this, 'is_admin' => false])
                 //->setFrom('noreply@' . Yii::$app->request->serverName)
                 ->setTo($this->user_email)
                 ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))
