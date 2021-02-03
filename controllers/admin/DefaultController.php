@@ -324,8 +324,8 @@ class DefaultController extends AdminController
            },
        ]);*/
 
-
-        $query = Order::find()->where(['buyOneClick' => 0]);
+        $statuses = Yii::$app->request->get('status_id');
+        $query = Order::find()->where(['buyOneClick' => 0])->andWhere(['status_id'=>$statuses]);
         if ($selection) {
             $query->andWhere([Order::tableName() . '.id' => $selection]);
         }
