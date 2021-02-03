@@ -180,7 +180,7 @@ class Order extends ActiveRecord
             [['ttn'], 'default'],
             [['invoice'], 'string', 'max' => 50],
             [['paid', 'apply_user_points'], 'boolean'],
-            [['delivery_city_ref', 'delivery_warehouse_ref', 'delivery_type'], 'string'],
+            [['delivery_city_ref', 'delivery_warehouse_ref', 'delivery_type','user_lastname'], 'string'],
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
             ['status_id', 'validateStatus'],
