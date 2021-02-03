@@ -17,7 +17,7 @@ use panix\mod\cart\models\Order;
 
 
         <?php
-        $title = 'Доход за 2020г.';
+        $title = 'Доход за '.date('Y').'г.';
         $subTitle = 'Итого: ' . $total . ' ' . Yii::$app->currency->active['symbol'];
 
         echo \panix\ext\highcharts\Highcharts::widget([

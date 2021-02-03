@@ -55,7 +55,7 @@ class GraphController extends AdminController
         $total = 0;
         for ($i = 0; $i < 12; $i++) {
             $index = $i + 1;
-            $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, $index, 2020);
+            $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, $index, date('Y'));
             $product_count = (isset($data[$index]['product_count'])) ? $data[$index]['product_count'] : 0;
 
             $query = (new \yii\db\Query())->from(Order::tableName())
@@ -103,7 +103,7 @@ class GraphController extends AdminController
                 rand(1500, 5000),
                 rand(2000, 6000),
                 //rand(1,2),
-                strtotime(rand(1, 28) . "-" . rand(1, 12) . "-2020 12:59:59")
+                strtotime(rand(1, 28) . "-" . rand(1, 12) . "-".date('Y')." 12:59:59")
             ];
         }
 

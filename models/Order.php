@@ -21,6 +21,7 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property integer $promocode_id
  * @property string $secret_key
  * @property float $total_price
+ * @property float $total_price_purchase
  * @property float $delivery_price
  * @property float $full_price
  * @property string $user_name
@@ -317,6 +318,7 @@ class Order extends ActiveRecord
     {
 
         $this->total_price = 0;
+        $this->total_price_purchase = 0;
         $products = OrderProduct::find()->where(['order_id' => $this->id])->all();
 
         foreach ($products as $product) {
@@ -325,6 +327,7 @@ class Order extends ActiveRecord
             $currency_rate = Yii::$app->currency->active['rate'];
             if ($product->originalProduct) {
                 $this->total_price += $product->price * $currency_rate * $product->quantity;
+                $this->total_price_purchase += $product->price_purchase * $currency_rate * $product->quantity;
             }
 
         }
