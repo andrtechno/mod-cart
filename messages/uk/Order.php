@@ -13,7 +13,7 @@ return [
     'PAID' => 'Оплачено',
     'TTN' => 'ТТН',
     'USER_LASTNAME' => 'Прізвище',
-    'USER_NAME' => 'ПІБ',
+    'USER_NAME' => 'Iм\'я',
     'USER_EMAIL' => 'Email',
     'DELIVERY_TYPE' => 'Тип доставки',
     'DELIVERY_CITY_REF' => 'Місто доставки',

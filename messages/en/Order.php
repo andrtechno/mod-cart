@@ -13,7 +13,7 @@ return [
     'PAID' => 'Paid',
     'TTN' => 'TTN',
     'USER_LASTNAME' => 'Last name',
-    'USER_NAME' => 'Full name',
+    'USER_NAME' => 'First name',
     'USER_EMAIL' => 'Email',
     'DELIVERY_TYPE' => 'Delivery type',
     'DELIVERY_CITY_REF' => 'City of delivery',
