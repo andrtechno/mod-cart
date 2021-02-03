@@ -3,6 +3,7 @@
 namespace panix\mod\cart\models;
 
 use panix\engine\CMS;
+use panix\mod\shop\models\ProductType;
 use Yii;
 use yii\base\ModelEvent;
 use yii\helpers\ArrayHelper;
@@ -683,6 +684,21 @@ class Order extends ActiveRecord
                 /** @var static $model */
                 return ($model->paymentMethod) ? $model->paymentMethod->name : null;
             }
+        ];
+
+
+        $columns['status_id'] = [
+            'attribute' => 'status_id',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center'],
+            'value' => function ($model) {
+                /** @var static $model */
+                return $model->getGridStatus();
+            },
+            'filter' => ArrayHelper::map(OrderStatus::find()
+                ->addOrderBy(['name' => SORT_ASC])
+                ->all(), 'id', 'name'),
+            'filterInputOptions' => ['class' => 'form-control', 'prompt' => html_entity_decode('&mdash;')],
         ];
 
         $columns['total_price'] = [

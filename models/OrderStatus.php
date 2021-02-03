@@ -33,7 +33,7 @@ class OrderStatus extends ActiveRecord
             ['ordern', 'number'],
             ['name', 'string', 'max' => 100],
             ['color', 'string', 'min' => 7, 'max' => 7],
-            ['use_in_stats', 'boolean']
+            [['use_in_stats'], 'boolean']
         ];
     }
 
