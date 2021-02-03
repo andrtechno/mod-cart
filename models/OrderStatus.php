@@ -4,6 +4,16 @@ namespace panix\mod\cart\models;
 
 use panix\engine\db\ActiveRecord;
 
+/**
+ * Class OrderStatus
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $color
+ * @property boolean $use_in_stats
+ *
+ * @package panix\mod\cart\models
+ */
 class OrderStatus extends ActiveRecord
 {
 

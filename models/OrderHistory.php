@@ -1,8 +1,10 @@
 <?php
+
 namespace panix\mod\cart\models;
 
 use Yii;
 use panix\engine\db\ActiveRecord;
+
 /**
  * This is the model class for table "OrderHistory".
  *
@@ -16,37 +18,24 @@ use panix\engine\db\ActiveRecord;
  * @property string $data_after
  * @property string $date_create
  */
-class OrderHistory extends ActiveRecord {
-
+class OrderHistory extends ActiveRecord
+{
 
 
     /**
      * @return string the associated database table name
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return '{{%order__history}}';
     }
 
-    /**
-     * @return array customized attribute labels (name=>label)
-     */
-    public function attributeLabels() {
-        $this->_attrLabels = array(
-            'id' => 'ID',
-            'order_id' => 'Order',
-            'user_id' => 'User',
-            'username' => 'Username',
-            'handler' => 'Handler',
-            'data_before' => 'Data Before',
-            'data_after' => 'Data After',
-        );
-        return CMap::mergeArray($this->_attrLabels, parent::attributeLabels());
-    }
 
     /**
      * @return array
      */
-    public function getDataBefore() {
+    public function getDataBefore()
+    {
         if ($this->handler === 'attributes')
             return $this->prepareData($this->data_before);
         else
@@ -56,7 +45,8 @@ class OrderHistory extends ActiveRecord {
     /**
      * @return array
      */
-    public function getDataAfter() {
+    public function getDataAfter()
+    {
         if ($this->handler === 'attributes')
             return $this->prepareData($this->data_after);
         else
@@ -67,7 +57,8 @@ class OrderHistory extends ActiveRecord {
      * @param $data
      * @return array
      */
-    public function prepareData($data) {
+    public function prepareData($data)
+    {
         $order = new Order;
         $result = array();
         $data = unserialize($data);

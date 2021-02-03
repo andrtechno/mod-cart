@@ -10,6 +10,13 @@ use panix\engine\db\ActiveRecord;
 
 /**
  * Class Payment
+ *
+ * @property int $id
+ * @property int $currency_id
+ * @property string payment_system
+ * @property string $name
+ * @property string $description
+ *
  * @package panix\mod\cart\models
  */
 class Payment extends ActiveRecord

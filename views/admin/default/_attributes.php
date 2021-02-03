@@ -5,7 +5,7 @@ use panix\engine\CMS;
 ?>
 <tr>
     <td>
-        <?php echo Html::a($data->username, ['/admin/users/default/update', 'id' => $data->user_id]); ?>
+        <?php echo Html::a($data->username, ['/user/admin/default/update', 'id' => $data->user_id]); ?>
 
         <br>
         <span class="date"><?= CMS::date(strtotime($data->date_create)) ?></span>

@@ -207,7 +207,7 @@ class HistoricalBehavior extends Behavior
         } elseif ('status_id' === $key) {
             $model = OrderStatus::findOne($id);
             if ($model)
-                $val = Html::tag('span', $model->name, ['class' => 'badge', 'style' => 'background:' . $model->color]);;
+                $val = Html::tag('span', $model->name, ['class' => 'badge', 'style' => 'background:' . $model->color]);
         }
 
         return $val;
@@ -225,6 +225,7 @@ class HistoricalBehavior extends Behavior
             'paid',
             'user_name',
             'user_email',
+            'user_lastname',
             'delivery_address',
             'user_phone',
             'user_comment',
