@@ -41,6 +41,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'ttn')->textInput()->hint('После заполнение ТТН, клиенту будет отправлено уведомление на почту.'); ?>
         <?= $form->field($model, 'paid')->checkbox(); ?>
         <?= $form->field($model, 'user_name')->textInput(); ?>
+        <?= $form->field($model, 'user_lastname')->textInput(); ?>
         <?= $form->field($model, 'user_email')->textInput(); ?>
         <?php
         if (!$model->isNewRecord && $model->user_phone) { ?>
