@@ -6,13 +6,27 @@ use panix\engine\jui\DatePicker;
 use panix\mod\cart\models\OrderStatus;
 use yii\helpers\ArrayHelper;
 
+/**
+ * @var $this \yii\web\View
+ */
+
+$this->registerJs("
+$('#filter-collapse').on('show.bs.collapse', function () {
+  $('#filter-collapse-icon').removeClass('icon-arrow-down').addClass('icon-arrow-up');
+});
+
+$('#filter-collapse').on('hide.bs.collapse', function () {
+  $('#filter-collapse-icon').removeClass('icon-arrow-up').addClass('icon-arrow-down');
+});
+
+")
 ?>
-<div class="card">
+<div class="card" id="card-filter-collapse">
     <div class="card-header">
         <h5>
             <a class="" data-toggle="collapse" href="#filter-collapse" role="button" aria-expanded="false"
-               aria-controls="collapseExample">
-                <i class="icon-menu"></i> Фильтры
+               aria-controls="filter-collapse">
+                <i class="icon-arrow-down" id="filter-collapse-icon"></i> Фильтры
             </a>
         </h5>
     </div>
