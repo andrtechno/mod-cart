@@ -352,7 +352,7 @@ class DefaultController extends WebController
         $order->promocode_id = $this->form->promocode_id;
         $order->call_confirm = $this->form->call_confirm;
         $order->points = $this->form->points;
-        //$order->status_id = 1;
+        //$order->status_id = 1; //set New status
 
 
         $s = Delivery::findOne($order->delivery_id);

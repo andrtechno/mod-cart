@@ -31,7 +31,7 @@ class DefaultController extends AdminController
     {
         $currentDate = CMS::date(time());
         $model = Order::findModel($id);
-        $config = Yii::$app->settings->get('cart','pdf_tpl_order');
+        $config = Yii::$app->settings->get('cart', 'pdf_tpl_order');
         $title = $model::t('NEW_ORDER_ID', ['id' => CMS::idToNumber($model->id)]);
         $mpdf = new Mpdf([
             // 'debug' => true,
@@ -144,19 +144,19 @@ class DefaultController extends AdminController
 
             if ($model->validate()) {
                 $model->save();
-
-                if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
-                    if ($model->user_email) {
-                        $mailer = Yii::$app->mailer;
-                        $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
-                        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/changed_status.tpl'], ['order' => $model])
-                            ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
-                            ->setTo([$model->user_email])
-                            ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
-                            ->send();
+                if (isset($old['status_id'])) {
+                    if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
+                        if ($model->user_email) {
+                            $mailer = Yii::$app->mailer;
+                            $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+                            $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/changed_status.tpl'], ['order' => $model])
+                                ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
+                                ->setTo([$model->user_email])
+                                ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
+                                ->send();
+                        }
                     }
                 }
-
 
                 if (isset($old['ttn']) != $model->ttn && !empty($model->ttn)) {
                     if ($model->user_email) {
@@ -325,7 +325,7 @@ class DefaultController extends AdminController
        ]);*/
 
 
-        $query = Order::find()->where(['buyOneClick'=>0]);
+        $query = Order::find()->where(['buyOneClick' => 0]);
         if ($selection) {
             $query->andWhere([Order::tableName() . '.id' => $selection]);
         }
