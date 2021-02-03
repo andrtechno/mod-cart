@@ -300,7 +300,6 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
     {
 
         return Yii::$app->view->renderAjax("@cart/widgets/delivery/{$model->deliveryMethod->system}/_view", [
-
             'model' => $model
         ]);
     }

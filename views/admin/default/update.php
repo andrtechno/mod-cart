@@ -8,7 +8,9 @@ use panix\ext\fancybox\Fancybox;
  */#ordercreateform-delivery_id
 $js = <<<JS
 
-
+    //$('#order-delivery_type').on('loaded.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        //ajax();
+   // });
 function ajax() {
     var form = $('#order-form');
         $.ajax({

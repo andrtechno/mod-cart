@@ -41,6 +41,7 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property boolean $buyOneClick
  * @property boolean $apply_user_points
  * @property boolean $call_confirm
+ * @property string $delivery_type
  * @property OrderStatus $status
  * @property OrderProduct[] $products
  * @property Delivery $deliveryMethod
@@ -54,7 +55,7 @@ class Order extends ActiveRecord
 
     const MODULE_ID = 'cart';
     const route = '/admin/cart/default';
-    public $delivery_type;
+    //public $delivery_type;
 
     /**
      * @inheritdoc
