@@ -1,7 +1,5 @@
 <?php
 
-namespace panix\mod\cart\migrations;
-
 /**
  * Generation migrate by PIXELION CMS
  * @author PIXELION CMS development team <dev@pixelion.com.ua>
@@ -9,7 +7,6 @@ namespace panix\mod\cart\migrations;
  * Class m170908_134034_cart
  */
 
-use Yii;
 use panix\engine\db\Migration;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderStatus;
@@ -64,7 +61,7 @@ class m170908_134034_cart extends Migration
             'call_confirm' => $this->boolean()->defaultValue(0),
             'ttn' => $this->string(100)->null(),
             'points' => $this->integer()->defaultValue(0),
-            'apply_user_points'=>$this->boolean()->defaultValue(0),
+            'apply_user_points' => $this->boolean()->defaultValue(0),
             'buyOneClick' => $this->boolean()->defaultValue(0),
         ], $this->tableOptions);
 
@@ -271,7 +268,6 @@ class m170908_134034_cart extends Migration
         $this->createIndex('order_id', OrderHistory::tableName(), 'order_id');
         $this->createIndex('user_id', OrderHistory::tableName(), 'user_id');
         $this->createIndex('date_create', OrderHistory::tableName(), 'date_create');
-
 
 
         // order history product indexes

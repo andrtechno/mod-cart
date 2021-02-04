@@ -1,13 +1,12 @@
 <?php
 
-namespace panix\mod\cart\migrations;
-
 /**
  * Generation migrate by PIXELION CMS
  * @author PIXELION CMS development team <dev@pixelion.com.ua>
  *
  * Class m170915_134424_promocode
  */
+
 use yii\db\Migration;
 use panix\mod\cart\models\PromoCode;
 
