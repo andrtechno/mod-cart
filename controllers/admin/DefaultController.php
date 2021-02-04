@@ -5,6 +5,7 @@ namespace panix\mod\cart\controllers\admin;
 use panix\engine\CMS;
 use panix\mod\cart\components\delivery\BaseDeliverySystem;
 use Yii;
+use yii\helpers\Markdown;
 use yii\helpers\Url;
 use yii\web\Response;
 use panix\engine\controllers\AdminController;
@@ -397,5 +398,14 @@ class DefaultController extends AdminController
     public function actionCreate()
     {
         return $this->actionUpdate(false);
+    }
+
+    public function actionReadDocFile($file)
+    {
+        if(file_exists(Yii::getAlias($file))){
+            $result = Markdown::process(file_get_contents(Yii::getAlias($file)), 'gfm');
+        }
+        return $this->render('@cart/guide/MAIL_TEMPLATE.md');
+      //  return $result;
     }
 }
