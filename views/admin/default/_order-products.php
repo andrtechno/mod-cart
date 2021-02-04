@@ -91,7 +91,13 @@ echo GridView::widget([
             'contentOptions' => ['class' => 'text-center'],
             'footer' => Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main['symbol'],
             'value' => function ($model) {
-                return Yii::$app->currency->number_format($model->price) . ' ' . Yii::$app->currency->main['symbol'];
+                /** @var $model OrderProduct */
+                if ($model->currency_id) {
+                    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
+                } else {
+                    $priceValue = $model->price;
+                }
+                return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
             }
         ],
         [
