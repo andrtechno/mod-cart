@@ -43,7 +43,7 @@ class Cart extends Component
         $this->session = Yii::$app->session;
         //$this->session->id = 'cart';
         $this->session->setTimeout(86000);
-        $this->session->cookieParams = ['lifetime' => 86000];
+        $this->session->setCookieParams(['lifetime' => 86000]);
         if (!isset($this->session['cart_data']) || !is_array($this->session['cart_data'])) {
             $this->session['cart_data'] = [];
         }
