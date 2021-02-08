@@ -18,7 +18,13 @@ echo GridView::widget([
         [
             'class' => \panix\engine\grid\sortable\Column::class,
         ],
-        'name',
+        [
+            'attribute' => 'name',
+            'format' => 'html',
+            'value' => function ($model) {
+                return $model->name;
+            }
+        ],
         [
             'attribute' => 'ordersCount',
             'format' => 'html',

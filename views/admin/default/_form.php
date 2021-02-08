@@ -59,8 +59,11 @@ $form = ActiveForm::begin([
         ?>
         <?= $form->field($model, 'user_comment')->textArea(); ?>
         <?= $form->field($model, 'admin_comment')->textArea(); ?>
-
-        <?= $form->field($model, 'discount')->textInput(); ?>
+        <?php
+        if (!$model->apply_user_points) {
+            echo $form->field($model, 'discount')->textInput();
+        }
+        ?>
         <?= $form->field($model, 'invoice')->textInput(['maxlength' => 50]); ?>
     </div>
     <div class="card-footer text-center">

@@ -42,3 +42,6 @@ Add to web config.
 ```
 php yii migrate --migrationPath=vendor/panix/mod-cart/migrations
 ```
+
+#### Plans & Ideas
+- Добавить воронку статуса заказа [?]

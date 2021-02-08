@@ -58,10 +58,11 @@ class Order extends ActiveRecord
     const MODULE_ID = 'cart';
     const route = '/admin/cart/default';
 
-    const STATUS_NEW = 1;
-    const STATUS_DELETE = 2;
-    const STATUS_SUBMITTED = 3;
-    const STATUS_COMPLETED = 4;
+    const STATUS_NEW = 1; //Новый
+    const STATUS_DELETE = 2; //Удален
+    const STATUS_SUBMITTED = 3; //Отправлен
+    const STATUS_COMPLETED = 4; //Выполнен
+    const STATUS_RETURN = 5; //Возврат
 
     //public $delivery_type;
 
@@ -259,15 +260,22 @@ class Order extends ActiveRecord
             $this->status_id = Order::STATUS_NEW;
 
 
-        // CMS::dump($this->oldAttributes);
-        //CMS::dump($this->attributes);die;
-        if (isset($this->oldAttributes['status_id']) && $this->attributes['status_id'] && $this->apply_user_points) {
-            if ($this->oldAttributes['status_id'] == self::STATUS_SUBMITTED && $this->attributes['status_id'] != self::STATUS_SUBMITTED) {
-
+        if (isset($this->oldAttributes['status_id']) && $this->attributes['status_id'] && $this->user_id && $this->apply_user_points) {
+            if ($this->oldAttributes['status_id'] != self::STATUS_SUBMITTED && $this->attributes['status_id'] == self::STATUS_RETURN) {
                 $this->user->unsetPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
                 $this->apply_user_points = false;
             }
         }
+
+
+        /*OLD if (isset($this->oldAttributes['status_id']) && $this->attributes['status_id'] && $this->apply_user_points) {
+            if ($this->oldAttributes['status_id'] == self::STATUS_SUBMITTED && $this->attributes['status_id'] != self::STATUS_SUBMITTED) {
+                $this->user->unsetPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
+                $this->apply_user_points = false;
+            }
+        }*/
+
+
         if ($this->status_id == self::STATUS_SUBMITTED && $this->user_id && !$this->apply_user_points) {
             $this->user->setPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
             $this->apply_user_points = true;
