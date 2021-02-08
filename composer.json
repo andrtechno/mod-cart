@@ -13,6 +13,7 @@
     ],
     "require": {
         "panix/engine": "dev-master",
+        "yiisoft/yii2-smarty": "~2.0.0",
         "panix/wgt-colorpicker": "dev-master",
         "panix/wgt-highcharts": "dev-master"
     },
