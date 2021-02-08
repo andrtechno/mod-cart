@@ -17,10 +17,10 @@ class Module extends WebModule implements BootstrapInterface
     public function init()
     {
         if (!(Yii::$app instanceof yii\console\Application) && !Yii::$app->user->isGuest) {
-            $count = Order::find()->where(['status_id' => 1])->count();
+            $count = Order::find()->where(['status_id' => Order::STATUS_NEW])->count();
             $this->count['num'] = (int)$count;
             $this->count['label'] = Yii::t('cart/default', 'WP_COUNT', ['num' => $this->count['num']]);
-            $this->count['url'] = ['/admin/cart', 'OrderSearch[status_id]' => 1];
+            $this->count['url'] = ['/admin/cart', 'OrderSearch[status_id]' => Order::STATUS_NEW];
         }
         parent::init();
     }
@@ -29,7 +29,7 @@ class Module extends WebModule implements BootstrapInterface
     {
         if (!Yii::$app->user->isGuest)
             return Order::find()->where([
-                'status_id' => 1,
+                'status_id' => Order::STATUS_NEW,
                 'user_id' => Yii::$app->user->id
             ])->count();
     }

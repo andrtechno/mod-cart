@@ -144,6 +144,7 @@ class DefaultController extends AdminController
 
 
             if ($model->validate()) {
+
                 $model->save();
                 if (isset($old['status_id'])) {
                     if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
@@ -151,7 +152,6 @@ class DefaultController extends AdminController
                             $mailer = Yii::$app->mailer;
                             $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
                             $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/changed_status.tpl'], ['order' => $model])
-                                ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
                                 ->setTo([$model->user_email])
                                 ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
                                 ->send();
@@ -164,7 +164,6 @@ class DefaultController extends AdminController
                         $mailer = Yii::$app->mailer;
                         $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
                         $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/ttn.tpl'], ['order' => $model])
-                            ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->settings->get('app', 'sitename')])
                             ->setTo([$model->user_email])
                             ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($model->id)))
                             ->send();
@@ -176,6 +175,8 @@ class DefaultController extends AdminController
                     $model->setProductQuantities(Yii::$app->request->post('quantity'));
 
                 return $this->redirectPage($isNew, $post);
+            }else{
+                CMS::dump($model->getErrors());die;
             }
         }
         return $this->render('update', [

@@ -57,6 +57,12 @@ class Order extends ActiveRecord
 
     const MODULE_ID = 'cart';
     const route = '/admin/cart/default';
+
+    const STATUS_NEW = 1;
+    const STATUS_DELETE = 2;
+    const STATUS_SUBMITTED = 3;
+    const STATUS_COMPLETED = 4;
+
     //public $delivery_type;
 
     /**
@@ -250,23 +256,22 @@ class Order extends ActiveRecord
 
         // Set `New` status
         if (!$this->status_id)
-            $this->status_id = 1;
+            $this->status_id = Order::STATUS_NEW;
 
 
         // CMS::dump($this->oldAttributes);
         //CMS::dump($this->attributes);die;
-        if (isset($this->oldAttributes['status_id']) && $this->attributes['status_id']) {
-            if ($this->oldAttributes['status_id'] == 3 && $this->attributes['status_id'] != 3) {
+        if (isset($this->oldAttributes['status_id']) && $this->attributes['status_id'] && $this->apply_user_points) {
+            if ($this->oldAttributes['status_id'] == self::STATUS_SUBMITTED && $this->attributes['status_id'] != self::STATUS_SUBMITTED) {
 
                 $this->user->unsetPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
                 $this->apply_user_points = false;
             }
         }
-        if ($this->status_id == 3 && $this->user_id && !$this->apply_user_points) {
+        if ($this->status_id == self::STATUS_SUBMITTED && $this->user_id && !$this->apply_user_points) {
             $this->user->setPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
             $this->apply_user_points = true;
         }
-
 
         return parent::beforeSave($insert);
     }

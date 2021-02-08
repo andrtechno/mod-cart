@@ -18,6 +18,10 @@ class StatusesController extends AdminController
                 'class' => 'panix\engine\actions\DeleteAction',
                 'modelClass' => OrderStatus::class,
             ],
+            'sortable' => [
+                'class' => 'panix\engine\grid\sortable\Action',
+                'modelClass' => OrderStatus::class,
+            ],
         ];
     }
 

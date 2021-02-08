@@ -370,7 +370,7 @@ class DefaultController extends WebController
         }
 
 
-        $order->status_id = 1;
+        $order->status_id = Order::STATUS_NEW;
         if ($order->validate()) {
             if($order->points > 0){
                 $order->discount = $order->points;

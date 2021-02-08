@@ -86,7 +86,7 @@ class BuyOneClickAction extends Action
         $order->user_name = $user->getUsername();
         $order->user_email = $user->email;
         $order->user_phone = $model->user_phone;
-        $order->status_id = 1;
+        $order->status_id = Order::STATUS_NEW;
         $order->buyOneClick = 1;
 
 

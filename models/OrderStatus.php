@@ -25,7 +25,10 @@ class OrderStatus extends ActiveRecord
     {
         return '{{%order__status}}';
     }
-
+    public static function find()
+    {
+        return new query\OrderStatusesQuery(get_called_class());
+    }
     public function rules()
     {
         return [

@@ -61,6 +61,7 @@ class m170908_134034_cart extends Migration
             'call_confirm' => $this->boolean()->defaultValue(0),
             'ttn' => $this->string(100)->null(),
             'points' => $this->integer()->defaultValue(0),
+            'points_expire' => $this->integer()->null(),
             'apply_user_points' => $this->boolean()->defaultValue(0),
             'buyOneClick' => $this->boolean()->defaultValue(0),
         ], $this->tableOptions);

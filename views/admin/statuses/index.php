@@ -15,6 +15,9 @@ echo GridView::widget([
     'filterModel' => $searchModel,
     'layoutOptions' => ['title' => $this->context->pageName],
     'columns' => [
+        [
+            'class' => \panix\engine\grid\sortable\Column::class,
+        ],
         'name',
         [
             'attribute' => 'ordersCount',
