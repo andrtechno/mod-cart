@@ -56,7 +56,7 @@ class OrderCreateForm extends Model
         $user = Yii::$app->user;
         if (!$user->isGuest && Yii::$app->controller instanceof \panix\engine\controllers\WebController) {
             // NEED CONFINGURE
-            $this->user_name = ($user->firstname) ? $user->firstname : $user->username;
+            $this->user_name = $user->firstname;
             $this->user_phone = $user->phone;
             //$this->delivery_address = Yii::app()->user->address; //comment for april
             $this->user_email = $user->getEmail();
