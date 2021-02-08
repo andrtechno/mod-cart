@@ -23,6 +23,7 @@ class OrderStatus extends ActiveRecord
         Order::STATUS_NEW,
         Order::STATUS_DELETE,
         Order::STATUS_SUBMITTED,
+        Order::STATUS_COMPLETED,
         Order::STATUS_RETURN
     ];
     const route = '/admin/cart/statuses';
