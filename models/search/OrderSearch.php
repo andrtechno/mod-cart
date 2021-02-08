@@ -17,8 +17,8 @@ class OrderSearch extends Order
     public function rules()
     {
         return [
-            [['id', 'status_id', 'price_min', 'price_max'], 'integer'],
-            [['status_id', 'user_name', 'total_price'], 'safe'],
+            [['id', 'status_id', 'price_min', 'price_max', 'delivery_id', 'payment_id'], 'integer'],
+            [['status_id', 'user_name', 'total_price', 'created_at', 'updated_at'], 'safe'],
             [['user_phone', 'user_email'], 'string'],
         ];
     }
@@ -88,7 +88,12 @@ class OrderSearch extends Order
         $query->andFilterWhere(['like', 'user_phone', $this->user_phone]);
         $query->andFilterWhere(['like', 'user_email', $this->user_email]);
         $query->andFilterWhere(['like', 'status_id', $this->status_id]);
-        //$query->andFilterWhere(['like', 'total_price', $this->total_price]);
+        $query->andFilterWhere(['like', 'delivery_id', $this->delivery_id]);
+        $query->andFilterWhere(['like', 'payment_id', $this->payment_id]);
+        if ($this->created_at)
+            $query->andFilterWhere(['between', 'created_at', strtotime($this->created_at . ' 00:00:00'), strtotime($this->created_at . ' 23:59:59')]);
+        if ($this->updated_at)
+            $query->andFilterWhere(['between', 'updated_at', strtotime($this->updated_at . ' 00:00:00'), strtotime($this->updated_at . ' 23:59:59')]);
 
         return $dataProvider;
     }

@@ -73,7 +73,7 @@ class SettingsForm extends \panix\engine\SettingsModel
         //  file_put_contents(Yii::getAlias('@app/views/mail') . '/order.tpl', $this->_mail_tpl_order);
 
 
-        file_put_contents(Yii::getAlias('@app/mail') . '/order.tpl', $this->pdf_tpl_order);
+        file_put_contents(Yii::getAlias('@app/mail') . '/order.tpl', $this->mail_tpl_order);
 
         //if(!file_exists(Yii::getAlias('@theme/order') . '/pdf-order.tpl')){
 

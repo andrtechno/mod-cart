@@ -3,6 +3,8 @@
 namespace panix\mod\cart\models;
 
 use panix\engine\CMS;
+use panix\mod\cart\models\search\OrderSearch;
+use panix\mod\news\models\search\NewsSearch;
 use panix\mod\shop\models\ProductType;
 use Yii;
 use yii\base\ModelEvent;
@@ -681,6 +683,10 @@ class Order extends ActiveRecord
             'attribute' => 'delivery_id',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-left'],
+            'filter' => ArrayHelper::map(Delivery::find()
+                ->orderByName(SORT_ASC)
+                ->all(), 'id', 'name'),
+            'filterInputOptions' => ['class' => 'form-control', 'prompt' => html_entity_decode('&mdash;')],
             'value' => function ($model) {
                 /** @var static $model */
 
@@ -700,6 +706,10 @@ class Order extends ActiveRecord
             'attribute' => 'payment_id',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
+            'filter' => ArrayHelper::map(Payment::find()
+                ->orderByName(SORT_ASC)
+                ->all(), 'id', 'name'),
+            'filterInputOptions' => ['class' => 'form-control', 'prompt' => html_entity_decode('&mdash;')],
             'value' => function ($model) {
                 /** @var static $model */
                 return ($model->paymentMethod) ? $model->paymentMethod->name : null;
@@ -747,6 +757,16 @@ class Order extends ActiveRecord
         $columns['created_at'] = [
             'attribute' => 'created_at',
             'class' => 'panix\engine\grid\columns\jui\DatepickerColumn',
+            /*'filter' => \yii\jui\DatePicker::widget([
+                'model' => new OrderSearch(),
+                'attribute' => 'created_at',
+                'dateFormat' => 'yyyy-MM-dd',
+                'options' => ['class' => 'form-control']
+            ]),
+            'contentOptions' => ['class' => 'text-center'],
+            'value' => function ($model) {
+                return Yii::$app->formatter->asDatetime($model->created_at, 'php:d D Y H:i:s');
+            }*/
         ];
         $columns['updated_at'] = [
             'attribute' => 'updated_at',
