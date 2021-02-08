@@ -260,8 +260,9 @@ class Order extends ActiveRecord
             $this->status_id = Order::STATUS_NEW;
 
 
-        if (isset($this->oldAttributes['status_id']) && $this->attributes['status_id'] && $this->user_id && $this->apply_user_points) {
-            if ($this->oldAttributes['status_id'] != self::STATUS_SUBMITTED && $this->attributes['status_id'] == self::STATUS_RETURN) {
+        //isset($this->oldAttributes['status_id']) && $this->attributes['status_id'] &&
+        if ($this->user_id && $this->apply_user_points) {
+            if ($this->attributes['status_id'] == self::STATUS_RETURN) {
                 $this->user->unsetPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
                 $this->apply_user_points = false;
             }
@@ -340,8 +341,14 @@ class Order extends ActiveRecord
 
             $currency_rate = Yii::$app->currency->active['rate'];
             if ($product->originalProduct) {
-                $this->total_price += $product->price * $currency_rate * $product->quantity;
-                $this->total_price_purchase += $product->price_purchase * $currency_rate * $product->quantity;
+               // if($this->currency_id){
+                    $this->total_price += Yii::$app->currency->convert($product->price,$product->currency_id) * $currency_rate * $product->quantity;
+                    $this->total_price_purchase += Yii::$app->currency->convert($product->price,$product->currency_id) * $currency_rate * $product->quantity;
+               // }else{
+              //      $this->total_price += $product->price * $currency_rate * $product->quantity;
+              //      $this->total_price_purchase += $product->price_purchase * $currency_rate * $product->quantity;
+              //  }
+
             }
 
         }

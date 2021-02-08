@@ -22,7 +22,15 @@ echo GridView::widget([
             'attribute' => 'name',
             'format' => 'html',
             'value' => function ($model) {
-                return $model->name;
+                $function = '';
+                if ($model->id == \panix\mod\cart\models\Order::STATUS_SUBMITTED) {
+                    $function .= '<br/><span class="text-warning"><i class="icon-warning"></i> На этот статус производиться <strong>начисление</strong> бонусов</span>';
+                } elseif ($model->id == \panix\mod\cart\models\Order::STATUS_RETURN) {
+                    $function .= '<br/><span class="text-warning"><i class="icon-warning"></i> На этот статус производиться <strong>снятие</strong> бонусов</span>';
+                }
+
+
+                return $model->name . $function;
             }
         ],
         [

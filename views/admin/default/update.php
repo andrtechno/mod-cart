@@ -104,9 +104,11 @@ $this->registerJs($js);
 
 
             <?php
-            echo $this->render('_addProduct', [
-                'model' => $model,
-            ]);
+            if (!$model->apply_user_points && $model->status_id != $model::STATUS_SUBMITTED) {
+                echo $this->render('_addProduct', [
+                    'model' => $model,
+                ]);
+            }
             ?>
 
             <div id="orderedProducts">

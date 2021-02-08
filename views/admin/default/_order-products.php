@@ -16,7 +16,16 @@ Pjax::begin([
     // 'enablePushState' => false,
     // 'linkSelector' => 'a:not(.linkTarget)'
 ]);
+$buttons = [];
+if (!$model->apply_user_points && $model->status_id != $model::STATUS_SUBMITTED) {
 
+    $buttons[] = [
+        'label' => Yii::t('shop/admin', 'CREATE_PRODUCT'),
+        'url' => '#',
+        'options' => ['class' => 'btn btn-success btn-sm', 'data-toggle' => "modal", 'data-target' => "#cart-add-product"]
+    ];
+
+}
 echo GridView::widget([
     //  'id' => 'orderedProducts',
     'tableOptions' => ['class' => 'table table-striped'],
@@ -26,18 +35,7 @@ echo GridView::widget([
     'footerRowOptions' => ['style' => 'font-weight:bold;', 'class' => 'text-center'],
     'layoutOptions' => [
         'title' => Yii::t('cart/admin', 'ORDER_PRODUCTS'),
-        'buttons' => [
-            /* [
-                 'label' => Yii::t('shop/admin', 'CREATE_PRODUCT'),
-                 'url' => 'javascript:openAddProductDialog(' . $model->id . ');',
-                 'options' => ['class' => 'btn btn-success btn-sm']
-             ],*/
-            [
-                'label' => Yii::t('shop/admin', 'CREATE_PRODUCT'),
-                'url' => '#',
-                'options' => ['class' => 'btn btn-success btn-sm', 'data-toggle' => "modal", 'data-target' => "#cart-add-product"]
-            ]
-        ]
+        'buttons' => $buttons
     ],
     'columns' => [
         'image' => [
@@ -104,12 +102,14 @@ echo GridView::widget([
             'class' => 'panix\engine\grid\columns\ActionColumn',
             'template' => '{delete}',
             'buttons' => [
-                'delete' => function ($url, $data, $key) {
-                    return Html::a('<i class="icon-delete"></i>', '#', [
-                        'title' => Yii::t('app/default', 'DELETE'),
-                        'class' => 'btn btn-sm btn-danger',
-                        'onClick' => "return deleteOrderedProduct($data->id, $data->order_id);"
-                    ]);
+                'delete' => function ($url, $data, $key) use ($model) {
+                    if (!$model->apply_user_points && $model->status_id != $model::STATUS_SUBMITTED) {
+                        return Html::a('<i class="icon-delete"></i>', '#', [
+                            'title' => Yii::t('app/default', 'DELETE'),
+                            'class' => 'btn btn-sm btn-danger',
+                            'onClick' => "return deleteOrderedProduct($data->id, $data->order_id);"
+                        ]);
+                    }
                 }
             ]
         ]
