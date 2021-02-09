@@ -716,19 +716,18 @@ class Order extends ActiveRecord
         ];
 
 
-        $columns['status_id'] = [
+        /*$columns['status_id'] = [
             'attribute' => 'status_id',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
             'value' => function ($model) {
-                /** @var static $model */
                 return $model->getGridStatus();
             },
             'filter' => ArrayHelper::map(OrderStatus::find()
                 ->addOrderBy(['name' => SORT_ASC])
                 ->all(), 'id', 'name'),
             'filterInputOptions' => ['class' => 'form-control', 'prompt' => html_entity_decode('&mdash;')],
-        ];
+        ];*/
 
         $columns['total_price'] = [
             'attribute' => 'total_price',
