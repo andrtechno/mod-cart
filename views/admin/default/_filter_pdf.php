@@ -26,7 +26,7 @@ $('#filter-collapse').on('hide.bs.collapse', function () {
         <h5>
             <a class="" data-toggle="collapse" href="#filter-collapse" role="button" aria-expanded="false"
                aria-controls="filter-collapse">
-                <i class="icon-arrow-down" id="filter-collapse-icon"></i> Фильтры
+                <i class="icon-arrow-down" id="filter-collapse-icon"></i> Печать
             </a>
         </h5>
     </div>
@@ -66,10 +66,6 @@ $('#filter-collapse').on('hide.bs.collapse', function () {
                         echo Html::dropDownList('type', 1, [1 => 'PDF', 0 => 'Html'], ['class' => 'custom-select']);
 
                         ?>
-
-
-
-
 
                     </div>
 

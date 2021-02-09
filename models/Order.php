@@ -776,10 +776,10 @@ class Order extends ActiveRecord
             'class' => 'panix\engine\grid\columns\ActionColumn',
             'template' => '{update}'
         ];
-        $columns['DEFAULT_COLUMNS'] = [
-            ['class' => 'panix\engine\grid\sortable\Column'],
+      //  $columns['DEFAULT_COLUMNS'] = [
+          //  ['class' => 'panix\engine\grid\sortable\Column'],
             //['class' => 'panix\engine\grid\columns\CheckboxColumn']
-        ];
+       // ];
 
         return $columns;
     }

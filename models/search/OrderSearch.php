@@ -8,6 +8,7 @@ use panix\mod\cart\models\Order;
 
 class OrderSearch extends Order
 {
+    public static $counterFilter = 0;
     public $price_min;
     public $price_max;
 
@@ -19,7 +20,20 @@ class OrderSearch extends Order
         return [
             [['id', 'status_id', 'price_min', 'price_max', 'delivery_id', 'payment_id'], 'integer'],
             [['status_id', 'user_name', 'total_price', 'created_at', 'updated_at'], 'safe'],
-            [['user_phone', 'user_email'], 'string'],
+            [['user_phone', 'user_email', 'delivery_city'], 'string'],
+            [['buyOneClick', 'call_confirm', 'paid'], 'boolean'],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'status_id' => Yii::t('cart/Order', 'STATUS_ID'),
+            'buyOneClick' => Yii::t('cart/Order', 'BUYONECLICK'),
+            'call_confirm' => Yii::t('cart/Order', 'CALL_CONFIRM'),
+            'paid' => Yii::t('cart/Order', 'PAID'),
+            'delivery_city' => Yii::t('cart/Order', 'DELIVERY_CITY'),
+
         ];
     }
 
@@ -90,6 +104,12 @@ class OrderSearch extends Order
         $query->andFilterWhere(['like', 'status_id', $this->status_id]);
         $query->andFilterWhere(['like', 'delivery_id', $this->delivery_id]);
         $query->andFilterWhere(['like', 'payment_id', $this->payment_id]);
+        $query->andFilterWhere(['like', 'delivery_city', $this->delivery_city]);
+        $query->andFilterWhere(['buyOneClick' => $this->buyOneClick]);
+        $query->andFilterWhere(['call_confirm' => $this->call_confirm]);
+        $query->andFilterWhere(['paid' => $this->paid]);
+
+
         if ($this->created_at)
             $query->andFilterWhere(['between', 'created_at', strtotime($this->created_at . ' 00:00:00'), strtotime($this->created_at . ' 23:59:59')]);
         if ($this->updated_at)

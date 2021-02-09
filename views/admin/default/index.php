@@ -8,12 +8,47 @@ use panix\mod\cart\models\Order;
 /**
  * @var $this \yii\web\View
  */
-Pjax::begin(['dataProvider' => $dataProvider]);
+
 ?>
 <?= Html::beginForm('/admin/cart/default/pdf-orders', 'GET'); ?>
 <?php echo $this->render('_filter_pdf'); ?>
 <?= Html::endForm(); ?>
 <?php
+$this->registerJs('
+$(document).on("click", "#collapse-grid-filter button" , function(event,k) {
+    var data = $("#grid-orders").yiiGridView("data");
+    console.log(data.settings.filterUrl,data.settings.filterSelector);
+    $.pjax({
+        url: data.settings.filterUrl,
+        container: \'#pjax-grid-orders\',
+        type:"GET",
+        push:false,
+        timeout:false,
+        scrollTo:false,
+        data:$("#collapse-grid-filter input, #collapse-grid-filter select").serialize()
+    });
+    return false;
+});
+');
+Pjax::begin(['id' => 'pjax-grid-orders']);
+
+
+$filterCount = 0;
+if (isset($searchModel->call_confirm) && !empty($searchModel->call_confirm)) {
+    $filterCount += 1;
+}
+if (isset($searchModel->paid) && !empty($searchModel->paid)) {
+    $filterCount += 1;
+}
+if (isset($searchModel->delivery_city) && !empty($searchModel->delivery_city)) {
+    $filterCount += 1;
+}
+if (isset($searchModel->buyOneClick) && !empty($searchModel->buyOneClick)) {
+    $filterCount += 1;
+}
+if (isset($searchModel->status_id) && !empty($searchModel->status_id)) {
+    $filterCount += 1;
+}
 
 
 echo GridView::widget([
@@ -21,23 +56,23 @@ echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'showFooter' => true,
-
+    'id' => 'grid-orders',
     'footerRowOptions' => ['style' => 'font-weight:bold;', 'class' => 'text-center'],
     //'rowOptions' => function ($model, $index, $widget, $grid) {
     //    return ['style' => 'background-color:' . $model->status->color . ';'];
     //},
     'layoutOptions' => [
         'title' => $this->context->pageName,
-        'beforeContent'=>$this->render('_grid_filter',['model'=>$searchModel]),
+        'beforeContent' => $this->render('_grid_filter', ['model' => $searchModel]),
         'buttons' => [
             [
-                'label' => Html::icon('filter'),
+                'label' => Html::icon('filter') . '<span class="badge badge-danger" style="font-size:75%">' . $filterCount . '</span>',
                 'url' => '#collapse-grid-filter',
                 'options' => [
                     'data-toggle' => "collapse",
                     'aria-expanded' => "false",
                     'aria-controls' => "collapse-grid-filter",
-                    'class'=>'btn btn-sm btn-outline-secondary'
+                    'class' => 'btn btn-sm btn-outline-secondary'
                 ]
             ]
         ],
