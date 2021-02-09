@@ -132,6 +132,8 @@ class DefaultController extends WebController
                 }
                 if ($this->form->validate()) {
                     $order = $this->createOrder();
+                    CMS::dump($order);
+                    die;
                     $this->form->registerGuest($order);
                     Yii::$app->cart->clear();
                     //die();
@@ -395,6 +397,7 @@ class DefaultController extends WebController
             $ordered_product->configurable_id = $item['configurable_id'];
             $ordered_product->currency_id = $item['model']->currency_id;
             $ordered_product->supplier_id = $item['model']->supplier_id;
+            $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
@@ -451,6 +454,7 @@ class DefaultController extends WebController
         $order->refresh(); //@todo panix text email tpl
         // All products added. Update delivery price.
         $order->updateDeliveryPrice();
+        //$order->updateTotalPrice();
         $text = (Yii::$app->user->isGuest) ? 'NOTIFICATION_GUEST_TEXT' : 'NOTIFICATION_USER_TEXT';
         $order->attachBehavior('notification', [
             'class' => 'panix\engine\behaviors\NotificationBehavior',

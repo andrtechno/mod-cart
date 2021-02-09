@@ -87,6 +87,7 @@ class m170908_134034_cart extends Migration
             'configurable_id' => $this->integer()->unsigned(),
             'weight_class_id' => $this->integer()->null(),
             'length_class_id' => $this->integer()->null(),
+            'currency_rate' => $this->money(10, 2)->comment('По курсу'),
             'weight' => $this->decimal(15, 4),
             'length' => $this->decimal(15, 4),
             'width' => $this->decimal(15, 4),

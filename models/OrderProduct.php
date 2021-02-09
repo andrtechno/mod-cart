@@ -16,6 +16,7 @@ use yii\helpers\Url;
  * @property integer $configurable_id
  * @property integer $currency_id
  * @property integer $supplier_id
+ * @property float $currency_rate
  * @property string $name
  * @property string $configurable_name
  * @property integer $quantity Quantity products

@@ -76,7 +76,13 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                             'contentOptions' => ['class' => 'text-center'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
-                                return Html::textInput("price_{$model->id}", $model->price, ['id' => "price_{$model->id}", 'class' => 'form-control']);
+                                $html = '';
+                                $html .= '<div class="input-group mb-3">';
+                                $html .= Html::textInput("price_{$model->id}", $model->price, ['id' => "price_{$model->id}", 'class' => 'form-control']);
+                                $html .= '<div class="input-group-append">';
+                                $html .= '<span class="input-group-text">' . Yii::$app->currency->getById($model->currency_id)->iso . '</span>';
+                                $html .= '</div></div>';
+                                return $html;
                             }
                         ],
                         [

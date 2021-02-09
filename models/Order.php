@@ -343,8 +343,8 @@ class Order extends ActiveRecord
 
             if ($product->originalProduct) {
                // if($this->currency_id){
-                    $this->total_price += Yii::$app->currency->convert($product->price,$product->currency_id) * $product->quantity;
-                    $this->total_price_purchase += Yii::$app->currency->convert($product->price,$product->currency_id) * $product->quantity;
+                    $this->total_price += $product->price * $product->currency_rate * $product->quantity;
+                    $this->total_price_purchase += $product->price_purchase * $product->currency_rate * $product->quantity;
                // }else{
               //      $this->total_price += $product->price * $currency_rate * $product->quantity;
               //      $this->total_price_purchase += $product->price_purchase * $currency_rate * $product->quantity;
@@ -460,6 +460,8 @@ class Order extends ActiveRecord
             $ordered_product->order_id = $this->id;
             $ordered_product->product_id = $product->id;
             $ordered_product->currency_id = $product->currency_id;
+            $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
+            $ordered_product->price_purchase = $product->price_purchase;
             $ordered_product->name = $product->name;
             $ordered_product->quantity = $quantity;
             $ordered_product->sku = $product->sku;
