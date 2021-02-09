@@ -6,6 +6,17 @@ use yii\widgets\ActiveForm;
  * @var $this \yii\web\View
  */
 $this->registerJs('formatter_price();');
+
+$this->registerJs("
+$(document).on('beforeValidate', 'form', function(event, messages, deferreds) {
+    $(this).find(':submit').attr('disabled', true);
+}).on('afterValidate', 'form', function(event, messages, errorAttributes) {
+    if (errorAttributes.length > 0) {
+        $(this).find(':submit').attr('disabled', false);
+    }
+});
+");
+
 ?>
 <div style="display: inline-block;width: 400px">
 
@@ -35,7 +46,7 @@ $this->registerJs('formatter_price();');
 
                     </div>
                     <br/>
-                    Количество: <b><?= $quantity; ?></b>
+                    <?= Yii::t('cart/OrderProduct','QUANTITY'); ?>: <b><?= $quantity; ?></b>
                     <?php
                     //Yii::$app->controller->renderPartial('cart.widgets.buyOneClick.views._configurations', array('productModel' => $productModel));
                     ?>
