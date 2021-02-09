@@ -341,11 +341,10 @@ class Order extends ActiveRecord
         foreach ($products as $product) {
             /** @var OrderProduct $product */
 
-            $currency_rate = Yii::$app->currency->active['rate'];
             if ($product->originalProduct) {
                // if($this->currency_id){
-                    $this->total_price += Yii::$app->currency->convert($product->price,$product->currency_id) * $currency_rate * $product->quantity;
-                    $this->total_price_purchase += Yii::$app->currency->convert($product->price,$product->currency_id) * $currency_rate * $product->quantity;
+                    $this->total_price += Yii::$app->currency->convert($product->price,$product->currency_id) * $product->quantity;
+                    $this->total_price_purchase += Yii::$app->currency->convert($product->price,$product->currency_id) * $product->quantity;
                // }else{
               //      $this->total_price += $product->price * $currency_rate * $product->quantity;
               //      $this->total_price_purchase += $product->price_purchase * $currency_rate * $product->quantity;
