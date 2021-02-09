@@ -66,7 +66,7 @@ echo GridView::widget([
         'beforeContent' => $this->render('_grid_filter', ['model' => $searchModel]),
         'buttons' => [
             [
-                'label' => Html::icon('filter') . '<span class="badge badge-danger" style="font-size:75%">' . $filterCount . '</span>',
+                'label' => Html::icon('filter') . (($filterCount)?'<span class="badge badge-danger" style="font-size:75%">' . $filterCount . '</span>':''),
                 'url' => '#collapse-grid-filter',
                 'options' => [
                     'data-toggle' => "collapse",
