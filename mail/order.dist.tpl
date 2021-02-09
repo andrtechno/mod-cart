@@ -4,39 +4,39 @@
 {use class="panix\mod\shop\models\Product"}
 
 {if $is_admin}
-    {if $order.buyOneClick}
+    {if $model.buyOneClick}
         <h4>{Yii::t('cart/admin', 'MSG_BUYONECLICK')}</h4>
     {/if}
-    {if $order.call_confirm}
+    {if $model.call_confirm}
         <h4>{Yii::t('cart/Order', 'CALL_CONFIRM')}</h4>
     {/if}
 {/if}
 
-{if $order.user_name}
-    <p><strong>{$order->getAttributeLabel('user_name')}:</strong> {$order->user_name}</p>
+{if $model.user_name}
+    <p><strong>{$model->getAttributeLabel('user_name')}:</strong> {$model->user_name}</p>
 {/if}
-{if $order.user_lastname}
-    <p><strong>{$order->getAttributeLabel('user_lastname')}:</strong> {$order->user_lastname}</p>
+{if $model.user_lastname}
+    <p><strong>{$model->getAttributeLabel('user_lastname')}:</strong> {$model->user_lastname}</p>
 {/if}
-{if $order.user_phone}
-    <p><strong>{$order->getAttributeLabel('user_phone')}:</strong> {Html::tel($order->user_phone)}</p>
+{if $model.user_phone}
+    <p><strong>{$model->getAttributeLabel('user_phone')}:</strong> {Html::tel($model->user_phone)}</p>
 {/if}
-{if $order.user_email}
-    <p><strong>{$order->getAttributeLabel('user_email')}:</strong> {$order->user_email}</p>
+{if $model.user_email}
+    <p><strong>{$model->getAttributeLabel('user_email')}:</strong> {$model->user_email}</p>
 {/if}
-{if $order.deliveryMethod}
-    <p><strong>{$order->getAttributeLabel('delivery_id')}:</strong> {$order.deliveryMethod.name}</p>
+{if $model.deliveryMethod}
+    <p><strong>{$model->getAttributeLabel('delivery_id')}:</strong> {$model.deliveryMethod.name}</p>
 {/if}
-{if $order.paymentMethod}
-    <p><strong>{$order->getAttributeLabel('payment_id')}:</strong> {$order.paymentMethod.name}</p>
+{if $model.paymentMethod}
+    <p><strong>{$model->getAttributeLabel('payment_id')}:</strong> {$model.paymentMethod.name}</p>
 {/if}
 
-{if $order.delivery_address}
-    <p><strong>{$order->getAttributeLabel('delivery_address')}
-            :</strong> {if $order.delivery_city}{$order.delivery_city},{/if} {$order.delivery_address}</p>
+{if $model.delivery_address}
+    <p><strong>{$model->getAttributeLabel('delivery_address')}
+            :</strong> {if $model.delivery_city}{$model.delivery_city},{/if} {$model.delivery_address}</p>
 {/if}
-{if $order.user_comment}
-    <p><strong>{$order->getAttributeLabel('user_comment')}:</strong> {$order.user_comment}</p>
+{if $model.user_comment}
+    <p><strong>{$model->getAttributeLabel('user_comment')}:</strong> {$model.user_comment}</p>
 {/if}
 
 <table border="0" width="100%" cellspacing="1" cellpadding="5" style="border-spacing: 0;border-collapse: collapse;">
@@ -47,7 +47,7 @@
         <th style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Yii::t('cart/default', 'PRICE_PER_UNIT')}</th>
         <th style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Yii::t('cart/default', 'TOTAL_PRICE')}</th>
     </tr>
-    {foreach from=$order.products item=product}
+    {foreach from=$model.products item=product}
 
         <tr>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 5%" align="center">
@@ -77,16 +77,16 @@
 </table>
 
 <p><strong>{Yii::t('cart/default', 'DETAIL_ORDER_VIEW')}:</strong><br/>
-    {Html::a(Url::to($order->getUrl(),true),Url::to($order->getUrl(),true),['target'=>'_blank'])}</p>
+    {Html::a(Url::to($model->getUrl(),true),Url::to($model->getUrl(),true),['target'=>'_blank'])}</p>
 <br/><br/><br/>
-{if $order.delivery_price}
+{if $model.delivery_price}
     {Yii::t('cart/default', 'DELIVERY_PRICE')}:
-    <h2 style="display:inline">{$app->currency->number_format($order->delivery_price)}
+    <h2 style="display:inline">{$app->currency->number_format($model->delivery_price)}
         <sup>{$app->currency->active['symbol']}</sup>
     </h2>
 {/if}
 
 {Yii::t('cart/default', 'TOTAL_PAY')}:
-<h1 style="display:inline">{$app->currency->number_format($order->total_price + $order->delivery_price)}
+<h1 style="display:inline">{$app->currency->number_format($model->total_price + $model->delivery_price)}
     <small>{$app->currency->active['symbol']}</small>
 </h1>
