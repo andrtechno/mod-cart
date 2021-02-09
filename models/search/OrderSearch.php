@@ -20,8 +20,8 @@ class OrderSearch extends Order
         return [
             [['id', 'status_id', 'price_min', 'price_max', 'delivery_id', 'payment_id'], 'integer'],
             [['status_id', 'user_name', 'total_price', 'created_at', 'updated_at'], 'safe'],
-            [['user_phone', 'user_email', 'delivery_city'], 'string'],
-            [['buyOneClick', 'call_confirm', 'paid'], 'boolean'],
+            [['user_phone', 'user_email', 'delivery_city','delivery_address','ttn'], 'string'],
+            [['buyOneClick', 'call_confirm', 'paid','apply_user_points'], 'boolean'],
         ];
     }
 
@@ -33,7 +33,9 @@ class OrderSearch extends Order
             'call_confirm' => Yii::t('cart/Order', 'CALL_CONFIRM'),
             'paid' => Yii::t('cart/Order', 'PAID'),
             'delivery_city' => Yii::t('cart/Order', 'DELIVERY_CITY'),
-
+            'apply_user_points' => Yii::t('cart/Order', 'Активированы бонусы?'),
+            'delivery_address' => Yii::t('cart/Order', 'DELIVERY_ADDRESS'),
+            'ttn' => Yii::t('cart/Order', 'TTN'),
         ];
     }
 
@@ -98,17 +100,24 @@ class OrderSearch extends Order
             $query->applyPrice($this->price_min, '>=');
         }
 
-        $query->andFilterWhere(['like', 'user_name', $this->user_name]);
+        //search by column contact
+        if ($this->user_name) {
+            $query->andFilterWhere(['like', 'user_name', $this->user_name]);
+            $query->orFilterWhere(['like', 'user_email', $this->user_name]);
+            $query->orFilterWhere(['like', 'user_lastname', $this->user_name]);
+        }
         $query->andFilterWhere(['like', 'user_phone', $this->user_phone]);
         $query->andFilterWhere(['like', 'user_email', $this->user_email]);
         $query->andFilterWhere(['like', 'status_id', $this->status_id]);
         $query->andFilterWhere(['like', 'delivery_id', $this->delivery_id]);
         $query->andFilterWhere(['like', 'payment_id', $this->payment_id]);
         $query->andFilterWhere(['like', 'delivery_city', $this->delivery_city]);
+        $query->andFilterWhere(['like', 'delivery_address', $this->delivery_address]);
+        $query->andFilterWhere(['like', 'ttn', $this->ttn]);
         $query->andFilterWhere(['buyOneClick' => $this->buyOneClick]);
         $query->andFilterWhere(['call_confirm' => $this->call_confirm]);
         $query->andFilterWhere(['paid' => $this->paid]);
-
+        $query->andFilterWhere(['apply_user_points' => $this->apply_user_points]);
 
         if ($this->created_at)
             $query->andFilterWhere(['between', 'created_at', strtotime($this->created_at . ' 00:00:00'), strtotime($this->created_at . ' 23:59:59')]);

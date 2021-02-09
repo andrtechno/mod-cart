@@ -12,7 +12,7 @@ $class = ($model->status_id || $model->delivery_city) ? 'show' : '';
 ?>
 
 <div class="collapse <?= $class; ?>" id="collapse-grid-filter">
-    <div class="pr-3 pl-3 pt-3">
+    <div class="p-3">
         <?php
 
         /*$form = ActiveForm::begin([
@@ -30,21 +30,21 @@ $class = ($model->status_id || $model->delivery_city) ? 'show' : '';
                 <div class="form-group">
                     <?php
                     echo Html::activeLabel($model, 'status_id');
-                    /* echo Html::dropDownList(Html::getInputName($model, 'status_id'), $model->status_id, ArrayHelper::map(OrderStatus::find()
-                         ->addOrderBy(['name' => SORT_ASC])
-                         ->all(), 'id', 'name'), [
-                         'class' => 'form-control',
-                         'prompt' => html_entity_decode('&mdash;'),
-                         'id' => Html::getInputId($model, 'status_id')
-                     ]);*/
-
-                    echo Html::activeDropDownList($model, 'status_id', ArrayHelper::map(OrderStatus::find()
+                        echo Html::activeDropDownList($model, 'status_id', ArrayHelper::map(OrderStatus::find()
                         ->addOrderBy(['name' => SORT_ASC])
                         ->all(), 'id', 'name'), [
                         'class' => 'form-control',
                         'prompt' => html_entity_decode('&mdash;'),
                         'id' => Html::getInputId($model, 'status_id')
                     ])
+                    ?>
+                </div>
+                <div class="form-group">
+                    <?php
+                    echo Html::activeLabel($model, 'ttn');
+                    echo Html::activeTextInput($model, 'ttn', [
+                        'class' => 'form-control',
+                    ]);
                     ?>
                 </div>
             </div>
@@ -57,40 +57,29 @@ $class = ($model->status_id || $model->delivery_city) ? 'show' : '';
                     ]);
                     ?>
                 </div>
+                <div class="form-group">
+                    <?php
+                    echo Html::activeLabel($model, 'delivery_address');
+                    echo Html::activeTextInput($model, 'delivery_address', [
+                        'class' => 'form-control',
+                    ]);
+                    ?>
+                </div>
+
             </div>
             <div class="col-sm-4">
-
                 <div class="form-check">
-                    <?php
-
-                    echo Html::activeCheckbox($model, 'buyOneClick', [
-                        'class' => 'form-check-input',
-                    ]);
-                 //   echo Html::activeLabel($model, 'buyOneClick', ['class' => 'form-check-label']);
-                    ?>
+                    <?= Html::activeCheckbox($model, 'buyOneClick', ['class' => 'form-check-input']); ?>
                 </div>
-
                 <div class="form-check">
-                    <?php
-
-                    echo Html::activeCheckbox($model, 'call_confirm', [
-                        'class' => 'form-check-input',
-                    ]);
-                   // echo Html::activeLabel($model, 'call_confirm', ['class' => 'form-check-label']);
-                    ?>
+                    <?= Html::activeCheckbox($model, 'call_confirm', ['class' => 'form-check-input']); ?>
                 </div>
-
                 <div class="form-check">
-                    <?php
-
-                    echo Html::activeCheckbox($model, 'paid', [
-                        'class' => 'form-check-input',
-                    ]);
-                 //   echo Html::activeLabel($model, 'paid', ['class' => 'form-check-label']);
-                    ?>
-
+                    <?= Html::activeCheckbox($model, 'paid', ['class' => 'form-check-input']); ?>
                 </div>
-
+                <div class="form-check">
+                    <?= Html::activeCheckbox($model, 'apply_user_points', ['class' => 'form-check-input']); ?>
+                </div>
             </div>
         </div>
     </div>

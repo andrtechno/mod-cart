@@ -49,6 +49,15 @@ if (isset($searchModel->buyOneClick) && !empty($searchModel->buyOneClick)) {
 if (isset($searchModel->status_id) && !empty($searchModel->status_id)) {
     $filterCount += 1;
 }
+if (isset($searchModel->apply_user_points) && !empty($searchModel->apply_user_points)) {
+    $filterCount += 1;
+}
+if (isset($searchModel->delivery_address) && !empty($searchModel->delivery_address)) {
+    $filterCount += 1;
+}
+if (isset($searchModel->ttn) && !empty($searchModel->ttn)) {
+    $filterCount += 1;
+}
 
 
 echo GridView::widget([
