@@ -4,6 +4,8 @@ use yii\widgets\ActiveForm;
 
 /**
  * @var $this \yii\web\View
+ * @var $productModel \panix\mod\shop\models\Product
+ * @var $quantity integer
  */
 $this->registerJs('formatter_price();');
 
@@ -64,14 +66,12 @@ $(document).on('beforeValidate', 'form', function(event, messages, deferreds) {
     ]);
 
     echo $form->field($model, 'quantity')->hiddenInput(['value' => $quantity])->error(false)->label(false);
-    // echo $form->field($model, 'user_phone');
-    echo $form->field($model, 'user_phone', ['options' => ['class' => 'form-group form-group-auto2']])->widget(\panix\ext\telinput\PhoneInput::class);
+    echo $form->field($model, 'user_phone', ['options' => ['class' => 'form-group form-group-auto2']])
+        ->widget(\panix\ext\telinput\PhoneInput::class);
     ?>
     <div class="text-center">
         <?php echo Html::submitButton(Yii::t('cart/default', 'BUY'), ['class' => 'btn btn-danger btn-buy']); ?>
     </div>
-
-
     <?php ActiveForm::end() ?>
 </div>
 
