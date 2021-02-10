@@ -135,7 +135,6 @@ class DefaultController extends WebController
 
                     $this->form->registerGuest($order);
                     Yii::$app->cart->clear();
-                    //die();
                     Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                     return $this->redirect(['view', 'secret_key' => $order->secret_key]);
                 }else{
@@ -396,7 +395,8 @@ class DefaultController extends WebController
             $ordered_product->configurable_id = $item['configurable_id'];
             $ordered_product->currency_id = $item['model']->currency_id;
             $ordered_product->supplier_id = $item['model']->supplier_id;
-            $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
+            if($ordered_product->currency_id)
+                $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
