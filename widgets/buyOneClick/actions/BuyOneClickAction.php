@@ -30,13 +30,14 @@ class BuyOneClickAction extends Action
 
     public function run()
     {
-        $result['success']=false;
+        $result['success'] = false;
         $quantity = Yii::$app->request->post('quantity');
+        $configurable_id = Yii::$app->request->post('configurable_id');
         if (Yii::$app->request->isAjax) {
 
-            if(Yii::$app->request->post('configurable_id')){
-                $productModel = Product::findOne(Yii::$app->request->post('configurable_id'));
-            }else{
+            if ($configurable_id) {
+                $productModel = Product::findOne($configurable_id);
+            } else {
                 $productModel = Product::findOne(Yii::$app->request->get('id'));
             }
 
@@ -46,11 +47,12 @@ class BuyOneClickAction extends Action
             //
             $model = new OrderCreateForm();
             $model->setScenario('buyOneClick');
+
             $post = Yii::$app->request->post();
             if ($model->load($post)) {
                 if ($model->validate()) {
-                    $order = $this->createOrder($model, $productModel);
-
+                    $order = $this->createOrder($model, $productModel, $quantity, $configurable_id);
+//print_r($order);die;
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     $result['success'] = true;
                     $result['message'] = Yii::t('cart/default', 'SUCCESS_ORDER');
@@ -59,11 +61,12 @@ class BuyOneClickAction extends Action
             }
             $path = Yii::$app->assetManager->getPublishedUrl('@bower/intl-tel-input/build');
 
-            $this->controller->view->registerJsFile($path.'/js/utils.js');
-            return $this->controller->render('@cart/widgets/buyOneClick/views/_form', [
+            $this->controller->view->registerJsFile($path . '/js/utils.js');
+            return $this->controller->render(Yii::$app->getModule('cart')->buyOneClick['skinForm'], [
                 'model' => $model,
                 'productModel' => $productModel,
-                'quantity' => (is_numeric($quantity)) ? $quantity : 1
+                'quantity' => (is_numeric($quantity)) ? $quantity : 1,
+                'configurable_id' => ($configurable_id) ? $configurable_id : 0
             ]);
         } else {
             throw new HttpException(404);
@@ -73,9 +76,11 @@ class BuyOneClickAction extends Action
     /**
      * @param $model OrderCreateForm
      * @param $productModel Product
+     * @param $quantity integer
+     * @param $configurable_id integer
      * @return Order
      */
-    public function createOrder($model, $productModel)
+    public function createOrder($model, $productModel, $quantity, $configurable_id)
     {
 
         $order = new Order();
@@ -105,8 +110,11 @@ class BuyOneClickAction extends Action
         $ordered_product->product_id = $productModel->id;
         $ordered_product->currency_id = $productModel->currency_id;
         $ordered_product->supplier_id = $productModel->supplier_id;
+        $ordered_product->configurable_id = $configurable_id;
+        if ($ordered_product->currency_id)
+            $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
         $ordered_product->name = $productModel->name;
-        $ordered_product->quantity = $model->quantity;
+        $ordered_product->quantity = $quantity;
         $ordered_product->sku = $productModel->sku;
         $ordered_product->price_purchase = $productModel->price_purchase;
         // if($item['currency_id']){
@@ -114,48 +122,45 @@ class BuyOneClickAction extends Action
         //$ordered_product->price = ShopProduct::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
         // }else{
         // 
-        // $category = ShopCategory::model()->findByPk($item['category_id']);
+
         //  $options = $item['options'];
         if (isset($productModel->hasDiscount)) {
 
-            $price += $productModel->discountPrice;
+            // $ordered_product->price += $productModel->discountPrice;
         } else {
-            $price += $productModel->price;
+            // $ordered_product->price += $productModel->price;
         }
+        $ordered_product->price = Product::calculatePrices($productModel, [], $configurable_id);
 
 
+        /* if (isset($productModel) && $productModel instanceof Product) {
+             $configurable_data = [];
 
-       /* if (isset($productModel) && $productModel instanceof Product) {
-            $configurable_data = [];
+             $ordered_product->configurable_name = $productModel->name;
+             // Use configurable product sku
+             $ordered_product->sku = $productModel->sku;
+             // Save configurable data
 
-            $ordered_product->configurable_name = $productModel->name;
-            // Use configurable product sku
-            $ordered_product->sku = $productModel->sku;
-            // Save configurable data
+             $attributeModels = Attribute::find()
+                 ->where(['id' => $productModel->configurable_attributes])->all();
+             //->findAllByPk($item['model']->configurable_attributes);
+             foreach ($attributeModels as $attribute) {
+                 $method = 'eav_' . $attribute->name;
+                 $configurable_data[$attribute->title] = $productModel->$method;
+             }
+             $ordered_product->configurable_data = serialize($configurable_data);
+         }
 
-            $attributeModels = Attribute::find()
-                ->where(['id' => $productModel->configurable_attributes])->all();
-            //->findAllByPk($item['model']->configurable_attributes);
-            foreach ($attributeModels as $attribute) {
-                $method = 'eav_' . $attribute->name;
-                $configurable_data[$attribute->title] = $productModel->$method;
-            }
-            $ordered_product->configurable_data = serialize($configurable_data);
-        }
-
-        // Save selected variants as key/value array
-        if (!empty($item['variant_models'])) {
-            $variants = [];
-            foreach ($item['variant_models'] as $variant)
-                $variants[$variant->productAttribute->title] = $variant->option->value;
-            $ordered_product->variants = serialize($variants);
-        }*/
-
+         // Save selected variants as key/value array
+         if (!empty($item['variant_models'])) {
+             $variants = [];
+             foreach ($item['variant_models'] as $variant)
+                 $variants[$variant->productAttribute->title] = $variant->option->value;
+             $ordered_product->variants = serialize($variants);
+         }*/
 
 
-
-
-        $ordered_product->price = $price;
+        //$ordered_product->price = $price;
         $ordered_product->save();
 
 

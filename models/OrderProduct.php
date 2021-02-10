@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\models;
 
+use Yii;
 use panix\engine\CMS;
 use panix\mod\shop\models\Product;
 use panix\engine\db\ActiveRecord;
@@ -58,6 +59,15 @@ class OrderProduct extends ActiveRecord
     public function getOriginalProduct()
     {
         return $this->hasOne(Product::class, ['id' => 'product_id']);
+    }
+
+    public function getPriceDisplay()
+    {
+        if ($this->currency_id && $this->currency_rate) {
+            return $this->price * $this->currency_rate;
+        } else {
+            return $this->price;
+        }
     }
 
     /**
@@ -188,7 +198,7 @@ class OrderProduct extends ActiveRecord
     }
 
 
-    public function getProductName($absoluteUrl = false, $linkOptions = array())
+    public function getProductName($absoluteUrl = false, $linkOptions = [])
     {
         if ($this->configurable_id) {
             if ($this->id != $this->configurable_id) {
@@ -228,7 +238,7 @@ class OrderProduct extends ActiveRecord
 
     public function getAttributesProduct()
     {
-        $items=[];
+        $items = [];
         if (isset($this->productAttributes->attributes)) {
             $attributesData = (array)$this->productAttributes->attributes;
             $query = \panix\mod\shop\models\Attribute::find();
@@ -238,9 +248,9 @@ class OrderProduct extends ActiveRecord
             $result = $query->all();
 
             foreach ($result as $q) {
-                $items[]=[
-                    'title'=>$q->title,
-                    'value'=>$q->renderValue($attributesData[$q->name])
+                $items[] = [
+                    'title' => $q->title,
+                    'value' => $q->renderValue($attributesData[$q->name])
                 ];
             }
         }

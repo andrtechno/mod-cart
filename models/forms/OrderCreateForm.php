@@ -48,7 +48,6 @@ class OrderCreateForm extends Model
     public $delivery_type = 'warehouse'; //for delivery systems;
     public $delivery_city_ref;
     public $delivery_warehouse_ref;
-    public $quantity; //for buy one click
     public $points;
 
     public function init()
@@ -73,7 +72,7 @@ class OrderCreateForm extends Model
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios['buyOneClick'] = ['user_phone', 'quantity'];
+        $scenarios['buyOneClick'] = ['user_phone'];
 
 
         $scenarios['guest'] = [
@@ -105,7 +104,7 @@ class OrderCreateForm extends Model
         $rules[] = [['user_lastname'], 'required', 'on' => 'guest'];
         $rules[] = [['user_name', 'user_email', 'user_phone', 'user_lastname'], 'required'];
         $rules[] = [['delivery_id', 'payment_id'], 'required'];
-        $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points', 'quantity'], 'integer'];
+        $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points'], 'integer'];
         $rules[] = ['user_email', 'email'];
         $rules[] = ['user_comment', 'string'];
         $rules[] = [['user_lastname', 'user_name'], 'string', 'max' => 100];

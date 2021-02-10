@@ -342,13 +342,13 @@ class Order extends ActiveRecord
             /** @var OrderProduct $product */
 
             if ($product->originalProduct) {
-               // if($this->currency_id){
-                    $this->total_price += $product->price * $product->currency_rate * $product->quantity;
-                    $this->total_price_purchase += $product->price_purchase * $product->currency_rate * $product->quantity;
+                //if($product->currency_id && $product->currency_rate){
+                //    $this->total_price += $product->price / $product->currency_rate * $product->quantity;
+               //     $this->total_price_purchase += $product->price_purchase * $product->currency_rate * $product->quantity;
                // }else{
-              //      $this->total_price += $product->price * $currency_rate * $product->quantity;
-              //      $this->total_price_purchase += $product->price_purchase * $currency_rate * $product->quantity;
-              //  }
+                    $this->total_price += $product->price * $product->quantity;
+                    $this->total_price_purchase += $product->price_purchase * $product->quantity;
+               // }
 
             }
 

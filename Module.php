@@ -14,6 +14,9 @@ class Module extends WebModule implements BootstrapInterface
     public $icon = 'cart';
     public $mailPath = '@cart/mail';
     public $homeUrl = ['/cart/default/index'];
+    public $buyOneClick = [
+        'skinForm' => '@cart/widgets/buyOneClick/views/_form'
+    ];
 
     public function init()
     {

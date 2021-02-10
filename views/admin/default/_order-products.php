@@ -45,7 +45,7 @@ echo GridView::widget([
             // 'filter'=>true,
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                return Html::a(Html::img($model->getProductImage()), $model->getProductUrl());
+                return Html::a(Html::img($model->getProductImage()), $model->getProductUrl(),['data-pjax'=>false]);
             },
         ],
         [
@@ -53,8 +53,8 @@ echo GridView::widget([
             'format' => 'raw',
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                if ($model->currency_id) {
-                    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
+                if ($model->currency_id && $model->currency_rate) {
+                    $priceValue = Yii::$app->currency->convert($model->price / $model->currency_rate,$model->currency_id);
                 } else {
                     $priceValue = $model->price;
                 }
@@ -74,7 +74,7 @@ echo GridView::widget([
 
                 }*/
                 $price = Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
-                return $model->getProductName() . '<br/>' . $variantsConfigure . $price;
+                return $model->getProductName(false,['data-pjax'=>'0']) . '<br/>' . $variantsConfigure . $price;
             },
         ],
         [
@@ -90,11 +90,11 @@ echo GridView::widget([
             'footer' => Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main['symbol'],
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                if ($model->currency_id) {
-                    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
-                } else {
+                //if ($model->currency_id && $model->currency_rate) {
+                //    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
+               // } else {
                     $priceValue = $model->price;
-                }
+              //  }
                 return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
             }
         ],
@@ -158,6 +158,10 @@ Pjax::end();
                 <?php } ?>
             </li>
         <?php } ?>
+        <li class="list-group-item">
+            <?= Yii::t('cart/default', 'Применено бонусов') ?>: <strong
+                    class="float-right"><?= $model->points ?></strong>
+        </li>
 
         <li class="list-group-item d-flex justify-content-between">
             <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>

@@ -132,7 +132,7 @@ class DefaultController extends WebController
                 }
                 if ($this->form->validate()) {
                     $order = $this->createOrder();
-
+//CMS::dump($order);die;
                     $this->form->registerGuest($order);
                     Yii::$app->cart->clear();
                     Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
@@ -415,6 +415,7 @@ class DefaultController extends WebController
             //$ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
             // }else{
             $ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
+            // $ordered_product->price = $item['model']->price;
             // }
 
 
@@ -529,12 +530,6 @@ class DefaultController extends WebController
         }
 
         return $this->asJson($result);
-    }
-
-    public function actionTest()
-    {
-
-        die;
     }
 
     /**
