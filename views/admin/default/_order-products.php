@@ -158,11 +158,6 @@ Pjax::end();
                 <?php } ?>
             </li>
         <?php } ?>
-        <li class="list-group-item">
-            <?= Yii::t('cart/default', 'Применено бонусов') ?>: <strong
-                    class="float-right"><?= $model->points ?></strong>
-        </li>
-
         <li class="list-group-item d-flex justify-content-between">
             <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>
             <h4 class="m-0"><?= Yii::$app->currency->number_format($model->full_price); ?>
