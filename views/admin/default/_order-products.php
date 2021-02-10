@@ -93,7 +93,7 @@ echo GridView::widget([
                 //if ($model->currency_id && $model->currency_rate) {
                 //    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
                // } else {
-                    $priceValue = $model->price;
+                    $priceValue = $model->price * $model->quantity;
               //  }
                 return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
             }

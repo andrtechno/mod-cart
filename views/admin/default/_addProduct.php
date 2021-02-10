@@ -81,7 +81,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                                 $html .= '<div class="input-group mb-3">';
                                 $html .= Html::textInput("price_{$model->id}", $model->price, ['id' => "price_{$model->id}", 'class' => 'form-control']);
                                 $html .= '<div class="input-group-append">';
-                                $html .= '<span class="input-group-text">' . Yii::$app->currency->getById($model->currency_id)->iso . '</span>';
+                                $html .= '<span class="input-group-text">' . (($model->currency_id) ? Yii::$app->currency->getById($model->currency_id)->iso : Yii::$app->currency->main['iso']) . '</span>';
                                 $html .= '</div></div>';
                                 return $html;
                             }
@@ -96,7 +96,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                                     'id' => "count_{$model->id}",
                                     'name' => "count_{$model->id}",
                                     'value' => 1,
-                                    'clientOptions' => ['max' => 999,'min'=>1],
+                                    'clientOptions' => ['max' => 999, 'min' => 1],
                                     'options' => ['class' => 'cart-spinner']
                                 ]);
                             }
