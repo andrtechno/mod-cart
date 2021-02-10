@@ -96,7 +96,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                                     'id' => "count_{$model->id}",
                                     'name' => "count_{$model->id}",
                                     'value' => 1,
-                                    'clientOptions' => ['max' => 999],
+                                    'clientOptions' => ['max' => 999,'min'=>1],
                                     'options' => ['class' => 'cart-spinner']
                                 ]);
                             }

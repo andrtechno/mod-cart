@@ -86,7 +86,7 @@ echo GridView::widget([
         [
             'attribute' => 'price',
             'format' => 'raw',
-            'contentOptions' => ['class' => 'text-center'],
+            'contentOptions' => ['class' => 'text-center','style'=>'min-width:120px'],
             'footer' => Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main['symbol'],
             'value' => function ($model) {
                 /** @var $model OrderProduct */

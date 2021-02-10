@@ -33,9 +33,9 @@ $data_after = $data->getDataAfter();
             <?php } ?>
             <div class="float-left">
                 <?php
-                echo Yii::t('cart/admin', 'HISTORY_DELETE_PRODUCT') . ': ' . $data_before['name'] . '<br>';
-                echo Yii::t('cart/default', 'COST') . ': ' . $data_before['price'] . '<br>';
-                echo Yii::t('cart/admin', 'QUANTITY') . ': ' . $data_before['quantity'];
+                echo Yii::t('cart/admin', 'HISTORY_DELETE_PRODUCT') . ': <strong>' . $data_before['name'] . '</strong><br>';
+                echo Yii::t('cart/default', 'COST') . ': <strong>' . $data_before['price'] . ' '.$data_before['currency'].'</strong><br>';
+                echo Yii::t('cart/admin', 'QUANTITY') . ': <strong>' . $data_before['quantity'].'</strong>';
                 ?>
             </div>
         </td>
@@ -48,9 +48,10 @@ $data_after = $data->getDataAfter();
             <?php } ?>
             <div class="float-left">
                 <?php
-                echo Yii::t('cart/admin', 'HISTORY_CREATE_PRODUCT', array('name' => $data_before['name'])) . '<br>';
-                echo Yii::t('cart/default', 'COST') . ': ' . $data_before['price'] . '<br>';
-                echo Yii::t('cart/admin', 'QUANTITY') . ': ' . $data_before['quantity'];
+                echo Yii::t('cart/admin', 'HISTORY_CREATE_PRODUCT') . ': <strong>'.$data_before['name'].'</strong><br>';
+                echo Yii::t('cart/default', 'COST') . ': <strong>' . $data_before['price'] . ' '.$data_before['currency'].'</strong><br>';
+                echo Yii::t('cart/admin', 'QUANTITY') . ': <strong>' . $data_before['quantity'].'</strong>';
+
                 ?>
             </div>
         </td>

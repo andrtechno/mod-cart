@@ -12,7 +12,6 @@ use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderStatus;
 use panix\mod\cart\models\OrderProduct;
 use panix\mod\cart\models\OrderHistory;
-use panix\mod\cart\models\OrderProductHistroy;
 use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\Payment;
 use panix\mod\cart\models\translate\DeliveryTranslate;
@@ -114,14 +113,6 @@ class m170908_134034_cart extends Migration
             'handler' => $this->string(255),
             'data_before' => $this->text(),
             'data_after' => $this->text(),
-            'date_create' => $this->datetime(),
-        ], $this->tableOptions);
-
-        // create table order history product
-        $this->createTable(OrderProductHistroy::tableName(), [
-            'id' => $this->primaryKey()->unsigned(),
-            'order_id' => $this->integer()->notNull()->unsigned(),
-            'product_id' => $this->integer()->notNull()->unsigned(),
             'date_create' => $this->datetime(),
         ], $this->tableOptions);
 
@@ -227,7 +218,6 @@ class m170908_134034_cart extends Migration
         $this->dropTable(OrderStatus::tableName());
         $this->dropTable(OrderProduct::tableName());
         $this->dropTable(OrderHistory::tableName());
-        $this->dropTable(OrderProductHistroy::tableName());
         $this->dropTable(Payment::tableName());
         $this->dropTable(PaymentTranslate::tableName());
         $this->dropTable(Delivery::tableName());
@@ -270,11 +260,6 @@ class m170908_134034_cart extends Migration
         $this->createIndex('order_id', OrderHistory::tableName(), 'order_id');
         $this->createIndex('user_id', OrderHistory::tableName(), 'user_id');
         $this->createIndex('date_create', OrderHistory::tableName(), 'date_create');
-
-
-        // order history product indexes
-        $this->createIndex('order_id', OrderProductHistroy::tableName(), 'order_id');
-        $this->createIndex('product_id', OrderProductHistroy::tableName(), 'product_id');
 
         // order_payment_method indexes
         $this->createIndex('ordern', Payment::tableName(), 'ordern');
