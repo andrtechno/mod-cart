@@ -132,8 +132,7 @@ class DefaultController extends WebController
                 }
                 if ($this->form->validate()) {
                     $order = $this->createOrder();
-                    CMS::dump($order);
-                    die;
+
                     $this->form->registerGuest($order);
                     Yii::$app->cart->clear();
                     //die();
