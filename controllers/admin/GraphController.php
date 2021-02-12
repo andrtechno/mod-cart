@@ -67,7 +67,8 @@ class GraphController extends AdminController
             $query = (new \yii\db\Query())->from(Order::tableName())
                 ->where(['between', 'created_at', strtotime("{$year}-{$index}-01 00:00:00"), strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59")])
                 ->andWhere(['status_id' => $statusIds])
-                ->select(['SUM(total_price_purchase - total_price) as sum']);
+                ->andWhere(['not',['total_price_purchase'=>null]])
+                ->select(['SUM(total_price-total_price_purchase) as sum']);
 
             $queryData = $query->one();
 
@@ -152,7 +153,8 @@ class GraphController extends AdminController
             $query = (new \yii\db\Query())->from(Order::tableName())
                 ->where(['between', 'created_at', strtotime("{$year}-{$month}-{$day} 00:00:00"), strtotime("{$year}-{$month}-{$day} 23:59:59")])
                 ->andWhere(['status_id' => $statusIds])
-                ->select(['SUM(total_price_purchase - total_price) as sum']);
+                ->andWhere(['not',['total_price_purchase'=>null]])
+                ->select(['SUM(total_price - total_price_purchase) as sum']);
 
 
             $queryData = $query->one();
