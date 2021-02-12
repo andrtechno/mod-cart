@@ -33,7 +33,7 @@ $class = ($model->status_id || $model->delivery_city) ? 'show' : '';
                         echo Html::activeDropDownList($model, 'status_id', ArrayHelper::map(OrderStatus::find()
                         ->addOrderBy(['name' => SORT_ASC])
                         ->all(), 'id', 'name'), [
-                        'class' => 'form-control',
+                        'class' => 'custom-select',
                         'prompt' => html_entity_decode('&mdash;'),
                         'id' => Html::getInputId($model, 'status_id')
                     ])
