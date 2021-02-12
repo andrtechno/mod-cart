@@ -1,6 +1,6 @@
 {
   "id": "novaposhta",
   "name": "Новая Почта",
-  "class": "NovaPoshtaDeliverySystem",
+  "class": "panix\\mod\\cart\\widgets\\delivery\\novaposhta\\NovaPoshtaDeliverySystem",
   "version": "1.0"
 }

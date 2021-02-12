@@ -1,0 +1,6 @@
+{
+  "id": "pickup",
+  "name": "Самовывоз",
+  "class": "panix\\mod\\cart\\widgets\\delivery\\pickup\\PickupDeliverySystem",
+  "version": "1.0"
+}
