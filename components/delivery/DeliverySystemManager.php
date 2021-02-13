@@ -42,16 +42,16 @@ class DeliverySystemManager extends Component {
     public function getSystemClass($id) {
         $systemInfo = $this->getSystemInfo($id);
         $className = $systemInfo['class'];
+        return new $className;
+        //$systemArray = $this->getDefaultModelClasses();
 
-        $systemArray = $this->getDefaultModelClasses();
-
-        return new $systemArray[$className];
+       // return new $systemArray[$className];
     }
 
-    protected function getDefaultModelClasses() {
+   /* protected function getDefaultModelClasses() {
         return [
             'NovaPoshtaDeliverySystem' => 'panix\mod\cart\widgets\delivery\novaposhta\NovaPoshtaDeliverySystem',
         ];
-    }
+    }*/
 
 }

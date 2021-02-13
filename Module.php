@@ -51,9 +51,9 @@ class Module extends WebModule implements BootstrapInterface
                 // 'cart/recount' => 'cart/default/recount',
 
                 'cart/payment/process' => 'cart/payment/process',
-                'cart/delivery/process' => 'cart/delivery/process2',
-                'cart/delivery/process2' => 'cart/delivery/process',
-                'cart/delivery/process-html' => 'cart/delivery/process-html',
+                'cart/delivery/process' => 'cart/delivery/process',
+                //'cart/delivery/process2' => 'cart/delivery/process',
+                //'cart/delivery/process-html' => 'cart/delivery/process-html',
                 'cart/orders/<page:\d+>' => 'cart/default/orders',
                 'cart/orders' => 'cart/default/orders',
                 'cart/<action:[0-9a-zA-Z_\-]+>' => 'cart/default/<action>',

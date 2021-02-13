@@ -91,8 +91,7 @@ class DeliveryController extends AdminController
                 if ($model->system) {
                     $manager = new DeliverySystemManager;
                     $system = $manager->getSystemClass($model->system);
-                   // CMS::dump($system->getModel());die;
-                    $system->setSettings($model->id, Yii::$app->request->post(basename(get_class($system->getModel()))));
+                    $system->setSettings($model->id, Yii::$app->request->post($system->getModelName()));
                 }
 
                 return $this->redirectPage($isNew, $post);
@@ -145,7 +144,7 @@ class DeliveryController extends AdminController
         $model->attributes = (array) $system->getSettings($delivery_id);
 
 
-        return $this->renderPartial('@cart/widgets/delivery/' . $systemId . '/_form', ['model' => $model]);
+        return $this->renderAjax('@cart/widgets/delivery/' . $systemId . '/_form', ['model' => $model]);
     }
 
     public function actionCreate()
