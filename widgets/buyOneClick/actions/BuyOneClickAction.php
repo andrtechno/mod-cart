@@ -167,7 +167,7 @@ class BuyOneClickAction extends Action
         $order->refresh();
         $order->updateDeliveryPrice();
 
-        $order->sendAdminEmail();
+        $order->sendAdminEmail(explode(',', Yii::$app->settings->get('cart', 'order_emails')));
 
         return $order;
     }
