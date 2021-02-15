@@ -292,6 +292,19 @@ class Order extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
+        if (isset($changedAttributes['status_id']) && Yii::$app->settings->get('cart', 'notify_changed_status')) {
+            if ($changedAttributes['status_id'] != $this->status_id) {
+                if ($this->user_email) {
+                    $mailer = Yii::$app->mailer;
+                    $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+                    $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/changed_status.tpl'], ['order' => $this])
+                        ->setTo([$this->user_email])
+                        ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
+                        ->send();
+                }
+            }
+        }
+
 
         if ($this->ttn && !empty($this->ttn)) {
             //CMS::dump($changedAttributes);

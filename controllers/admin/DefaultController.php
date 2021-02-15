@@ -146,7 +146,7 @@ class DefaultController extends AdminController
             if ($model->validate()) {
 
                 $model->save();
-                if (isset($old['status_id'])) {
+                /*if (isset($old['status_id'])) {
                     if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
                         if ($model->user_email) {
                             $mailer = Yii::$app->mailer;
@@ -157,7 +157,7 @@ class DefaultController extends AdminController
                                 ->send();
                         }
                     }
-                }
+                }*/
 
                 /*if (isset($old['ttn']) != $model->ttn && !empty($model->ttn)) {
                     if ($model->user_email) {
