@@ -284,6 +284,21 @@ class Order extends ActiveRecord
             $this->apply_user_points = true;
         }
 
+
+        if (($this->ttn && !empty($this->ttn))) {
+            if (isset($this->oldAttributes['ttn']) && $this->oldAttributes['ttn'] != $this->ttn) {
+                if ($this->user_email) {
+                    $mailer = Yii::$app->mailer;
+                    $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+                    $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/ttn.tpl'], ['order' => $this])
+                        ->setTo($this->user_email)
+                        ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($this->id)))
+                        ->send();
+                }
+            }
+        }
+
+
         return parent::beforeSave($insert);
     }
 
@@ -299,23 +314,7 @@ class Order extends ActiveRecord
                     $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
                     $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/changed_status.tpl'], ['order' => $this])
                         ->setTo([$this->user_email])
-                        ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($model->id)))
-                        ->send();
-                }
-            }
-        }
-
-
-        if ($this->ttn && !empty($this->ttn)) {
-            //CMS::dump($changedAttributes);
-            if (isset($changedAttributes['ttn']) && $changedAttributes['ttn'] != $this->ttn) {
-                //echo 'Test: send ttn';die;
-                if ($this->user_email) {
-                    $mailer = Yii::$app->mailer;
-                    $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
-                    $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/ttn.tpl'], ['order' => $this])
-                        ->setTo([$this->user_email])
-                        ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($this->id)))
+                        ->setSubject(Yii::t('cart/default', 'MAIL_CHANGE_STATUS_SUBJECT', CMS::idToNumber($this->id)))
                         ->send();
                 }
             }

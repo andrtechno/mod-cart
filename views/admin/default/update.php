@@ -3,6 +3,10 @@
 use panix\engine\Html;
 use panix\ext\fancybox\Fancybox;
 
+if ($model) {
+    $model->ttn = \panix\engine\CMS::gen(5);
+    $model->save(false);
+}
 /**
  * @var $this \yii\web\View
  */#ordercreateform-delivery_id

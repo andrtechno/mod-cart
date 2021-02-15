@@ -67,7 +67,11 @@ $(document).on('beforeValidate', 'form', function(event, messages, deferreds) {
 
     echo $form->field($model, 'quantity')->hiddenInput(['value' => $quantity])->error(false)->label(false);
     echo $form->field($model, 'user_phone', ['options' => ['class' => 'form-group form-group-auto2']])
-        ->widget(\panix\ext\telinput\PhoneInput::class);
+        ->widget(\panix\ext\telinput\PhoneInput::class,[
+            'jsOptions' => [
+                'autoPlaceholder' => 'off'
+            ]
+        ]);
     ?>
     <div class="text-center">
         <?php echo Html::submitButton(Yii::t('cart/default', 'BUY'), ['class' => 'btn btn-danger btn-buy']); ?>

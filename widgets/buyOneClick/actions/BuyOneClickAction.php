@@ -88,8 +88,9 @@ class BuyOneClickAction extends Action
         $user = Yii::$app->user;
         // Set main data
         $order->user_id = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
-        $order->user_name = $user->getUsername();
+        $order->user_name = $user->getFirstname();
         $order->user_email = $user->email;
+        $order->user_lastname = $user->getLastname();
         $order->user_phone = $model->user_phone;
         $order->status_id = Order::STATUS_NEW;
         $order->buyOneClick = 1;
