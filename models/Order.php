@@ -189,7 +189,7 @@ class Order extends ActiveRecord
             [['ttn'], 'default'],
             [['invoice'], 'string', 'max' => 50],
             [['paid', 'apply_user_points'], 'boolean'],
-            [['delivery_city_ref', 'delivery_warehouse_ref', 'delivery_type','user_lastname'], 'string'],
+            [['delivery_city_ref', 'delivery_warehouse_ref', 'delivery_type', 'user_lastname'], 'string'],
             ['delivery_id', 'validateDelivery'],
             ['payment_id', 'validatePayment'],
             ['status_id', 'validateStatus'],
@@ -293,6 +293,21 @@ class Order extends ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
 
+        if ($this->ttn && !empty($this->ttn)) {
+            //CMS::dump($changedAttributes);
+            if (isset($changedAttributes['ttn']) && $changedAttributes['ttn'] != $this->ttn) {
+                //echo 'Test: send ttn';die;
+                if ($this->user_email) {
+                    $mailer = Yii::$app->mailer;
+                    $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+                    $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/ttn.tpl'], ['order' => $this])
+                        ->setTo([$this->user_email])
+                        ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($this->id)))
+                        ->send();
+                }
+            }
+        }
+
 
         parent::afterSave($insert, $changedAttributes);
     }
@@ -344,11 +359,11 @@ class Order extends ActiveRecord
             if ($product->originalProduct) {
                 //if($product->currency_id && $product->currency_rate){
                 //    $this->total_price += $product->price / $product->currency_rate * $product->quantity;
-               //     $this->total_price_purchase += $product->price_purchase * $product->currency_rate * $product->quantity;
-               // }else{
-                    $this->total_price += $product->price * $product->quantity;
-                    $this->total_price_purchase += $product->price_purchase * $product->quantity;
-               // }
+                //     $this->total_price_purchase += $product->price_purchase * $product->currency_rate * $product->quantity;
+                // }else{
+                $this->total_price += $product->price * $product->quantity;
+                $this->total_price_purchase += $product->price_purchase * $product->quantity;
+                // }
 
             }
 
@@ -605,10 +620,10 @@ class Order extends ActiveRecord
      * @param string|null $email Email recipient
      * @return bool|\yii\swiftmailer\Mailer
      */
-    public function sendClientEmail($email=null)
+    public function sendClientEmail($email = null)
     {
-        if(!$email){
-            $email=$this->user_email;
+        if (!$email) {
+            $email = $this->user_email;
         }
         if ($email) {
 
@@ -783,10 +798,10 @@ class Order extends ActiveRecord
             'class' => 'panix\engine\grid\columns\ActionColumn',
             'template' => '{update}'
         ];
-      //  $columns['DEFAULT_COLUMNS'] = [
-          //  ['class' => 'panix\engine\grid\sortable\Column'],
-            //['class' => 'panix\engine\grid\columns\CheckboxColumn']
-       // ];
+        //  $columns['DEFAULT_COLUMNS'] = [
+        //  ['class' => 'panix\engine\grid\sortable\Column'],
+        //['class' => 'panix\engine\grid\columns\CheckboxColumn']
+        // ];
 
         return $columns;
     }
