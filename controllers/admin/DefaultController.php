@@ -409,4 +409,10 @@ class DefaultController extends AdminController
         return $this->render('@cart/guide/MAIL_TEMPLATE.md');
       //  return $result;
     }
+
+    public function actionOrderSendEmail($id){
+        $model = Order::findOne($id);
+        $model->sendAdminEmail(['andrew.panix@gmail.com']);
+        $model->sendClientEmail('andrew.panix@gmail.com');
+    }
 }

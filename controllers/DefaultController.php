@@ -472,7 +472,7 @@ class DefaultController extends WebController
         // Send email to user.
         $order->sendClientEmail();
         // Send email to admin.
-        $order->sendAdminEmail();
+        $order->sendAdminEmail(explode(',', Yii::$app->settings->get('cart', 'order_emails')));
         // $order->detachBehavior('notification');
 
         Yii::$app->user->unsetPoints($order->points);
@@ -563,39 +563,6 @@ class DefaultController extends WebController
             'url' => Url::to($this->module->homeUrl)
         ];
         return $this->asJson($data);
-    }
-
-    /**
-     * @param Order $order
-     * @return \yii\mail\MailerInterface
-     */
-    private function sendAdminEmail(Order $order)
-    {
-
-        $mailer = Yii::$app->mailer;
-        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/order.tpl'], ['order' => $order])
-            ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
-            ->setTo([Yii::$app->settings->get('app', 'email') => Yii::$app->name])
-            ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', ['id' => $order->id]))
-            ->send();
-        return $mailer;
-    }
-
-    /**
-     * @param Order $order
-     * @return \yii\mail\MailerInterface
-     */
-    private function sendClientEmail(Order $order)
-    {
-        $mailer = Yii::$app->mailer;
-        $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
-        $mailer->compose(Yii::$app->getModule('cart')->mailPath . '/order.tpl', ['order' => $order])
-            ->setFrom('noreply@' . Yii::$app->request->serverName)
-            ->setTo($order->user_email)
-            ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', ['id' => $order->id]))
-            ->send();
-
-        return $mailer;
     }
 
     /**

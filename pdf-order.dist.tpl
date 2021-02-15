@@ -151,7 +151,7 @@
             </p>
         {/if}
         {Yii::t('cart/default', 'TOTAL_PAY')}:
-        <h3>{Yii::$app->currency->number_format($model->total_price)}
+        <h3>{Yii::$app->currency->number_format($model->full_price)}
             {Yii::$app->currency->active['symbol']}</h3>
     </div>
 {/if}

@@ -584,9 +584,10 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\mail\MailerInterface
+     * @param array $emails Email recipients
+     * @return \yii\mail\MailerInterface|\yii\swiftmailer\Mailer
      */
-    public function sendAdminEmail()
+    public function sendAdminEmail($emails = [])
     {
         /** @var \yii\swiftmailer\Mailer $mailer */
 
@@ -594,25 +595,30 @@ class Order extends ActiveRecord
         $mailer = Yii::$app->mailer;
         $mailer->compose(['html' => $tplPath], ['model' => $this, 'is_admin' => true])
             //->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
-            ->setTo(explode(',', Yii::$app->settings->get('cart', 'order_emails')))
+            ->setTo($emails)
             ->setSubject(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', $this->id))
             ->send();
         return $mailer;
     }
 
     /**
-     * @return bool|\yii\mail\MailerInterface
+     * @param string|null $email Email recipient
+     * @return bool|\yii\swiftmailer\Mailer
      */
-    public function sendClientEmail()
+    public function sendClientEmail($email=null)
     {
-        if ($this->user_email) {
+        if(!$email){
+            $email=$this->user_email;
+        }
+        if ($email) {
+
             $tplPath = Yii::$app->settings->get('cart', 'mail_tpl_order');
             /** @var \yii\swiftmailer\Mailer $mailer */
             $mailer = Yii::$app->mailer;
             $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
             $mailer->compose($tplPath, ['model' => $this, 'is_admin' => false])
                 //->setFrom('noreply@' . Yii::$app->request->serverName)
-                ->setTo($this->user_email)
+                ->setTo($email)
                 ->setSubject(Yii::t('cart/default', 'MAIL_CLIENT_SUBJECT', $this->id))
                 ->send();
 
