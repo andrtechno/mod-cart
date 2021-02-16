@@ -3,10 +3,7 @@
 use panix\engine\Html;
 use panix\ext\fancybox\Fancybox;
 
-if ($model) {
-    $model->ttn = \panix\engine\CMS::gen(5);
-    $model->save(false);
-}
+
 /**
  * @var $this \yii\web\View
  */#ordercreateform-delivery_id
@@ -68,6 +65,15 @@ $(document).on('change','#order-delivery_id',function(e, clickedIndex, isSelecte
 
 JS;
 $this->registerJs($js);
+/*
+$pattern = '#^catalog/(?P<slug>[0-9a-zA-Z_\/\-]+)/(?P<filter>\/[\w,\/]+)$#u';
+
+$pathInfo = 'catalog/ukhod-dla-volos/kondicioner-dla-volos/filter/size/13,5/brand/1';
+if (!preg_match($pattern, $pathInfo, $matches)) {
+  //  return false;
+}
+CMS::dump($matches);die;
+*/
 
 ?>
 <?php if ($model->call_confirm) { ?>
@@ -138,4 +144,3 @@ $this->registerJs($js);
         ?>
     </div>
 </div>
-

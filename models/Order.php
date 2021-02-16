@@ -52,6 +52,8 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property Payment $paymentMethod
  * @property PromoCode $promoCode
  *
+ * @property string $_ttn
+ *
  * @package panix\mod\cart\models
  */
 class Order extends ActiveRecord
@@ -66,6 +68,10 @@ class Order extends ActiveRecord
     const STATUS_COMPLETED = 4; //Выполнен
     const STATUS_RETURN = 5; //Возврат
 
+    /**
+     * @var string
+     */
+    private $_ttn;
     //public $delivery_type;
 
     /**
@@ -284,9 +290,32 @@ class Order extends ActiveRecord
             $this->apply_user_points = true;
         }
 
+        return parent::beforeSave($insert);
+    }
 
-        if (($this->ttn && !empty($this->ttn))) {
+    public function afterFind()
+    {
+        $this->_ttn = $this->ttn;
+        parent::afterFind();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+
+
+        $send_ttn = false;
+        if ($this->ttn) {
             if (isset($this->oldAttributes['ttn']) && $this->oldAttributes['ttn'] != $this->ttn) {
+                $send_ttn = true;
+            }
+
+            if ($this->ttn != $this->_ttn) {
+                $send_ttn = true;
+            }
+            if ($send_ttn) {
                 if ($this->user_email) {
                     $mailer = Yii::$app->mailer;
                     $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
@@ -299,14 +328,6 @@ class Order extends ActiveRecord
         }
 
 
-        return parent::beforeSave($insert);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function afterSave($insert, $changedAttributes)
-    {
         if (isset($changedAttributes['status_id']) && Yii::$app->settings->get('cart', 'notify_changed_status')) {
             if ($changedAttributes['status_id'] != $this->status_id) {
                 if ($this->user_email) {
