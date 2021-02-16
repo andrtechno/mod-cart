@@ -3,6 +3,7 @@
 namespace panix\mod\cart;
 
 use panix\mod\admin\widgets\sidebar\BackendNav;
+use panix\mod\cart\controllers\admin\DefaultController;
 use Yii;
 use panix\engine\WebModule;
 use panix\mod\cart\models\Order;

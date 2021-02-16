@@ -5,6 +5,7 @@ namespace panix\mod\cart\models;
 use panix\engine\CMS;
 use panix\mod\cart\models\search\OrderSearch;
 use panix\mod\news\models\search\NewsSearch;
+use panix\mod\novaposhta\models\Warehouses;
 use panix\mod\shop\models\ProductType;
 use Yii;
 use yii\base\ModelEvent;
@@ -290,6 +291,24 @@ class Order extends ActiveRecord
             $this->apply_user_points = true;
         }
 
+
+        if($this->isNewRecord){
+            $delivery=Delivery::findOne($this->delivery_id);
+        }else{
+            $delivery=$this->deliveryMethod;
+        }
+        if ($delivery->system == 'novaposhta') {
+
+            // $this->delivery_city_ref = $this->form->delivery_city_ref;
+            //$this->delivery_warehouse_ref = $this->form->delivery_warehouse;
+            $warehouse = Warehouses::findOne($this->delivery_warehouse_ref);
+            if ($warehouse) {
+                $this->delivery_city = $warehouse->getCityDescription();
+                $this->delivery_address = $warehouse->getDescription();
+            }
+        }
+
+
         return parent::beforeSave($insert);
     }
 
@@ -340,6 +359,13 @@ class Order extends ActiveRecord
                 }
             }
         }
+
+
+
+
+
+
+
 
 
         parent::afterSave($insert, $changedAttributes);

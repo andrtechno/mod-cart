@@ -357,7 +357,7 @@ class DefaultController extends WebController
         //$order->status_id = 1; //set New status
 
 
-        $s = Delivery::findOne($order->delivery_id);
+        /*$s = Delivery::findOne($order->delivery_id);
         if ($s->system) {
 
             $order->delivery_city_ref = $this->form->delivery_city_ref;
@@ -367,7 +367,7 @@ class DefaultController extends WebController
                 $order->delivery_city = $warehouse->getCityDescription();
                 $order->delivery_address = $warehouse->getDescription();
             }
-        }
+        }*/
 
 
         $order->status_id = Order::STATUS_NEW;
