@@ -357,17 +357,17 @@ class DefaultController extends WebController
         //$order->status_id = 1; //set New status
 
 
-        /*$s = Delivery::findOne($order->delivery_id);
-        if ($s->system) {
+        $delivery = Delivery::findOne($order->delivery_id);
+        if ($delivery->system && $delivery->system=='novaposhta') {
 
             $order->delivery_city_ref = $this->form->delivery_city_ref;
             $order->delivery_warehouse_ref = $this->form->delivery_warehouse;
-            $warehouse = Warehouses::findOne($order->delivery_warehouse_ref);
-            if ($warehouse) {
-                $order->delivery_city = $warehouse->getCityDescription();
-                $order->delivery_address = $warehouse->getDescription();
-            }
-        }*/
+            //$warehouse = Warehouses::findOne($order->delivery_warehouse_ref);
+            //if ($warehouse) {
+            //    $order->delivery_city = $warehouse->getCityDescription();
+            //    $order->delivery_address = $warehouse->getDescription();
+           // }
+        }
 
 
         $order->status_id = Order::STATUS_NEW;
