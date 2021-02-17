@@ -184,14 +184,21 @@ class Cart extends Component
     /**
      * Count total price
      */
-    public function getTotalPrice()
+    public function getTotalPrice($onlyDiscount = false)
     {
         $result = 0;
         $data = $this->getDataWithModels();
         if (isset($data['items'])) {
             foreach ($data['items'] as $item) {
                 $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
-                $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
+                if ($onlyDiscount) {
+                    if (!$item['model']->hasDiscount) {
+                        $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
+                    }
+                } else {
+                    $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
+                }
+
             }
         }
         //if(isset($data['bonus'])){
@@ -276,15 +283,17 @@ class Cart extends Component
 
         $points2 = 0;
         if (isset(Yii::$app->request->post('OrderCreateForm')['points'])) {
+            $totalSummary = $this->getTotalPrice(true);
             $total = $this->getTotalPrice();
-            $points2 = Yii::$app->request->post('OrderCreateForm')['points'];
 
+            $points2 = (Yii::$app->request->post('OrderCreateForm')['points'])?Yii::$app->request->post('OrderCreateForm')['points']:0;
             $bonusData = [];
             $config = Yii::$app->settings->get('user');
             $points = ($points2 * (int)$config->bonus_value);
             // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
-            $profit = (($total - $points) / $total) * 100;
+            $profit = (($totalSummary - $points) / $totalSummary) * 100;
             // echo $total;die;
+
             if ($points2 > 0) {
                 if ($points2 <= Yii::$app->user->identity->points) {
                     if ($profit >= (int)$config->bonus_max_use_order) {
