@@ -433,7 +433,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return int
+     * Update delivery price
      */
     public function updateDeliveryPrice()
     {
