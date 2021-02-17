@@ -96,10 +96,13 @@ CMS::dump($matches);die;
             $api = Yii::$app->novaposhta;
             $doc = \panix\mod\novaposhta\models\ExpressInvoice::findOne(['order_id' => $model->id]);
             if ($doc) {
-                echo '<span class="text-warning"><i class="icon-warning"></i> ЭН уже создана: </span>';
+                echo Html::a(Html::icon('novaposhta') . ' ' . Yii::t('novaposhta/default', 'UPDATE_EXPRESS_WAYBILL_CART'), ['/admin/novaposhta/express-invoice/update', 'id' => $doc->Ref], ['data-pjax' => 0, 'class' => 'btn btn-danger mb-3']);
+             //   echo '<span class="text-warning"><i class="icon-warning"></i> ЭН уже создана: </span>';
+            }else{
+                echo Html::a(Html::icon('novaposhta') . ' ' . Yii::t('novaposhta/default', 'CREATE_EXPRESS_WAYBILL_CART'), ['/admin/novaposhta/express-invoice/create', 'order_id' => $model->primaryKey], ['data-pjax' => 0, 'class' => 'btn btn-danger mb-3']);
             }
             ?>
-            <?= Html::a(Html::icon('novaposhta') . ' ' . Yii::t('novaposhta/default', 'CREATE_EXPRESS_WAYBILL_CART'), ['/admin/novaposhta/express-invoice/create', 'order_id' => $model->primaryKey], ['data-pjax' => 0, 'class' => 'btn btn-danger mb-3']); ?>
+
         </div>
     <?php }
 } ?>
