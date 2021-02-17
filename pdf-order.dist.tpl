@@ -150,6 +150,17 @@
                 <strong>{Yii::$app->currency->number_format($model->delivery_price)} {Yii::$app->currency->active['symbol']}</strong>
             </p>
         {/if}
+
+        {if $model->discount}
+            <p>{Yii::t('cart/Order', 'DISCOUNT')}:
+            {if ('%' === $model->discount|substr:-1:1)}
+                <strong>{$model->discount}</strong>
+            {else}
+                <strong>{Yii::$app->currency->number_format($model->discount)}</strong> {Yii::$app->currency->active['symbol']}
+            {/if}</p>
+        {/if}
+
+
         {Yii::t('cart/default', 'TOTAL_PAY')}:
         <h3>{Yii::$app->currency->number_format($model->full_price)}
             {Yii::$app->currency->active['symbol']}</h3>
