@@ -297,17 +297,18 @@ class Order extends ActiveRecord
         } else {
             $delivery = $this->deliveryMethod;
         }
-        if ($delivery->system == 'novaposhta') {
+        if ($delivery) {
+            if ($delivery->system == 'novaposhta') {
 
-            // $this->delivery_city_ref = $this->form->delivery_city_ref;
-            //$this->delivery_warehouse_ref = $this->form->delivery_warehouse;
-            $warehouse = Warehouses::findOne($this->delivery_warehouse_ref);
-            if ($warehouse) {
-                $this->delivery_city = $warehouse->getCityDescription();
-                $this->delivery_address = $warehouse->getDescription();
+                // $this->delivery_city_ref = $this->form->delivery_city_ref;
+                //$this->delivery_warehouse_ref = $this->form->delivery_warehouse;
+                $warehouse = Warehouses::findOne($this->delivery_warehouse_ref);
+                if ($warehouse) {
+                    $this->delivery_city = $warehouse->getCityDescription();
+                    $this->delivery_address = $warehouse->getDescription();
+                }
             }
         }
-
 
         return parent::beforeSave($insert);
     }
