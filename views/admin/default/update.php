@@ -90,19 +90,15 @@ CMS::dump($matches);die;
 <?php } ?>
 <?php if (Yii::$app->hasModule('novaposhta') && $model->deliveryMethod) { ?>
     <?php if ($model->deliveryMethod->system == 'novaposhta') { ?>
-<?php
-        $api = Yii::$app->novaposhta;
-            $doc = \panix\mod\novaposhta\models\ExpressInvoice::findOne(['order_id'=>$model->id]);
-        if($doc){
-            echo 'Warn: ';
-        }
-?>
-
-
-
-
 
         <div class="text-right">
+            <?php
+            $api = Yii::$app->novaposhta;
+            $doc = \panix\mod\novaposhta\models\ExpressInvoice::findOne(['order_id' => $model->id]);
+            if ($doc) {
+                echo '<span class="text-warning"><i class="icon-warning"></i> ЭН уже создана: </span>';
+            }
+            ?>
             <?= Html::a(Html::icon('novaposhta') . ' ' . Yii::t('novaposhta/default', 'CREATE_EXPRESS_WAYBILL_CART'), ['/admin/novaposhta/express-invoice/create', 'order_id' => $model->primaryKey], ['data-pjax' => 0, 'class' => 'btn btn-danger mb-3']); ?>
         </div>
     <?php }
