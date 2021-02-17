@@ -501,7 +501,7 @@ class Order extends ActiveRecord
     public function getFull_Price()
     {
         if (!$this->isNewRecord) {
-            $result = $this->total_price + $this->delivery_price;
+            $result = $this->total_price;
             if ($this->discount) {
                 $sum = $this->discount;
                 if ('%' === substr($this->discount, -1, 1))
