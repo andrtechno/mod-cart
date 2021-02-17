@@ -146,6 +146,7 @@ class DefaultController extends AdminController
             if ($model->validate()) {
 
                 $model->save();
+                $model->updateDeliveryPrice();
                 /*if (isset($old['status_id'])) {
                     if (Yii::$app->settings->get('cart', 'notify_changed_status') && $old['status_id'] != $model->status_id) {
                         if ($model->user_email) {
