@@ -77,9 +77,13 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                             'contentOptions' => ['class' => 'text-center'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
-                                $html = '';
+                                $discount = '';
+                                if ($model->hasDiscount) {
+                                    $discount = 'Скидка ' . $model->discountSum;
+                                }
+                                $html = $discount;
                                 $html .= '<div class="input-group">';
-                                $html .= Html::textInput("price_{$model->id}", $model->price, ['id' => "price_{$model->id}", 'class' => 'form-control']);
+                                $html .= Html::textInput("price_{$model->id}", $model->getFrontPrice(), ['id' => "price_{$model->id}", 'class' => 'form-control']);
                                 $html .= '<div class="input-group-append">';
                                 $html .= '<span class="input-group-text">' . (($model->currency_id) ? Yii::$app->currency->getById($model->currency_id)->iso : Yii::$app->currency->main['iso']) . '</span>';
                                 $html .= '</div></div>';
