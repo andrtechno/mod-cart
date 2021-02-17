@@ -140,13 +140,6 @@ Pjax::end();
                     class="float-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <span
                         class="text-muted"><?= $symbol ?></span></strong>
         </li>
-        <?php if ($model->delivery_price > 0) { ?>
-            <li class="list-group-item">
-                <?= Yii::t('cart/default', 'DELIVERY_PRICE') ?>: <strong
-                        class="float-right"><?= Yii::$app->currency->number_format($model->delivery_price) ?> <span
-                            class="text-muted"><?= $symbol ?></span></strong>
-            </li>
-        <?php } ?>
         <?php if ($model->discount) { ?>
             <li class="list-group-item">
                 <?= $model::t('DISCOUNT') ?>:
