@@ -58,7 +58,7 @@ class HistoricalBehavior extends Behavior
                 'deleted' => false,
                 'name' => $event->ordered_product->getRenderFullName(),
                 'price' => $event->ordered_product->price,
-                'currency' => Yii::$app->currency->getById($event->ordered_product->currency_id)->iso,
+                'currency' => ($event->ordered_product->currency_id) ? Yii::$app->currency->getById($event->ordered_product->currency_id)->iso : Yii::$app->currency->main['iso'],
                 'image' => $event->ordered_product->originalProduct->getMainImage()->url,
                 'quantity' => $event->ordered_product->quantity
             ]),
@@ -77,8 +77,8 @@ class HistoricalBehavior extends Behavior
                 'deleted' => true,
                 'name' => $event->ordered_product->getRenderFullName(),
                 'price' => $event->ordered_product->price,
-                'currency' => Yii::$app->currency->getById($event->ordered_product->currency_id)->iso,
-                'image' => ($event->ordered_product->originalProduct)?$event->ordered_product->originalProduct->getMainImage('50x50')->url:'no image',
+                'currency' => ($event->ordered_product->currency_id) ? Yii::$app->currency->getById($event->ordered_product->currency_id)->iso : Yii::$app->currency->main['iso'],
+                'image' => ($event->ordered_product->originalProduct) ? $event->ordered_product->originalProduct->getMainImage('50x50')->url : 'no image',
                 'quantity' => $event->ordered_product->quantity
             ]),
             'data_after' => '',
@@ -95,7 +95,7 @@ class HistoricalBehavior extends Behavior
             'data_before' => serialize([
                 'changed' => true,
                 'name' => $event->ordered_product->getRenderFullName(),
-                'image' => ($event->ordered_product->originalProduct)?$event->ordered_product->originalProduct->getMainImage('50x50')->url:'no image',
+                'image' => ($event->ordered_product->originalProduct) ? $event->ordered_product->originalProduct->getMainImage('50x50')->url : 'no image',
                 'quantity' => $event->ordered_product->quantity
             ]),
             'data_after' => serialize([
