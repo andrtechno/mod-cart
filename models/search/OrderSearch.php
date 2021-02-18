@@ -108,7 +108,7 @@ class OrderSearch extends Order
         }
         $query->andFilterWhere(['like', 'user_phone', $this->user_phone]);
         $query->andFilterWhere(['like', 'user_email', $this->user_email]);
-        $query->andFilterWhere(['like', 'status_id', $this->status_id]);
+        $query->andFilterWhere(['status_id'=>$this->status_id]);
         $query->andFilterWhere(['like', 'delivery_id', $this->delivery_id]);
         $query->andFilterWhere(['like', 'payment_id', $this->payment_id]);
         $query->andFilterWhere(['like', 'delivery_city', $this->delivery_city]);
