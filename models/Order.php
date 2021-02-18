@@ -748,7 +748,7 @@ class Order extends ActiveRecord
             'value' => function ($model) {
                 /** @var $model self */
                 $phone = ($model->user_phone) ? Html::tel($model->user_phone) : $model->user_phone;
-                return $model->user_name . '<br/>' . $phone . '<br/>' . Yii::$app->formatter->asEmail($model->user_email);
+                return $model->user_name . ' '.$model->user_lastname . '<br/>' . $phone . '<br/>' . Yii::$app->formatter->asEmail($model->user_email);
 
             },
         ];
