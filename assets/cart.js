@@ -253,40 +253,42 @@ cart = {
     init: function () {
         console.log('cart.init');
         $(function () {
-            $('.cart-spinner').spinner({
-                max: 999,
-                min: 1,
-                mouseWheel: false,
-                /*icons: {
-                 down: "btn btn-default",
-                 up: "btn btn-default"
-                 },*/
-                //клик по стрелочкам spinner
-                spin: function (event, ui) {
-                    var max = $(this).spinner('option', 'max');
-                    var product_id = $(this).attr('product_id');
-                    if (ui.value >= 1 && cart.spinnerRecount) {
-                        cart.recount(ui.value, product_id);
-                    }
-                    // && max > ui.value
-                },
-                stop: function (event, ui) { //запрещаем ввод числа больше 999;
-                    var max = $(this).spinner('option', 'max');
-                    if ($(this).val() > max)
-                        $(this).val(max);
-                },
-                change: function (event, ui) {
-                    var product_id = $(this).attr('product_id');
-                    if ($(this).val() < 1) {
-                        $(this).val(1);
-                    }
-                    if (cart.spinnerRecount) {
-                        cart.recount($(this).val(), product_id);
-                    }
-                }
-            });
-            $('.ui-spinner-down').html('-');
-            $('.ui-spinner-up').html('+');
+			if ($.fn.spinner) {
+				$('.cart-spinner').spinner({
+					max: 999,
+					min: 1,
+					mouseWheel: false,
+					/*icons: {
+					 down: "btn btn-default",
+					 up: "btn btn-default"
+					 },*/
+					//клик по стрелочкам spinner
+					spin: function (event, ui) {
+						var max = $(this).spinner('option', 'max');
+						var product_id = $(this).attr('product_id');
+						if (ui.value >= 1 && cart.spinnerRecount) {
+							cart.recount(ui.value, product_id);
+						}
+						// && max > ui.value
+					},
+					stop: function (event, ui) { //запрещаем ввод числа больше 999;
+						var max = $(this).spinner('option', 'max');
+						if ($(this).val() > max)
+							$(this).val(max);
+					},
+					change: function (event, ui) {
+						var product_id = $(this).attr('product_id');
+						if ($(this).val() < 1) {
+							$(this).val(1);
+						}
+						if (cart.spinnerRecount) {
+							cart.recount($(this).val(), product_id);
+						}
+					}
+				});
+				$('.ui-spinner-down').html('-');
+				$('.ui-spinner-up').html('+');
+			}
         });
     }
 }

@@ -354,7 +354,8 @@ class DefaultController extends WebController
         $order->call_confirm = $this->form->call_confirm;
         $order->points = $this->form->points;
 
-        $order->delivery_type = $this->form->delivery_type;
+        if(isset($this->form->delivery_type))
+            $order->delivery_type = $this->form->delivery_type;
         //$order->status_id = 1; //set New status
 
 

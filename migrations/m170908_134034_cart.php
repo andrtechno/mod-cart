@@ -36,6 +36,7 @@ class m170908_134034_cart extends Migration
             'payment_id' => $this->integer()->unsigned()->notNull(),
             'status_id' => $this->integer()->unsigned()->notNull(),
             'promocode_id' => $this->integer()->unsigned()->null(),
+            'delivery_type' => $this->string(32),
             'delivery_city' => $this->string(255),
             'delivery_city_ref' => $this->string(36),
             'delivery_address' => $this->string(255),
