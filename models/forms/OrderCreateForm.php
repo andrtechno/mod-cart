@@ -217,7 +217,7 @@ class OrderCreateForm extends Model
             'password' => $password,
             'form' => $this,
         ])
-            ->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
+            //->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
             ->setTo($this->user_email)
             ->setSubject(Yii::t('cart/default', 'Вы загеристрованы'))
             ->send();

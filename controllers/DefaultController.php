@@ -224,8 +224,10 @@ class DefaultController extends WebController
 
         $variants = [];
 
+        $productClass=Yii::$app->getModule('shop')->model('Product');
         // Load product model
-        $model = Product::findOne(Yii::$app->request->post('product_id', 0));
+        /** @var Product $model */
+        $model = $productClass::findOne(Yii::$app->request->post('product_id', 0));
 
         // Check product
         if (!isset($model))
@@ -411,12 +413,12 @@ class DefaultController extends WebController
             $ordered_product->weight_class_id = $item['weight_class_id'];
             $ordered_product->length_class_id = $item['length_class_id'];
 
-
+            $productClass = Yii::$app->getModule('shop')->model('Product');
             // if($item['currency_id']){
             //     $currency = Currency::model()->findByPk($item['currency_id']);
             //$ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
             // }else{
-            $ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
+            $ordered_product->price = productClass::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
             // $ordered_product->price = $item['model']->price;
             // }
 
