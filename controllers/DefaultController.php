@@ -188,6 +188,10 @@ class DefaultController extends WebController
         if (!$model)
             $this->error404(Yii::t('cart/default', 'ERROR_ORDER_NO_FIND'));
 
+        if ((Yii::$app->user->id != $model->user_id) || (Yii::$app->request->userAgent != $model->user_agent && Yii::$app->request->remoteIP != $model->ip_create)) {
+            return $this->redirect(['/site/index']);
+        }
+
         $post = Yii::$app->request->post();
         if ($post) {
             if ($model->load($post)) {
