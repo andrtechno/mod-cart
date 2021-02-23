@@ -747,8 +747,20 @@ class Order extends ActiveRecord
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
                 /** @var $model self */
+                $badges = [];
+
+                if (!$model->user_id) {
+                    $badges[] = Html::tag('span', 'Гость', ['class' => 'badge badge-warning']);
+                }
+                if ($model->call_confirm) {
+                    $badges[] = Html::tag('span', 'Не звонить', ['class' => 'badge badge-info']);
+                }
+                if ($model->buyOneClick) {
+                    $badges[] = Html::tag('span', '1 клик', ['class' => 'badge badge-secondary']);
+                }
+
                 $phone = ($model->user_phone) ? Html::tel($model->user_phone) : $model->user_phone;
-                return $model->user_name . ' '.$model->user_lastname . '<br/>' . $phone . '<br/>' . Yii::$app->formatter->asEmail($model->user_email);
+                return $model->user_name . ' ' . $model->user_lastname . ' ' . implode('', $badges) . '<br/>' . $phone . '<br/>' . Yii::$app->formatter->asEmail($model->user_email);
 
             },
         ];

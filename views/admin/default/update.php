@@ -80,6 +80,10 @@ CMS::dump($matches);die;
     <div class="alert alert-info">Мне можно не звонить!</div>
 <?php } ?>
 
+<?php if (!$model->user_id) { ?>
+    <div class="alert alert-warning">Заказ оформлен <strong>незарегистрированным</strong> пользователем</div>
+<?php } ?>
+
 <?php if ($model->buyOneClick) { ?>
     <div class="alert alert-info"><?= Yii::t('cart/admin', 'MSG_BUYONECLICK'); ?></div>
 <?php } ?>

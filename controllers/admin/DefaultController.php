@@ -27,7 +27,15 @@ class DefaultController extends AdminController
             ],*/
         ];
     }
-
+    public function actionRelated()
+    {
+        $model = Order::findModel(Yii::$app->request->post('order_id'));
+        $model->user_id = Yii::$app->request->post('user_id');
+        if ($model->save(false)) {
+            Yii::$app->session->setFlash('success', 'Пользователь успешно связан с данным заказом');
+            return $this->redirect(['update', 'id' => Yii::$app->request->post('order_id')]);
+        }
+    }
     public function actionPrint($id)
     {
         $currentDate = CMS::date(time());

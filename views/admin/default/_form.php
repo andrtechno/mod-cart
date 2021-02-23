@@ -9,7 +9,100 @@ use panix\engine\bootstrap\ActiveForm;
 use panix\ext\telinput\PhoneInput;
 use panix\engine\CMS;
 
+?>
 
+<?php
+$related=false;
+if(!$model->user_id){
+    $user = \panix\mod\user\models\User::findOne(['email' => $model->user_email]);
+    if($user){
+        $related=true;
+    }
+}
+if($related){
+
+    ?>
+    <!-- Modal -->
+    <div class="modal fade" id="diffModal" tabindex="-1" role="dialog" aria-labelledby="diffModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Сходство по почте <?= $model->user_email; ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-0">
+
+                    <table class="table table-striped table-bordered m-0">
+                        <tr>
+                            <th></th>
+                            <th>Заказ</th>
+                            <th>Пользователь</th>
+                            <th>% сходство</th>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Имя</strong></td>
+                            <td><?= $model->user_name; ?></td>
+                            <td><?= (!empty($user->first_name)) ? $user->first_name : ''; ?></td>
+                            <td>
+                                <?php
+                                similar_text($model->user_name, $user->first_name, $percent);
+                                ?>
+                                <?= Html::tag('span', round($percent, 0) . '%', ['class' => 'text-' . (($percent > 80) ? 'success' : 'danger')]); ?>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Фамилия</strong></td>
+                            <td><?= $model->user_lastname; ?></td>
+                            <td><?= $user->last_name; ?></td>
+                            <td>
+                                <?php
+                                $d = similar_text($model->user_lastname, $user->last_name, $percent12);
+                                ?>
+                                <?= Html::tag('span', round($percent12, 0) . '%', ['class' => 'text-' . (($percent12 > 80) ? 'success' : 'danger')]); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>IP</strong></td>
+                            <td><?= $model->ip_create; ?></td>
+                            <td><?= $user->login_ip; ?></td>
+                            <td>
+                                <?php
+                                $d = similar_text($model->ip_create, $user->login_ip, $percent_ip);
+                                ?>
+                                <?= Html::tag('span', round($percent_ip, 0) . '%', ['class' => 'text-' . (($percent_ip > 80) ? 'success' : 'danger')]); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Тел.</strong></td>
+                            <td><?= CMS::phone_format($model->user_phone); ?></td>
+                            <td><?= CMS::phone_format($user->phone); ?></td>
+                            <td>
+                                <?php
+                                $d = similar_text($model->user_phone, $user->phone, $percent13);
+                                ?>
+                                <?= Html::tag('span', round($percent13, 0) . '%', ['class' => 'text-' . (($percent13 > 80) ? 'success' : 'danger')]); ?>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <?php \yii\widgets\ActiveForm::begin(['action'=>['related']]); ?>
+                    <?= Html::hiddenInput('order_id', $model->id); ?>
+                    <?= Html::hiddenInput('user_id', $user->id); ?>
+                    <span class="text-danger"><i class="icon-warning"></i> Связать заказ с найденным пользователем?</span>
+                    <?= Html::submitButton('Связать', ['class' => 'btn btn-success']) ?>
+                    <?php \yii\widgets\ActiveForm::end(); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<?php
 $form = ActiveForm::begin([
     'id' => 'order-form',
     'fieldConfig' => [
@@ -21,6 +114,13 @@ $form = ActiveForm::begin([
     ]
 ]);
 ?>
+
+
+
+
+
+
+
     <div class="card-body">
 
         <?=
@@ -36,13 +136,20 @@ $form = ActiveForm::begin([
             'prompt' => html_entity_decode($model::t('SELECT_DELIVERY'))
         ]);
         ?>
+
+
         <div id="delivery-form"></div>
         <?= $form->field($model, 'delivery_address')->textInput(); ?>
         <?= $form->field($model, 'ttn')->textInput()->hint('После заполнение ТТН, клиенту будет отправлено уведомление на почту.'); ?>
         <?= $form->field($model, 'paid')->checkbox(); ?>
         <?= $form->field($model, 'user_name')->textInput(); ?>
         <?= $form->field($model, 'user_lastname')->textInput(); ?>
-        <?= $form->field($model, 'user_email')->textInput(); ?>
+        <?= $form->field($model, 'user_email', [
+            'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-4\">{label}</div>\n{hint}\n{beginWrapper}{input}{related}\n{error}{endWrapper}",
+            'parts' => [
+                '{related}' => ($related)?'<button type="button" class="btn text-danger btn-sm btn-link" data-toggle="modal" data-target="#diffModal"><i class="icon-warning text-danger"></i> Найдено совпадение &mdash; связать с этим заказом?</button>':''
+            ]
+        ])->textInput(); ?>
         <?php
         if (!$model->isNewRecord && $model->user_phone) { ?>
             <?= $form->field($model, 'user_phone', [
