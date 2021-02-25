@@ -298,18 +298,26 @@ cart.init();
 
 $(function () {
     $(document).on('click', '.cart-remove', function () {
+        var that = this
+        var success;
         $.ajax({
             url: $(this).attr('href'),
             type: 'GET',
             dataType: 'json',
-            success: function (data) {
-                if (data.success) {
-                    $('#product-' + data.id).remove();
-                    common.notify(data.message, 'success');
-                    cart.renderBlockCart();
-                    $(cart.selectorTotal).html(data.total_price);
+            success: function (response) {
+                if (response.success) {
+                    success=true
+                    common.notify(response.message, 'success');
+                    $(that).closest('#product-'+response.id).remove();
+                    $(cart.selectorTotal).html(response.total_price);
                 } else {
+                    success=false
                     common.notify('remove error', 'success');
+                }
+            },
+            complete:function(){
+                if(success){
+                   cart.renderBlockCart();
                 }
             }
         });

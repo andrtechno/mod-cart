@@ -297,17 +297,17 @@ class DefaultController extends WebController
      */
     public function actionRemove($id)
     {
-        Yii::$app->cart->remove($id);
-        if (!Yii::$app->request->isAjax || !Yii::$app->cart->countItems()) {
+        $cart = Yii::$app->cart;
+        $cart->remove($id);
+        if (!Yii::$app->request->isAjax || !$cart->countItems()) {
             return $this->redirect($this->module->homeUrl);
         } else {
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            return [
+            return $this->asJson([
                 'id' => $id,
                 'success' => true,
-                'total_price' => Yii::$app->currency->number_format(Yii::$app->cart->getTotalPrice()),
+                'total_price' => Yii::$app->currency->number_format($cart->getTotalPrice()),
                 'message' => Yii::t('cart/default', 'SUCCESS_PRODUCT_CART_DELETE')
-            ];
+            ]);
         }
     }
 
