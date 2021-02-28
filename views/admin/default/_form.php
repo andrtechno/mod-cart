@@ -45,11 +45,11 @@ if($related){
 
                         <tr>
                             <td><strong>Имя</strong></td>
-                            <td><?= $model->user_name; ?></td>
-                            <td><?= (!empty($user->first_name)) ? $user->first_name : ''; ?></td>
+                            <td><?= trim($model->user_name); ?></td>
+                            <td><?= (!empty($user->first_name)) ? trim($user->first_name) : ''; ?></td>
                             <td>
                                 <?php
-                                similar_text($model->user_name, $user->first_name, $percent);
+                                similar_text(trim($model->user_name), trim($user->first_name), $percent);
                                 ?>
                                 <?= Html::tag('span', round($percent, 0) . '%', ['class' => 'text-' . (($percent > 80) ? 'success' : 'danger')]); ?>
                             </td>
@@ -57,11 +57,11 @@ if($related){
 
                         <tr>
                             <td><strong>Фамилия</strong></td>
-                            <td><?= $model->user_lastname; ?></td>
-                            <td><?= $user->last_name; ?></td>
+                            <td><?= trim($model->user_lastname); ?></td>
+                            <td><?= trim($user->last_name); ?></td>
                             <td>
                                 <?php
-                                $d = similar_text($model->user_lastname, $user->last_name, $percent12);
+                                $d = similar_text(trim($model->user_lastname), trim($user->last_name), $percent12);
                                 ?>
                                 <?= Html::tag('span', round($percent12, 0) . '%', ['class' => 'text-' . (($percent12 > 80) ? 'success' : 'danger')]); ?>
                             </td>
@@ -80,7 +80,7 @@ if($related){
                         <tr>
                             <td><strong>Тел.</strong></td>
                             <td><?= CMS::phone_format($model->user_phone); ?></td>
-                            <td><?= CMS::phone_format($user->phone); ?></td>
+                            <td><?= ($user->phone)?CMS::phone_format($user->phone):$user->phone; ?></td>
                             <td>
                                 <?php
                                 $d = similar_text($model->user_phone, $user->phone, $percent13);
