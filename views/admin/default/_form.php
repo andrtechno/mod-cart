@@ -80,7 +80,7 @@ if($related){
                         <tr>
                             <td><strong>Тел.</strong></td>
                             <td><?= CMS::phone_format($model->user_phone); ?></td>
-                            <td><?= ($user->phone)?CMS::phone_format($user->phone):$user->phone; ?></td>
+                            <td><?= CMS::phone_format($user->phone); ?></td>
                             <td>
                                 <?php
                                 $d = similar_text($model->user_phone, $user->phone, $percent13);
