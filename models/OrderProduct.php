@@ -224,7 +224,7 @@ class OrderProduct extends ActiveRecord
     }
 
 
-    public function getProductImage($size = '50x50')
+    public function getProductImage($size = null)
     {
         if ($this->configurable_id) {
             if ($this->id != $this->configurable_id) {

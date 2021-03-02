@@ -45,7 +45,7 @@ echo GridView::widget([
             // 'filter'=>true,
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                return Html::a(Html::img($model->getProductImage()), $model->getProductUrl(),['data-pjax'=>false]);
+                return Html::a(Html::img($model->getProductImage('50x50')), $model->getProductImage(),['data-pjax'=>false]);
             },
         ],
         [

@@ -18,7 +18,7 @@ class SettingsController extends AdminController
         return [
             'preview-mail' => [
                 'class' => 'panix\engine\actions\PreviewMailAction',
-                'data' => ['order' => Order::find()->limit(1)->one(), 'is_admin' => true]
+                'data' => ['model' => Order::find()->limit(1)->one(), 'is_admin' => true]
             ],
             'preview-pdf' => [
                 'class' => 'panix\engine\actions\PreviewMailAction',
