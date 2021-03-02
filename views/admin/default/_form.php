@@ -12,14 +12,14 @@ use panix\engine\CMS;
 ?>
 
 <?php
-$related=false;
-if(!$model->user_id){
+$related = false;
+if (!$model->user_id) {
     $user = \panix\mod\user\models\User::findOne(['email' => $model->user_email]);
-    if($user){
-        $related=true;
+    if ($user) {
+        $related = true;
     }
 }
-if($related){
+if ($related) {
 
     ?>
     <!-- Modal -->
@@ -91,10 +91,11 @@ if($related){
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <?php \yii\widgets\ActiveForm::begin(['action'=>['related']]); ?>
+                    <?php \yii\widgets\ActiveForm::begin(['action' => ['related']]); ?>
                     <?= Html::hiddenInput('order_id', $model->id); ?>
                     <?= Html::hiddenInput('user_id', $user->id); ?>
-                    <span class="text-danger"><i class="icon-warning"></i> Связать заказ с найденным пользователем?</span>
+                    <span class="text-danger"><i
+                                class="icon-warning"></i> Связать заказ с найденным пользователем?</span>
                     <?= Html::submitButton('Связать', ['class' => 'btn btn-success']) ?>
                     <?php \yii\widgets\ActiveForm::end(); ?>
                 </div>
@@ -114,11 +115,6 @@ $form = ActiveForm::begin([
     ]
 ]);
 ?>
-
-
-
-
-
 
 
     <div class="card-body">
@@ -147,7 +143,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'user_email', [
             'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-4\">{label}</div>\n{hint}\n{beginWrapper}{input}{related}\n{error}{endWrapper}",
             'parts' => [
-                '{related}' => ($related)?'<button type="button" class="btn text-danger btn-sm btn-link" data-toggle="modal" data-target="#diffModal"><i class="icon-warning text-danger"></i> Найдено совпадение &mdash; связать с этим заказом?</button>':''
+                '{related}' => ($related) ? '<button type="button" class="btn text-danger btn-sm btn-link" data-toggle="modal" data-target="#diffModal"><i class="icon-warning text-danger"></i> Найдено совпадение &mdash; связать с этим заказом?</button>' : ''
             ]
         ])->textInput(); ?>
         <?php
@@ -157,7 +153,11 @@ $form = ActiveForm::begin([
                 'parts' => [
                     '{call}' => Html::a(Html::icon('phone') . ' Позвонить', 'tel:' . $model->user_phone, ['class' => 'mt-2 mt-lg-0 float-none float-lg-right btn btn-light'])
                 ]
-            ])->widget(PhoneInput::class); ?>
+            ])->widget(PhoneInput::class, [
+                'jsOptions' => [
+                    'autoPlaceholder' => 'off'
+                ]
+            ]); ?>
 
 
         <?php } else {
