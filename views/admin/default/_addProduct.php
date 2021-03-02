@@ -45,6 +45,15 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                     ],
                     'columns' => [
                         [
+                            'attribute' => 'id',
+                            'format' => 'raw',
+                            'contentOptions' => ['class' => 'text-center'],
+                            'value' => function ($model) {
+                                /** @var \panix\mod\shop\models\Product $model */
+                                return $model->id;
+                            },
+                        ],
+                        [
                             'class' => 'panix\engine\grid\columns\ImageColumn',
                             'format' => 'raw',
                             'contentOptions' => ['class' => 'text-center image'],

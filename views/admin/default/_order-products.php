@@ -48,6 +48,7 @@ echo GridView::widget([
                 return Html::a(Html::img($model->getProductImage('50x50')), $model->getProductImage(),['data-pjax'=>false]);
             },
         ],
+
         [
             'attribute' => 'name',
             'format' => 'raw',

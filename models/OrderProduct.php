@@ -6,7 +6,8 @@ use Yii;
 use panix\engine\CMS;
 use panix\mod\shop\models\Product;
 use panix\engine\db\ActiveRecord;
-use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+use panix\engine\Html;
 use yii\helpers\Url;
 
 /**
@@ -256,5 +257,101 @@ class OrderProduct extends ActiveRecord
         }
         return $items;
     }
+    public function getGridColumns()
+    {
 
+        //  $price_max = self::find()->aggregatePrice('MAX')->asArray()->one();
+        //  $price_min = self::find()->aggregatePrice('MIN')->asArray()->one();
+
+        $columns = [];
+
+        $columns['id']=[
+            'attribute' => 'id',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center image'],
+            'value' => function ($model) {
+                return $model->id;
+            },
+        ];
+
+        $columns['image']=[
+            'class' => 'panix\engine\grid\columns\ImageColumn',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center image'],
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
+                return $model->renderGridImage();
+            },
+        ];
+        $columns['name']=[
+            'attribute' => 'name',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-left'],
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
+                return $model->name;
+            },
+        ];
+        $columns['sku']=[
+            'attribute' => 'sku',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-left'],
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
+                return $model->sku;
+            },
+        ];
+        $columns['price']=[
+            'attribute' => 'price',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center'],
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
+                $discount = '';
+                if ($model->hasDiscount) {
+                    $discount = 'Скидка ' . $model->discountSum;
+                }
+                $html = $discount;
+                $html .= '<div class="input-group">';
+                $html .= Html::textInput("price_{$model->id}", $model->getFrontPrice(), ['id' => "price_{$model->id}", 'class' => 'form-control']);
+                $html .= '<div class="input-group-append">';
+                $html .= '<span class="input-group-text">' . (($model->currency_id) ? Yii::$app->currency->getById($model->currency_id)->iso : Yii::$app->currency->main['iso']) . '</span>';
+                $html .= '</div></div>';
+                return $html;
+            }
+        ];
+        $columns['quantity']=[
+            'attribute' => 'quantity',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center'],
+            'value' => function ($model) {
+                /** @var \panix\mod\shop\models\Product $model */
+                return \yii\jui\Spinner::widget([
+                    'id' => "count_{$model->id}",
+                    'name' => "count_{$model->id}",
+                    'value' => 1,
+                    'clientOptions' => ['max' => 999, 'min' => 1],
+                    'options' => ['class' => 'cart-spinner']
+                ]);
+            }
+        ];
+
+
+        $columns['DEFAULT_CONTROL'] = [
+            'class' => 'panix\engine\grid\columns\ActionColumn',
+            'template' => '{add}',
+           // 'filter' => false,
+            'buttons' => [
+                'add' => function ($url, $data, $key) {
+                    return Html::a(Html::icon('add'), $data->id, [
+                        'title' => Yii::t('yii', 'VIEW'),
+                        'class' => 'btn btn-sm btn-success addProductToOrder',
+                        'onClick' => 'return addProductToOrder(this, ' . Yii::$app->request->get('id') . ');'
+                    ]);
+                }
+            ]
+        ];
+
+        return $columns;
+    }
 }
