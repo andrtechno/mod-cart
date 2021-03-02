@@ -20,8 +20,8 @@ class OrderSearch extends Order
         return [
             [['id', 'status_id', 'price_min', 'price_max', 'delivery_id', 'payment_id'], 'integer'],
             [['status_id', 'user_name', 'total_price', 'created_at', 'updated_at'], 'safe'],
-            [['user_phone', 'user_email', 'delivery_city','delivery_address','ttn'], 'string'],
-            [['buyOneClick', 'call_confirm', 'paid','apply_user_points'], 'boolean'],
+            [['user_phone', 'user_email', 'delivery_city', 'delivery_address', 'ttn'], 'string'],
+            [['buyOneClick', 'call_confirm', 'paid', 'apply_user_points'], 'boolean'],
         ];
     }
 
@@ -89,7 +89,6 @@ class OrderSearch extends Order
 
         $query->andFilterWhere([
             'id' => $this->id,
-            //'status_id' => $this->status_id,
         ]);
 
 
@@ -108,16 +107,23 @@ class OrderSearch extends Order
         }
         $query->andFilterWhere(['like', 'user_phone', $this->user_phone]);
         $query->andFilterWhere(['like', 'user_email', $this->user_email]);
-        $query->andFilterWhere(['status_id'=>$this->status_id]);
+
         $query->andFilterWhere(['like', 'delivery_id', $this->delivery_id]);
         $query->andFilterWhere(['like', 'payment_id', $this->payment_id]);
         $query->andFilterWhere(['like', 'delivery_city', $this->delivery_city]);
         $query->andFilterWhere(['like', 'delivery_address', $this->delivery_address]);
         $query->andFilterWhere(['like', 'ttn', $this->ttn]);
-        $query->andFilterWhere(['buyOneClick' => $this->buyOneClick]);
-        $query->andFilterWhere(['call_confirm' => $this->call_confirm]);
-        $query->andFilterWhere(['paid' => $this->paid]);
-        $query->andFilterWhere(['apply_user_points' => $this->apply_user_points]);
+
+        $query->andFilterWhere(['status_id' => $this->status_id]);
+
+        if ($this->buyOneClick)
+            $query->andFilterWhere(['buyOneClick' => $this->buyOneClick]);
+        if ($this->call_confirm)
+            $query->andFilterWhere(['call_confirm' => $this->call_confirm]);
+        if ($this->paid)
+            $query->andFilterWhere(['paid' => $this->paid]);
+        if ($this->apply_user_points)
+            $query->andFilterWhere(['apply_user_points' => $this->apply_user_points]);
 
         if ($this->created_at)
             $query->andFilterWhere(['between', 'created_at', strtotime($this->created_at . ' 00:00:00'), strtotime($this->created_at . ' 23:59:59')]);
