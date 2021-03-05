@@ -47,7 +47,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                         [
                             'attribute' => 'id',
                             'format' => 'raw',
-                            'contentOptions' => ['class' => 'text-center'],
+                            'contentOptions' => ['class' => 'text-center', 'style'=>'width:100px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
                                 return $model->id;
@@ -83,7 +83,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                         [
                             'attribute' => 'price',
                             'format' => 'raw',
-                            'contentOptions' => ['class' => 'text-center'],
+                            'contentOptions' => ['class' => 'text-center', 'style'=>'width:150px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
                                 $discount = '';
@@ -102,7 +102,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                         [
                             'attribute' => 'quantity',
                             'format' => 'raw',
-                            'contentOptions' => ['class' => 'text-center'],
+                            'contentOptions' => ['class' => 'text-center', 'style'=>'width:80px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
                                 return \yii\jui\Spinner::widget([
@@ -110,7 +110,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                                     'name' => "count_{$model->id}",
                                     'value' => 1,
                                     'clientOptions' => ['max' => 999, 'min' => 1],
-                                    'options' => ['class' => 'cart-spinner']
+                                    'options' => ['class' => 'cart-spinner', 'style'=>'width:80px']
                                 ]);
                             }
                         ],
