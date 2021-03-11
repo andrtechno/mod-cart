@@ -161,7 +161,11 @@ $form = ActiveForm::begin([
 
 
         <?php } else {
-            echo $form->field($model, 'user_phone')->widget(PhoneInput::class);
+            echo $form->field($model, 'user_phone')->widget(PhoneInput::class, [
+                'jsOptions' => [
+                    'autoPlaceholder' => 'off'
+                ]
+            ]);
         }
         ?>
         <?= $form->field($model, 'user_comment')->textArea(); ?>
