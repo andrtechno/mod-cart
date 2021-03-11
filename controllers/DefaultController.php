@@ -102,7 +102,7 @@ class DefaultController extends WebController
             $this->processRecount();
         }
         $this->form = new OrderCreateForm(); //['scenario' => 'create-form-order']
-        if(Yii::$app->user->isGuest){
+        if (Yii::$app->user->isGuest) {
             $this->form->setScenario('guest');
 
         }
@@ -138,8 +138,8 @@ class DefaultController extends WebController
                     Yii::$app->cart->clear();
                     Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                     return $this->redirect(['view', 'secret_key' => $order->secret_key]);
-                }else{
-                   // print_r($this->form->errors);die;
+                } else {
+                    // print_r($this->form->errors);die;
                 }
             }
         }
@@ -159,11 +159,22 @@ class DefaultController extends WebController
             var separator_hundredth = '" . Yii::$app->currency->active['separator_hundredth'] . "';
         ", yii\web\View::POS_HEAD, 'numberformat');
 
-
-
+        $items = Yii::$app->cart->getDataWithModels();
+        $totalPrice = Yii::$app->cart->getTotalPrice();
+        if (Yii::$app->settings->get('seo', 'google_tag_manager')) {
+            $dataLayer['ecomm_pagetype'] = 'conversionintent';
+            $dataLayer['ecomm_totalvalue'] = $totalPrice;
+            foreach ($items['items'] as $item) {
+                $dataLayer['ecomm_prodid'][] = $item['product_id'];
+            }
+            $dataLayer = json_encode($dataLayer);
+            $this->view->registerJs("
+window.dataLayer = window.dataLayer || [];
+dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
+        }
         return $this->render('index', [
-            'items' => Yii::$app->cart->getDataWithModels(),
-            'totalPrice' => Yii::$app->cart->getTotalPrice(),
+            'items' => $items,
+            'totalPrice' => $totalPrice,
             'deliveryMethods' => $deliveryMethods,
             'paymentMethods' => $paymentMethods,
         ]);
@@ -188,7 +199,8 @@ class DefaultController extends WebController
         if (!$model)
             $this->error404(Yii::t('cart/default', 'ERROR_ORDER_NO_FIND'));
 
-        if(!Yii::$app->user->can('admin')){
+
+        if (!Yii::$app->user->can('admin')) {
             if ((Yii::$app->user->id != $model->user_id) || (Yii::$app->request->remoteIP != $model->ip_create)) {
                 return $this->redirect(['/site/index']);
             }
@@ -212,8 +224,44 @@ class DefaultController extends WebController
 
         $this->pageName = Yii::t('cart/default', 'VIEW_ORDER', ['id' => CMS::idToNumber($model->id)]);
         $this->view->params['breadcrumbs'][] = $this->pageName;
+
+
+        $items = $model->getOrderedProducts()->getModels();
+        if (Yii::$app->settings->get('seo', 'google_tag_manager')) {
+            $dataLayer['ecomm_pagetype'] = 'conversion';
+            $dataLayer['ecomm_totalvalue'] = $model->full_price;
+
+
+            $transaction['transactionId'] = $model->id;
+            $transaction['transactionAffiliation'] = Yii::$app->settings->get('app','site_name');
+            $transaction['transactionTotal'] = $model->full_price;
+
+            foreach ($items as $item) {
+                $dataLayer['ecomm_prodid'][] = $item->product_id;
+                $transaction['transactionProducts'][] = [
+                    'sku' => $item->product_id,
+                    'name' => $item->name,
+                    'category' => $item->quantity,
+                    'price' => $item->price,
+                    'quantity' => $item->quantity
+                ];
+            }
+            $dataLayer = json_encode($dataLayer);
+            $transaction = json_encode($transaction);
+            $this->view->registerJs("
+window.dataLayer = window.dataLayer || [];
+dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
+
+
+            /*$this->view->registerJs("
+            window.dataLayer = window.dataLayer || [];
+            dataLayer.push($transaction);", $this->view::POS_BODY, 'dataLayer_transaction');*/
+
+        }
+
         return $this->render('view', [
             'model' => $model,
+            'items' => $items
         ]);
     }
 
@@ -230,7 +278,7 @@ class DefaultController extends WebController
 
         $variants = [];
 
-        $productClass=Yii::$app->getModule('shop')->model('Product');
+        $productClass = Yii::$app->getModule('shop')->model('Product');
         // Load product model
         /** @var Product $model */
         $model = $productClass::findOne(Yii::$app->request->post('product_id', 0));
@@ -254,16 +302,16 @@ class DefaultController extends WebController
         }
 
         // Process configurable products
-      //  if ($model->use_configurations) {
-            // Get last configurable item
-            $configurable_id = Yii::$app->request->post('configurable_id', 0);
+        //  if ($model->use_configurations) {
+        // Get last configurable item
+        $configurable_id = Yii::$app->request->post('configurable_id', 0);
 
 //if($configurable_id != $model->id){
-           // if (!$configurable_id || !in_array($configurable_id, $model->configurations))
-           //     return $this->_addError(Yii::t('cart/default', 'ERROR_SELECT_VARIANT'), true);
+        // if (!$configurable_id || !in_array($configurable_id, $model->configurations))
+        //     return $this->_addError(Yii::t('cart/default', 'ERROR_SELECT_VARIANT'), true);
 //}
-      //  } else
-      //      $configurable_id = 0;
+        //  } else
+        //      $configurable_id = 0;
 
 
         // Update counter
@@ -362,13 +410,13 @@ class DefaultController extends WebController
         $order->call_confirm = $this->form->call_confirm;
         $order->points = $this->form->points;
 
-        if(isset($this->form->delivery_type))
+        if (isset($this->form->delivery_type))
             $order->delivery_type = $this->form->delivery_type;
         //$order->status_id = 1; //set New status
 
 
         $delivery = Delivery::findOne($order->delivery_id);
-        if ($delivery->system && $delivery->system=='novaposhta') {
+        if ($delivery->system && $delivery->system == 'novaposhta') {
 
             $order->delivery_city_ref = $this->form->delivery_city_ref;
             $order->delivery_warehouse_ref = $this->form->delivery_warehouse;
@@ -376,13 +424,13 @@ class DefaultController extends WebController
             //if ($warehouse) {
             //    $order->delivery_city = $warehouse->getCityDescription();
             //    $order->delivery_address = $warehouse->getDescription();
-           // }
+            // }
         }
 
 
         $order->status_id = Order::STATUS_NEW;
         if ($order->validate()) {
-            if($order->points > 0){
+            if ($order->points > 0) {
                 $order->discount = $order->points;
             }
             $order->save();
@@ -405,7 +453,7 @@ class DefaultController extends WebController
             $ordered_product->configurable_id = $item['configurable_id'];
             $ordered_product->currency_id = $item['model']->currency_id;
             $ordered_product->supplier_id = $item['model']->supplier_id;
-            if($ordered_product->currency_id)
+            if ($ordered_product->currency_id)
                 $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
@@ -521,8 +569,8 @@ class DefaultController extends WebController
     public function actionAcceptPoints()
     {
         $cart = Yii::$app->cart;
-        $result=[];
-        $result['success']=false;
+        $result = [];
+        $result['success'] = false;
         $config = Yii::$app->settings->get('user');
         $totalPrice = 100000;
         $points = 5000;
@@ -534,7 +582,7 @@ class DefaultController extends WebController
         if ($profit >= (int)$config->bonus_max_use_order) {
             $points2 = Yii::$app->request->post('bonus');
             $cart->acceptPoint($points2);
-            $result['success']=true;
+            $result['success'] = true;
         } else {
             $cart->acceptPoint(0);
         }

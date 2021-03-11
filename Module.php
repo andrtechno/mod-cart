@@ -2,7 +2,7 @@
 
 namespace panix\mod\cart;
 
-use panix\mod\admin\widgets\sidebar\BackendNav;
+use app\web\themes\dashboard\sidebar\BackendNav;
 use panix\mod\cart\controllers\admin\DefaultController;
 use Yii;
 use panix\engine\WebModule;
@@ -90,6 +90,7 @@ class Module extends WebModule implements BootstrapInterface
             'cart' => [
                 'label' => Yii::t('cart/admin', 'ORDERS'),
                 'icon' => $this->icon,
+                'sort'=>2,
                 'badge' => (isset($this->count['num'])) ? $this->count['num'] : 0,
                 'badgeOptions' => ['id' => 'navbar-badge-cart', 'class' => 'badge badge-success badge-pulse-success'],
                 'visible' => Yii::$app->user->can('/cart/admin/default/index') || Yii::$app->user->can('/cart/admin/default/*'),

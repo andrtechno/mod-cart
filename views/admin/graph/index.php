@@ -6,6 +6,9 @@ use panix\mod\cart\models\Order;
 /**
  * @var $this \yii\web\View
  */
+
+
+
 ?>
 
 
@@ -17,6 +20,14 @@ use panix\mod\cart\models\Order;
 
 
         <?php
+
+        $statuses = \panix\mod\cart\models\OrderStatus::find()->where(['use_in_stats'=>1])->all();
+        $listStatus = [];
+        foreach ($statuses as $status){
+            echo \yii\helpers\Html::tag('span',$status->name,['class'=>'badge','style'=>'background-color:'.$status->color]).' ';
+        }
+
+
         $title = 'Доход за '.date('Y').'г.';
         $subTitle = 'Итого: ' . $total . ' ' . Yii::$app->currency->active['symbol'];
 
