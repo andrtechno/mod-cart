@@ -40,6 +40,8 @@ class BuyOneClickWidget extends Widget {
                         if(data.success){
                             $.fancybox.close();
                             common.notify(data.message,'success');
+                            window.dataLayer = window.dataLayer || [];
+                            dataLayer.push({event: 'buy_one_click'});
                         }
                        
                     }

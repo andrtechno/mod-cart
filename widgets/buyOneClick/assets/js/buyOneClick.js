@@ -9,6 +9,7 @@ function buyOneClickSend(){
             $('#buyOneClick-dialog').html(data);
             $('.ui-widget-button').attr('disabled',false);
           //  common.removeLoader();
+
         },
         beforeSend:function(){
             common.addLoader();
