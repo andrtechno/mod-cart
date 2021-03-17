@@ -104,8 +104,12 @@ class DefaultController extends WebController
         $this->form = new OrderCreateForm(); //['scenario' => 'create-form-order']
         if (Yii::$app->user->isGuest) {
             $this->form->setScenario('guest');
-
         }
+
+
+
+
+
         // Make order
         $post = Yii::$app->request->post();
 
