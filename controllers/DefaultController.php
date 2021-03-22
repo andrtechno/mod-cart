@@ -107,9 +107,6 @@ class DefaultController extends WebController
         }
 
 
-
-
-
         // Make order
         $post = Yii::$app->request->post();
 
@@ -235,9 +232,9 @@ dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
             $dataLayer['ecomm_pagetype'] = 'conversion';
             $dataLayer['ecomm_totalvalue'] = $model->full_price;
 
-
+            $transaction['event'] = 'transaction';
             $transaction['transactionId'] = $model->id;
-            $transaction['transactionAffiliation'] = Yii::$app->settings->get('app','site_name');
+            $transaction['transactionAffiliation'] = Yii::$app->settings->get('app', 'sitename');
             $transaction['transactionTotal'] = $model->full_price;
 
             foreach ($items as $item) {
@@ -259,7 +256,7 @@ dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
 
             $this->view->registerJs("
             window.dataLayer = window.dataLayer || [];
-            dataLayer.push($transaction);", $this->view::POS_BODY, 'dataLayer_transaction');
+            dataLayer.push($transaction);", $this->view::POS_BEGIN, 'dataLayer_transaction');
 
         }
 
