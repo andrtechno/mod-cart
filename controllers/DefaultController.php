@@ -250,16 +250,16 @@ dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
                     'quantity' => $item->quantity
                 ];
             }
-            $dataLayer = json_encode($dataLayer);
-            $transaction = json_encode($transaction);
+            $dataLayer = Json::encode($dataLayer);
+            $transaction = Json::encode($transaction);
             $this->view->registerJs("
 window.dataLayer = window.dataLayer || [];
 dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
 
 
-            /*$this->view->registerJs("
+            $this->view->registerJs("
             window.dataLayer = window.dataLayer || [];
-            dataLayer.push($transaction);", $this->view::POS_BODY, 'dataLayer_transaction');*/
+            dataLayer.push($transaction);", $this->view::POS_BODY, 'dataLayer_transaction');
 
         }
 
