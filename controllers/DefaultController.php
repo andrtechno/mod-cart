@@ -242,7 +242,6 @@ dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
                 $transaction['transactionProducts'][] = [
                     'sku' => $item->product_id,
                     'name' => $item->name,
-                    'category' => $item->quantity,
                     'price' => $item->price,
                     'quantity' => $item->quantity
                 ];

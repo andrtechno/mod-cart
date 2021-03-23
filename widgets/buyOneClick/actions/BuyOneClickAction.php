@@ -53,6 +53,18 @@ class BuyOneClickAction extends Action
                 if ($model->validate()) {
                     $order = $this->createOrder($model, $productModel, $quantity, $configurable_id);
 //print_r($order);die;
+                    if (Yii::$app->settings->get('seo', 'google_tag_manager')) {
+                        $result['data']['order_id'] = $order->id;
+                        $result['data']['total'] = $order->full_price;
+                        foreach ($order->products as $item) {
+                            $result['data']['products'][] = [
+                                'id' => $item->product_id,
+                                'name' => $item->name,
+                                'price' => $item->price,
+                                'quantity' => $item->quantity
+                            ];
+                        }
+                    }
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     $result['success'] = true;
                     $result['message'] = Yii::t('cart/default', 'SUCCESS_ORDER');
