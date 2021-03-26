@@ -164,7 +164,7 @@ class DefaultController extends WebController
         $totalPrice = Yii::$app->cart->getTotalPrice();
         if (Yii::$app->settings->get('seo', 'google_tag_manager')) {
             $dataLayer['ecomm_pagetype'] = 'conversionintent';
-            $dataLayer['ecomm_totalvalue'] = $totalPrice;
+            $dataLayer['ecomm_totalvalue'] = (string)$totalPrice;
             foreach ($items['items'] as $item) {
                 $dataLayer['ecomm_prodid'][] = $item['product_id'];
             }
