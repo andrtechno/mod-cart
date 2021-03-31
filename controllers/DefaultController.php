@@ -168,10 +168,8 @@ class DefaultController extends WebController
             foreach ($items['items'] as $item) {
                 $dataLayer['ecomm_prodid'][] = $item['product_id'];
             }
-            $dataLayer = json_encode($dataLayer);
-            $this->view->registerJs("
-window.dataLayer = window.dataLayer || [];
-dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
+            $this->view->params['gtm_ecomm']= $dataLayer;
+
         }
         return $this->render('index', [
             'items' => $items,
@@ -246,11 +244,8 @@ dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
                     'quantity' => $item->quantity
                 ];
             }
-            $dataLayer = Json::encode($dataLayer);
+            $this->view->params['gtm_ecomm']= $dataLayer;
             $transaction = Json::encode($transaction);
-            $this->view->registerJs("
-window.dataLayer = window.dataLayer || [];
-dataLayer.push($dataLayer);", $this->view::POS_HEAD, 'gtm_dataLayer');
 
 
             $this->view->registerJs("
