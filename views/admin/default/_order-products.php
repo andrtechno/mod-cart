@@ -45,7 +45,13 @@ echo GridView::widget([
             // 'filter'=>true,
             'value' => function ($model) {
                 /** @var $model OrderProduct */
-                return Html::a(Html::img($model->getProductImage('50x50')), $model->getProductImage(),['data-pjax'=>false]);
+
+                if($model->getProduct()){
+                    return Html::a(Html::img($model->getProductImage('50x50')), $model->getProductImage(),['data-pjax'=>false]);
+                }else{
+                    return \panix\engine\Html::tag('span', 'товар удален', ['class' => 'badge badge-danger']);
+                }
+
             },
         ],
 

@@ -114,8 +114,8 @@ class OrderProduct extends ActiveRecord
     public function getRenderFullName($appendConfigurableName = true)
     {
 
-        if ($this->originalProduct) {
-            $result = \yii\helpers\Html::a($this->name, $this->originalProduct->getUrl(), ['target' => '_blank']);
+        if ($this->getProduct()) {
+            $result = \yii\helpers\Html::a($this->name, $this->getProduct()->getUrl(), ['target' => '_blank']);
         } else {
             $result = $this->name;
         }
@@ -147,9 +147,11 @@ class OrderProduct extends ActiveRecord
 
     public function getCategories()
     {
-        $content = array();
-        foreach ($this->originalProduct->categories as $c) {
-            $content[] = $c->name;
+        $content = [];
+        if ($this->getProduct()) {
+            foreach ($this->getProduct()->categories as $c) {
+                $content[] = $c->name;
+            }
         }
         return implode(', ', $content);
     }
@@ -205,8 +207,8 @@ class OrderProduct extends ActiveRecord
             if ($this->id != $this->configurable_id) {
                 return Html::a($this->configureProduct->name, Url::to($this->configureProduct->getUrl(), $absoluteUrl), $linkOptions);
             }
-        } elseif ($this->originalProduct) {
-            return Html::a($this->originalProduct->name, Url::to($this->originalProduct->getUrl(), $absoluteUrl), $linkOptions);
+        } elseif ($this->getProduct()) {
+            return Html::a($this->getProduct()->name, Url::to($this->getProduct()->getUrl(), $absoluteUrl), $linkOptions);
         }
         return $this->name;
     }
@@ -218,8 +220,8 @@ class OrderProduct extends ActiveRecord
             if ($this->id != $this->configurable_id) {
                 return $this->configureProduct->getUrl();
             }
-        } elseif ($this->originalProduct) {
-            return $this->originalProduct->getUrl();
+        } elseif ($this->getProduct()) {
+            return $this->getProduct()->getUrl();
         }
         return [];
     }
@@ -231,10 +233,19 @@ class OrderProduct extends ActiveRecord
             if ($this->id != $this->configurable_id) {
                 return ($this->configureProduct) ? $this->configureProduct->getMainImage($size)->url : CMS::placeholderUrl(['size' => $size]);
             }
-        } elseif ($this->originalProduct) {
-            return $this->originalProduct->getMainImage($size)->url;
+        } elseif ($this->getProduct()) {
+            return $this->getProduct()->getMainImage($size)->url;
         }
-        return Html::tag('span', 'удален', ['class' => 'badge badge-danger']);
+
+    }
+
+    public function getProduct()
+    {
+        if ($this->originalProduct) {
+            return $this->originalProduct;
+        } else {
+            return false;
+        }
     }
 
     public function getAttributesProduct()
@@ -257,6 +268,7 @@ class OrderProduct extends ActiveRecord
         }
         return $items;
     }
+
     public function getGridColumns()
     {
 
@@ -265,7 +277,7 @@ class OrderProduct extends ActiveRecord
 
         $columns = [];
 
-        $columns['id']=[
+        $columns['id'] = [
             'attribute' => 'id',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center image'],
@@ -274,7 +286,7 @@ class OrderProduct extends ActiveRecord
             },
         ];
 
-        $columns['image']=[
+        $columns['image'] = [
             'class' => 'panix\engine\grid\columns\ImageColumn',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center image'],
@@ -283,7 +295,7 @@ class OrderProduct extends ActiveRecord
                 return $model->renderGridImage();
             },
         ];
-        $columns['name']=[
+        $columns['name'] = [
             'attribute' => 'name',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-left'],
@@ -292,7 +304,7 @@ class OrderProduct extends ActiveRecord
                 return $model->name;
             },
         ];
-        $columns['sku']=[
+        $columns['sku'] = [
             'attribute' => 'sku',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-left'],
@@ -301,7 +313,7 @@ class OrderProduct extends ActiveRecord
                 return $model->sku;
             },
         ];
-        $columns['price']=[
+        $columns['price'] = [
             'attribute' => 'price',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
@@ -320,7 +332,7 @@ class OrderProduct extends ActiveRecord
                 return $html;
             }
         ];
-        $columns['quantity']=[
+        $columns['quantity'] = [
             'attribute' => 'quantity',
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center'],
@@ -340,7 +352,7 @@ class OrderProduct extends ActiveRecord
         $columns['DEFAULT_CONTROL'] = [
             'class' => 'panix\engine\grid\columns\ActionColumn',
             'template' => '{add}',
-           // 'filter' => false,
+            // 'filter' => false,
             'buttons' => [
                 'add' => function ($url, $data, $key) {
                     return Html::a(Html::icon('add'), $data->id, [
