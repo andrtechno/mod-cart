@@ -28,7 +28,7 @@ class CartWidget extends Widget
         $dataRender = [
             'count' => $cart->countItems(),
             'currency' => $currency,
-            'total' => $cart->totalPrice,
+            'total' => $cart->getTotalPrice(),
             'items' => $items
         ];
         if (!Yii::$app->request->isAjax)
