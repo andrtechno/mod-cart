@@ -21,7 +21,7 @@ cart = {
      * @return boolean
      */
     spinnerRecount: true,
-    selectorTotal: '#total',
+    selectorTotal: '.cart-total',
     skin: 'default',
     /**
      * @param that
