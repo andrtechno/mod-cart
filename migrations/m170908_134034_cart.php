@@ -57,13 +57,13 @@ class m170908_134034_cart extends Migration
             'discount' => $this->string(10),
             'created_at' => $this->integer(11)->null(),
             'updated_at' => $this->integer(11)->null(),
-            'paid' => $this->boolean()->defaultValue(0),
-            'call_confirm' => $this->boolean()->defaultValue(0),
+            'paid' => $this->boolean()->defaultValue(false),
+            'call_confirm' => $this->boolean()->defaultValue(false),
             'ttn' => $this->string(100)->null(),
             'points' => $this->integer()->defaultValue(0),
             'points_expire' => $this->integer()->null(),
-            'apply_user_points' => $this->boolean()->defaultValue(0),
-            'buyOneClick' => $this->boolean()->defaultValue(0),
+            'apply_user_points' => $this->boolean()->defaultValue(false),
+            'buyOneClick' => $this->boolean()->defaultValue(false),
         ], $this->tableOptions);
 
         // create table order status
@@ -71,7 +71,7 @@ class m170908_134034_cart extends Migration
             'id' => $this->primaryKey()->unsigned(),
             'name' => $this->string(100),
             'color' => $this->string(7),
-            'use_in_stats' => $this->boolean()->defaultValue(0),
+            'use_in_stats' => $this->boolean()->defaultValue(false),
             'ordern' => $this->integer(),
         ], $this->tableOptions);
 
@@ -122,7 +122,7 @@ class m170908_134034_cart extends Migration
         $this->createTable(Payment::tableName(), [
             'id' => $this->primaryKey()->unsigned(),
             'currency_id' => $this->integer()->unsigned(),
-            'switch' => $this->boolean()->defaultValue(1),
+            'switch' => $this->boolean()->defaultValue(true),
             'payment_system' => $this->string(100),
             'ordern' => $this->integer()->unsigned(),
         ], $this->tableOptions);
@@ -141,7 +141,7 @@ class m170908_134034_cart extends Migration
             'price' => $this->money(10, 2)->null(),
             'free_from' => $this->money(10, 2)->null(),
             'system' => $this->string(100),
-            'switch' => $this->boolean()->defaultValue(1),
+            'switch' => $this->boolean()->defaultValue(true),
             'ordern' => $this->integer()->unsigned(),
         ], $this->tableOptions);
 

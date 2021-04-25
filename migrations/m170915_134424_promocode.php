@@ -7,7 +7,7 @@
  * Class m170915_134424_promocode
  */
 
-use yii\db\Migration;
+use panix\engine\db\Migration;
 use panix\mod\cart\models\PromoCode;
 
 /**
