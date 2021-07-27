@@ -144,7 +144,15 @@ class Module extends WebModule implements BootstrapInterface
             ],
         ];
     }
-
+    
+    public function getDefaultModelClasses()
+    {
+        return [
+            'Order' => '\panix\mod\cart\models\Order',
+            'OrderProduct' => '\panix\mod\cart\models\OrderProduct',
+        ];
+    }
+    
     public function getAdminSidebar()
     {
         return (new BackendNav())->findMenu($this->id)['items'];
