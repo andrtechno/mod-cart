@@ -29,7 +29,7 @@ class CartWidget extends Widget
             'count' => $cart->countItems(),
             'currency' => $currency,
             'total' => $cart->getTotalPrice(),
-            'items' => $items
+            'items' => $items['items']
         ];
         if (!Yii::$app->request->isAjax)
             echo Html::beginTag('div', ['class' => 'cart']);

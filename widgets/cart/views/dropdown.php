@@ -18,7 +18,7 @@ use panix\mod\shop\models\Product;
             </div>
             <div class="dropdown-menu dropdown-menu-right2">
                 <?php
-                foreach ($items as $product) {
+                foreach ($items as $index=>$product) {
 
                     ?>
 
