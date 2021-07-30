@@ -51,6 +51,7 @@ class Module extends WebModule implements BootstrapInterface
                 // 'cart/payment' => 'cart/default/payment',
                 // 'cart/recount' => 'cart/default/recount',
 
+                'cart/buyOneClick/<id:\d+>' => 'cart/default/buyOneClick',
                 'cart/payment/process' => 'cart/payment/process',
                 'cart/delivery/process' => 'cart/delivery/process',
                 //'cart/delivery/process2' => 'cart/delivery/process',
@@ -90,7 +91,7 @@ class Module extends WebModule implements BootstrapInterface
             'cart' => [
                 'label' => Yii::t('cart/admin', 'ORDERS'),
                 'icon' => $this->icon,
-                'sort'=>2,
+                'sort' => 2,
                 'badge' => (isset($this->count['num'])) ? $this->count['num'] : 0,
                 'badgeOptions' => ['id' => 'navbar-badge-cart', 'class' => 'badge badge-success badge-pulse-success'],
                 'visible' => Yii::$app->user->can('/cart/admin/default/index') || Yii::$app->user->can('/cart/admin/default/*'),
@@ -144,7 +145,7 @@ class Module extends WebModule implements BootstrapInterface
             ],
         ];
     }
-    
+
     public function getDefaultModelClasses()
     {
         return [
@@ -152,7 +153,7 @@ class Module extends WebModule implements BootstrapInterface
             'OrderProduct' => '\panix\mod\cart\models\OrderProduct',
         ];
     }
-    
+
     public function getAdminSidebar()
     {
         return (new BackendNav())->findMenu($this->id)['items'];

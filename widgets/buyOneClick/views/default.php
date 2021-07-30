@@ -8,7 +8,8 @@ use panix\engine\Html;
 
 \panix\ext\fancybox\FancyboxAsset::register($this);
 
-echo Html::a(Yii::t('cart/Order','BUYONECLICK'), ['/cart/default/buyOneClick', 'id' => $model->primaryKey], [
+echo Html::button(Yii::t('cart/Order','BUYONECLICK'), [
+    'data-url'=>\yii\helpers\Url::to(['/cart/default/buyOneClick', 'id' => $model->primaryKey]),
     'id' => 'buyOneClick-button',
     'class' => 'mt-4 btn btn-block btn-outline-secondary',
 ]);
@@ -18,7 +19,7 @@ $(document).on('click','#buyOneClick-button',function(){
     var that = $(this);
     var form = that.closest('form');
     $.fancybox.open({
-        src: that.attr('href'),
+        src: that.data('url'),
         type: 'ajax',
         opts: {
             touch: {
