@@ -45,8 +45,9 @@ class Module extends WebModule implements BootstrapInterface
             [
                 'cart' => 'cart/default/index',
                 'cart/view/<secret_key:[0-9a-z]{10}$>' => 'cart/default/view',
-                'cart/remove/<id:\d+>' => 'cart/default/remove',
+                'cart/remove' => 'cart/default/remove',
                 'cart/promo-code' => 'cart/default/promoCode',
+                'cart/popup' => 'cart/default/popup',
                 // 'cart/clear' => 'cart/default/clear',
                 // 'cart/payment' => 'cart/default/payment',
                 // 'cart/recount' => 'cart/default/recount',

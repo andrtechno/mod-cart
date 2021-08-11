@@ -73,7 +73,7 @@ return false;
 $formOrder = ActiveForm::begin([
     'enableClientValidation' => false,
     'enableAjaxValidation' => true,
-    'action' => ['/cart'],
+    'action' => ['/cart/default/index'],
     'id' => 'cartForm',
     'options' => ['class' => 'form-horizontal'],
 ]) ?>

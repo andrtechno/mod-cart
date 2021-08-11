@@ -53,7 +53,10 @@ class DefaultController extends WebController
             ],
         ];
     }
-
+    public function actionTest()
+    {
+        CMS::dump(Yii::$app->cart->getDataWithModels());die;
+    }
     public function actionRecount()
     {
         if (Yii::$app->request->isAjax) {
@@ -65,6 +68,14 @@ class DefaultController extends WebController
         } else {
             throw new ForbiddenHttpException(Yii::t('app/error', '403'));
         }
+    }
+
+    public function actionPopup()
+    {
+        return $this->renderAjax('popup', [
+            'totalPrice' => Yii::$app->cart->getTotalPrice(),
+            'items' => Yii::$app->cart->getDataWithModels(),
+        ]);
     }
 
     public function actionPreCheckout()
@@ -162,17 +173,17 @@ class DefaultController extends WebController
 
         $items = Yii::$app->cart->getDataWithModels();
         $totalPrice = Yii::$app->cart->getTotalPrice();
-        if (Yii::$app->settings->get('seo', 'google_tag_manager')) {
+        if (Yii::$app->settings->get('seo', 'google_tag_manager') && isset($items['items'])) {
             $dataLayer['ecomm_pagetype'] = 'conversionintent';
             $dataLayer['ecomm_totalvalue'] = (string)$totalPrice;
             foreach ($items['items'] as $item) {
                 $dataLayer['ecomm_prodid'][] = $item['product_id'];
             }
-            $this->view->params['gtm_ecomm']= $dataLayer;
+            $this->view->params['gtm_ecomm'] = $dataLayer;
 
         }
         return $this->render('index', [
-            'items' => $items,
+            'items' => isset($items['items'])?$items['items']:[],
             'totalPrice' => $totalPrice,
             'deliveryMethods' => $deliveryMethods,
             'paymentMethods' => $paymentMethods,
@@ -244,7 +255,7 @@ class DefaultController extends WebController
                     'quantity' => $item->quantity
                 ];
             }
-            $this->view->params['gtm_ecomm']= $dataLayer;
+            $this->view->params['gtm_ecomm'] = $dataLayer;
             $transaction = Json::encode($transaction);
 
 
@@ -266,6 +277,17 @@ class DefaultController extends WebController
      */
     public function actionAdd()
     {
+        $product_id= Yii::$app->request->post('product_id', 0);
+        $cart = Yii::$app->cart;
+        if($cart->hasIndex($product_id)){
+            $data = [
+                'errors' => true,
+                'status'=>'already_exists',
+                'message' => 'Товар уже в корзине.',
+                'url' => Url::to($this->module->homeUrl)
+            ];
+            return $this->asJson($data);
+        }
         if (!Yii::$app->request->isAjax) {
             throw new BadRequestHttpException(Yii::t('app/default', 'ACCESS_DENIED'));
         }
@@ -276,7 +298,7 @@ class DefaultController extends WebController
         $productClass = Yii::$app->getModule('shop')->model('Product');
         // Load product model
         /** @var Product $model */
-        $model = $productClass::findOne(Yii::$app->request->post('product_id', 0));
+        $model = $productClass::findOne($product_id);
 
         // Check product
         if (!isset($model))
@@ -312,7 +334,9 @@ class DefaultController extends WebController
         // Update counter
         $model->updateCounters(['added_to_cart_count' => 1]);
 
-        Yii::$app->cart->add([
+
+           // print_r($items);die;
+        $cart->add([
             'product_id' => $model->id,
             'variants' => $variants,
             'attributes_data' => json_encode([
@@ -331,8 +355,25 @@ class DefaultController extends WebController
             'quantity' => (int)Yii::$app->request->post('quantity', 1),
             'price' => $model->price
         ]);
+        $totalPrice=$cart->getTotalPrice();
+        $items = $cart->getDataWithModels();
 
-        $this->_finish($model->name);
+        $data = [
+            'errors' => $this->_errors,
+            'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
+                'product_name' => $model->name
+            ]),
+            'status'=>'success',
+            'html' => $this->renderAjax('popup', [
+                'totalPrice' => $totalPrice,
+                'items' => $items,
+            ]),
+            'buttonText'=>'Уже в корзине',
+            'url' => Url::to($this->module->homeUrl)
+        ];
+        return $this->asJson($data);
+
+
     }
 
     /**
@@ -340,8 +381,9 @@ class DefaultController extends WebController
      * @param $id
      * @return array|Response
      */
-    public function actionRemove($id)
+    public function actionRemove()
     {
+        $id = Yii::$app->request->post('id');
         $cart = Yii::$app->cart;
         $cart->remove($id);
         if (!Yii::$app->request->isAjax || !$cart->countItems()) {
@@ -351,7 +393,7 @@ class DefaultController extends WebController
                 'id' => $id,
                 'success' => true,
                 'total_price' => Yii::$app->currency->number_format($cart->getTotalPrice()),
-                'message' => Yii::t('cart/default', 'SUCCESS_PRODUCT_CART_DELETE')
+                'message' => Yii::t('cart/default', 'SUCCESS_PRODUCT_CART_DELETE'),
             ]);
         }
     }
@@ -612,6 +654,10 @@ class DefaultController extends WebController
             'errors' => $this->_errors,
             'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
                 'product_name' => $product
+            ]),
+            'html' => $this->renderAjax('popup', [
+                'totalPrice' => Yii::$app->cart->getTotalPrice(),
+                'items' => Yii::$app->cart->getDataWithModels(),
             ]),
             'url' => Url::to($this->module->homeUrl)
         ];

@@ -8,6 +8,7 @@ use Yii;
 use yii\base\Component;
 use panix\mod\shop\models\Product;
 use panix\mod\shop\models\Currency;
+use yii\helpers\Html;
 use yii\web\Response;
 use yii\web\Session;
 
@@ -74,15 +75,19 @@ class Cart extends Component
         $itemIndex = $this->getItemIndex($data);
 
         $currentData = $this->getData();
+
         if (isset($currentData['items'][$itemIndex])) {
             //echo $currentData[$itemIndex]['quantity'];
             //die();
-            if ($currentData['items'][$itemIndex]['quantity']) {
+
+
+            //if add quantity++
+            /*if ($currentData['items'][$itemIndex]['quantity']) {
                 $currentData['items'][$itemIndex]['quantity'] += (int)$data['quantity'];
                 if ($currentData['items'][$itemIndex]['quantity'] > 999) {
                     $currentData['items'][$itemIndex]['quantity'] = 999;
                 }
-            }
+            }*/
         } else {
             $currentData['items'][$itemIndex] = $data;
         }
@@ -92,6 +97,7 @@ class Cart extends Component
     public function acceptPoint($bonus = 0)
     {
         $data = $this->getData();
+
         $this->session['cart_data'] = [
             'items' => $data['items'],
             'bonus' => $bonus
@@ -107,7 +113,6 @@ class Cart extends Component
         $currentData = $this->getData();
         if (isset($currentData['items'][$index])) {
             unset($currentData['items'][$index]);
-            //$this->session['cart_data'] = $currentData;
             $this->session['cart_data'] = $currentData;
         }
     }
@@ -139,7 +144,7 @@ class Cart extends Component
         if (empty($data['items']))
             return [];
 
-
+        arsort($data['items']);
         foreach ($data['items'] as $index => &$item) {
 
             $item['variant_models'] = [];
@@ -176,7 +181,9 @@ class Cart extends Component
 
         unset($item);
 
+
         $this->data = $data;
+
         return $this->data;
     }
 
@@ -286,7 +293,7 @@ class Cart extends Component
             $totalSummary = $this->getTotalPrice(true);
             $total = $this->getTotalPrice();
 
-            $points2 = (Yii::$app->request->post('OrderCreateForm')['points'])?Yii::$app->request->post('OrderCreateForm')['points']:0;
+            $points2 = (Yii::$app->request->post('OrderCreateForm')['points']) ? Yii::$app->request->post('OrderCreateForm')['points'] : 0;
             $bonusData = [];
             $config = Yii::$app->settings->get('user');
             $points = ($points2 * (int)$config->bonus_value);
@@ -362,6 +369,15 @@ class Cart extends Component
 
     }
 
+    public function hasIndex($index)
+    {
+        $data = $this->getData();
+        if (isset($data['items'][$index]))
+            return true;
+
+        return false;
+    }
+
     /**
      * @return int number of items in cart
      */
@@ -383,8 +399,38 @@ class Cart extends Component
      */
     public function getItemIndex($data)
     {
+        $index = $data['product_id'];
+        if ($data['configurable_id']) {
+            $index .= ':' . $data['configurable_id'];
+        }
+        if ($data['variants']) {
+            $index .= ':' . implode('_', $data['variants']);
+        }
 
-        return $data['product_id'] . implode('_', $data['variants']) . $data['configurable_id'];
+        return $index;
     }
+    public function buy($value, Product $model, array $options)
+    {
 
+        $configurable_id = 0;
+        if ($model->use_configurations) {
+            $configurable_id = $model->primaryKey;
+        }
+
+        $options['data'] = [
+            'product' => $model->primaryKey,
+            'configurable' => $configurable_id,
+            'quantity' => 1
+        ];
+
+
+        if(Yii::$app->cart->hasIndex($model->id)){
+            Html::addCssClass($options, 'btn-already-in-cart');
+            return Html::button('Оформить заказ ;)', $options);
+        }else{
+            Html::addCssClass($options, 'btn-buy');
+            return Html::button($value, $options);
+        }
+
+    }
 }

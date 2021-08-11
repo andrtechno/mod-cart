@@ -106,6 +106,27 @@ cart = {
                 if (data.errors) {
                     common.notify(data.errors, 'error');
                 } else {
+
+
+                    $.fancybox.open({
+                        src: '/cart/popup',
+                        type: 'ajax',
+                        opts: {
+                            touch: {
+                                vertical: false,
+                                momentum: false
+                            },
+                            ajax: {
+                                settings: {
+                                    method: 'POST',
+                                    data: form.serialize()
+                                }
+                            }
+                        },
+
+                    });
+
+
                     cart.renderBlockCart();
                     $.notify({
                         message: data.message,
@@ -113,8 +134,8 @@ cart = {
                     }, {
                         type: 'success',
                         allow_dismiss: false,
-                        delay:1,
-                        timer:($(document).width() > 768)?700:500,
+                        delay: 1,
+                        timer: ($(document).width() > 768) ? 700 : 500,
                         placement: {
                             from: "top",
                             align: "right"
@@ -223,29 +244,29 @@ cart = {
         });
     },*/
 
-    delivery:function(that){
+    delivery: function (that) {
 
         //if ($('#ordercreateform-delivery_id').val() == 1) {
-            console.log('init','delivery');
-            //$('#user-city, #user-address').hide();
-            $.ajax({
-                url: common.url('/cart/delivery/process?id='+$(that).val()),
-                type: 'GET',
-                // dataType:'json',
-                dataType:'html',
-                success: function (data) {
-                    $('#delivery-form').html(data);
-                    //console.log(data);
-                    /*if(data.cities){
-                        $('#delivery-form').append('<select id="ordercreateform-delivery_city" name="OrderCreateForm[delivery_city]" class="form-control">' +
-                            '<option value="address">Доставка на адрес</option>' +
-                            '<option value="warehouse">Доставка на отделение</option>' +
-                            '</select>');
-                    }*/
-                }
-            });
-       // }else{
-       //     $('#delivery-form').html('');
+        console.log('init', 'delivery');
+        //$('#user-city, #user-address').hide();
+        $.ajax({
+            url: common.url('/cart/delivery/process?id=' + $(that).val()),
+            type: 'GET',
+            // dataType:'json',
+            dataType: 'html',
+            success: function (data) {
+                $('#delivery-form').html(data);
+                //console.log(data);
+                /*if(data.cities){
+                    $('#delivery-form').append('<select id="ordercreateform-delivery_city" name="OrderCreateForm[delivery_city]" class="form-control">' +
+                        '<option value="address">Доставка на адрес</option>' +
+                        '<option value="warehouse">Доставка на отделение</option>' +
+                        '</select>');
+                }*/
+            }
+        });
+        // }else{
+        //     $('#delivery-form').html('');
         //    $('#user-city, #user-address').show();
         //}
     },
@@ -253,42 +274,42 @@ cart = {
     init: function () {
         console.log('cart.init');
         $(function () {
-			if ($.fn.spinner) {
-				$('.cart-spinner').spinner({
-					max: 999,
-					min: 1,
-					mouseWheel: false,
-					/*icons: {
-					 down: "btn btn-default",
-					 up: "btn btn-default"
-					 },*/
-					//клик по стрелочкам spinner
-					spin: function (event, ui) {
-						var max = $(this).spinner('option', 'max');
-						var product_id = $(this).attr('product_id');
-						if (ui.value >= 1 && cart.spinnerRecount) {
-							cart.recount(ui.value, product_id);
-						}
-						// && max > ui.value
-					},
-					stop: function (event, ui) { //запрещаем ввод числа больше 999;
-						var max = $(this).spinner('option', 'max');
-						if ($(this).val() > max)
-							$(this).val(max);
-					},
-					change: function (event, ui) {
-						var product_id = $(this).attr('product_id');
-						if ($(this).val() < 1) {
-							$(this).val(1);
-						}
-						if (cart.spinnerRecount) {
-							cart.recount($(this).val(), product_id);
-						}
-					}
-				});
-				$('.ui-spinner-down').html('-');
-				$('.ui-spinner-up').html('+');
-			}
+            if ($.fn.spinner) {
+                $('.cart-spinner').spinner({
+                    max: 999,
+                    min: 1,
+                    mouseWheel: false,
+                    /*icons: {
+                     down: "btn btn-default",
+                     up: "btn btn-default"
+                     },*/
+                    //клик по стрелочкам spinner
+                    spin: function (event, ui) {
+                        var max = $(this).spinner('option', 'max');
+                        var product_id = $(this).attr('product_id');
+                        if (ui.value >= 1 && cart.spinnerRecount) {
+                            cart.recount(ui.value, product_id);
+                        }
+                        // && max > ui.value
+                    },
+                    stop: function (event, ui) { //запрещаем ввод числа больше 999;
+                        var max = $(this).spinner('option', 'max');
+                        if ($(this).val() > max)
+                            $(this).val(max);
+                    },
+                    change: function (event, ui) {
+                        var product_id = $(this).attr('product_id');
+                        if ($(this).val() < 1) {
+                            $(this).val(1);
+                        }
+                        if (cart.spinnerRecount) {
+                            cart.recount($(this).val(), product_id);
+                        }
+                    }
+                });
+                $('.ui-spinner-down').html('-');
+                $('.ui-spinner-up').html('+');
+            }
         });
     }
 }
@@ -297,27 +318,98 @@ cart.init();
 
 
 $(function () {
+    $(document).on('click', '.spinner button', function () {
+        var action = $(this).data('action');
+        var input = $(this).parent().find('input');
+        var product = $(this).parent().data('product');
+        var value = input.val();
+        if (action == 'plus') {
+            value++;
+        } else {
+            value--;
+        }
+        value = (value > 999) ? 999 : value;
+        value = (value < 1) ? 1 : value;
+
+        if (value >= 1 && cart.spinnerRecount) {
+            cart.recount(value, product);
+        }
+
+
+        input.val(value);
+    });
+
+    $(document).on('click', '.btn-buy', function () {
+        var that = $(this);
+        var form = that.closest('form');
+        var action = form.attr('action');
+        console.log(form);
+        var product = that.data('product');
+        var configurable = that.data('configurable');
+        var quantity = that.data('quantity');
+        if (quantity === undefined) {
+            quantity = 1;
+        }
+        $.fancybox.open({
+            src: action,//common.url('/cart/add'),
+            type: 'ajax', //ajax html
+
+            opts: {
+                gutter: 10,
+                touch: {
+                    vertical: false,
+                    momentum: false
+                },
+                ajax: {
+                    settings: {
+                        method: 'POST',
+                        //data: {product_id: product, configurable_id: configurable, quantity: quantity},
+                        data: form.serialize(),
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.errors) {
+                                common.notify(data.errors, 'error');
+                            } else {
+                                var ins = $.fancybox.getInstance();
+                                that.text(data.buttonText);
+                                cart.renderBlockCart();
+                                ins.setContent(ins.current, data.html);
+                            }
+
+                        }
+                    }
+                }
+            }
+        });
+
+        return false;
+
+    });
+
+
     $(document).on('click', '.cart-remove', function () {
         var that = this
+        var product = $(this).data('product');
         var success;
         $.ajax({
-            url: $(this).attr('href'),
-            type: 'GET',
+            url: common.url('/cart/remove'),
+            type: 'POST',
             dataType: 'json',
+            data: {id: product},
             success: function (response) {
                 if (response.success) {
-                    success=true
+                    success = true
                     common.notify(response.message, 'success');
-                    $(that).closest('#product-'+response.id).remove();
+                    $(that).closest('#product-' + response.id).remove();
                     $(cart.selectorTotal).html(response.total_price);
                 } else {
-                    success=false
+                    success = false
                     common.notify('remove error', 'success');
                 }
             },
-            complete:function(){
-                if(success){
-                   cart.renderBlockCart();
+            complete: function () {
+                if (success) {
+                    cart.renderBlockCart();
                 }
             }
         });
@@ -348,12 +440,12 @@ $(function () {
 
 
                 },
-                complete:function () {
-                   // select.selectpicker('refresh');
+                complete: function () {
+                    // select.selectpicker('refresh');
                 }
             });
-        }else{
-           // select.attr('');
+        } else {
+            // select.attr('');
         }
     });
 
