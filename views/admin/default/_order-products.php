@@ -8,6 +8,7 @@ use panix\engine\CMS;
 
 /**
  * @var \panix\mod\cart\models\Order $model
+ * @var \yii\web\View $this
  */
 $symbol = Yii::$app->currency->active['symbol'];
 
@@ -46,9 +47,9 @@ echo GridView::widget([
             'value' => function ($model) {
                 /** @var $model OrderProduct */
 
-                if($model->getProduct()){
-                    return Html::a(Html::img($model->getProductImage('50x50')), $model->getProductImage(),['data-pjax'=>false]);
-                }else{
+                if ($model->getProduct()) {
+                    return Html::a(Html::img($model->getProductImage('50x50')), $model->getProductImage(), ['data-pjax' => false]);
+                } else {
                     return \panix\engine\Html::tag('span', 'товар удален', ['class' => 'badge badge-danger']);
                 }
 
@@ -61,7 +62,7 @@ echo GridView::widget([
             'value' => function ($model) {
                 /** @var $model OrderProduct */
                 if ($model->currency_id && $model->currency_rate) {
-                    $priceValue = Yii::$app->currency->convert($model->price / $model->currency_rate,$model->currency_id);
+                    $priceValue = Yii::$app->currency->convert($model->price / $model->currency_rate, $model->currency_id);
                 } else {
                     $priceValue = $model->price;
                 }
@@ -81,27 +82,32 @@ echo GridView::widget([
 
                 }*/
                 $price = Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
-                return $model->getProductName(false,['data-pjax'=>'0']) . '<br/>' . $variantsConfigure . $price;
+                return $model->getProductName(false, ['data-pjax' => '0']) . '<br/>' . $variantsConfigure . $price;
             },
         ],
         [
             'attribute' => 'quantity',
             'footer' => $model->productsCount,
+            'format' => 'raw',
             'contentOptions' => ['class' => 'text-center quantity'],
+            'value' => function ($model) {
+                //return Html::textInput('quantity[' . $model->product_id . ']', $model->quantity, ['data-title'=>$model->name,'data-product'=>$model->product_id,'readonly' => 'readonly','tabindex'=>-1, 'class' => 'form-control d-inline text-center', 'style' => 'max-width:50px']);
+                return Html::button($model->quantity, ['data-value'=>$model->quantity,'data-title'=>$model->name,'data-product'=>$model->product_id,'class' => 'btn', 'style' => '']);
+            }
 
         ],
         [
             'attribute' => 'price',
             'format' => 'raw',
-            'contentOptions' => ['class' => 'text-center','style'=>'min-width:120px'],
+            'contentOptions' => ['class' => 'text-center', 'style' => 'min-width:120px'],
             'footer' => Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main['symbol'],
             'value' => function ($model) {
                 /** @var $model OrderProduct */
                 //if ($model->currency_id && $model->currency_rate) {
                 //    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
-               // } else {
-                    $priceValue = $model->price * $model->quantity;
-              //  }
+                // } else {
+                $priceValue = $model->price * $model->quantity;
+                //  }
                 return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
             }
         ],
@@ -127,76 +133,199 @@ Pjax::end();
 ?>
 
 
-<div class="panel-container">
-    <ul class="list-group">
-        <?php if ($model->user_id) { ?>
+    <div class="panel-container">
+        <ul class="list-group">
+            <?php if ($model->user_id) { ?>
+                <li class="list-group-item">
+                    Бонусы к зачаслению:
+                    <h5 class="m-0 float-right"><?= floor($model->total_price * Yii::$app->settings->get('user', 'bonus_ratio')) ?>
+                        <span class="text-muted"><?= $symbol ?></span></h5>
+                </li>
+            <?php } ?>
+            <?php if ($model->delivery_price > 0) { ?>
+                <li class="list-group-item">
+                    <?= Yii::t('cart/Order', 'DELIVERY_PRICE') ?>: <strong
+                            class="float-right"><?= Yii::$app->currency->number_format($model->delivery_price); ?> <?= $symbol; ?></strong>
+                </li>
+            <?php } ?>
             <li class="list-group-item">
-                Бонусы к зачаслению:
-                <h5 class="m-0 float-right"><?= floor($model->total_price * Yii::$app->settings->get('user', 'bonus_ratio')) ?>
-                    <span class="text-muted"><?= $symbol ?></span></h5>
+                <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong
+                        class="float-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <span
+                            class="text-muted"><?= $symbol ?></span></strong>
             </li>
-        <?php } ?>
-        <?php if ($model->delivery_price > 0) { ?>
-            <li class="list-group-item">
-                <?= Yii::t('cart/Order', 'DELIVERY_PRICE') ?>: <strong
-                        class="float-right"><?= Yii::$app->currency->number_format($model->delivery_price); ?> <?= $symbol; ?></strong>
+            <?php if ($model->discount) { ?>
+                <li class="list-group-item">
+                    <?= $model::t('DISCOUNT') ?>:
+                    <?php if ('%' === substr($model->discount, -1, 1)) { ?>
+                        <strong class="float-right"><?= $model->discount; ?></strong>
+                    <?php } else { ?>
+                        <strong class="float-right"><?= Yii::$app->currency->number_format($model->discount) ?> <span
+                                    class="text-muted"><?= $symbol ?></span></strong>
+                    <?php } ?>
+                </li>
+            <?php } ?>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>
+                <h4 class="m-0"><?= Yii::$app->currency->number_format($model->full_price); ?>
+                    <small class="text-muted"><?= $symbol; ?></small>
+                </h4>
             </li>
-        <?php } ?>
-        <li class="list-group-item">
-            <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong
-                    class="float-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <span
-                        class="text-muted"><?= $symbol ?></span></strong>
-        </li>
-        <?php if ($model->discount) { ?>
-            <li class="list-group-item">
-                <?= $model::t('DISCOUNT') ?>:
-                <?php if ('%' === substr($model->discount, -1, 1)) { ?>
-                    <strong class="float-right"><?= $model->discount; ?></strong>
-                <?php } else { ?>
-                    <strong class="float-right"><?= Yii::$app->currency->number_format($model->discount) ?> <span
-                                class="text-muted"><?= $symbol ?></span></strong>
-                <?php } ?>
-            </li>
-        <?php } ?>
-        <li class="list-group-item d-flex justify-content-between">
-            <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>
-            <h4 class="m-0"><?= Yii::$app->currency->number_format($model->full_price); ?>
-                <small class="text-muted"><?= $symbol; ?></small>
-            </h4>
-        </li>
-    </ul>
-</div>
-
-
-<div class="card mt-4">
-    <div class="card-header">
-        <h5><?= Yii::t('cart/admin', 'Доп информация'); ?></h5>
+        </ul>
     </div>
-    <div class="card-body">
 
-        <?php
-        $browser = new \panix\engine\components\Browser($model->user_agent);
-        ?>
 
-        <div class="list-group-item d-flex justify-content-between">
-            <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('ip_create'); ?>:</span>
-            <span class="m-0"><?= CMS::ip($model->ip_create); ?></span>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5><?= Yii::t('cart/admin', 'Доп информация'); ?></h5>
         </div>
-        <div class="list-group-item d-flex justify-content-between">
-            <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('created_at'); ?>:</span>
-            <span class="m-0"><?= CMS::date($model->created_at); ?></span>
-        </div>
-        <div class="list-group-item d-flex justify-content-between">
-            <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('updated_at'); ?>:</span>
-            <span class="m-0"><?= CMS::date($model->updated_at); ?></span>
-        </div>
-        <div class="list-group-item d-flex justify-content-between">
-            <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('user_agent'); ?>:</span>
-            <span class="m-0 text-right">
+        <div class="card-body">
+
+            <?php
+            $browser = new \panix\engine\components\Browser($model->user_agent);
+            ?>
+
+            <div class="list-group-item d-flex justify-content-between">
+                <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('ip_create'); ?>:</span>
+                <span class="m-0"><?= CMS::ip($model->ip_create); ?></span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between">
+                <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('created_at'); ?>:</span>
+                <span class="m-0"><?= CMS::date($model->created_at); ?></span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between">
+                <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('updated_at'); ?>:</span>
+                <span class="m-0"><?= CMS::date($model->updated_at); ?></span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between">
+                <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('user_agent'); ?>:</span>
+                <span class="m-0 text-right">
                     <?= $browser->getBrowser(); ?> (v <?= $browser->getVersion(); ?>)
                     <br/>
                 <?= $browser->getPlatformIcon(); ?> <?= $browser->getPlatform(); ?>
                 </span>
+            </div>
         </div>
     </div>
-</div>
+
+
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php
+if(!$model->isNewRecord){
+$this->registerJs("
+
+var locale = {
+    OK: 'OK',
+    CONFIRM: 'CONFIRM',
+    CANCEL: 'Cancel'
+};
+
+bootbox.addLocale('custom', locale);
+
+
+
+
+$(document).on('click','.quantity button',function(e){
+console.log(e);
+var title = $(this).data('title');
+var product_id = $(this).data('product');
+//var value = $(this).val();
+var value = $(this).html();
+    if($(this).prop('readonly')){
+        $(this).prop('readonly',false);
+    }else{
+        $(this).prop('readonly',true);
+    }
+
+
+bootbox.prompt({
+    value:value,
+    title: title, 
+    message: 'Укажите количество',
+    locale: 'custom',
+    inputType: 'number',
+    backdrop:true,
+    onEscape:true,
+    //centerVertical: true,
+    callback: function (result) {
+    
+console.log(result);
+
+        var pattern = /^\d+$/;
+        var valid = false;
+        
+        if(pattern.test(result) && result <= 999 && result >= 1)
+            valid=true;
+
+        
+        console.log('valid',valid);
+        if(valid){
+            $(this).find('input').removeClass('error');
+            if(value != result && valid){
+                $.ajax({
+                    url:'/admin/cart/default/quantity?id=".$model->id."',
+                    type:'POST',
+                    data:{product_id:product_id,quantity:result},
+                    dataType:'json',
+                    success:function(response){
+                        if(response.success){
+                            common.notify(response.message,'success');
+                            $.pjax.reload({container:\"#pjax-container-products\",timeout:false});
+                        }else{
+                        }
+                    }
+                });
+            }
+            return true;
+        }else{
+            $(this).find('input').addClass('error');
+            return false;
+        }
+
+    }
+});
+
+
+});
+
+
+$(document).on('keyup','.quantity input',function(e){
+    console.log(e,e.keyCode);
+    var value = $(this).val();
+    if(e.keyCode !== 8){ //backspace
+    
+    
+        var pattern = /^\d+$/;
+        if(pattern.test(value)){
+            //console.log('patt');
+            $(this).removeClass('error');
+        }else{
+            $(this).addClass('error');
+            console.log('ошибка');
+            return false;
+        }
+    }
+    console.log('das');
+});
+
+");
+}

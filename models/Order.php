@@ -3,7 +3,9 @@
 namespace panix\mod\cart\models;
 
 use panix\engine\CMS;
+use panix\mod\cart\components\OrderCreateEvent;
 use panix\mod\cart\models\search\OrderSearch;
+use panix\mod\cart\Module;
 use panix\mod\news\models\search\NewsSearch;
 use panix\mod\novaposhta\models\Warehouses;
 use panix\mod\shop\models\ProductType;
@@ -607,22 +609,33 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @param array $data
+     * @param array $data [product_id=>quantity]
      */
     public function setProductQuantities(array $data)
     {
         foreach ($this->products as $product) {
+
             if (isset($data[$product->id])) {
+
                 if ((int)$product->quantity !== (int)$data[$product->id]) {
-                    $event = new ModelEvent($this, [
+                    /*$event = new ModelEvent($this, [
                         'ordered_product' => $product,
                         'new_quantity' => (int)$data[$product->id]
+                    ]);*/
+
+                    $event = new EventProduct([
+                       // 'product_model' => $product,
+                        'ordered_product' => $product,
+                        'quantity' => (int)$data[$product->id]
                     ]);
-                    $this->onProductQuantityChanged($event);
-                    //$this->trigger('onProductQuantityChanged');
+
+
+                    $this->onProductUpdateQuantity($event);
+
                 }
 
                 $product->quantity = (int)$data[$product->id];
+              //  print_r($product);die;
                 $product->save(false);
             }
         }

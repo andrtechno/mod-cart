@@ -78,6 +78,7 @@ $formOrder = ActiveForm::begin([
     'options' => ['class' => 'form-horizontal'],
 ]) ?>
 
+
 <div class="row">
     <?php
     if (empty($items)) { ?>
@@ -202,7 +203,7 @@ $formOrder = ActiveForm::begin([
                             ?>
                         </td>
                         <td width="20px" class="remove-item">
-                            <?= Html::a(Html::icon('delete'), ['/cart/default/remove', 'id' => $index], ['class' => 'btn btn-sm text-danger cart-remove']) ?>
+                            <?= Html::a(Html::icon('delete'), ['/cart/default/remove', 'id' => $index], ['data-product' => $index, 'class' => 'btn btn-sm text-danger cart-remove']) ?>
                         </td>
                     </tr>
                 <?php } ?>
@@ -242,7 +243,8 @@ $formOrder = ActiveForm::begin([
     <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h4><?= Yii::t('cart/default', 'USER_DATA'); ?></h4>
+                <h3 class="panel-title"><?= Yii::t('cart/default', 'USER_DATA'); ?></h3>
+
             </div>
             <div class="card-body">
                 <div class="text-muted mb-3">

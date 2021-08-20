@@ -34,7 +34,12 @@ to the require section of your `composer.json` file.
 Add to web config.
 ```
 'modules' => [
-    'cart' => ['class' => 'panix\mod\cart\Module'],
+    'cart' => [
+        'class' => 'panix\mod\cart\Module',
+        'on orderCreate' => function ($event) {
+            //Event after create order "$event->order"
+        }
+    ],
 ]
 ```
 

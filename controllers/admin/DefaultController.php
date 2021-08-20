@@ -4,6 +4,7 @@ namespace panix\mod\cart\controllers\admin;
 
 use panix\engine\CMS;
 use panix\mod\cart\components\delivery\BaseDeliverySystem;
+use panix\mod\cart\components\events\EventProduct;
 use Yii;
 use yii\helpers\Markdown;
 use yii\helpers\Url;
@@ -27,6 +28,47 @@ class DefaultController extends AdminController
             ],*/
         ];
     }
+
+    /**
+     * Update Quantity products
+     *
+     * @param $id
+     * @return Response
+     */
+    public function actionQuantity($id)
+    {
+        $product_id = Yii::$app->request->post('product_id');
+        $quantity = Yii::$app->request->post('quantity');
+        $result['success'] = false;
+        if ($product_id && $quantity) {
+            //$product = Yii::$app->request->post();
+            //$quantity = $post['quantity'][$key];
+            $product = OrderProduct::find()->where(['order_id' => $id, 'product_id' => $product_id])->one();
+            $oldQuantity = $product->quantity;
+           // $product->quantity = $quantity;
+            //$event = new EventProduct([
+            //    'product_model' => $product->originalProduct,
+            //    'ordered_product' => $product,
+            //    'quantity' => $quantity,
+              //  'params'=>['new_quantity'=>$quantity]
+           // ]);
+           // $product->save(false);
+
+            /** @var Order $order */
+            $order = Order::findOne($id);
+           // $order = $product->order;
+
+
+            $order->setProductQuantities([$product->id=>$quantity]);
+            //$order->eventProductQuantityChanged($event);
+           // $order->updateTotalPrice();
+            $result['success'] = true;
+            $result['message'] = "Количество <strong>{$product->name}</strong> успешно изменено.";
+
+        }
+        return $this->asJson($result);
+    }
+
     public function actionRelated()
     {
         $model = Order::findModel(Yii::$app->request->post('order_id'));
@@ -36,6 +78,7 @@ class DefaultController extends AdminController
             return $this->redirect(['update', 'id' => Yii::$app->request->post('order_id')]);
         }
     }
+
     public function actionPrint($id)
     {
         $currentDate = CMS::date(time());
@@ -184,8 +227,9 @@ class DefaultController extends AdminController
                     $model->setProductQuantities(Yii::$app->request->post('quantity'));
 
                 return $this->redirectPage($isNew, $post);
-            }else{
-                CMS::dump($model->getErrors());die;
+            } else {
+                CMS::dump($model->getErrors());
+                die;
             }
         }
         return $this->render('update', [
@@ -336,7 +380,7 @@ class DefaultController extends AdminController
        ]);*/
 
         $statuses = Yii::$app->request->get('status_id');
-        $query = Order::find()->where(['buyOneClick' => 0])->andWhere(['status_id'=>$statuses]);
+        $query = Order::find()->where(['buyOneClick' => 0])->andWhere(['status_id' => $statuses]);
         if ($selection) {
             $query->andWhere([Order::tableName() . '.id' => $selection]);
         }
@@ -412,14 +456,15 @@ class DefaultController extends AdminController
 
     public function actionReadDocFile($file)
     {
-        if(file_exists(Yii::getAlias($file))){
+        if (file_exists(Yii::getAlias($file))) {
             $result = Markdown::process(file_get_contents(Yii::getAlias($file)), 'gfm');
         }
         return $this->render('@cart/guide/MAIL_TEMPLATE.md');
-      //  return $result;
+        //  return $result;
     }
 
-    public function actionOrderSendEmail($id){
+    public function actionOrderSendEmail($id)
+    {
         $model = Order::findOne($id);
         $model->sendAdminEmail(['andrew.panix@gmail.com']);
         $model->sendClientEmail('andrew.panix@gmail.com');

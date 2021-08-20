@@ -8,10 +8,7 @@ use panix\engine\CMS;
 ?>
 <table width="100%">
     <tr>
-        <td width="10%">
-            <?= Html::img('/uploads/pdf-logo.png'); ?>
-        </td>
-        <td width="50%">
+        <td width="60%">
             <h1>№<?= CMS::idToNumber($model->id); ?></h1>
         </td>
         <td width="40%" style="text-align: right"><?= $model->getAttributeLabel('created_at'); ?>:

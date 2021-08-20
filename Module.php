@@ -3,6 +3,7 @@
 namespace panix\mod\cart;
 
 use app\web\themes\dashboard\sidebar\BackendNav;
+use panix\mod\cart\components\OrderEvent;
 use panix\mod\cart\controllers\admin\DefaultController;
 use Yii;
 use panix\engine\WebModule;
@@ -18,9 +19,24 @@ class Module extends WebModule implements BootstrapInterface
     public $buyOneClick = [
         'skinForm' => '@cart/widgets/buyOneClick/views/_form'
     ];
+    public $modalView = '@cart/widgets/cart2/views/_items';
+    public $emptyView = '@cart/widgets/cart2/views/_empty';
+
+    const EVENT_ORDER_CREATE = 'orderCreate';
+
+    public function onOrderCreate($order)
+    {
+        $event = new OrderEvent();
+        $event->order = $order;
+        $this->trigger(self::EVENT_ORDER_CREATE, $event);
+        return $event->order;
+    }
 
     public function init()
     {
+        if ($this->hasEventHandlers(self::EVENT_ORDER_CREATE)) {
+            $this->on(self::EVENT_ORDER_CREATE, [$this, 'onOrderCreate']);
+        }
         if (!(Yii::$app instanceof yii\console\Application) && !Yii::$app->user->isGuest) {
             $count = Order::find()->where(['status_id' => Order::STATUS_NEW])->count();
             $this->count['num'] = (int)$count;
@@ -65,14 +81,35 @@ class Module extends WebModule implements BootstrapInterface
             ],
             true
         );
+
+        $app->setComponents([
+            'cart' => [
+                'class' => 'panix\mod\cart\components\Cart',
+                'on createOrder' => function () {
+                    die('e');
+                }
+            ],
+        ]);
+
         if (!(Yii::$app instanceof yii\console\Application)) {
             if ($this->count)
                 $app->counters[$this->id] = $this->count['num'];
+
+            $cart = Yii::$app->cart;
+            $items = $cart->getDataWithModels();
+
+            $this->cart = [
+                'items' => isset($items['items']) ? $items['items'] : [],
+                'total' => $cart->getTotalPrice(),
+                'count' => $cart->countItems()
+            ];
         }
-        $app->setComponents([
-            'cart' => ['class' => 'panix\mod\cart\components\Cart'],
-        ]);
+
+
     }
+
+    public $cart;
+
 
     public function getInfo()
     {

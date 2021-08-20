@@ -260,7 +260,7 @@ class Cart extends Component
                 $currentData['items'][$index]['quantity'] = (int)$quantity;
                 $data = $currentData['items'][$index];
 
-
+                $response['product_id'] = $data['product_id'];
                 $productModel = $this->productModel::findOne($data['product_id']);
 
                 $calcPrice = $this->productModel::calculatePrices($productModel, $data['variants'], $data['configurable_id'], $data['quantity']);
@@ -281,6 +281,7 @@ class Cart extends Component
                     $rowTotal = $calcPrice * $data['quantity'];
 
                 }
+                $response['rowQuantity'] = $data['quantity'];
             }
             //$total+=$rowTotal;
         }
@@ -342,6 +343,8 @@ class Cart extends Component
         $response['unit_price'] = Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice));
         $response['rowTotal'] = Yii::$app->currency->number_format($rowTotal);
         $response['total_price'] = Yii::$app->currency->number_format((isset($total)) ? $total : $this->getTotalPrice());
+        $response['countItems'] = $this->countItems();
+
 
         return $response;
     }
@@ -417,19 +420,36 @@ class Cart extends Component
             $configurable_id = $model->primaryKey;
         }
 
-        $options['data'] = [
+        /*$options['data'] = [
             'product' => $model->primaryKey,
             'configurable' => $configurable_id,
             'quantity' => 1
+        ];*/
+        $options['data'] = [
+            'product' => $model->primaryKey,
+          //  'configurable' => $configurable_id,
+           // 'quantity' => 1
         ];
-
 
         if(Yii::$app->cart->hasIndex($model->id)){
             Html::addCssClass($options, 'btn-already-in-cart');
-            return Html::button('Оформить заказ ;)', $options);
+            $options['onclick']='cart.popup(false)';
+            return Html::button('В корзине', $options);
         }else{
-            Html::addCssClass($options, 'btn-buy');
-            return Html::button($value, $options);
+            if ($model->isAvailable) {
+
+                Html::addCssClass($options, 'btn-buy');
+                //$options['data-toggle']='modal';
+                //$options['data-target']='#myModal';
+                $options['onclick']='cart.add(this)';
+                return Html::button($value, $options);
+
+
+            } else {
+                \panix\mod\shop\bundles\NotifyAsset::register($this);
+                return Html::button(Yii::t('shop/default', 'NOT_AVAILABLE'), ['onclick'=>'javascript:notify(' . $model->id . ');', 'class' => 'text-danger']);
+            }
+
         }
 
     }

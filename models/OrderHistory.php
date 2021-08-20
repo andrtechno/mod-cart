@@ -60,7 +60,7 @@ class OrderHistory extends ActiveRecord
     public function prepareData($data)
     {
         $order = new Order;
-        $result = array();
+        $result = [];
         $data = unserialize($data);
 
         foreach ($data as $key => $val) {

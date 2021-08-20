@@ -166,8 +166,9 @@ class m170908_134034_cart extends Migration
         $this->batchInsert(OrderStatus::tableName(), ['name', 'color', 'ordern', 'use_in_stats'], [
             ['Новый', '#67bf3b', 1, 0],
             ['Удален', '#db6058', 2, 0],
-            ['Отправлен', '#b4b4c2', 2, 0],
-            ['Выполнен', '#e0e089', 2, 1],
+            ['Отправлен', '#b4b4c2', 3, 0],
+            ['Выполнен', '#e0e089', 4, 1],
+            ['Возврат', '#799ff3', 5, 0],
         ]);
 
 

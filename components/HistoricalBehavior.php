@@ -3,6 +3,7 @@
 namespace panix\mod\cart\components;
 
 use panix\engine\Html;
+use panix\mod\cart\components\events\EventProduct;
 use panix\mod\cart\models\Payment;
 use Yii;
 use panix\mod\cart\models\Delivery;
@@ -29,7 +30,7 @@ class HistoricalBehavior extends Behavior
     const PRODUCT_HANDLER = 'product';
 
     const EVENT_PRODUCT_ADDED = 'onProductAdded';
-    const EVENT_PRODUCT_QUANTITY_CHANGED = 'onProductQuantityChanged';
+    const EVENT_PRODUCT_UPDATE_QUANTITY = 'onProductUpdateQuantity';
     const EVENT_PRODUCT_DELETED = 'onProductDeleted';
 
     public function events()
@@ -40,14 +41,14 @@ class HistoricalBehavior extends Behavior
             ActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
             self::EVENT_PRODUCT_ADDED => [$this, 'onProductAdded'],
-            self::EVENT_PRODUCT_QUANTITY_CHANGED => [$this, 'onProductQuantityChanged'],
+            self::EVENT_PRODUCT_UPDATE_QUANTITY => [$this, 'onProductUpdateQuantity'],
             self::EVENT_PRODUCT_DELETED => [$this, 'onProductDeleted'],
         ];
     }
 
 
     /**
-     * @param $event
+     * @param $event EventProduct
      */
     public function onProductAdded($event)
     {
@@ -67,7 +68,7 @@ class HistoricalBehavior extends Behavior
     }
 
     /**
-     * @param $event
+     * @param  $event EventProduct
      */
     public function onProductDeleted($event)
     {
@@ -86,20 +87,21 @@ class HistoricalBehavior extends Behavior
     }
 
     /**
-     * @param $event
+     * @param $event EventProduct
      */
-    public function onProductQuantityChanged($event)
+    public function onProductUpdateQuantity($event)
     {
+        $original = $event->ordered_product->originalProduct ? $event->ordered_product->originalProduct : null;
         $this->log([
             'handler' => self::PRODUCT_HANDLER,
             'data_before' => serialize([
                 'changed' => true,
-                'name' => $event->ordered_product->getRenderFullName(),
-                'image' => ($event->ordered_product->originalProduct) ? $event->ordered_product->originalProduct->getMainImage('50x50')->url : 'no image',
+                'name' => Html::a($event->ordered_product->name, $original->getUrl()),
+                'image' => ($original) ? $original->getMainImage('50x50')->url : 'no image',
                 'quantity' => $event->ordered_product->quantity
             ]),
             'data_after' => serialize([
-                'quantity' => $event->params['new_quantity']
+                'quantity' => $event->quantity
             ]),
         ]);
     }

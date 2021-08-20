@@ -14,18 +14,24 @@
  * @function notifier Сообщить о появление (ajax response)
  * @function init Инициализация jquery spinner
  */
+
+
 var cart_recount_xhr;
 var cart = window.cart || {};
+
 cart = {
     /**
      * @return boolean
      */
     spinnerRecount: true,
-    selectorTotal: '.cart-total',
+    selectorCount: '.cart-countItems',
+    selectorTotal: '.cart-totalPrice',
     skin: 'default',
     /**
      * @param that
      */
+    log: common.logger('Cart.js'),
+
     recountTotalPrice: function (that) {
 
         //var total = parseFloat(orderTotalPrice);
@@ -92,7 +98,54 @@ cart = {
         });
 
     },
+    popupCallback: function () {
+        $('#cart-modal').modal('show');
+    },
+    popup: function (reload = true) {
+        cart.log.debug('popup','[reload: '+reload+']',);
+        if (reload) {
+            $("#cart-modal .modal-body").load(common.url('/cart/popup'), {}, function () {
+                cart.popupCallback();
+            });
+        } else {
+            cart.popupCallback();
+        }
+
+    },
     add: function (that) {
+        var form = $(that).closest('form');
+
+        cart.log.debug('add',that);
+
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            dataType: 'json',
+            data: form.serialize(),
+            beforeSend:function(){
+                $(that).addClass('btn-loading');
+            },
+            success: function (data, textStatus, xhr) {
+                $(that).removeClass('btn-loading');
+                if (data.errors) {
+                    common.notify(data.errors, 'error');
+                } else {
+                    cart.popup();
+                    $(that).text(data.buttonText);
+                    $(that).attr('onclick', 'cart.popup(false);');
+                    //cart.renderBlockCart();
+                    $(cart.selectorCount).html(data.countItems);
+                    $(cart.selectorTotal).html(data.total_price_format);
+
+
+                }
+            },
+            complete: function () {
+
+            }
+        });
+    },
+    add2: function (that) {
         //var form = $("#form-add-cart-" + product_id);
 
         var form = $(that).closest('form');
@@ -155,6 +208,14 @@ cart = {
             }
         });
     },
+    addLoader: function () {
+        cart.log.debug('addLoader');
+        $('#cart-modal, #cart-table').addClass('modal-loading');
+    },
+    removeLoader: function () {
+        cart.log.debug('removeLoader');
+        $('#cart-modal, #cart-table').removeClass('modal-loading');
+    },
     /**
      * @param product_id ИД обэекта
      * @param quantities Количество
@@ -172,10 +233,14 @@ cart = {
                 product_id: product_id,
                 quantities: quantities
             },
+            beforeSend: function () {
+                cart.addLoader();
+            },
             dataType: 'json',
             success: function (data) {
-                $('#row-total-price' + product_id).find('span:first-child').html(data.rowTotal);
-                $('#price-unit-' + product_id).find('span:first-child').html(data.unit_price);
+                $('#row-total-price' + data.product_id).addClass('TTTTTTTTTTTTTTTTTTTT').html('dsadsa')
+                $('.row-total-price' + data.product_id).find('span:first-child').html(data.rowTotal);
+                $('.price-unit-' + data.product_id).find('span:first-child').html(data.unit_price);
                 //var delprice = 0;
                 //if ($('.delivery-choose').prop("checked")) { //for april
                 //    delprice = parseInt($('.delivery-choose:checked').attr("data-price"));
@@ -187,11 +252,14 @@ cart = {
 
                 // $('#balance').text(data.balance);
                 //$('#balance').text((Number(data.total_price) * disum / 100));
+                cart.log.debug('recount',data);
 
-                common.removeLoader();
                 //$(cart.selectorTotal).text(price_format(total));
-                $(cart.selectorTotal).html(total);
-                cart.renderBlockCart();
+                $(cart.selectorTotal).html(data.total_price);
+                $(cart.selectorCount).html(data.countItems);
+                $('.product-' + data.product_id + ' .spinner input').val(data.rowQuantity)
+                cart.removeLoader();
+                //cart.renderBlockCart();
             }
         });
     },
@@ -247,7 +315,7 @@ cart = {
     delivery: function (that) {
 
         //if ($('#ordercreateform-delivery_id').val() == 1) {
-        console.log('init', 'delivery');
+        cart.log.debug('init', 'delivery');
         //$('#user-city, #user-address').hide();
         $.ajax({
             url: common.url('/cart/delivery/process?id=' + $(that).val()),
@@ -272,49 +340,11 @@ cart = {
     },
 
     init: function () {
-        console.log('cart.init');
-        $(function () {
-            if ($.fn.spinner) {
-                $('.cart-spinner').spinner({
-                    max: 999,
-                    min: 1,
-                    mouseWheel: false,
-                    /*icons: {
-                     down: "btn btn-default",
-                     up: "btn btn-default"
-                     },*/
-                    //клик по стрелочкам spinner
-                    spin: function (event, ui) {
-                        var max = $(this).spinner('option', 'max');
-                        var product_id = $(this).attr('product_id');
-                        if (ui.value >= 1 && cart.spinnerRecount) {
-                            cart.recount(ui.value, product_id);
-                        }
-                        // && max > ui.value
-                    },
-                    stop: function (event, ui) { //запрещаем ввод числа больше 999;
-                        var max = $(this).spinner('option', 'max');
-                        if ($(this).val() > max)
-                            $(this).val(max);
-                    },
-                    change: function (event, ui) {
-                        var product_id = $(this).attr('product_id');
-                        if ($(this).val() < 1) {
-                            $(this).val(1);
-                        }
-                        if (cart.spinnerRecount) {
-                            cart.recount($(this).val(), product_id);
-                        }
-                    }
-                });
-                $('.ui-spinner-down').html('-');
-                $('.ui-spinner-up').html('+');
-            }
-        });
+        cart.log.debug('Init',this);
     }
 }
 
-cart.init();
+//cart.init();
 
 
 $(function () {
@@ -335,15 +365,33 @@ $(function () {
             cart.recount(value, product);
         }
 
-
-        input.val(value);
+        //update all spinner value
+        $('.spinner[data-product="'+product+'"]').find('input').val(value);
+        //  input.val(value);
     });
 
-    $(document).on('click', '.btn-buy', function () {
+    $(document).on('keyup', '.spinner input', function () {
+        var input = $(this);
+        var product = $(this).parent().data('product');
+        var value = input.val();
+
+        value = (value > 999) ? 999 : value;
+        value = (value < 1) ? 1 : value;
+
+        if (value >= 1 && cart.spinnerRecount) {
+            cart.recount(value, product);
+        }
+
+        //update all spinner value
+        $('.spinner[data-product="'+product+'"]').find('input').val(value);
+
+    });
+
+    $(document).on('click', '.btn-buy222', function () {
         var that = $(this);
         var form = that.closest('form');
         var action = form.attr('action');
-        console.log(form);
+        cart.log.debug(form);
         var product = that.data('product');
         var configurable = that.data('configurable');
         var quantity = that.data('quantity');
@@ -390,27 +438,42 @@ $(function () {
     $(document).on('click', '.cart-remove', function () {
         var that = this
         var product = $(this).data('product');
+        var isPopup = $(this).data('ispopup');
+
+
         var success;
         $.ajax({
             url: common.url('/cart/remove'),
             type: 'POST',
             dataType: 'json',
-            data: {id: product},
+            data: {id: product,isPopup:isPopup},
+            beforeSend:function(){
+              cart.addLoader();
+            },
             success: function (response) {
                 if (response.success) {
-                    success = true
+
+                    if (response.reload) {
+                        cart.popup(true);
+                    } else {
+                        $(that).closest('#product-' + response.id).remove();
+                    }
+
                     common.notify(response.message, 'success');
-                    $(that).closest('#product-' + response.id).remove();
+
                     $(cart.selectorTotal).html(response.total_price);
+                    $(cart.selectorCount).html(response.countItems);
+                    var button = $('button[data-product=' + response.id + ']');
+                    if (button) {
+                        button.attr('onclick', 'cart.add(this)').text(response.button_text_add)
+                    }
                 } else {
-                    success = false
-                    common.notify('remove error', 'success');
+
+                    common.notify(response.message, 'error');
                 }
             },
             complete: function () {
-                if (success) {
-                    cart.renderBlockCart();
-                }
+                cart.removeLoader();
             }
         });
         return false;
@@ -451,7 +514,7 @@ $(function () {
 
 
     select.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-        console.log('CHNAGE?', clickedIndex, isSelected, previousValue, $(this).selectpicker('val'));
+        cart.log.debug('CHNAGE?', clickedIndex, isSelected, previousValue, $(this).selectpicker('val'));
 
 
         $.ajax({
@@ -463,7 +526,7 @@ $(function () {
                 select.html('');
                 // cada array del parametro tiene un elemento index(concepto) y un elemento value(el  valor de concepto)
                 $.each(data, function (index, value) {
-                    console.log(value);
+                    cart.log.debug(value);
                     select.append('<option id="' + value + '">' + value + '</option>');
                 });
                 select.selectpicker('refresh');
@@ -476,4 +539,3 @@ $(function () {
 
 
 });
-

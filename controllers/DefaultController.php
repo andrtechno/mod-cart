@@ -2,16 +2,20 @@
 
 namespace panix\mod\cart\controllers;
 
-
 use panix\engine\bootstrap\ActiveForm;
 use panix\engine\CMS;
 use panix\mod\cart\CartAsset;
+use panix\mod\cart\components\OrderEvent;
+use panix\mod\cart\Module;
 use panix\mod\novaposhta\models\Cities;
 use panix\mod\novaposhta\models\Warehouses;
 use panix\mod\shop\models\Attribute;
 use panix\mod\user\models\forms\LoginForm;
 use Yii;
+use yii\base\ActionEvent;
+use yii\base\Event;
 use yii\base\Exception;
+use yii\db\ActiveRecord;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
@@ -53,10 +57,13 @@ class DefaultController extends WebController
             ],
         ];
     }
+
     public function actionTest()
     {
-        CMS::dump(Yii::$app->cart->getDataWithModels());die;
+        CMS::dump(Yii::$app->cart->getDataWithModels());
+        die;
     }
+
     public function actionRecount()
     {
         if (Yii::$app->request->isAjax) {
@@ -72,9 +79,13 @@ class DefaultController extends WebController
 
     public function actionPopup()
     {
-        return $this->renderAjax('popup', [
-            'totalPrice' => Yii::$app->cart->getTotalPrice(),
-            'items' => Yii::$app->cart->getDataWithModels(),
+        $cart = Yii::$app->cart;
+        $items = $cart->getDataWithModels();
+
+        return $this->renderAjax($this->module->modalView, [
+            'total' => $cart->getTotalPrice(),
+            'items' => isset($items['items']) ? $items['items'] : [],
+            'isPopup' => true
         ]);
     }
 
@@ -183,7 +194,7 @@ class DefaultController extends WebController
 
         }
         return $this->render('index', [
-            'items' => isset($items['items'])?$items['items']:[],
+            'items' => isset($items['items']) ? $items['items'] : [],
             'totalPrice' => $totalPrice,
             'deliveryMethods' => $deliveryMethods,
             'paymentMethods' => $paymentMethods,
@@ -277,12 +288,12 @@ class DefaultController extends WebController
      */
     public function actionAdd()
     {
-        $product_id= Yii::$app->request->post('product_id', 0);
+        $product_id = Yii::$app->request->post('product_id', 0);
         $cart = Yii::$app->cart;
-        if($cart->hasIndex($product_id)){
+        if ($cart->hasIndex($product_id)) {
             $data = [
                 'errors' => true,
-                'status'=>'already_exists',
+                'status' => 'already_exists',
                 'message' => 'Товар уже в корзине.',
                 'url' => Url::to($this->module->homeUrl)
             ];
@@ -335,7 +346,7 @@ class DefaultController extends WebController
         $model->updateCounters(['added_to_cart_count' => 1]);
 
 
-           // print_r($items);die;
+        // print_r($items);die;
         $cart->add([
             'product_id' => $model->id,
             'variants' => $variants,
@@ -355,7 +366,7 @@ class DefaultController extends WebController
             'quantity' => (int)Yii::$app->request->post('quantity', 1),
             'price' => $model->price
         ]);
-        $totalPrice=$cart->getTotalPrice();
+        $totalPrice = $cart->getTotalPrice();
         $items = $cart->getDataWithModels();
 
         $data = [
@@ -363,12 +374,15 @@ class DefaultController extends WebController
             'message' => Yii::t('cart/default', 'SUCCESS_ADDCART', [
                 'product_name' => $model->name
             ]),
-            'status'=>'success',
-            'html' => $this->renderAjax('popup', [
+            'status' => 'success',
+            /*'html' => $this->renderAjax('popup', [
                 'totalPrice' => $totalPrice,
                 'items' => $items,
-            ]),
-            'buttonText'=>'Уже в корзине',
+            ]),*/
+            'total_price' => $totalPrice,
+            'total_price_format' => Yii::$app->currency->number_format($totalPrice),
+            'countItems' => $cart->countItems(),
+            'buttonText' => 'В корзине',
             'url' => Url::to($this->module->homeUrl)
         ];
         return $this->asJson($data);
@@ -385,16 +399,35 @@ class DefaultController extends WebController
     {
         $id = Yii::$app->request->post('id');
         $cart = Yii::$app->cart;
-        $cart->remove($id);
-        if (!Yii::$app->request->isAjax || !$cart->countItems()) {
-            return $this->redirect($this->module->homeUrl);
+
+        if (!Yii::$app->request->isAjax) {
+            return $this->redirect(Yii::$app->homeUrl);
+
         } else {
-            return $this->asJson([
-                'id' => $id,
-                'success' => true,
-                'total_price' => Yii::$app->currency->number_format($cart->getTotalPrice()),
-                'message' => Yii::t('cart/default', 'SUCCESS_PRODUCT_CART_DELETE'),
-            ]);
+            if ($cart->hasIndex($id)) {
+                $cart->remove($id);
+                $result['success'] = true;
+                $result['message'] = Yii::t('cart/default', 'SUCCESS_PRODUCT_CART_DELETE');
+            } else {
+                $result['success'] = false;
+                $result['message'] = Yii::t('cart/default', 'ERROR_PRODUCT_NO_FIND');
+            }
+            $countItems = $cart->countItems();
+            if (!Yii::$app->request->post('isPopup') && !$countItems) {
+                return $this->redirect(Yii::$app->homeUrl);
+            }
+            $total = $cart->getTotalPrice();
+            $result['id'] = $id;
+
+            $result['button_text_already'] = Yii::t('cart/default', 'BUTTON_ALREADY_CART');
+            $result['button_text_add'] = Yii::t('cart/default', 'BUY');
+            $result['total_price'] = Yii::$app->currency->number_format($total);
+            $result['countItems'] = $countItems;
+
+            $result['reload'] = ($total) ? false : true;
+
+
+            return $this->asJson($result);
         }
     }
 
@@ -471,6 +504,11 @@ class DefaultController extends WebController
                 $order->discount = $order->points;
             }
             $order->save();
+            if(Yii::$app->getModule('cart')->hasEventHandlers(Module::EVENT_ORDER_CREATE)) {
+                $event = new OrderEvent();
+                $event->order = $order;
+                Yii::$app->getModule('cart')->trigger(Module::EVENT_ORDER_CREATE, $event);
+            }
 
         } else {
             print_r($order->getErrors());

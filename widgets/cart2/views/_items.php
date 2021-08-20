@@ -9,31 +9,31 @@ use yii\jui\Spinner;
  * @var $this \yii\web\View
  */
 
-\panix\mod\cart\CartAsset::register($this);
+
 ?>
-<div style="max-width: 70%">
+<?php if ($items) { ?>
+
     <div class="table-responsive">
         <table id="cart-table" class="table table-striped">
             <thead>
             <tr>
                 <th></th>
                 <th style="width:30%"><?= Yii::t('cart/default', 'TABLE_PRODUCT') ?></th>
-                <th style="width:30%"><?= Yii::t('cart/default', 'QUANTITY') ?></th>
+                <th style="width:30%"><?= Yii::t('cart/default', 'QUANTITY') ?> ящиков</th>
                 <th style="width:30%">Сумма</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($items['items'] as $index => $product) { ?>
+            <?php foreach ($items as $index => $product) { ?>
                 <?php
-
 
                 $price = Product::calculatePrices($product['model'], $product['variant_models'], $product['configurable_id']);
                 ?>
                 <tr id="product-<?= $index ?>">
                     <td width="110px" align="center">
 
-                        <?= Html::img(Url::to($product['model']->getMainImage('100x')->url), ['alt' => $product['model']->name]); ?>
+                        <?= Html::img(Url::to($product['model']->getMainImage('100x100', ['watermark' => false])->url), ['width' => 100, 'alt' => $product['model']->name]); ?>
 
                     </td>
                     <td>
@@ -69,10 +69,10 @@ use yii\jui\Spinner;
                                 </small>
                             </div>
                         <?php } ?>
-                        <span class="price price-sm  text-warning">
+                        <span class="price price-sm">
                                 <?= Yii::$app->currency->number_format($price); ?>
-                                <sub><?= Yii::$app->currency->active['symbol']; ?>
-                                    /<?= $product['model']->units[$product['model']->unit]; ?></sub>
+                            <?= Yii::$app->currency->active['symbol']; ?>
+                                    /<?= $product['model']->units[$product['model']->unit]; ?>
                             </span>
 
                         <?php
@@ -91,22 +91,22 @@ use yii\jui\Spinner;
                     </td>
                     <td class="text-center">
                         <div class="spinner" data-product="<?= $index; ?>">
-                            <?= Html::button('-',['data-action'=>'minus']); ?>
-                            <?= Html::textInput("quantities[$index]",$product['quantity']); ?>
-                            <?= Html::button('+',['data-action'=>'plus']); ?>
+                            <?= Html::button('-', ['data-action' => 'minus']); ?>
+                            <?= Html::textInput("quantities[$index]", $product['quantity']); ?>
+                            <?= Html::button('+', ['data-action' => 'plus']); ?>
                         </div>
 
-                        <span><?= $product['model']->units[$product['model']->unit]; ?></span>
+
                         <?php //echo Html::textInput("quantities[$index]", $product['quantity'], array('class' => 'spinner btn-group form-control', 'product_id' => $index)) ?>
 
                     </td>
                     <td id="price-<?= $index ?>" class="text-center">
 
-                            <span class="price text-warning">
-                                <span class="cart-sub-total-price" id="row-total-price<?= $index ?>">
+                            <span class="price">
+                                <span class="cart-sub-total-price row-total-price<?= $index ?>">
                                     <span><?= Yii::$app->currency->number_format($price * $product['quantity']); ?></span>
                                 </span>
-                                <sub><?= Yii::$app->currency->active['symbol']; ?></sub>
+                                <?= Yii::$app->currency->active['symbol']; ?>
                             </span>
 
 
@@ -116,24 +116,29 @@ use yii\jui\Spinner;
                         ?>
                     </td>
                     <td width="20px" class="remove-item">
-                        <?= Html::button(Html::icon('delete'), ['data-product'=>$index,'class' => 'btn btn-sm text-danger cart-remove']) ?>
+                        <?= Html::button(Html::icon('delete'), ['data-product' => $index, 'class' => 'btn btn-sm text-danger cart-remove','data-ispopup'=> $isPopup ? 1 : 0]) ?>
                     </td>
                 </tr>
             <?php } ?>
             </tbody>
         </table>
     </div>
-<div class="row">
-    <div class="col-sm-6">
-        <?= Html::button('Продолжить покупки',['class'=>'btn btn-outline-secondary','onclick'=>'$.fancybox.close();']); ?>
-    </div>
-    <div class="col-sm-6 text-right">
-        <span class="" id="total"><?= Yii::$app->currency->number_format($totalPrice) ?></span>
-        <sub><?php echo Yii::$app->currency->active['symbol']; ?></sub>
-        <?= Html::a('Оформить заказ',['/cart/default/index'],['class'=>'btn btn-primary']); ?>
-    </div>
-</div>
+    <?php if ($isPopup) { ?>
+        <div class="row">
+            <div class="col-md-6 col-sm-12 hidden-xs">
 
+                <?= Html::button(Yii::t('cart/default', 'BUTTON_CONTINUE_SHOPPING'), ['class' => 'btn btn-outline-secondary', 'data-dismiss' => 'modal']); ?>
+            </div>
+            <div class="col-md-6 col-sm-12 text-right container-checkout" style="">
+                <div style="margin-right: 1rem" class="container-checkout-price">
+                    <span class="h1 cart-totalPrice"><?= Yii::$app->currency->number_format($total) ?></span>
+                    <span class="h3"><?php echo Yii::$app->currency->active['symbol']; ?></span>
+                </div>
+                <?= Html::a(Yii::t('cart/default', 'BUTTON_CHECKOUT'), ['/cart/default/index'], ['class' => 'btn btn-primary']); ?>
+            </div>
+        </div>
+    <?php } ?>
 
-</div>
-
+<?php } else { ?>
+    <?php echo $this->render(Yii::$app->getModule('cart')->emptyView); ?>
+<?php } ?>
