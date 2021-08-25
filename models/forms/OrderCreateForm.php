@@ -83,6 +83,7 @@ class OrderCreateForm extends Model
             'user_name',
             'user_email',
             'user_phone',
+            'user_comment',
             'delivery_address',
             'delivery_city',
             'delivery_type',

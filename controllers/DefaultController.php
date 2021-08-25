@@ -155,12 +155,16 @@ class DefaultController extends WebController
                 }
                 if ($this->form->validate()) {
                     $order = $this->createOrder();
+                    if ($order) {
+                        $this->form->registerGuest($order);
 
-                    $this->form->registerGuest($order);
                     //CMS::dump($order);die;
                     Yii::$app->cart->clear();
                     Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                     return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+                    }else{
+                        return $this->redirect(['index']);
+                    }
                 } else {
                     // print_r($this->form->errors);die;
                 }
@@ -461,8 +465,11 @@ class DefaultController extends WebController
     public function createOrder()
     {
         /** @var $form OrderCreateForm */
-        if (Yii::$app->cart->countItems() == 0)
+        if (Yii::$app->cart->countItems() == 0) {
+
             return false;
+        }
+
 
         $order = new Order;
 
@@ -504,7 +511,7 @@ class DefaultController extends WebController
                 $order->discount = $order->points;
             }
             $order->save();
-            if(Yii::$app->getModule('cart')->hasEventHandlers(Module::EVENT_ORDER_CREATE)) {
+            if (Yii::$app->getModule('cart')->hasEventHandlers(Module::EVENT_ORDER_CREATE)) {
                 $event = new OrderEvent();
                 $event->order = $order;
                 Yii::$app->getModule('cart')->trigger(Module::EVENT_ORDER_CREATE, $event);
