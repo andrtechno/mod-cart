@@ -131,6 +131,16 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
 
     }
 
+    public function processRequestHtml(Delivery $method)
+    {
+        $post = Yii::$app->request->post();
+        $model = new OrderCreateForm;
+
+        $model->load($post);
+        return Yii::$app->view->renderAjax("@cart/widgets/delivery/novaposhta/_view", [
+            'model' => $model
+        ]);
+    }
 
     public function renderDeliveryFormHtml($model)
     {

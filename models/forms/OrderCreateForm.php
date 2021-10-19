@@ -92,6 +92,21 @@ class OrderCreateForm extends Model
             'points',
             'call_confirm',
         ];
+        $scenarios['checkout_guest'] = [
+            'user_lastname',
+            'user_name',
+            'user_email',
+            'user_phone',
+        ];
+        $scenarios['checkout_delivery'] = [
+            'user_lastname',
+            'user_name',
+            'user_email',
+            'user_phone',
+            'delivery_id',
+        ];
+
+
 
         return $scenarios;
     }

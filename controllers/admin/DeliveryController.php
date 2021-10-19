@@ -90,7 +90,9 @@ class DeliveryController extends AdminController
 
                 if ($model->system) {
                     $manager = new DeliverySystemManager;
+
                     $system = $manager->getSystemClass($model->system);
+           //CMS::dump($system);die;
                     $system->setSettings($model->id, Yii::$app->request->post($system->getModelName()));
                 }
 

@@ -89,6 +89,11 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                                 $discount = '';
                                 if ($model->hasDiscount) {
                                     $discount = 'Скидка ' . $model->discountSum;
+									//if($model->currency_id){
+										//var_dump($model->currency_id);
+										//print_r(Yii::$app->currency->getById($model->currency_id));
+									//}
+										
                                 }
                                 $html = $discount;
                                 $html .= '<div class="input-group">';

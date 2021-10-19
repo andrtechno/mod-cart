@@ -312,17 +312,20 @@ cart = {
         });
     },*/
 
-    delivery: function (that) {
+    delivery2: function (that) {
 
+        var ser = $('#cartForm').serialize();
         //if ($('#ordercreateform-delivery_id').val() == 1) {
         cart.log.debug('init', 'delivery');
         //$('#user-city, #user-address').hide();
         $.ajax({
-            url: common.url('/cart/delivery/process?id=' + $(that).val()),
-            type: 'GET',
+            url: common.url('/cart'),
+            type: 'POST',
             // dataType:'json',
             dataType: 'html',
+            data:ser,
             success: function (data) {
+
                 $('#delivery-form').html(data);
                 //console.log(data);
                 /*if(data.cities){
@@ -333,6 +336,52 @@ cart = {
                 }*/
             }
         });
+        // }else{
+        //     $('#delivery-form').html('');
+        //    $('#user-city, #user-address').show();
+        //}
+    },
+
+
+
+    delivery: function (id) {
+        var ser = $('#cartForm').serialize();
+        //if ($('#ordercreateform-delivery_id').val() == 1) {
+        cart.log.debug('init', 'delivery');
+        //$('#user-city, #user-address').hide();
+
+
+
+
+
+
+        var xhr = $.ajax({
+            url: common.url('/cart/delivery/process?id=' + id),
+            type: 'POST',
+            //dataType:'json',
+            data:ser,
+            dataType: 'html',
+            success: function (data) {
+               // console.log(data);
+                //$('#delivery-form').html(data);
+                $('.delivery-container-1').append('<div>asdasdasd</div>');
+
+
+                $('#cartForm').on("cart:delivery", { xhr: 'test' },function(event,test) { // (1)
+                    console.log("Привет от ", event,test); // Привет от H1
+                });
+
+                //console.log(data);
+                /*if(data.cities){
+                    $('#delivery-form').append('<select id="ordercreateform-delivery_city" name="OrderCreateForm[delivery_city]" class="form-control">' +
+                        '<option value="address">Доставка на адрес</option>' +
+                        '<option value="warehouse">Доставка на отделение</option>' +
+                        '</select>');
+                }*/
+            }
+        });
+
+
         // }else{
         //     $('#delivery-form').html('');
         //    $('#user-city, #user-address').show();

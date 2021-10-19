@@ -5,6 +5,7 @@ namespace panix\mod\cart\controllers;
 use panix\engine\bootstrap\ActiveForm;
 use panix\engine\CMS;
 use panix\mod\cart\CartAsset;
+use panix\mod\cart\components\delivery\BaseDeliverySystem;
 use panix\mod\cart\components\OrderEvent;
 use panix\mod\cart\Module;
 use panix\mod\novaposhta\models\Cities;
@@ -13,6 +14,7 @@ use panix\mod\shop\models\Attribute;
 use panix\mod\user\models\forms\LoginForm;
 use Yii;
 use yii\base\ActionEvent;
+use yii\base\DynamicModel;
 use yii\base\Event;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
@@ -111,6 +113,127 @@ class DefaultController extends WebController
         ]);
     }
 
+    public function actionCheckoutValidate()
+    {
+        $this->form = new OrderCreateForm();
+        $this->form->setScenario('checkout_guest');
+        $this->form->load(Yii::$app->request->post());
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($this->form);
+        }
+        die('dsa');
+    }
+
+    public function actionCheckout()
+    {
+        $this->layout = 'checkout';
+        $this->form = new OrderCreateForm(); //['scenario' => 'create-form-order']
+
+        if (Yii::$app->user->isGuest) {
+            $this->form->setScenario('checkout_guest');
+        } else {
+            $this->form->setScenario('checkout_guest');
+        }
+        // Yii::$app->session->remove('checkout.step1');
+
+        $response = [];
+        $response['success'] = false;
+        Yii::$app->session->remove('checkout.contact');
+        Yii::$app->session->remove('checkout.delivery');
+        Yii::$app->session->remove('checkout.current');
+
+        if (!Yii::$app->session->has('checkout.current')) {
+            Yii::$app->session->set('checkout.current', 'contact');
+        }
+
+        if ($this->form->load(Yii::$app->request->post())) {
+
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                if (Yii::$app->session->get('checkout.current') == 'contact') {
+                    $response['step'] = 1;
+                    $errors = ActiveForm::validate($this->form);
+                    if ($errors) {
+                        Yii::$app->session->set('checkout.contact', false);
+                        return $errors;
+                    }
+                    Yii::$app->session->set('checkout.contact', true);
+                    Yii::$app->session->set('checkout.current', 'contact');
+
+                    $response['complete'] = [$this->form->user_name,$this->form->user_email,CMS::phone_format($this->form->user_phone)];
+                    $response['success'] = true;
+                    $response['state'] = Yii::$app->session->get('checkout.contact');
+
+                    $response['current'] = Yii::$app->session->get('checkout.current');
+                    $response['scenario'] = $this->form->scenario;
+                    return $this->asJson($response);
+                } elseif (Yii::$app->session->get('checkout.current') == 'delivery') {
+                    $response['step'] = 2;
+
+                    $this->form = new OrderCreateForm();
+                    $this->form->setScenario('checkout_delivery');
+                    $this->form->load(Yii::$app->request->post());
+
+
+                    //if (Yii::$app->session->get('checkout.step2')===true && $response['step']==2) {
+                    $errors = ActiveForm::validate($this->form);
+                    if ($errors && Yii::$app->session->get('checkout.current') == 'delivery') {
+                        Yii::$app->session->set('checkout.validate.step2', false);
+                        // return $errors;
+                        $response['errors'] = $errors;
+                    } else {
+                        Yii::$app->session->set('checkout.validate.step2', true);
+                    }
+
+                    if ($this->form->delivery_id) {
+                        $model = Delivery::findOne($this->form->delivery_id);
+                        if (!$model)
+                            $this->error404();
+
+                        $system = $model->getDeliverySystemClass();
+                        if ($system instanceof BaseDeliverySystem) {
+                            Yii::$app->response->format = Response::FORMAT_HTML;
+                            return $system->processRequest($model);
+                            // $test= $system->model($model);
+
+
+                         //   var_dump($test->validate());die;
+
+                        }
+                    }
+
+                    //}
+                    Yii::$app->session->set('checkout.delivery', true);
+                    Yii::$app->session->set('checkout.current', 'delivery');
+
+                    $response['state'] = Yii::$app->session->get('checkout.delivery');
+                }
+
+
+                //  $response['gotostep'] = $this->form->attributes;
+
+                $response['current'] = Yii::$app->session->get('checkout.current');
+                $response['scenario'] = $this->form->scenario;
+                return $this->asJson($response);
+            }
+
+
+        }
+
+        $deliveryMethods = Delivery::find()
+            ->published()
+            ->all();
+
+        // return $this->asJson($response);
+        // print_r($this->form->scenario);
+        //print_r($this->form->getErrors());die;
+        return $this->render('checkout', [
+            'model' => $this->form,
+            'deliveryMethods' => $deliveryMethods
+        ]);
+    }
+
     /**
      * Display list of product added to cart
      */
@@ -149,11 +272,30 @@ class DefaultController extends WebController
         if ($post) {
 
             if ($this->form->load($post)) {
+
+
+                /*if (Yii::$app->request->isAjax) {
+                   // Yii::$app->response->format = Response::FORMAT_JSON;
+                     $model = Delivery::findOne($this->form->delivery_id);
+                     if($model->system){
+                         return $this->renderAjax("@cart/widgets/delivery/novaposhta/_view", [
+                             'model' => $this->form
+                         ]);
+                        // print_r($model->system);die;
+                     }
+
+                    return [1];
+                }*/
+
+
                 if (Yii::$app->request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
                     return ActiveForm::validate($this->form);
                 }
                 if ($this->form->validate()) {
+                    print_r(ActiveForm::validate($this->form));
+                    CMS::dump($_POST);
+                    die('create order');
                     $order = $this->createOrder();
 
                     $this->form->registerGuest($order);
@@ -504,7 +646,7 @@ class DefaultController extends WebController
                 $order->discount = $order->points;
             }
             $order->save();
-            if(Yii::$app->getModule('cart')->hasEventHandlers(Module::EVENT_ORDER_CREATE)) {
+            if (Yii::$app->getModule('cart')->hasEventHandlers(Module::EVENT_ORDER_CREATE)) {
                 $event = new OrderEvent();
                 $event->order = $order;
                 Yii::$app->getModule('cart')->trigger(Module::EVENT_ORDER_CREATE, $event);
