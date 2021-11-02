@@ -446,7 +446,7 @@ class Cart extends Component
 
 
             } else {
-                \panix\mod\shop\bundles\NotifyAsset::register($this);
+                \panix\mod\shop\bundles\NotifyAsset::register(Yii::$app->view);
                 return Html::button(Yii::t('shop/default', 'NOT_AVAILABLE'), ['onclick'=>'javascript:notify(' . $model->id . ');', 'class' => 'text-danger']);
             }
 
