@@ -79,16 +79,12 @@ class OrderProduct extends ActiveRecord
         $this->order->updateTotalPrice();
         $this->order->updateDeliveryPrice();
 
-        if ($this->isNewRecord) {
+        if ($insert) {
             $product = Product::findOne($this->product_id);
-
-            if ($product->added_to_cart_count == Yii::$app->settings->get('shop', 'added_to_cart_count')) {
-                $product->added_to_cart_date = time();
-                $product->save(false);
-            }
-
+            $product->added_to_cart_count += 1;
+            $product->added_to_cart_date = time();
+            $product->save(false);
             $product->decreaseQuantity();
-
         }
 
         return parent::afterSave($insert, $changedAttributes);
