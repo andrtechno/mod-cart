@@ -386,7 +386,7 @@ class DefaultController extends WebController
             'total_price' => $totalPrice,
             'total_price_format' => Yii::$app->currency->number_format($totalPrice),
             'countItems' => $cart->countItems(),
-            'buttonText' => 'В корзине',
+            'buttonText' => Yii::t('cart/default','BUTTON_ALREADY_CART'),
             'url' => Url::to($this->module->homeUrl)
         ];
         return $this->asJson($data);
