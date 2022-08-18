@@ -19,6 +19,8 @@ return [
     'ERROR_ORDER_NO_FIND' => 'Помилка. Замовлення не найден. ',
     'TOTAL_PAY' => 'Всього до сплати',
     'BUTTON_CHECKOUT' => 'Оформити замовлення',
+    'BUTTON_CONTINUE_SHOPPING' => 'Продовжити покупки',
+    'BUTTON_ALREADY_CART' => 'У кошику',
     'USER_DATA' => 'Особисті дані',
     'TABLE_SUM' => 'Разом ({currency})',
     'TABLE_PRODUCT' => 'Товар',
