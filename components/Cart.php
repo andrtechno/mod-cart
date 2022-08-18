@@ -434,7 +434,7 @@ class Cart extends Component
         if(Yii::$app->cart->hasIndex($model->id)){
             Html::addCssClass($options, 'btn-already-in-cart');
             $options['onclick']='cart.popup(false)';
-            return Html::button('В корзине', $options);
+            return Html::button(Yii::t('cart/default','BUTTON_ALREADY_CART'), $options);
         }else{
             if ($model->isAvailable) {
 
