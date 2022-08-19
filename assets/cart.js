@@ -136,7 +136,7 @@ cart = {
                     //cart.renderBlockCart();
                     $(cart.selectorCount).html(data.countItems);
                     $(cart.selectorTotal).html(data.total_price_format);
-
+                    $(document).trigger( "cart:add:success", data);
 
                 }
             },
@@ -467,6 +467,7 @@ $(function () {
                     if (button) {
                         button.attr('onclick', 'cart.add(this)').text(response.button_text_add)
                     }
+                    $(document).trigger( "cart:remove:success", response);
                 } else {
 
                     common.notify(response.message, 'error');
