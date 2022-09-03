@@ -83,7 +83,9 @@ use yii\jui\Spinner;
                             echo Html::beginTag('span', ['class' => 'cartProductOptions']);
                             foreach ($attributeModels as $attribute) {
                                 $method = 'eav_' . $attribute->name;
-                                echo ' - ' . $attribute->title . ': ' . $product['configurable_model']->$method->value . '<br/>';
+                                    if(isset($product['configurable_model']->$method)){
+                                        echo ' - ' . $attribute->title . ': ' . $product['configurable_model']->$method->value . '<br/>';
+                                    }
                             }
                             echo Html::endTag('span');
                         }
