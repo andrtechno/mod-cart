@@ -530,6 +530,8 @@ class Order extends ActiveRecord
             $ordered_product->order_id = $this->id;
             $ordered_product->product_id = $product->id;
             $ordered_product->currency_id = $product->currency_id;
+            $ordered_product->supplier_id = $product->supplier_id;
+            $ordered_product->manufacturer_id = $product->brand_id;
             $ordered_product->currency_rate = ($product->currency_id) ? Yii::$app->currency->getById($product->currency_id)->rate : NULL;
             $ordered_product->price_purchase = $product->price_purchase;
             $ordered_product->name = $product->name;
