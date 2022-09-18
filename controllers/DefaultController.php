@@ -357,7 +357,7 @@ class DefaultController extends WebController
             'attributes_data' => json_encode([
                 'data' => $model->eavData['data'],
                 'attributes' => $model->eavAttributes
-            ]),
+            ], JSON_UNESCAPED_UNICODE),
             'currency_id' => $model->currency_id,
             'supplier_id' => $model->supplier_id,
             'weight' => $model->weight,
