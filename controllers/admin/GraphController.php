@@ -57,21 +57,26 @@ class GraphController extends AdminController
 
         $data = [];
         $highchartsData = [];
-
+        $time = time();
         $total = 0;
         for ($i = 0; $i < 12; $i++) {
             $index = $i + 1;
             $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, $index, date('Y'));
             $product_count = (isset($data[$index]['product_count'])) ? $data[$index]['product_count'] : 0;
 
-            $query = (new \yii\db\Query())->from(Order::tableName())
-                ->where(['between', 'created_at', strtotime("{$year}-{$index}-01 00:00:00"), strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59")])
-                ->andWhere(['status_id' => $statusIds])
-                ->andWhere(['not',['total_price_purchase'=>null]])
-                ->andWhere(['>','total_price_purchase',0])
-                ->select(['SUM(total_price-total_price_purchase) as sum']);
+            if (strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59") > $time) {
+                $query = (new \yii\db\Query())->from(Order::tableName())
+                    ->where(['between', 'created_at', strtotime("{$year}-{$index}-01 00:00:00"), strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59")])
+                    ->andWhere(['status_id' => $statusIds])
+                    ->andWhere(['not', ['total_price_purchase' => null]])
+                    ->andWhere(['>', 'total_price_purchase', 0])
+                    //->select(['id']);
+                    ->select(['SUM(total_price-total_price_purchase) as sum']);
 
-            $queryData = $query->one();
+                $queryData = $query->one();
+            } else {
+                $queryData['sum'] = 0;
+            }
 
             $total += $queryData['sum'];
             $highchartsData[] = [
@@ -87,6 +92,7 @@ class GraphController extends AdminController
                 //"drilldown" => "Month_{$index}"
                 'drilldown' => []
             ];
+
         }
 
 
@@ -111,7 +117,7 @@ class GraphController extends AdminController
                 rand(1500, 5000),
                 rand(2000, 6000),
                 //rand(1,2),
-                strtotime(rand(1, 28) . "-" . rand(1, 12) . "-".date('Y')." 12:59:59")
+                strtotime(rand(1, 28) . "-" . rand(1, 12) . "-" . date('Y') . " 12:59:59")
             ];
         }
 
@@ -122,7 +128,7 @@ class GraphController extends AdminController
             'status_id',
             'total_price',
             'total_price_purchase',
-           // 'status_id',
+            // 'status_id',
             'created_at'
         ], $data)->execute();
 
@@ -154,8 +160,8 @@ class GraphController extends AdminController
             $query = (new \yii\db\Query())->from(Order::tableName())
                 ->where(['between', 'created_at', strtotime("{$year}-{$month}-{$day} 00:00:00"), strtotime("{$year}-{$month}-{$day} 23:59:59")])
                 ->andWhere(['status_id' => $statusIds])
-                ->andWhere(['not',['total_price_purchase'=>null]])
-                ->andWhere(['>','total_price_purchase',0])
+                ->andWhere(['not', ['total_price_purchase' => null]])
+                ->andWhere(['>', 'total_price_purchase', 0])
                 ->select(['SUM(total_price - total_price_purchase) as sum']);
 
 
