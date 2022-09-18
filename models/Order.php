@@ -30,6 +30,7 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property float $total_price_purchase
  * @property float $delivery_price
  * @property float $full_price
+ * @property float $diff_price
  * @property string $user_name
  * @property string $user_email
  * @property string $user_lastname
@@ -368,7 +369,8 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function afterDelete()
     {
@@ -406,18 +408,23 @@ class Order extends ActiveRecord
 
         $this->total_price = 0;
         $this->total_price_purchase = 0;
+        $this->diff_price = 0;
         $products = OrderProduct::find()->where(['order_id' => $this->id])->all();
 
         foreach ($products as $product) {
             /** @var OrderProduct $product */
-
-            if ($product->originalProduct) {
+            $original = $product->originalProduct;
+            if ($original) {
                 //if($product->currency_id && $product->currency_rate){
                 //    $this->total_price += $product->price / $product->currency_rate * $product->quantity;
                 //     $this->total_price_purchase += $product->price_purchase * $product->currency_rate * $product->quantity;
                 // }else{
                 $this->total_price += $product->price * $product->quantity;
                 $this->total_price_purchase += $product->price_purchase * $product->quantity;
+                if ($product->price_purchase) {
+                    $this->diff_price += ($product->price * $product->quantity) - ($product->price_purchase * $product->quantity);
+                }
+
                 // }
 
             }
@@ -428,7 +435,6 @@ class Order extends ActiveRecord
             if ('%' === substr($this->promoCode->discount, -1, 1)) {
                 $this->total_price -= $this->total_price * ((double) $this->promoCode->discount) / 100;
             }
-
         }*/
 
         $this->save(false);
@@ -533,7 +539,12 @@ class Order extends ActiveRecord
             $ordered_product->supplier_id = $product->supplier_id;
             $ordered_product->manufacturer_id = $product->brand_id;
             $ordered_product->currency_rate = ($product->currency_id) ? Yii::$app->currency->getById($product->currency_id)->rate : NULL;
-            $ordered_product->price_purchase = $product->price_purchase;
+            $box = $product->eav_kolicestvo_v_asike;
+            if (isset($box)) {
+                $ordered_product->price_purchase = $product->price_purchase * $box->value;
+            } else {
+                $ordered_product->price_purchase = $product->price_purchase;
+            }
             $ordered_product->name = $product->name;
             $ordered_product->quantity = $quantity;
             $ordered_product->sku = $product->sku;
@@ -626,7 +637,7 @@ class Order extends ActiveRecord
                     ]);*/
 
                     $event = new EventProduct([
-                       // 'product_model' => $product,
+                        // 'product_model' => $product,
                         'ordered_product' => $product,
                         'quantity' => (int)$data[$product->id]
                     ]);
@@ -637,7 +648,7 @@ class Order extends ActiveRecord
                 }
 
                 $product->quantity = (int)$data[$product->id];
-              //  print_r($product);die;
+                //  print_r($product);die;
                 $product->save(false);
             }
         }
