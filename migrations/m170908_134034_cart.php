@@ -44,6 +44,7 @@ class m170908_134034_cart extends Migration
             'delivery_price' => $this->money(10, 2),
             'total_price' => $this->money(10, 2),
             'total_price_purchase' => $this->money(10, 2),
+            'diff_price' => $this->money(10, 2),
             'user_lastname' => $this->string(100),
             'user_name' => $this->string(100),
             'user_email' => $this->string(100),
@@ -239,6 +240,7 @@ class m170908_134034_cart extends Migration
         $this->createIndex('status_id', Order::tableName(), 'status_id');
         $this->createIndex('created_at', Order::tableName(), 'created_at');
         $this->createIndex('updated_at', Order::tableName(), 'updated_at');
+        $this->createIndex('diff_price', Order::tableName(), 'diff_price');
 
         $this->createIndex('delivery_city_ref', Order::tableName(), 'delivery_city_ref');
         $this->createIndex('delivery_warehouse_ref', Order::tableName(), 'delivery_warehouse_ref');
