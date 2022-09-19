@@ -20,6 +20,7 @@ return [
     'Wednesday' => 'Wednesday',
     'Thursday' => 'Thursday',
     'INCOME' => 'Income',
+    'INCOME_FOR' => 'Income for {month} {year}year.',
     'MSG_ORDER_DELETED' => 'The order has been marked as deleted. This order is visible only to the Site Administrator. ',
     'ORDER_ISDELETED' => 'Order deleted.',
     'STATUS_NEW_NOTIFY' => 'This status is being assigned to a new order',
