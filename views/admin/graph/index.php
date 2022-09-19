@@ -28,7 +28,10 @@ use panix\mod\cart\models\Order;
         }
 
 
-        $title = 'Доход за '.date('Y').'г.';
+        $title = Yii::t('cart/admin', 'INCOME_FOR', [
+            'month' => '',
+            'year' => date('Y')
+        ]);
         $subTitle = 'Итого: ' . $total . ' ' . Yii::$app->currency->active['symbol'];
 
         echo \panix\ext\highcharts\Highcharts::widget([
