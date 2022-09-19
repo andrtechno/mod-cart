@@ -63,19 +63,17 @@ class GraphController extends AdminController
             $index = $i + 1;
             $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, $index, date('Y'));
             $product_count = (isset($data[$index]['product_count'])) ? $data[$index]['product_count'] : 0;
-
+            $queryData['sum'] = 0;
             if (strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59") > $time) {
                 $query = (new \yii\db\Query())->from(Order::tableName())
                     ->where(['between', 'created_at', strtotime("{$year}-{$index}-01 00:00:00"), strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59")])
                     ->andWhere(['status_id' => $statusIds])
-                    ->andWhere(['not', ['total_price_purchase' => null]])
-                    ->andWhere(['>', 'total_price_purchase', 0])
+                    ->andWhere(['not', ['diff_price' => null]])
+                    ->andWhere(['>', 'diff_price', 0])
                     //->select(['id']);
-                    ->select(['SUM(total_price-total_price_purchase) as sum']);
+                    ->select(['SUM(diff_price) as sum']);
 
                 $queryData = $query->one();
-            } else {
-                $queryData['sum'] = 0;
             }
 
             $total += $queryData['sum'];
@@ -155,24 +153,27 @@ class GraphController extends AdminController
 
         $data = [];
         $total = 0;
+        $time = time();
         foreach (range(1, $monthDaysCount) as $k => $day) {
+            $queryData['sum'] = 0;
+            if (strtotime("{$year}-{$month}-{$day} 23:59:59") < $time) {
+                $query = (new \yii\db\Query())->from(Order::tableName())
+                    ->where(['between', 'created_at', strtotime("{$year}-{$month}-{$day} 00:00:00"), strtotime("{$year}-{$month}-{$day} 23:59:59")])
+                    ->andWhere(['status_id' => $statusIds])
+                    ->andWhere(['not', ['diff_price' => null]])
+                    ->andWhere(['>', 'diff_price', 0])
+                    ->select(['SUM(diff_price) as sum']);
+                $queryData = $query->one();
+            }
 
-            $query = (new \yii\db\Query())->from(Order::tableName())
-                ->where(['between', 'created_at', strtotime("{$year}-{$month}-{$day} 00:00:00"), strtotime("{$year}-{$month}-{$day} 23:59:59")])
-                ->andWhere(['status_id' => $statusIds])
-                ->andWhere(['not', ['total_price_purchase' => null]])
-                ->andWhere(['>', 'total_price_purchase', 0])
-                ->select(['SUM(total_price - total_price_purchase) as sum']);
 
-
-            $queryData = $query->one();
             $value = ($queryData['sum']) ? $queryData['sum'] : 0;
             $total += $value;
             $data[] = [
                 'name' => Yii::t('cart/admin', date('l', strtotime("{$year}-{$month}-{$day}"))) . ', ' . date('d', strtotime("{$year}-{$month}-{$day}")),
                 'y' => (double)$value,
                 'value' => Yii::$app->currency->number_format($value),
-                'products' => 10
+                //'products' => 10
             ];
 
 
