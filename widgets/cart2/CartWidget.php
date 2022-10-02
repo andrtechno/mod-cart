@@ -20,27 +20,14 @@ class CartWidget extends Widget
     public $total;
     public $items;
     public $count;
-    public $bs=4;
-    public $templateBs3 = '<div class="modal fade" id="cart-modal" tabindex="-1" role="dialog" aria-labelledby="cart-modalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                {close}
-                {title}
-            </div>
-            <div class="modal-body">{body}</div>
-        </div>
-    </div>
-</div>';
-    public $templateBs4 = '';
     public $title;
+    public $skin;
+
     public static function modal($config = [])
     {
         $config['class'] = get_called_class();
         $widget = Yii::createObject($config);
         return $widget->renderModal($config);
-
-        // CMS::dump($widget);die;
     }
 
 
@@ -49,7 +36,7 @@ class CartWidget extends Widget
         $config['class'] = get_called_class();
         $widget = Yii::createObject($config);
         return $widget->renderButton($config);
-        // CMS::dump($widget);die;
+
     }
 
     public function init()
@@ -90,34 +77,37 @@ class CartWidget extends Widget
     protected function renderModal($config = [])
     {
 
-        /*$view = Yii::$app->getModule('cart')->modalView;
-        if(isset($config['view'])){
-            $view=$config['view'];
-        }*/
+        $this->skin = Yii::$app->getModule('cart')->modalView;
+        if (isset($config['skin'])) {
+            $this->skin = $config['skin'];
+        }
+
         $currency = Yii::$app->currency->active;
         $dataRender = [
             'count' => $this->count,
             'currency' => $currency,
             'total' => $this->total,
             'items' => $this->items,
-            'isPopup'=>true
+            'isPopup' => true
         ];
 
-        return strtr($this->templateBs3, [
+        return $this->render($this->skin, $dataRender);
+        /*return strtr($this->templateBs3, [
             '{title}' => $this->renderTitle(),
             '{close}' => $this->renderCloseButton(),
-            '{body}' => $this->render(Yii::$app->getModule('cart')->modalView, $dataRender)
-        ]);
+            '{body}' => $this->render($this->skin, $dataRender)
+        ]);*/
         // return $this->render('popup', $dataRender);
     }
 
 
     protected function renderButton($config = [])
     {
-        $view = 'button';
-        if (isset($config['view'])) {
-            $view = $config['view'];
+        $this->skin = 'button';
+        if (isset($config['skin'])) {
+            $this->skin = $config['skin'];
         }
+
         $currency = Yii::$app->currency->active;
         $dataRender = [
             'count' => $this->count,
@@ -125,7 +115,7 @@ class CartWidget extends Widget
             'total' => $this->total,
             'items' => $this->items
         ];
-        return $this->render($view, $dataRender);
+        return $this->render($this->skin, $dataRender);
     }
 
     /**
@@ -180,14 +170,13 @@ class CartWidget extends Widget
 
             return Html::tag($tag, Html::tag('span', '&times;', [
                 'aria-hidden' => 'true'
-            ]), ['class'=>'close','data-dismiss'=>'modal', 'aria-label'=>'Close'
+            ]), ['class' => 'close', 'data-dismiss' => 'modal', 'aria-label' => 'Close'
 
             ]);
         } else {
             return null;
         }
     }
-
 
 
     protected function renderTitle()
