@@ -22,10 +22,10 @@ class DefaultController extends AdminController
     public function actions()
     {
         return [
-            /*'delete' => [
+            'delete' => [
                 'class' => 'panix\engine\actions\DeleteAction',
                 'modelClass' => Order::class,
-            ],*/
+            ],
         ];
     }
 

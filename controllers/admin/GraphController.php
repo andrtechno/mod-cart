@@ -190,7 +190,10 @@ class GraphController extends AdminController
         return $this->asJson([
             'data' => $response,
             'subtitle' => 'Итого: ' . Yii::$app->currency->number_format($total) . ' ' . Yii::$app->currency->active['symbol'],
-            'title' => 'Доход за ' . $name . ' ' . $year . 'г.'
+            'title' => Yii::t('cart/admin', 'INCOME_FOR', [
+                'month' => $name,
+                'year' => $year
+            ])
         ]);
     }
 

@@ -87,6 +87,7 @@ class DefaultController extends WebController
             'items' => isset($items['items']) ? $items['items'] : [],
             'isPopup' => true
         ]);
+
     }
 
     public function actionPreCheckout()
@@ -158,11 +159,11 @@ class DefaultController extends WebController
                     if ($order) {
                         $this->form->registerGuest($order);
 
-                    //CMS::dump($order);die;
-                    Yii::$app->cart->clear();
-                    Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
-                    return $this->redirect(['view', 'secret_key' => $order->secret_key]);
-                    }else{
+                        //CMS::dump($order);die;
+                        Yii::$app->cart->clear();
+                        Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                        return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+                    } else {
                         return $this->redirect(['index']);
                     }
                 } else {
@@ -357,7 +358,7 @@ class DefaultController extends WebController
             'attributes_data' => json_encode([
                 'data' => $model->eavData['data'],
                 'attributes' => $model->eavAttributes
-            ], JSON_UNESCAPED_UNICODE),
+            ],JSON_UNESCAPED_UNICODE),
             'currency_id' => $model->currency_id,
             'supplier_id' => $model->supplier_id,
             'weight' => $model->weight,
@@ -386,7 +387,7 @@ class DefaultController extends WebController
             'total_price' => $totalPrice,
             'total_price_format' => Yii::$app->currency->number_format($totalPrice),
             'countItems' => $cart->countItems(),
-            'buttonText' => Yii::t('cart/default','BUTTON_ALREADY_CART'),
+            'buttonText' => Yii::t('cart/default', 'BUTTON_ALREADY_CART'),
             'url' => Url::to($this->module->homeUrl)
         ];
         return $this->asJson($data);
@@ -528,7 +529,6 @@ class DefaultController extends WebController
         $cartItems = Yii::$app->cart->getDataWithModels();
         foreach ($cartItems['items'] as $item) {
 
-
             $ordered_product = new OrderProduct;
             $ordered_product->order_id = $order->id;
             $ordered_product->product_id = $item['model']->id;
@@ -537,10 +537,20 @@ class DefaultController extends WebController
             $ordered_product->supplier_id = $item['model']->supplier_id;
             if ($ordered_product->currency_id)
                 $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
+
+
+            $box = $item['model']->eav_kolicestvo_v_asike;
+            if (isset($box)) {
+                $ordered_product->price_purchase = Yii::$app->currency->convert($item['model']->price_purchase * $box->value, $ordered_product->currency_id);
+            }else{
+                $ordered_product->price_purchase = Yii::$app->currency->convert($item['model']->price_purchase, $ordered_product->currency_id);
+            }
+
+
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
-            $ordered_product->price_purchase = $item['model']->price_purchase;
+
             $ordered_product->attributes_data = json_encode($item['attributes_data']);
             $ordered_product->weight = $item['weight'];
             $ordered_product->height = $item['height'];
