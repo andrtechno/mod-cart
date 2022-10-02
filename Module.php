@@ -66,7 +66,6 @@ class Module extends WebModule implements BootstrapInterface
                 'cart/popup' => 'cart/default/popup',
                 // 'cart/clear' => 'cart/default/clear',
                 // 'cart/payment' => 'cart/default/payment',
-                // 'cart/recount' => 'cart/default/recount',
 
                 'cart/buyOneClick/<id:\d+>' => 'cart/default/buyOneClick',
                 'cart/payment/process' => 'cart/payment/process',
@@ -76,7 +75,6 @@ class Module extends WebModule implements BootstrapInterface
                 'cart/orders/<page:\d+>' => 'cart/default/orders',
                 'cart/orders' => 'cart/default/orders',
                 'cart/<action:[0-9a-zA-Z_\-]+>' => 'cart/default/<action>',
-                // 'cart/<action:[0-9a-zA-Z_\-]+>/*' => 'cart/default/<action>',
 
             ],
             true

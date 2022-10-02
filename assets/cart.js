@@ -114,7 +114,7 @@ cart = {
     },
     add: function (that) {
         var form = $(that).closest('form');
-
+        var t = this;
         cart.log.debug('add',that);
 
         $.ajax({
@@ -137,13 +137,20 @@ cart = {
                     $(cart.selectorCount).html(data.countItems);
                     $(cart.selectorTotal).html(data.total_price_format);
                     $(document).trigger( "cart:add:success", data);
-
                 }
+
             },
             complete: function () {
 
+
+
             }
         });
+        return this;
+    },
+    addComplete: function(){
+        //console.log("dasadsdsa");
+        $('#cart').trigger('cart:add:complete');
     },
     add2: function (that) {
         //var form = $("#form-add-cart-" + product_id);
@@ -238,8 +245,8 @@ cart = {
             },
             dataType: 'json',
             success: function (data) {
-                $('#row-total-price' + data.product_id).addClass('TTTTTTTTTTTTTTTTTTTT').html('dsadsa')
-                $('.row-total-price' + data.product_id).find('span:first-child').html(data.rowTotal);
+                //$('#row-total-price' + data.product_id).addClass('TTTTTTTTTTTTTTTTTTTT').html('dsadsa')
+                $('#row-total-price' + data.product_id).find('span:first-child').html(data.rowTotal);
                 $('.price-unit-' + data.product_id).find('span:first-child').html(data.unit_price);
                 //var delprice = 0;
                 //if ($('.delivery-choose').prop("checked")) { //for april
@@ -348,7 +355,9 @@ cart = {
 
 
 $(function () {
-    $(document).on('click', '.spinner button', function () {
+
+
+    /*$(document).on('click', '.spinner button', function () {
         var action = $(this).data('action');
         var input = $(this).parent().find('input');
         var product = $(this).parent().data('product');
@@ -368,7 +377,8 @@ $(function () {
         //update all spinner value
         $('.spinner[data-product="'+product+'"]').find('input').val(value);
         //  input.val(value);
-    });
+    });*/
+
 
     $(document).on('keyup', '.spinner input', function () {
         var input = $(this);
@@ -383,7 +393,7 @@ $(function () {
         }
 
         //update all spinner value
-        $('.spinner[data-product="'+product+'"]').find('input').val(value);
+        $('.spinner[product="'+product+'"]').find('input').val(value);
 
     });
 
