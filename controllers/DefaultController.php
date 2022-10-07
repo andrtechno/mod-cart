@@ -539,7 +539,7 @@ class DefaultController extends WebController
                 $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
 
 
-            $box = $item['model']->eav_kolicestvo_v_asike;
+            $box = $item['model']->eav_par_v_asike;
             if (isset($box)) {
                 $ordered_product->price_purchase = Yii::$app->currency->convert($item['model']->price_purchase * $box->value, $ordered_product->currency_id);
             }else{
@@ -550,7 +550,6 @@ class DefaultController extends WebController
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
-
             $ordered_product->attributes_data = json_encode($item['attributes_data']);
             $ordered_product->weight = $item['weight'];
             $ordered_product->height = $item['height'];

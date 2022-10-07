@@ -539,7 +539,7 @@ class Order extends ActiveRecord
             $ordered_product->supplier_id = $product->supplier_id;
             $ordered_product->manufacturer_id = $product->brand_id;
             $ordered_product->currency_rate = ($product->currency_id) ? Yii::$app->currency->getById($product->currency_id)->rate : NULL;
-            $box = $product->eav_kolicestvo_v_asike;
+            $box = $product->eav_par_v_asike;
             if (isset($box)) {
                 $ordered_product->price_purchase = $product->price_purchase * $box->value;
             } else {

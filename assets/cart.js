@@ -116,17 +116,17 @@ cart = {
         var form = $(that).closest('form');
         var t = this;
         cart.log.debug('add',that);
-
-        $.ajax({
+        if (typeof xhr !== 'undefined')
+            xhr.abort();
+        var xhr = $.ajax({
             url: form.attr('action'),
             type: 'POST',
             dataType: 'json',
             data: form.serialize(),
             beforeSend:function(){
-                $(that).addClass('btn-loading');
+                $(that).addClass('btn-loading').attr('disabled',true);
             },
             success: function (data, textStatus, xhr) {
-                $(that).removeClass('btn-loading');
                 if (data.errors) {
                     common.notify(data.errors, 'error');
                 } else {
@@ -141,10 +141,8 @@ cart = {
 
             },
             complete: function () {
-
-
-
-            }
+                $(that).removeClass('btn-loading').attr('disabled',false);;
+            },
         });
         return this;
     },
