@@ -441,13 +441,16 @@ class Cart extends Component
                 Html::addCssClass($options, 'btn-buy');
                 //$options['data-toggle']='modal';
                 //$options['data-target']='#myModal';
+                if($model->availability == $model::STATUS_PREORDER){
+                    $value = Yii::t('shop/Product','AVAILABILITY_2');
+                }
                 $options['onclick']='cart.add(this)';
                 return Html::button($value, $options);
 
 
             } else {
-                \panix\mod\shop\bundles\NotifyAsset::register($this);
-                return Html::button(Yii::t('shop/default', 'NOT_AVAILABLE'), ['onclick'=>'javascript:notify(' . $model->id . ');', 'class' => 'text-danger']);
+                //\panix\mod\shop\bundles\NotifyAsset::register($this);
+                //return Html::button(Yii::t('shop/default', 'NOT_AVAILABLE'), ['onclick'=>'javascript:notify(' . $model->id . ');', 'class' => 'text-danger']);
             }
 
         }
