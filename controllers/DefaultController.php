@@ -57,13 +57,14 @@ class DefaultController extends WebController
             ],
         ];
     }
-
-    public function actionTest()
+    public function beforeAction($action)
     {
-        CMS::dump(Yii::$app->cart->getDataWithModels());
-        die;
-    }
 
+        if (in_array($this->action->id,['add','popup','recount'])) {
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
     public function actionRecount()
     {
         if (Yii::$app->request->isAjax) {
