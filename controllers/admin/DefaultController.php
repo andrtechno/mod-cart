@@ -397,12 +397,14 @@ class DefaultController extends AdminController
             ]));
         } else {
             $query->joinWith(['products p']);
-            if ($render == 'manufacturer') {
-                $view = 'pdf/manufacturer';
+            if ($render == 'brand') {
+                //$view = 'pdf/brand';
+                $view = Yii::$app->settings->get('cart','print_tpl_brand');
                 $query->andWhere(['not', ['p.manufacturer_id' => null]]);
                 $query->orderBy(['p.manufacturer_id' => SORT_DESC]);
             } elseif ($render == 'supplier') {
-                $view = 'pdf/supplier';
+                //$view = 'pdf/supplier';
+                $view = Yii::$app->settings->get('cart','print_tpl_supplier');
                 $query->andWhere(['not', ['p.supplier_id' => null]]);
                 $query->orderBy(['p.supplier_id' => SORT_DESC]);
             } else {

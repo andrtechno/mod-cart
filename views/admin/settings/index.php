@@ -127,9 +127,31 @@ $form = ActiveForm::begin();
             ],
 
         ]);
-
         ?>
-
+        <?php
+        echo $form->field($model, 'print_tpl_brand')->widget(\panix\ext\codemirror\CodeMirrorTextArea::class, [
+            //  'modes' => ['php', 'css', 'xml', 'javascript', 'smarty'],
+            'mode' => ['name' => 'smarty', 'version' => 3, 'baseMode' => 'text/html'],
+            'theme' => 'elegant',//'solarized', ttcn
+            'options' => [
+                'rows' => 6,
+                'class' => 'form-control',
+                'value' => file_get_contents(file_exists(Yii::getAlias($model->print_tpl_brand))?Yii::getAlias($model->print_tpl_brand):Yii::getAlias('@cart') . '/print_brand.dist.tpl')
+            ],
+        ]);
+        ?>
+        <?php
+        echo $form->field($model, 'print_tpl_supplier')->widget(\panix\ext\codemirror\CodeMirrorTextArea::class, [
+            //  'modes' => ['php', 'css', 'xml', 'javascript', 'smarty'],
+            'mode' => ['name' => 'smarty', 'version' => 3, 'baseMode' => 'text/html'],
+            'theme' => 'elegant',//'solarized', ttcn
+            'options' => [
+                'rows' => 6,
+                'class' => 'form-control',
+                'value' => file_get_contents(file_exists(Yii::getAlias($model->print_tpl_supplier))?Yii::getAlias($model->print_tpl_supplier):Yii::getAlias('@cart') . '/print_supplier.dist.tpl')
+            ],
+        ]);
+        ?>
     </div>
     <div class="card-footer text-center">
         <?= $model->submitButton(); ?>

@@ -190,7 +190,8 @@ class Order extends ActiveRecord
         return [
             ['user_phone', 'panix\ext\telinput\PhoneInputValidator', 'on' => self::SCENARIO_DEFAULT],
             ['user_phone', 'string', 'on' => 'buyOneClick'],
-            [['user_name', 'user_email', 'delivery_id', 'payment_id', 'user_phone'], 'required'],
+            [['user_name', 'delivery_id', 'payment_id', 'user_phone'], 'required'],
+            //'user_email',
             ['user_email', 'email'],
             [['user_comment', 'admin_comment', 'delivery_city'], 'string', 'max' => 500],
             [['delivery_address'], 'string', 'max' => 255],
@@ -539,7 +540,7 @@ class Order extends ActiveRecord
             $ordered_product->supplier_id = $product->supplier_id;
             $ordered_product->manufacturer_id = $product->brand_id;
             $ordered_product->currency_rate = ($product->currency_id) ? Yii::$app->currency->getById($product->currency_id)->rate : NULL;
-            $box = $product->eav_par_v_asike;
+            $box = $product->eav_par_v_asiku;
             if (isset($box)) {
                 $ordered_product->price_purchase = $product->price_purchase * $box->value;
             } else {

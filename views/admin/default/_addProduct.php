@@ -92,7 +92,15 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                                 }
                                 $html = $discount;
                                 $html .= '<div class="input-group">';
-                                $html .= Html::textInput("price_{$model->id}", $model->getFrontPrice(), ['id' => "price_{$model->id}", 'class' => 'form-control']);
+
+                                $box = $model->eav_par_v_asiku;
+                                if (isset($box)) {
+                                    $price = Yii::$app->currency->convert($model->price, $model->currency_id) * $box->value;
+                                } else {
+                                    $price = $model->getFrontPrice();
+                                }
+
+                                $html .= Html::textInput("price_{$model->id}", $price, ['id' => "price_{$model->id}", 'class' => 'form-control']);
                                 $html .= '<div class="input-group-append">';
                                 $html .= '<span class="input-group-text">' . (($model->currency_id) ? Yii::$app->currency->getById($model->currency_id)->iso : Yii::$app->currency->main['iso']) . '</span>';
                                 $html .= '</div></div>';

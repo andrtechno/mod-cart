@@ -540,7 +540,7 @@ class DefaultController extends WebController
                 $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
 
 
-            $box = $item['model']->eav_par_v_asike;
+            $box = $item['model']->eav_par_v_asiku;
             if (isset($box)) {
                 $ordered_product->price_purchase = Yii::$app->currency->convert($item['model']->price_purchase * $box->value, $ordered_product->currency_id);
             }else{

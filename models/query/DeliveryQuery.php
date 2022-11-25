@@ -15,5 +15,14 @@ class DeliveryQuery extends ActiveQuery {
         return $this->joinWith('translations')
                         ->addOrderBy(['{{%order__delivery_translate}}.name' => $sort]);
     }
-
+    public function init()
+    {
+        /** @var \yii\db\ActiveRecord $modelClass */
+        $modelClass = $this->modelClass;
+        $tableName = $modelClass::tableName();
+        if (isset($modelClass::getTableSchema()->columns['ordern'])) {
+            $this->addOrderBy(["{$tableName}.ordern" => SORT_DESC]);
+        }
+        parent::init();
+    }
 }

@@ -69,23 +69,46 @@ $('#filter-collapse').on('hide.bs.collapse', function () {
 
                     </div>
 
+                    <div class="row">
+                        <div class="col-3">
+                            <?php
+                            echo Html::label(Yii::t('cart/Order', 'STATUS_ID'), 'status_id', ['class' => 'font-weight-bold']);
+                            echo Html::checkboxList('status_id', NULL, ArrayHelper::map(OrderStatus::find()
+                                ->addOrderBy(['name' => SORT_ASC])
+                                ->all(), 'id', 'name'), ['class' => '', 'item' => function ($index, $label, $name, $checked, $value) {
+                                $checked = $checked ? 'checked' : '';
+                                return "<div class='custom-control custom-checkbox'><input id='status-id-{$index}' class='custom-control-input' type='checkbox' {$checked} name='{$name}' value='{$value}'><label class='custom-control-label' for='status-id-{$index}'>{$label}</label></div>";
+                            }]);
 
-                    <?php
-                    echo Html::label(Yii::t('cart/Order','STATUS_ID'),'status_id',['class'=>'font-weight-bold']);
-                    echo Html::checkboxList('status_id', NULL, ArrayHelper::map(OrderStatus::find()
-                        ->addOrderBy(['name' => SORT_ASC])
-                        ->all(), 'id', 'name'), ['class' => '', 'item' => function ($index, $label, $name, $checked, $value) {
-                        $checked = $checked ? 'checked' : '';
-                        return "<div class='custom-control custom-checkbox'><input id='status-id-{$index}' class='custom-control-input' type='checkbox' {$checked} name='{$name}' value='{$value}'><label class='custom-control-label' for='status-id-{$index}'>{$label}</label></div>";
-                    }]);
+                            ?>
+                        </div>
 
-                    ?>
+                    </div>
+
+
                 </div>
             </div>
             <div class="card-footer text-center">
-                <?= Html::checkBox('image', true, ['class' => 'form-control2']); ?>
-                <?= Html::label('Картинки', 'image', ['class' => 'control-label']); ?>
-                <?= Html::submitButton('Показать', ['class' => 'btn btn-success', 'name' => '']); ?>
+                <div class="row">
+                    <div class="col text-right">
+                        <div class="custom-control custom-checkbox">
+                            <?php
+                            echo Html::checkbox('price', true, ['id' => 'type_price', 'class' => 'custom-control-input', 'checked' => 1]);
+                            echo Html::label('Цена закупки (только для поставщиков)', 'type_price', ['class' => 'font-weight-b2old custom-control-label']);
+                            ?>
+                        </div>
+
+                        <div class="custom-control custom-checkbox">
+                            <?php
+                            echo Html::checkbox('image', true, ['id' => 'image', 'class' => 'custom-control-input', 'checked' => 1]);
+                            echo Html::label('Картинки', 'image', ['class' => 'font-weight-b2old custom-control-label']);
+                            ?>
+                        </div>
+                    </div>
+                    <div class="col text-left">
+                        <?= Html::submitButton('Показать', ['class' => 'btn btn-success', 'name' => '']); ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

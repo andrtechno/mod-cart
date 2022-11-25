@@ -73,8 +73,6 @@ class OrderCreateForm extends Model
     {
         $scenarios = parent::scenarios();
         $scenarios['buyOneClick'] = ['user_phone'];
-
-
         $scenarios['guest'] = [
             'register',
             'delivery_id',
@@ -103,7 +101,9 @@ class OrderCreateForm extends Model
         $rules = [];
 
         $rules[] = [['user_lastname'], 'required', 'on' => 'guest'];
-        $rules[] = [['user_name', 'user_email', 'user_phone', 'user_lastname'], 'required'];
+        $rules[] = [['user_name', 'user_phone', 'user_lastname','delivery_address'], 'required'];
+        //'user_email',  required
+
         $rules[] = [['delivery_id', 'payment_id'], 'required'];
         $rules[] = [['delivery_id', 'payment_id', 'promocode_id', 'points'], 'integer'];
         $rules[] = ['user_email', 'email'];

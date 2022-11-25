@@ -40,7 +40,7 @@ class DeliverySearch extends Delivery {
      */
     public function search($params) {
         $query = Delivery::find();
-        $query->joinWith(['translations translations']);
+        //$query->joinWith(['translations translations']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
