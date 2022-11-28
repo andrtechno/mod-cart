@@ -60,7 +60,7 @@ $('#filter-collapse').on('hide.bs.collapse', function () {
                         ?>
                         <?php
 
-                        echo Html::dropDownList('render', 'delivery', ['delivery' => 'Распределить по доставке', 'manufacturer' => 'Распределить по производителю', 'supplier' => 'Распределить по поставщику'], ['class' => 'custom-select']);
+                        echo Html::dropDownList('render', 'delivery', ['delivery' => 'Распределить по доставке', 'brand' => 'Распределить по бренду', 'supplier' => 'Распределить по поставщику'], ['class' => 'custom-select']);
                         ?>
                         <?php
                         echo Html::dropDownList('type', 1, [1 => 'PDF', 0 => 'Html'], ['class' => 'custom-select']);

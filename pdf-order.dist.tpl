@@ -3,13 +3,26 @@
 {use class="panix\engine\Html"}
 {use class="panix\engine\CMS"}
 
+<!--HEADER-->
+<table width="100%" border="0" style="margin-bottom:30px">
+    <tr>
+        <td width="60%">
+            <h1>№{CMS::idToNumber($model->id)}</h1>
+        </td>
+        <td width="40%" style="text-align: right">{$model->getAttributeLabel('created_at')}:
+            <strong>{Yii::$app->formatter->asDatetime($model->created_at)}</strong>
+        </td>
+    </tr>
+</table>
+<!--/HEADER-->
+
 <table border="0" cellspacing="0" cellpadding="0" style="width:100%;" class="table2">
     <tr>
         <td width="50%" valign="top">
             <table border="0" cellspacing="0" cellpadding="5" style="width:100%;" class="table2">
                 {if $model->user_name}
                     <tr>
-                        <td align="left" class="text-left" style="border-bottom: 1px dotted #777;">
+                        <td align="left" class="text-left" style="border-bottom: 1px solid #ccc;">
                             {$model->getAttributeLabel('user_name')}:
                             <strong>{$model->user_name}</strong>
                             {if $model->user_lastname}
@@ -20,7 +33,7 @@
                 {/if}
                 {if $model->user_phone}
                     <tr>
-                        <td align="left" class="text-left" style="border-bottom: 1px dotted #777;">
+                        <td align="left" class="text-left" style="border-bottom: 1px solid #ccc;">
                             {$model->getAttributeLabel('user_phone')}:
                             <strong>{$model->user_phone}</strong>
                         </td>
@@ -28,7 +41,7 @@
                 {/if}
                 {if $model->user_email}
                     <tr>
-                        <td align="left" class="text-left" style="border-bottom: 1px dotted #777;">
+                        <td align="left" class="text-left" style="border-bottom: 1px solid #ccc;">
                             {$model->getAttributeLabel('user_email')}:
                             <strong>{$model->user_email}</strong>
                         </td>
@@ -40,7 +53,7 @@
             <table border="0" cellspacing="0" cellpadding="5" style="width:100%;">
                 {if $model->delivery_address}
                     <tr>
-                        <td align="left" class="text-left" style="border-bottom: 1px dotted #777;">
+                        <td align="left" class="text-left" style="border-bottom: 1px solid #ccc;">
                             {$model->getAttributeLabel('delivery_address')}:
                             <strong>{$model->delivery_address}</strong>
                         </td>
@@ -48,14 +61,14 @@
                 {/if}
                 {if $model->deliveryMethod}
                     <tr>
-                        <td align="left" class="text-left" style="border-bottom: 1px dotted #777;">
+                        <td align="left" class="text-left" style="border-bottom: 1px solid #ccc;">
                             {$model->getAttributeLabel('delivery_id')}:
                             <strong>{Yii::$app->formatter->asHtml($model->deliveryMethod->name)}</strong>
                     </tr>
                 {/if}
                 {if $model->paymentMethod}
                     <tr>
-                        <td align="left" class="text-left" style="border-bottom: 1px dotted #777;">
+                        <td align="left" class="text-left" style="border-bottom: 1px solid #ccc;">
                             {$model->getAttributeLabel('payment_id')}:
                             <strong>{Yii::$app->formatter->asHtml($model->paymentMethod->name)}</strong>
                         </td>

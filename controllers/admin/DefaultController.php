@@ -90,7 +90,7 @@ class DefaultController extends AdminController
             //'mode' => 'utf-8',
             'default_font_size' => 9,
             'default_font' => 'times',
-            'margin_top' => 25,
+            'margin_top' => 5,
             'margin_bottom' => 9,
             'margin_left' => 5,
             'margin_right' => 5,
@@ -104,10 +104,9 @@ class DefaultController extends AdminController
         //$mpdf->SetProtection(['copy','print'], 'asdsad', 'MyPassword');
         $mpdf->SetTitle($title);
         $mpdf->SetHTMLFooter($this->renderPartial('@theme/views/pdf/footer', ['currentDate' => $currentDate]));
-        $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_order', [
-
+        /*$mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_order', [
             'model' => $model
-        ]));
+        ]));*/
         $mpdf->WriteHTML(file_get_contents(Yii::getAlias('@vendor/panix/engine/pdf/assets/mpdf-bootstrap.min.css')), 1);
         //$mpdf->WriteHTML($this->renderPartial('_pdf_order', ['model' => $model]), 2);
         $mpdf->WriteHTML($this->renderPartial($config, ['model' => $model]), 2);
@@ -328,7 +327,7 @@ class DefaultController extends AdminController
             //'mode' => 'utf-8',
             'default_font_size' => 9,
             'default_font' => 'times',
-            'margin_top' => 35,
+            'margin_top' => 5,
             'margin_bottom' => 10,
             'margin_left' => 5,
             'margin_right' => 5,
@@ -399,22 +398,22 @@ class DefaultController extends AdminController
             $query->joinWith(['products p']);
             if ($render == 'brand') {
                 //$view = 'pdf/brand';
-                $view = Yii::$app->settings->get('cart','print_tpl_brand');
+                $view = Yii::$app->settings->get('cart','pdf_tpl_brand');
                 $query->andWhere(['not', ['p.manufacturer_id' => null]]);
                 $query->orderBy(['p.manufacturer_id' => SORT_DESC]);
             } elseif ($render == 'supplier') {
                 //$view = 'pdf/supplier';
-                $view = Yii::$app->settings->get('cart','print_tpl_supplier');
+                $view = Yii::$app->settings->get('cart','pdf_tpl_supplier');
                 $query->andWhere(['not', ['p.supplier_id' => null]]);
                 $query->orderBy(['p.supplier_id' => SORT_DESC]);
             } else {
                 $this->error404();
             }
 
-            $mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_products', [
+            /*$mpdf->SetHTMLHeader($this->renderPartial('pdf/_header_products', [
                 'start_date' => CMS::date($dateStart, false),
                 'end_date' => CMS::date($dateEnd, false),
-            ]));
+            ]));*/
         }
         $model = $query->all();
 
@@ -425,9 +424,9 @@ class DefaultController extends AdminController
             $mpdf->WriteHTML($this->renderPartial($view, [
                 'array' => $array,
                 'model' => $model,
-                'dateStart' => CMS::date($dateStart),
+                'dateStart' => $dateStart,
                 //'dateStart' => date('Y-m-d', $dateStart),
-                'dateEnd' => date('Y-m-d', $dateEnd - 86400)
+                'dateEnd' => $dateEnd - 86400
 
             ]), 2);
             $mpdf->Ln();
