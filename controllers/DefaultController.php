@@ -532,6 +532,7 @@ class DefaultController extends WebController
 
             $ordered_product = new OrderProduct;
             $ordered_product->order_id = $order->id;
+            $ordered_product->user_id = $order->user_id;
             $ordered_product->product_id = $item['model']->id;
             $ordered_product->configurable_id = $item['configurable_id'];
             $ordered_product->currency_id = $item['model']->currency_id;
