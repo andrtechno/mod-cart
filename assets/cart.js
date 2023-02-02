@@ -338,6 +338,9 @@ cart = {
                 //$('#delivery-form').html(data);
                 $(that).closest('.delivery-radio').find('.delivery-form-'+delivery_id).html(data);
                 $('#order-delivery_id').removeClass('loading');
+
+                var deliveryCheck = $('#order-delivery_id input[type="radio"]:checked');
+                $('#delivery').html($("label[for='"+deliveryCheck.attr('id')+"']").text());
             },
             complete:function(jqXHR, textStatus){
                 $('#delivery-1,#delivery-2,#delivery-3').html('');

@@ -166,13 +166,19 @@ $this->registerJs("
         $('#delivery-3').html($('option:selected',this).text());
     });
 
-    $('#delivery-1').html($('#dynamicmodel-type option:selected').text());
+    if($('#dynamicmodel-area option:selected').val()){
+        $('#delivery-1').html($('#dynamicmodel-area option:selected').text());
+    }
+    
     if($('#dynamicmodel-city option:selected').val()){
         $('#delivery-2').html($('#dynamicmodel-city option:selected').text());
     }
+    
     if($('#dynamicmodel-warehouse option:selected').val()){
         $('#delivery-3').html($('#dynamicmodel-warehouse option:selected').text());
     }
 
+    var deliveryCheck = $('#order-delivery_id input[type=\"radio\"]:checked');
+    $('#delivery').html($(\"label[for='\"+deliveryCheck.attr('id')+\"']\").text());
 
 ", \yii\web\View::POS_END, 'delivery-novaposhta');
