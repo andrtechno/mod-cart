@@ -38,7 +38,7 @@ ajax();
 $(document).on('change','#order-delivery_type',function(e, clickedIndex, isSelected, previousValue){
 
     //if($(this).val() == 'warehouse'){
-        ajax();
+        //ajax();
    // }else{
      //   ajax();
         //$('.field-order-delivery_address').show();
@@ -47,7 +47,7 @@ $(document).on('change','#order-delivery_type',function(e, clickedIndex, isSelec
 
 
 $(document).on('change','#order-delivery_city_ref',function(e, clickedIndex, isSelected, previousValue){
-        ajax();
+        //ajax();
 });
 
 
@@ -64,7 +64,7 @@ $(document).on('change','#order-delivery_id',function(e, clickedIndex, isSelecte
 });
 
 JS;
-$this->registerJs($js);
+//$this->registerJs($js);
 /*
 $pattern = '#^catalog/(?P<slug>[0-9a-zA-Z_\/\-]+)/(?P<filter>\/[\w,\/]+)$#u';
 
@@ -80,7 +80,7 @@ CMS::dump($matches);die;
     <div class="alert alert-info">Мне можно не звонить!</div>
 <?php } ?>
 
-<?php if (!$model->user_id) { ?>
+<?php if (!$model->user_id && !$model->isNewRecord) { ?>
     <div class="alert alert-warning">Заказ оформлен <strong>незарегистрированным</strong> пользователем</div>
 <?php } ?>
 

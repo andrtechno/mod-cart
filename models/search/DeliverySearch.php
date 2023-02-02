@@ -19,6 +19,7 @@ class DeliverySearch extends Delivery {
     public function rules() {
         return [
             [['id'], 'integer'],
+            ['system','string'],
             [['name', 'slug'], 'safe'],
         ];
     }
@@ -58,7 +59,7 @@ class DeliverySearch extends Delivery {
         ]);
 
         $query->andFilterWhere(['like', 'translations.name', $this->name]);
-
+        $query->andFilterWhere(['like', 'system', $this->system]);
         return $dataProvider;
     }
 

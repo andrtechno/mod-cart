@@ -27,14 +27,15 @@
 {if $model.deliveryMethod}
     <p><strong>{$model->getAttributeLabel('delivery_id')}:</strong> {$model.deliveryMethod.name}</p>
 {/if}
+{if $model->getDeliveryEach()}
+    {foreach from=$model->getDeliveryEach() item=value}
+        <p>{$value['key']}: <strong>{$value['value']}</strong></p>
+    {/foreach}
+{/if}
 {if $model.paymentMethod}
     <p><strong>{$model->getAttributeLabel('payment_id')}:</strong> {$model.paymentMethod.name}</p>
 {/if}
 
-{if $model.delivery_address}
-    <p><strong>{$model->getAttributeLabel('delivery_address')}
-            :</strong> {if $model.delivery_city}{$model.delivery_city},{/if} {$model.delivery_address}</p>
-{/if}
 {if $model.user_comment}
     <p><strong>{$model->getAttributeLabel('user_comment')}:</strong> {$model.user_comment}</p>
 {/if}

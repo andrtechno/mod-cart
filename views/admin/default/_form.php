@@ -9,6 +9,9 @@ use panix\engine\bootstrap\ActiveForm;
 use panix\ext\telinput\PhoneInput;
 use panix\engine\CMS;
 
+/**
+ * @var $this \yii\web\View
+ */
 ?>
 
 <?php
@@ -118,7 +121,7 @@ $form = ActiveForm::begin([
 
 
     <div class="card-body">
-
+        <h5 class="mt-3 mb-3 text-center">Оплата и доставка</h5>
         <?=
         $form->field($model, 'status_id')->dropDownList(ArrayHelper::map(OrderStatus::find()->all(), 'id', 'name'));
         ?>
@@ -133,11 +136,25 @@ $form = ActiveForm::begin([
         ]);
         ?>
 
+        <div id="delivery-form">
+            <?php
+            if ($model->delivery_id) {
+                $delivery = \panix\mod\cart\models\Delivery::findOne($model->delivery_id);
+                $system = $delivery->getDeliverySystemClass();
+                if ($system instanceof \panix\mod\cart\components\delivery\BaseDeliverySystem) {
+                    //echo $system->processRequestAdmin($delivery, $model->getDeliveryData());
+                    //CMS::dump($model->deliveryModel);
+                    echo $system->processRequestAdmin2($delivery, $model);
+                }
+            }
+            ?>
 
-        <div id="delivery-form"></div>
-        <?= $form->field($model, 'delivery_address')->textInput(); ?>
+        </div>
+
+        <?php //echo $form->field($model, 'delivery_address')->textInput(); ?>
         <?= $form->field($model, 'ttn')->textInput()->hint('После заполнение ТТН, клиенту будет отправлено уведомление на почту.'); ?>
-        <?= $form->field($model, 'paid')->checkbox(); ?>
+
+        <h5 class="mt-3 mb-3 text-center">Личная информация</h5>
         <?= $form->field($model, 'user_name')->textInput(); ?>
         <?= $form->field($model, 'user_lastname')->textInput(); ?>
         <?= $form->field($model, 'user_email', [
@@ -169,6 +186,7 @@ $form = ActiveForm::begin([
         }
         ?>
         <?= $form->field($model, 'user_comment')->textArea(); ?>
+        <h5 class="mt-3 mb-3 text-center">Прочее</h5>
         <?= $form->field($model, 'admin_comment')->textArea(); ?>
         <?php
         if (!$model->apply_user_points) {
@@ -176,9 +194,31 @@ $form = ActiveForm::begin([
         }
         ?>
         <?= $form->field($model, 'invoice')->textInput(['maxlength' => 50]); ?>
+        <?= $form->field($model, 'paid')->checkbox(); ?>
     </div>
     <div class="card-footer text-center">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app/default', 'CREATE') : Yii::t('app/default', 'UPDATE'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
 <?php ActiveForm::end(); ?>
+
+<?php
+
+$this->registerJs("
+$('#order-delivery_id').change(function(){
+        $.ajax({
+            url: common.url('/admin/cart/delivery/process?id=' + $(this).val()),
+            type: 'POST',
+            dataType: 'html',
+            data: $('#order-form').serialize(),
+            success: function (data) {
+                $('#delivery-form').html(data);
+                $('#delivery-form').removeClass('pjax-loader');
+            },
+            beforeSend:function(){
+                $('#delivery-form').addClass('pjax-loader');
+            }
+        });
+});
+
+");

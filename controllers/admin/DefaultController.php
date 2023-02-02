@@ -2,10 +2,14 @@
 
 namespace panix\mod\cart\controllers\admin;
 
+use panix\engine\bootstrap\ActiveForm;
 use panix\engine\CMS;
 use panix\mod\cart\components\delivery\BaseDeliverySystem;
+use panix\mod\cart\components\delivery\DeliverySystemManager;
 use panix\mod\cart\components\events\EventProduct;
+use panix\mod\cart\models\Delivery;
 use Yii;
+use yii\helpers\Json;
 use yii\helpers\Markdown;
 use yii\helpers\Url;
 use yii\web\Response;
@@ -45,23 +49,23 @@ class DefaultController extends AdminController
             //$quantity = $post['quantity'][$key];
             $product = OrderProduct::find()->where(['order_id' => $id, 'product_id' => $product_id])->one();
             $oldQuantity = $product->quantity;
-           // $product->quantity = $quantity;
+            // $product->quantity = $quantity;
             //$event = new EventProduct([
             //    'product_model' => $product->originalProduct,
             //    'ordered_product' => $product,
             //    'quantity' => $quantity,
-              //  'params'=>['new_quantity'=>$quantity]
-           // ]);
-           // $product->save(false);
+            //  'params'=>['new_quantity'=>$quantity]
+            // ]);
+            // $product->save(false);
 
             /** @var Order $order */
             $order = Order::findOne($id);
-           // $order = $product->order;
+            // $order = $product->order;
 
 
-            $order->setProductQuantities([$product->id=>$quantity]);
+            $order->setProductQuantities([$product->id => $quantity]);
             //$order->eventProductQuantityChanged($event);
-           // $order->updateTotalPrice();
+            // $order->updateTotalPrice();
             $result['success'] = true;
             $result['message'] = "Количество <strong>{$product->name}</strong> успешно изменено.";
 
@@ -175,10 +179,39 @@ class DefaultController extends AdminController
         $post = Yii::$app->request->post();
 
 
+
+        //LOAD
+        if (!$post && !$model->isNewRecord && $model->delivery_id) {
+            $delivery = Delivery::findOne($model->delivery_id);
+            if ($delivery->system) {
+                $manager = new DeliverySystemManager();
+                $system = $manager->getSystemClass($delivery->system);
+                $model->deliveryModel = $system->getModel();
+            }
+
+        }
+
         if ($model->load($post)) {
 
+            //POST
+            $delivery = Delivery::findOne($model->delivery_id);
+            if ($delivery->system) {
+                $manager = new DeliverySystemManager();
+                $system = $manager->getSystemClass($delivery->system);
+                $model->deliveryModel = $system->getModel();
+                $model->deliveryModel->load($post);
+                if(isset($model->deliveryModel->type)){
+                if ($model->deliveryModel->type == 'warehouse') {
+                    $model->deliveryModel->addRule(['warehouse'], 'required');
+                } else {
+                    $model->deliveryModel->addRule(['address'], 'required');
+                }
+                }
+                //$model->deliveryModel->validate();
+            }
 
-            if (Yii::$app->request->post('onChangeDelivery')) {
+
+            /*if (Yii::$app->request->post('onChangeDelivery')) {
                 //   print_r($model);
                 if ($model->deliveryMethod) {
                     // if($model->deliveryMethod->system){
@@ -190,7 +223,7 @@ class DefaultController extends AdminController
                     // }
                 }
                 return false;
-            }
+            }*/
 
 
             if ($model->validate()) {
@@ -227,8 +260,8 @@ class DefaultController extends AdminController
 
                 return $this->redirectPage($isNew, $post);
             } else {
-                CMS::dump($model->getErrors());
-                die;
+                //CMS::dump($model->getErrors());
+                //die;
             }
         }
         return $this->render('update', [
@@ -398,12 +431,12 @@ class DefaultController extends AdminController
             $query->joinWith(['products p']);
             if ($render == 'brand') {
                 //$view = 'pdf/brand';
-                $view = Yii::$app->settings->get('cart','pdf_tpl_brand');
+                $view = Yii::$app->settings->get('cart', 'pdf_tpl_brand');
                 $query->andWhere(['not', ['p.manufacturer_id' => null]]);
                 $query->orderBy(['p.manufacturer_id' => SORT_DESC]);
             } elseif ($render == 'supplier') {
                 //$view = 'pdf/supplier';
-                $view = Yii::$app->settings->get('cart','pdf_tpl_supplier');
+                $view = Yii::$app->settings->get('cart', 'pdf_tpl_supplier');
                 $query->andWhere(['not', ['p.supplier_id' => null]]);
                 $query->orderBy(['p.supplier_id' => SORT_DESC]);
             } else {

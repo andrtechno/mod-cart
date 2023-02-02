@@ -38,7 +38,6 @@ return [
     'PROMO_CODE_ACTIVATED' => 'Активирован промо-код',
     'PRICE_PER_UNIT' => 'Цена за шт.',
     'TOTAL_PRICE' => 'Общая цена',
-    'SELECT_SYSTEM_DELIVERY' => '&mdash; Система доставки &mdash;',
     'SELECT_SYSTEM_PAYMENT' => '&mdash; Система оплаты &mdash;',
     'TOTAL_COST' => 'Общая стоимость',
     'MAIL_ADMIN_SUBJECT' => 'Оформлен новый заказ №{0}',

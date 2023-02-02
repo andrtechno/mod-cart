@@ -1,6 +1,6 @@
 <?php
 
-namespace panix\mod\cart\widgets\delivery\pickup;
+namespace panix\mod\cart\widgets\delivery\address;
 
 use panix\mod\cart\models\forms\OrderCreateForm;
 use Yii;
@@ -12,9 +12,9 @@ use yii\helpers\Html;
 use yii\web\Response;
 
 /**
- * Pickup delivery system
+ * Address delivery system
  */
-class PickupDeliverySystem extends BaseDeliverySystem
+class AddressDeliverySystem extends BaseDeliverySystem
 {
 
     public $model;
@@ -34,15 +34,13 @@ class PickupDeliverySystem extends BaseDeliverySystem
 
         $settings = $this->getSettings($method->id);
         $post = Yii::$app->request->post();
-        if ($this->model->load($post)) {
-            $this->model->validate($post);
+        if($this->model->load($post)){
+            $this->model->validate();
         }
 
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
-        return Yii::$app->view->$render("@cart/widgets/delivery/pickup/_view", [
+        return Yii::$app->view->$render("@cart/widgets/delivery/address/_view", [
             'model' => $this->model,
-            'deliveryModel' => $this->model,
-            'list' => $this->getList($settings)
         ]);
     }
 
@@ -53,10 +51,8 @@ class PickupDeliverySystem extends BaseDeliverySystem
         $post = Yii::$app->request->post();
 
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
-        return Yii::$app->view->$render("@cart/widgets/delivery/pickup/_view_admin", [
+        return Yii::$app->view->$render("@cart/widgets/delivery/address/_view_admin", [
             'model' => $this->model,
-            'list' => $this->getList($settings),
-            'activeIndex' => 0,
         ]);
     }
 
@@ -64,22 +60,15 @@ class PickupDeliverySystem extends BaseDeliverySystem
     {
         $settings = $this->getSettings($method->id);
         $post = Yii::$app->request->post();
-        $model->deliveryModel->address = 1;
-        $activeIndex = 0;
         $data = $model->getDeliveryData();
         if ($data) {
-            if (isset($data['address'])) {
-                $activeIndex = $data['address'];
+            if(isset($data['address'])){
+                $model->deliveryModel->address = $data['address'];
             }
         }
-
-
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
-        return Yii::$app->view->$render("@cart/widgets/delivery/pickup/_view_admin", [
+        return Yii::$app->view->$render("@cart/widgets/delivery/address/_view_admin", [
             'model' => $model->deliveryModel,
-            //'deliveryModel' => $model->deliveryModel,
-            'activeIndex' => $activeIndex,
-            'list' => $this->getList($settings)
         ]);
     }
 
@@ -92,32 +81,11 @@ class PickupDeliverySystem extends BaseDeliverySystem
 
     public function getModelConfig()
     {
-        return new PickupConfigurationModel();
+        return false;
     }
-
-    public function getList($settings)
-    {
-        $list = [];
-        foreach ($settings->address as $address) {
-            $html = '';
-            if ($address['from']) {
-                $html .= '<small class="text-muted">(c ' . $address['from'];
-            }
-            if ($address['to']) {
-                $html .= ' по ' . $address['to'] . ')</small>';
-            }
-            $list[] = $address['name'] . ' ' . $html;
-        }
-        return $list;
-    }
-
     public function getModel()
     {
-        $model = new \yii\base\DynamicModel(['address']);
-        $model->addRule(['address'], 'required');
-        $model->addRule(['address'], 'safe');
-        $model->setAttributeLabels(['address' => 'Забрать из адреса']);
-        return $model;
+        return new AddressModel;
     }
 
 }

@@ -22,7 +22,7 @@ class NovaPoshtaConfigurationModel extends Model
     public function attributeLabels()
     {
         return [
-            'api_key' => Yii::t('cart/payments', 'API key'),
+            'api_key' => Yii::t('cart/delivery', 'API key'),
         ];
     }
 

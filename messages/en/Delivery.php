@@ -7,5 +7,17 @@ return [
     'DESCRIPTION' => 'Description',
     'PAYMENT_METHODS' => 'Payment methods',
     'ERROR_PAYMENT' => 'Error checking payment method.',
-    'SYSTEM' => 'Delivery system'
+    'SYSTEM' => 'Delivery system',
+    'ERROR_DELIVERY' => 'You must fill in the delivery method',
+    'CITY' => 'City',
+    'AREA' => 'Region',
+    'WAREHOUSE' => 'Warehouse',
+    'ADDRESS' => 'Address',
+    'TYPE_WAREHOUSE' => 'Warehouse',
+    'TYPE_ADDRESS' => 'To address',
+    'DELIVERY_WAREHOUSE' => 'Delivery to department',
+    'DELIVERY_ADDRESS' => 'Delivery to address',
+    'PROMPT_CITY' => 'Select a city',
+    'PROMPT_AREA' => 'Select region',
+    'PROMPT_WAREHOUSE' => 'Select department',
 ];

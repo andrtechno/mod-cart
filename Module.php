@@ -23,6 +23,7 @@ class Module extends WebModule implements BootstrapInterface
     public $emptyView = '@cart/widgets/cart2/views/_empty';
 
     const EVENT_ORDER_CREATE = 'orderCreate';
+    public $cart;
 
     public function onOrderCreate($order)
     {
@@ -80,6 +81,7 @@ class Module extends WebModule implements BootstrapInterface
             true
         );
 
+
         $app->setComponents([
             'cart' => [
                 'class' => 'panix\mod\cart\components\Cart',
@@ -105,8 +107,6 @@ class Module extends WebModule implements BootstrapInterface
 
 
     }
-
-    public $cart;
 
 
     public function getInfo()

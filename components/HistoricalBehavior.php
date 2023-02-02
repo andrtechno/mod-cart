@@ -2,9 +2,14 @@
 
 namespace panix\mod\cart\components;
 
+use panix\engine\CMS;
 use panix\engine\Html;
+use panix\mod\cart\components\delivery\DeliverySystemManager;
 use panix\mod\cart\components\events\EventProduct;
 use panix\mod\cart\models\Payment;
+use panix\mod\novaposhta\models\Area;
+use panix\mod\novaposhta\models\Cities;
+use panix\mod\novaposhta\models\Warehouses;
 use Yii;
 use panix\mod\cart\models\Delivery;
 use panix\mod\cart\models\OrderStatus;
@@ -12,6 +17,7 @@ use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderHistory;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
+use yii\helpers\Json;
 
 /**
  * Logs order changes
@@ -148,8 +154,8 @@ class HistoricalBehavior extends Behavior
         if (!empty($changed)) {
             $this->log([
                 'handler' => self::ATTRIBUTES_HANDLER,
-                'data_before' => $this->prepareAttributes($old_data),
-                'data_after' => $this->prepareAttributes($new_data),
+                'data_before' => $this->prepareAttributes($old_data, $old),
+                'data_after' => $this->prepareAttributes($new_data, $new),
             ]);
         }
     }
@@ -181,12 +187,12 @@ class HistoricalBehavior extends Behavior
      * @param array $attrs
      * @return string
      */
-    public function prepareAttributes(array $attrs)
+    public function prepareAttributes(array $attrs, $modelOrder)
     {
         $result = [];
 
         foreach ($attrs as $key => $val)
-            $result[$key] = $this->idToText($key, $val);
+            $result[$key] = $this->idToText($key, $val, $modelOrder);
 
         return serialize($result);
     }
@@ -196,14 +202,60 @@ class HistoricalBehavior extends Behavior
      * @param $id
      * @return string
      */
-    public function idToText($key, $id)
+    public function idToText($key, $id, $modelOrder)
     {
         $val = $id;
 
         if ('delivery_id' === $key) {
             $model = Delivery::findOne($id);
-            if ($model)
+            if ($model) {
                 $val = $model->name;
+                if ($model->system) {
+                    $data = Json::decode($modelOrder->delivery_data);
+                    $manager = new DeliverySystemManager();
+                    $system = $manager->getSystemClass($model->system);
+
+                    $html = '<br/>';
+                    if ($model->system == 'novaposhta') {
+
+                        if (isset($data['type']) && $data['type'] == 'warehouse') {
+                            if (isset($data['area'])) {
+                                $area = Area::findOne($data['area']);
+                                if ($area) {
+                                    $html .= $area->getDescription() . ', ';
+                                }
+                            }
+                            if (isset($data['city'])) {
+                                $city = Cities::findOne($data['city']);
+                                if ($city) {
+                                    $html .= Yii::t('cart/Delivery', 'CITY') . ' ' . $city->getDescription() . '';
+                                }
+                            }
+                            if (isset($data['warehouse'])) {
+                                $warehouse = Warehouses::findOne($data['warehouse']);
+                                if ($warehouse) {
+                                    $html .= '<br/>' . $warehouse->getDescription();
+                                }
+                            }
+
+                        } else {
+                            $html .= $data['address'];
+                        }
+
+
+                    } elseif ($model->system == 'pickup') {
+                        $settings = $system->getSettings($model->id);
+                        $list = $system->getList($settings);
+                        if(isset($list[$data['address']])){
+                            $html .= $system->getList($settings)[$data['address']];
+                        }
+
+                    } else { //address
+                        $html .= $data['address'];
+                    }
+                    $val .= $html;
+                }
+            }
         } elseif ('payment_id' === $key) {
             $model = Payment::findOne($id);
             if ($model)
@@ -230,7 +282,6 @@ class HistoricalBehavior extends Behavior
             'user_name',
             'user_email',
             'user_lastname',
-            'delivery_address',
             'user_phone',
             'user_comment',
             'admin_comment',

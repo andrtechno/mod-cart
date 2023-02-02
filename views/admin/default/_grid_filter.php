@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 
 
-$class = ($model->status_id || $model->delivery_city) ? 'show' : '';
+$class = ($model->status_id) ? 'show' : '';
 
 
 ?>
@@ -48,25 +48,7 @@ $class = ($model->status_id || $model->delivery_city) ? 'show' : '';
                     ?>
                 </div>
             </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <?php
-                    echo Html::activeLabel($model, 'delivery_city');
-                    echo Html::activeTextInput($model, 'delivery_city', [
-                        'class' => 'form-control',
-                    ]);
-                    ?>
-                </div>
-                <div class="form-group">
-                    <?php
-                    echo Html::activeLabel($model, 'delivery_address');
-                    echo Html::activeTextInput($model, 'delivery_address', [
-                        'class' => 'form-control',
-                    ]);
-                    ?>
-                </div>
 
-            </div>
             <div class="col-sm-4">
                 <div class="form-check">
                     <?= Html::activeCheckbox($model, 'buyOneClick', ['class' => 'form-check-input']); ?>

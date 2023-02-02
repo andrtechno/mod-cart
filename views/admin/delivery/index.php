@@ -27,6 +27,22 @@ echo GridView::widget([
             'class' => '\panix\engine\grid\sortable\Column',
         ],
         'name',
+        [
+            'attribute' => 'system',
+            'header' => Yii::t('cart/Delivery', 'SYSTEM'),
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center'],
+            'filter' => $searchModel->getDeliverySystemsArray(),
+            'filterInputOptions' => ['class' => 'form-control', 'prompt' => html_entity_decode('&mdash;')],
+            'value' => function ($model) {
+                /** @var $model self */
+                if($model->system){
+                    return $model->getDeliverySystemsArray()[$model->system];
+                }
+
+
+            },
+        ],
         'description:html',
         [
             'class' => 'panix\engine\grid\columns\ActionColumn',

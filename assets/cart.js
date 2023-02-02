@@ -102,7 +102,7 @@ cart = {
         $('#cart-modal').modal('show');
     },
     popup: function (reload = true) {
-        cart.log.debug('popup','[reload: '+reload+']',);
+        cart.log.debug('popup', '[reload: ' + reload + ']',);
         if (reload) {
             $("#cart-modal .modal-body").load(common.url('/cart/popup'), {}, function () {
                 cart.popupCallback();
@@ -115,7 +115,7 @@ cart = {
     add: function (that) {
         var form = $(that).closest('form');
         var t = this;
-        cart.log.debug('add',that);
+        cart.log.debug('add', that);
         if (typeof xhr !== 'undefined')
             xhr.abort();
         var xhr = $.ajax({
@@ -123,8 +123,8 @@ cart = {
             type: 'POST',
             dataType: 'json',
             data: form.serialize(),
-            beforeSend:function(){
-                $(that).addClass('btn-loading').attr('disabled',true);
+            beforeSend: function () {
+                $(that).addClass('btn-loading').attr('disabled', true);
             },
             success: function (data, textStatus, xhr) {
                 if (data.errors) {
@@ -136,17 +136,18 @@ cart = {
                     //cart.renderBlockCart();
                     $(cart.selectorCount).html(data.countItems);
                     $(cart.selectorTotal).html(data.total_price_format);
-                    $(document).trigger( "cart:add:success", data);
+                    $(document).trigger("cart:add:success", data);
                 }
 
             },
             complete: function () {
-                $(that).removeClass('btn-loading').attr('disabled',false);;
+                $(that).removeClass('btn-loading').attr('disabled', false);
+                ;
             },
         });
         return this;
     },
-    addComplete: function(){
+    addComplete: function () {
         //console.log("dasadsdsa");
         $('#cart').trigger('cart:add:complete');
     },
@@ -257,7 +258,7 @@ cart = {
 
                 // $('#balance').text(data.balance);
                 //$('#balance').text((Number(data.total_price) * disum / 100));
-                cart.log.debug('recount',data);
+                cart.log.debug('recount', data);
 
                 //$(cart.selectorTotal).text(price_format(total));
                 $(cart.selectorTotal).html(data.total_price);
@@ -320,32 +321,38 @@ cart = {
     delivery: function (that) {
 
         //if ($('#ordercreateform-delivery_id').val() == 1) {
-        cart.log.debug('init', 'delivery');
-        //$('#user-city, #user-address').hide();
+        cart.log.debug('init', 'delivery', that);
+        var delivery_id = $(that).val();
         $.ajax({
-            url: common.url('/cart/delivery/process?id=' + $(that).val()),
+            url: common.url('/cart/delivery/process?id=' + delivery_id),
             type: 'GET',
             // dataType:'json',
             dataType: 'html',
+            beforeSend:function(){
+                $('.delivery-form').html('');
+                $('#order-delivery_id').addClass('loading');
+                $('#cartForm').find('button[type="submit"]').attr('disabled','disabled');
+            },
             success: function (data) {
-                $('#delivery-form').html(data);
-                //console.log(data);
-                /*if(data.cities){
-                    $('#delivery-form').append('<select id="ordercreateform-delivery_city" name="OrderCreateForm[delivery_city]" class="form-control">' +
-                        '<option value="address">Доставка на адрес</option>' +
-                        '<option value="warehouse">Доставка на отделение</option>' +
-                        '</select>');
-                }*/
+                $('#delivery-1,#delivery-2,#delivery-3').html('');
+                //$('#delivery-form').html(data);
+                $(that).closest('.delivery-radio').find('.delivery-form-'+delivery_id).html(data);
+                $('#order-delivery_id').removeClass('loading');
+            },
+            complete:function(jqXHR, textStatus){
+                $('#delivery-1,#delivery-2,#delivery-3').html('');
+                $('#cartForm').find('button[type="submit"]').removeAttr('disabled');
+                $('#order-delivery_id').removeClass('loading');
+            },
+            error:function( jqXHR, textStatus, errorThrown ){
+                $('#delivery-1,#delivery-2,#delivery-3').html('');
+                $('#order-delivery_id').removeClass('loading');
             }
         });
-        // }else{
-        //     $('#delivery-form').html('');
-        //    $('#user-city, #user-address').show();
-        //}
     },
 
     init: function () {
-        cart.log.debug('Init',this);
+        cart.log.debug('Init', this);
     }
 }
 
@@ -391,7 +398,7 @@ $(function () {
         }
 
         //update all spinner value
-        $('.spinner[product="'+product+'"]').find('input').val(value);
+        $('.spinner[product="' + product + '"]').find('input').val(value);
 
     });
 
@@ -454,9 +461,9 @@ $(function () {
             url: common.url('/cart/remove'),
             type: 'POST',
             dataType: 'json',
-            data: {id: product,isPopup:isPopup},
-            beforeSend:function(){
-              cart.addLoader();
+            data: {id: product, isPopup: isPopup},
+            beforeSend: function () {
+                cart.addLoader();
             },
             success: function (response) {
                 if (response.success) {
@@ -475,7 +482,7 @@ $(function () {
                     if (button) {
                         button.attr('onclick', 'cart.add(this)').text(response.button_text_add)
                     }
-                    $(document).trigger( "cart:remove:success", response);
+                    $(document).trigger("cart:remove:success", response);
                 } else {
 
                     common.notify(response.message, 'error');
@@ -524,8 +531,6 @@ $(function () {
 
     select.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
         cart.log.debug('CHNAGE?', clickedIndex, isSelected, previousValue, $(this).selectpicker('val'));
-
-
         $.ajax({
             url: common.url('/cart/delivery/process'),
             type: 'GET',
@@ -543,8 +548,21 @@ $(function () {
 
             }
         });
-
     });
 
+
+    /*$('#delivery-form select').change(function (e, clickedIndex, isSelected, previousValue) {
+
+        var delivery_id = $('#order-delivery_id input[type="radio"]:checked').val();
+        $.ajax({
+            url: common.url('/cart/delivery/process?id=' + delivery_id),
+            type: 'POST',
+            data: $('#cartForm').serialize(),
+            dataType: 'html',
+            success: function (data) {
+                $('#delivery-form').html(data);
+            }
+        });
+    });*/
 
 });

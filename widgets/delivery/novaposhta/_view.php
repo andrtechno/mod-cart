@@ -1,132 +1,178 @@
 <?php
+
 use panix\engine\Html;
 use panix\engine\CMS;
-use panix\ext\bootstrapselect\BootstrapSelect;
-use panix\mod\cart\models\forms\OrderCreateForm;
+use panix\ext\select2\Select2;
+
 
 /**
  * @var \yii\web\View $this
  */
-//CMS::dump($model);
-
-$js2 = <<<JS
-
-$('#order-form').yiiActiveForm('add', {
-    id: 'order-delivery_type',
-    name: 'delivery_type',
-    container: '.field-order-delivery_type',
-    input: '#order-delivery_type',
-    error: '.invalid-feedback',
-    validate:  function (attribute, value, messages, deferred, form) {
-        yii.validation.required(value, messages, {message: 'errr'});
-        console.log('validate',attribute,value);
-        if(value){
-            $(attribute.container).removeClass('field-is-invalid');
-        }else{
-            $(attribute.container).addClass('field-is-invalid');
-        }
-    }
-});
-
-JS;
-$this->registerJs($js2, \yii\web\View::POS_END, 'rrrr');
 
 
-$this->registerCss('.bootstrap-select .inner{max-height: 300px;}');
 ?>
+    <div class="mb-4">
+        <div class="form-group field-delivery-area required <?php if ($model->getErrors('area')) echo "has-error" ?>">
+            <?= Html::activeLabel($model, 'area', ['class' => 'col-form-label']); ?>
 
-<div class="form-group row field-order-delivery_type">
-    <div class="col-sm-4 col-md-4 col-lg-3 col-xl-4">
-        <?= Html::activeLabel($model, 'delivery_type', ['class' => 'col-form-label']); ?>
+            <?php
+            echo Select2::widget([
+                'model' => $model,
+                'attribute' => 'area',
+                'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Area::find()->cache(86000 * 30)
+                    ->orderBy(['Description' => SORT_ASC])
+                    ->all(), 'Ref', function ($model) {
+                    return $model->getDescription();
+                }),
+                'options' => [
+                    'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_AREA') . ' &mdash;'),
+                    'class' => ($model->getErrors('area')) ? 'is-invalid' : ''
+                ],
+                'clientOptions' => [
+                    'width' => '100%',
+                    'placeholder' => [
+                        'id' => '-1',
+                        'text' => '1111'
+                    ],
+                    'allowClear' => true,
+                    //'initSelection' => new \yii\web\JsExpression('function(element, callback) {}')
+                ],
+            ]);
+            echo Html::error($model, 'area', ['class' => 'invalid-feedback d-block']);
+            ?>
+        </div>
+        <?php if ($model->area) { ?>
+            <div class="form-group field-delivery-city required <?php if ($model->getErrors('city')) echo "has-error" ?>">
+                <?php
+                echo Html::activeLabel($model, 'city', ['class' => 'col-form-label']);
+                echo Select2::widget([
+                    'model' => $model,
+                    'attribute' => 'city',
+                    'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Cities::find()
+                        ->orderBy(['Description' => SORT_ASC])
+                        ->where(['warehouse' => 1])
+                        ->andWhere(['Area' => $model->area])
+                        ->all(), 'Ref', function ($model) {
+                        return $model->getDescription();
+                    }),
+                    'options' => [
+                        'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_CITY') . ' &mdash;'),
+                        'class' => ($model->getErrors('city')) ? 'is-invalid' : ''
+                    ],
+                    'clientOptions' => [
+                        'width' => '100%',
+                        'placeholder' => [
+                            'id' => '-1',
+                            'text' => ''
+                        ],
+                        'allowClear' => true,
+                        //'initSelection' => new \yii\web\JsExpression('function(element, callback) {}')
+                    ],
+                ]);
+                echo Html::error($model, 'city', ['class' => 'invalid-feedback d-block']);
+                ?>
+            </div>
+        <?php } ?>
+        <?php if ($model->area && $model->city) { ?>
+            <div class="form-group field-delivery-type required">
+
+                <?php echo Html::activeLabel($model, 'type', ['class' => 'col-form-label']); ?>
+
+                <?php
+                echo Select2::widget([
+                    'model' => $model,
+                    'attribute' => 'type',
+                    'items' => $model->typesList,
+                    'clientOptions' => [
+                        'width' => '100%'
+                    ],
+                ]);
+                //echo Html::activeDropDownList($model,'delivery_type',['address' => 'Доставка на адрес', 'warehouse' => 'Доставка на отделение'])
+
+                ?>
+            </div>
+
+            <?php
+            if ($model->type == 'warehouse') { ?>
+                <div class="form-group field-order-warehouse required <?php if ($model->getErrors('warehouse')) echo "has-error" ?>">
+                    <?= Html::activeLabel($model, 'warehouse', ['class' => 'col-form-label']); ?>
+                    <?php
+                    echo Select2::widget([
+                        'model' => $model,
+                        'attribute' => 'warehouse',
+                        'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Warehouses::find()->cache(8600 * 7)->where(['CityRef' => $model->city])->orderBy(['number' => SORT_ASC])->all(), 'Ref', function ($model) {
+                            return $model->getDescription();
+                        }),
+                        'options' => [
+                            'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_WAREHOUSE') . ' &mdash;'),
+                            'class' => ($model->getErrors('warehouse')) ? 'is-invalid' : ''
+                        ],
+                        'clientOptions' => [
+                            'width' => '100%',
+                            'placeholder' => [
+                                'id' => '-1',
+                                'text' => '1111'
+                            ],
+                            'allowClear' => true,
+                        ],
+                    ]);
+                    echo Html::error($model, 'warehouse', ['class' => 'invalid-feedback d-block']);
+                    ?>
+                </div>
+            <?php } else { ?>
+                <div class="form-group field-delivery-address required <?php if ($model->getErrors('address')) echo "has-error" ?>">
+                    <?= Html::activeLabel($model, 'address', ['class' => 'col-form-label']); ?>
+                    <?= Html::activeTextInput($model, 'address', ['class' => 'form-control ' . (($model->getErrors('address')) ? 'is-invalid' : '')]); ?>
+                    <?= Html::error($model, 'address'); ?>
+                    <?php //echo $form->field($model, 'delivery_address')->textInput(['maxlength' => 255])
+                    ?>
+                </div>
+            <?php } ?>
+        <?php } ?>
+
+
     </div>
-    <div class="col-sm-8 col-md-8 col-lg-9 col-xl-8">
-        <?php
-        if($model->delivery_type == 'warehouse' &&$model->delivery_warehouse_ref){
-            $model->delivery_type = 'warehouse';
-        }
-        echo BootstrapSelect::widget([
-            'model' => $model,
-            'attribute' => 'delivery_type',
-            'items' => ['address' => 'Доставка на адрес','warehouse' => 'Доставка на отделение'],
-            'jsOptions' => [
-
-            ],
-            'options' => [
-                'class' => ''
-            ]
-        ]);
-        ?>
-    </div>
-</div>
-
-<?php if ($model->delivery_type == 'warehouse') { ?>
-<div class="form-group row field-order-delivery_city_ref">
-    <div class="col-sm-4 col-md-4 col-lg-3 col-xl-4">
-        <?= Html::activeLabel($model, 'delivery_city_ref', ['class' => 'col-form-label']); ?>
-    </div>
-    <div class="col-sm-8 col-md-8 col-lg-9 col-xl-8">
-        <?php
-
-        echo BootstrapSelect::widget([
-            'model' => $model,
-            'attribute' => 'delivery_city_ref',
-            'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Cities::find()->cache(8600*7)->orderBy(['Description' => SORT_ASC])->all(), 'Ref', function ($model) {
-                return $model->getDescription();
-            }),
-            'jsOptions' => [
-                'liveSearch' => true,
-                'width' => '100%',
-                'liveSearchPlaceholder' => 'Найти город',
-                'dropdownAlignRight' => 'auto',
-                'size' => '300px',
-            ],
-            'options' => [
-                'class' => ''
-            ]
-        ]);
-        ?>
-
-    </div>
-</div>
-<?php } ?>
 <?php
 
+$this->registerJs("
+    $(document).on('change', '#dynamicmodel-city, #dynamicmodel-type, #dynamicmodel-area', function(e) {
+        $.ajax({
+            url: common.url('/cart/delivery/process?id=" . $delivery_id . "'),
+            type: 'POST',
+            data: $('#cartForm').serialize(),
+            dataType: 'html',
+            beforeSend: function(){
+                $('#order-delivery_id').addClass('loading');
+            },
+            complete: function(){
+                $('#order-delivery_id').removeClass('loading');
+            },
+            error: function(){
+                $('#order-delivery_id').removeClass('loading');
+            },
+            success: function (data) {
+                $('.delivery-form-" . $delivery_id . "').html(data);
+                $('#order-delivery_id').removeClass('loading');
+            }
+        });
+    });
+    $(document).on('change', '#dynamicmodel-type', function(e) {
+        $('#delivery-1').html($('option:selected',this).text());
+    });
+    $(document).on('change', '#dynamicmodel-city', function(e) {
+        $('#delivery-2').html($('option:selected',this).text());
+    });
+    $(document).on('change', '#dynamicmodel-warehouse', function(e) {
+        $('#delivery-3').html($('option:selected',this).text());
+    });
 
-if ($model->delivery_city_ref && $model->delivery_type == 'warehouse') { ?>
+    $('#delivery-1').html($('#dynamicmodel-type option:selected').text());
+    if($('#dynamicmodel-city option:selected').val()){
+        $('#delivery-2').html($('#dynamicmodel-city option:selected').text());
+    }
+    if($('#dynamicmodel-warehouse option:selected').val()){
+        $('#delivery-3').html($('#dynamicmodel-warehouse option:selected').text());
+    }
 
 
-
-
-<div class="form-group row field-order-delivery_warehouse_ref">
-    <div class="col-sm-4 col-md-4 col-lg-3 col-xl-4">
-        <?= Html::activeLabel($model, 'delivery_warehouse_ref', ['class' => 'col-form-label']); ?>
-    </div>
-    <div class="col-sm-8 col-md-8 col-lg-9 col-xl-8">
-        <?php
-
-        echo BootstrapSelect::widget([
-            'model' => $model,
-            'attribute' => 'delivery_warehouse_ref',
-            //'items' => \panix\mod\novaposhta\models\Warehouses::getList($model->delivery_city_ref),
-            'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Warehouses::find()->cache(8600*7)->where(['CityRef' => $model->delivery_city_ref])->orderBy(['number' => SORT_ASC])->all(), 'Ref', function ($model) {
-                return $model->getDescription();
-            }),
-            'jsOptions' => [
-                'liveSearch' => true,
-                'width' => '100%',
-                'liveSearchPlaceholder' => 'Найти отделение',
-                'dropdownAlignRight' => 'auto',
-                'size' => '300px',
-
-            ],
-            'options' => [
-                'class' => ''
-            ]
-        ]);
-        ?>
-
-    </div>
-</div>
-<?php } ?>
-
-
+", \yii\web\View::POS_END, 'delivery-novaposhta');

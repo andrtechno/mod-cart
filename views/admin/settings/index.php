@@ -5,6 +5,7 @@ use panix\engine\Html;
 use panix\engine\bootstrap\ActiveForm;
 use panix\ext\taginput\TagInput;
 use panix\ext\tinymce\TinyMce;
+use panix\mod\cart\models\Delivery;
 
 /*
 echo \panix\ext\highcharts\Highcharts::widget([
@@ -88,6 +89,9 @@ $form = ActiveForm::begin();
         ?>
 
         <?php echo $form->field($model, 'notify_changed_status')->checkbox(); ?>
+        <?php echo $form->field($model, 'delivery_id')->dropdownList(\yii\helpers\ArrayHelper::map(Delivery::find()
+            ->orderByName(SORT_ASC)
+            ->all(),'id','name')); ?>
         <?php //echo $form->field($model, 'tpl_subject_admin'); ?>
 
 

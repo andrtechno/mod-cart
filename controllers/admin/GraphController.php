@@ -32,22 +32,24 @@ class GraphController extends AdminController
             ],
             $this->pageName
         ];
-
-
-        $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())
-            ->where(['use_in_stats' => 1])
-            ->select(['id']);
-        $queryStatusIds = $queryStatus->all();
-
-        $statusIds = [];
-        foreach ($queryStatusIds as $status) {
-            $statusIds[] = $status['id'];
-        }
-
-
         $data = [];
         $data_total = [];
         $request = Yii::$app->request;
+        $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())
+            ->where(['use_in_stats' => 1])
+            ->select(['id', 'name']);
+        $statusIds = [];
+        $queryStatusIds = $queryStatus->all();
+
+        if ($request->get('status_id')) {
+            $statusIds[] = (int)$request->get('status_id');
+        } else {
+            foreach ($queryStatusIds as $status) {
+                $statusIds[] = $status['id'];
+            }
+        }
+
+
 
         $year = (int)$request->get('year', date('Y'));
         $month = (int)$request->get('month', date('n'));
@@ -55,7 +57,7 @@ class GraphController extends AdminController
         $start_month = ($month) ? $month : '01';
         $end_month = ($month) ? $month : '12';
 
-        $data = [];
+
         $highchartsData = [];
         $time = time();
         $total = 0;
@@ -64,7 +66,7 @@ class GraphController extends AdminController
             $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, $index, date('Y'));
             $product_count = (isset($data[$index]['product_count'])) ? $data[$index]['product_count'] : 0;
             $queryData['sum'] = 0;
-            if (strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59") > $time) {
+            //if (strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59") > $time) {
                 $query = (new \yii\db\Query())->from(Order::tableName())
                     ->where(['between', 'created_at', strtotime("{$year}-{$index}-01 00:00:00"), strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59")])
                     ->andWhere(['status_id' => $statusIds])
@@ -72,9 +74,8 @@ class GraphController extends AdminController
                     ->andWhere(['>', 'diff_price', 0])
                     //->select(['id']);
                     ->select(['SUM(diff_price) as sum']);
-
                 $queryData = $query->one();
-            }
+            //}
 
             $total += $queryData['sum'];
             $highchartsData[] = [
@@ -99,6 +100,7 @@ class GraphController extends AdminController
             'data_total' => $data_total,
             'year' => $year,
             'month' => $month,
+            'queryStatusIds' => $queryStatusIds,
             'total' => Yii::$app->currency->number_format($total)
         ]);
     }

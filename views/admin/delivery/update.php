@@ -21,7 +21,6 @@ $form = ActiveForm::begin();
         <?= $form->field($model, 'free_from')->textInput(['maxlength' => 255]) ?>
         <?=
         $form->field($model, 'system')->dropDownList($model->getDeliverySystemsArray(), [
-            'prompt' => html_entity_decode(Yii::t('cart/default','SELECT_SYSTEM_DELIVERY')),
             'data-id'=>$model->id
         ]);
         ?>

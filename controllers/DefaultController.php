@@ -5,8 +5,10 @@ namespace panix\mod\cart\controllers;
 use panix\engine\bootstrap\ActiveForm;
 use panix\engine\CMS;
 use panix\mod\cart\CartAsset;
+use panix\mod\cart\components\delivery\DeliverySystemManager;
 use panix\mod\cart\components\OrderEvent;
 use panix\mod\cart\Module;
+use panix\mod\cart\widgets\delivery\address\AddressModel;
 use panix\mod\novaposhta\models\Cities;
 use panix\mod\novaposhta\models\Warehouses;
 use panix\mod\shop\models\Attribute;
@@ -44,7 +46,8 @@ class DefaultController extends WebController
      * @var bool
      */
     protected $_errors = false;
-
+    public $order;
+    protected $delivery;
 
     public function actions()
     {
@@ -57,14 +60,16 @@ class DefaultController extends WebController
             ],
         ];
     }
+
     public function beforeAction($action)
     {
 
-        if (in_array($this->action->id,['add','popup','recount'])) {
+        if (in_array($this->action->id, ['add', 'popup', 'recount'])) {
             $this->enableCsrfValidation = false;
         }
         return parent::beforeAction($action);
     }
+
     public function actionRecount()
     {
         if (Yii::$app->request->isAjax) {
@@ -125,15 +130,31 @@ class DefaultController extends WebController
         if (Yii::$app->request->isPost && Yii::$app->request->post('recount') && !empty($_POST['quantities'])) {
             $this->processRecount();
         }
-        $this->form = new OrderCreateForm(); //['scenario' => 'create-form-order']
-        if (Yii::$app->user->isGuest) {
-            $this->form->setScenario('guest');
+        //$this->form = new OrderCreateForm(); //['scenario' => 'create-form-order']
+        $this->order = new Order;
+
+        $user = Yii::$app->user;
+        if (!$user->isGuest) {
+            // NEED CONFINGURE
+            $this->order->user_name = $user->firstname;
+            $this->order->user_phone = $user->phone;
+            //$this->delivery_address = Yii::app()->user->address; //comment for april
+            $this->order->user_email = $user->getEmail();
+            $this->order->user_lastname = $user->lastname;
+            $this->order->points = (isset(Yii::$app->cart->session['cart_data']['bonus'])) ? Yii::$app->cart->session['cart_data']['bonus'] : 0;
         }
 
 
-        // Make order
-        $post = Yii::$app->request->post();
+        $this->order->setScenario('create_order');
+        if (Yii::$app->user->isGuest) {
+            //$this->form->setScenario('guest');
+            $this->order->setScenario('create_order_guest');
+        }
 
+        $post = Yii::$app->request->post();
+        if ($this->order->isNewRecord && !$post) {
+            $this->order->delivery_id = Yii::$app->settings->get('cart', 'delivery_id');
+        }
         /*if (Yii::$app->user->isGuest) {
              $modelLogin = new LoginForm();
              $config = Yii::$app->settings->get('user');
@@ -148,29 +169,84 @@ class DefaultController extends WebController
              }
          }*/
 
-        if ($post) {
 
-            if ($this->form->load($post)) {
-                if (Yii::$app->request->isAjax) {
-                    Yii::$app->response->format = Response::FORMAT_JSON;
-                    return ActiveForm::validate($this->form);
-                }
-                if ($this->form->validate()) {
-                    $order = $this->createOrder();
-                    if ($order) {
-                        $this->form->registerGuest($order);
+        if ($this->order->load($post)) {
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($this->order);
+            }
+            $this->delivery = Delivery::findOne($this->order->delivery_id);
+            if ($this->delivery->system) {
+                $manager = new DeliverySystemManager();
+                $system = $manager->getSystemClass($this->delivery->system);
+                $deliveryModel = $system->getModel();
 
-                        //CMS::dump($order);die;
-                        Yii::$app->cart->clear();
-                        Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
-                        return $this->redirect(['view', 'secret_key' => $order->secret_key]);
-                    } else {
-                        return $this->redirect(['index']);
+                if ($this->delivery->system == 'novaposhta') {
+                    if (isset($post['DynamicModel'])) {
+
+                        if ($deliveryModel->load($post)) {
+                            // CMS::dump($deliveryModel);
+                            //die;
+                            //if (isset($post['DynamicModel']['type'])) {
+                            if ($deliveryModel->type == 'warehouse') {
+                                //if ($post['DynamicModel']['type'] == 'warehouse') {
+                                $deliveryModel->addRule(['warehouse'], 'required');
+                            } else {
+                                $deliveryModel->addRule(['address'], 'required');
+                            }
+                            //}
+                            if (Yii::$app->request->isAjax) {
+                                Yii::$app->response->format = Response::FORMAT_JSON;
+                                return ActiveForm::validate($deliveryModel);
+                            }
+                            $this->order->deliveryModel = $deliveryModel;
+                        }
                     }
-                } else {
-                    // print_r($this->form->errors);die;
+                } elseif ($this->delivery->system == 'pickup') {
+                    if (isset($post['DynamicModel'])) {
+                        if ($deliveryModel->load($post)) {
+                            if (Yii::$app->request->isAjax) {
+                                Yii::$app->response->format = Response::FORMAT_JSON;
+                                return ActiveForm::validate($deliveryModel);
+                            }
+                            $this->order->deliveryModel = $deliveryModel;
+                        }
+                    }
+                } elseif ($this->delivery->system == 'address') {
+                    if (isset($post['AddressModel'])) {
+                        //$deliveryModel = new AddressModel();
+                        if ($deliveryModel->load($post)) {
+                            if (Yii::$app->request->isAjax) {
+                                Yii::$app->response->format = Response::FORMAT_JSON;
+                                return ActiveForm::validate($deliveryModel);
+                            }
+                            $this->order->deliveryModel = $deliveryModel;
+                        }
+                    }
                 }
             }
+
+//CMS::dump($this->order->deliveryModel);die;
+            $order = $this->createOrder();
+
+            if ($order instanceof Order) {
+                //$this->order->registerGuest();
+
+                //CMS::dump($this->order);
+                //echo 'success';
+                //die;
+                Yii::$app->cart->clear();
+                Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
+                return $this->redirect(['view', 'secret_key' => $order->secret_key]);
+            } elseif ($order == 'error') {
+
+                //return $this->refresh();
+            } else {
+                //return $this->redirect(['index']);
+                return $this->refresh();
+            }
+        } else {
+            // print_r($this->form->errors);die;
         }
 
 
@@ -199,6 +275,7 @@ class DefaultController extends WebController
             $this->view->params['gtm_ecomm'] = $dataLayer;
 
         }
+
         return $this->render('index', [
             'items' => isset($items['items']) ? $items['items'] : [],
             'totalPrice' => $totalPrice,
@@ -359,7 +436,7 @@ class DefaultController extends WebController
             'attributes_data' => json_encode([
                 'data' => $model->eavData['data'],
                 'attributes' => $model->eavAttributes
-            ],JSON_UNESCAPED_UNICODE),
+            ], JSON_UNESCAPED_UNICODE),
             'currency_id' => $model->currency_id,
             'supplier_id' => $model->supplier_id,
             'weight' => $model->weight,
@@ -473,7 +550,7 @@ class DefaultController extends WebController
         }
 
 
-        $order = new Order;
+        /*$order = new Order;
 
         // Set main data
         $order->user_id = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
@@ -487,42 +564,37 @@ class DefaultController extends WebController
         $order->payment_id = $this->form->payment_id;
         $order->promocode_id = $this->form->promocode_id;
         $order->call_confirm = $this->form->call_confirm;
-        $order->points = $this->form->points;
+        $order->points = $this->form->points;*/
 
-        if (isset($this->form->delivery_type))
-            $order->delivery_type = $this->form->delivery_type;
+        //if (isset($this->order->delivery_type))
+        //    $this->order->delivery_type = $this->order->delivery_type;
         //$order->status_id = 1; //set New status
 
 
-        $delivery = Delivery::findOne($order->delivery_id);
-        if ($delivery->system && $delivery->system == 'novaposhta') {
-
-            $order->delivery_city_ref = $this->form->delivery_city_ref;
-            $order->delivery_warehouse_ref = $this->form->delivery_warehouse;
-            //$warehouse = Warehouses::findOne($order->delivery_warehouse_ref);
-            //if ($warehouse) {
-            //    $order->delivery_city = $warehouse->getCityDescription();
-            //    $order->delivery_address = $warehouse->getDescription();
-            // }
-        }
+        //$delivery = Delivery::findOne($this->order->delivery_id);
 
 
-        $order->status_id = Order::STATUS_NEW;
-        if ($order->validate()) {
-            if ($order->points > 0) {
-                $order->discount = $order->points;
+        $this->order->status_id = Order::STATUS_NEW;
+        if ($this->order->validate()) {
+
+            if ($this->order->points > 0) {
+                $this->order->discount = $this->order->points;
             }
-            $order->save();
+            $this->order->save();
             if (Yii::$app->getModule('cart')->hasEventHandlers(Module::EVENT_ORDER_CREATE)) {
                 $event = new OrderEvent();
-                $event->order = $order;
+                $event->order = $this->order;
                 Yii::$app->getModule('cart')->trigger(Module::EVENT_ORDER_CREATE, $event);
             }
 
         } else {
-            print_r($order->getErrors());
-            die;
-            throw new Exception(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
+            //print_r($this->order->getErrors());die;
+            Yii::$app->session->setFlash('error', Yii::t('cart/default', 'SUCCESS_ORDER'));
+            return 'error';
+            //echo 'ERRR';
+            //print_r($this->order->getErrors());
+            //die;
+            //throw new Exception(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
         }
 
         // Process products
@@ -531,8 +603,8 @@ class DefaultController extends WebController
         foreach ($cartItems['items'] as $item) {
 
             $ordered_product = new OrderProduct;
-            $ordered_product->order_id = $order->id;
-            $ordered_product->user_id = $order->user_id;
+            $ordered_product->order_id = $this->order->id;
+            $ordered_product->user_id = $this->order->user_id;
             $ordered_product->product_id = $item['model']->id;
             $ordered_product->configurable_id = $item['configurable_id'];
             $ordered_product->currency_id = $item['model']->currency_id;
@@ -544,7 +616,7 @@ class DefaultController extends WebController
             $box = $item['model']->eav_par_v_asiku;
             if (isset($box)) {
                 $ordered_product->price_purchase = Yii::$app->currency->convert($item['model']->price_purchase * $box->value, $ordered_product->currency_id);
-            }else{
+            } else {
                 $ordered_product->price_purchase = Yii::$app->currency->convert($item['model']->price_purchase, $ordered_product->currency_id);
             }
 
@@ -602,33 +674,33 @@ class DefaultController extends WebController
         }
 
         // Reload order data.
-        $order->refresh(); //@todo panix text email tpl
+        $this->order->refresh(); //@todo panix text email tpl
         // All products added. Update delivery price.
-        $order->updateDeliveryPrice();
+        $this->order->updateDeliveryPrice();
         //$order->updateTotalPrice();
         $text = (Yii::$app->user->isGuest) ? 'NOTIFICATION_GUEST_TEXT' : 'NOTIFICATION_USER_TEXT';
-        $order->attachBehavior('notification', [
+        $this->order->attachBehavior('notification', [
             'class' => 'panix\engine\behaviors\NotificationBehavior',
             'type' => 'success',
-            'url' => Url::to($order->getUpdateUrl()),
+            'url' => Url::to($this->order->getUpdateUrl()),
             'sound' => CartAsset::register($this->view)->baseUrl . '/notification_new-order.mp3',
             'text' => Yii::t('cart/default', $text, [
                 'num' => $productsCount,
-                'total' => Yii::$app->currency->number_format($order->total_price),
+                'total' => Yii::$app->currency->number_format($this->order->total_price),
                 'currency' => Yii::$app->currency->active['symbol'],
-                'username' => Yii::$app->user->isGuest ? $order->user_name : Yii::$app->user->getDisplayName()
+                'username' => Yii::$app->user->isGuest ? $this->order->user_name : Yii::$app->user->getDisplayName()
             ])
         ]);
 
         // Send email to user.
-        $order->sendClientEmail();
+        $this->order->sendClientEmail();
         // Send email to admin.
-        $order->sendAdminEmail(explode(',', Yii::$app->settings->get('cart', 'order_emails')));
+        $this->order->sendAdminEmail(explode(',', Yii::$app->settings->get('cart', 'order_emails')));
         // $order->detachBehavior('notification');
 
-        Yii::$app->user->unsetPoints($order->points);
+        Yii::$app->user->unsetPoints($this->order->points);
         //\machour\yii2\notifications\components\Notification::notify(\machour\yii2\notifications\components\Notification::KEY_NEW_ORDER, 1,$order->primaryKey);
-        return $order;
+        return $this->order;
     }
 
     /**

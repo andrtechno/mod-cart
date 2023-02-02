@@ -7,4 +7,5 @@ return [
     'PDF_TPL_ORDER' => 'Template PDF order',
     'PDF_TPL_BRAND' => 'PDF Template Brand Distribution',
     'PDF_TPL_SUPPLIER' => 'PDF template supplier distribution',
+    'DELIVERY_ID' => 'Selected default delivery'
 ];

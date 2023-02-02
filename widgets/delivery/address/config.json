@@ -1,0 +1,6 @@
+{
+  "id": "address",
+  "name": "На адрес",
+  "class": "panix\\mod\\cart\\widgets\\delivery\\address\\AddressDeliverySystem",
+  "version": "1.0"
+}

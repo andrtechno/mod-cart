@@ -4,11 +4,13 @@ namespace panix\mod\cart\controllers\admin;
 
 
 use panix\engine\CMS;
+use panix\mod\cart\components\delivery\BaseDeliverySystem;
 use panix\mod\cart\components\delivery\DeliverySystemManager;
 use Yii;
 use panix\mod\cart\models\search\DeliverySearch;
 use panix\mod\cart\models\Delivery;
 use panix\engine\controllers\AdminController;
+use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
 
 class DeliveryController extends AdminController
@@ -32,6 +34,15 @@ class DeliveryController extends AdminController
                 'modelClass' => Delivery::class,
             ],
         ];
+    }
+
+    public function beforeAction($action)
+    {
+        if ($action == 'process') {
+            $this->enableCsrfValidation = false;
+        }
+
+        return parent::beforeAction($action);
     }
 
     public function actionIndex()
@@ -85,18 +96,29 @@ class DeliveryController extends AdminController
 
 
         if ($model->load($post)) {
-            if($model->validate()){
+            if ($model->validate()) {
                 $model->save();
 
                 if ($model->system) {
                     $manager = new DeliverySystemManager;
                     $system = $manager->getSystemClass($model->system);
-                    $system->setSettings($model->id, Yii::$app->request->post($system->getModelName()));
-                }
 
+                    $modelD = $system->getModelConfig();
+                    if ($modelD) {
+                        if ($modelD->load($post)) {
+                            if ($modelD->validate()) {
+                                $system->setSettings($model->id, Yii::$app->request->post($system->getModelName()));
+                            } else {
+                                CMS::dump($modelD->getErrors());
+                                die;
+                                //echo 'ERRR';die;
+
+                            }
+                        }
+                    }
+                }
                 return $this->redirectPage($isNew, $post);
             }
-
         }
 
         return $this->render('update', [
@@ -111,7 +133,7 @@ class DeliveryController extends AdminController
     public function actionDelete($id = [])
     {
         if (Yii::$app->request->isPost) {
-            $model = Delivery::find()->where(['id'=>$_REQUEST['id']])->all();
+            $model = Delivery::find()->where(['id' => $_REQUEST['id']])->all();
 
             if (!empty($model)) {
                 foreach ($model as $m) {
@@ -140,9 +162,12 @@ class DeliveryController extends AdminController
             exit;
         $manager = new DeliverySystemManager();
         $system = $manager->getSystemClass($systemId);
-        $model = $system->getModel();
-        $model->attributes = (array) $system->getSettings($delivery_id);
-
+        $model = $system->getModelConfig();
+        if ($model) {
+            $model->attributes = (array)$system->getSettings($delivery_id);
+        } else {
+            return;
+        }
 
         return $this->renderAjax('@cart/widgets/delivery/' . $systemId . '/_form', ['model' => $model]);
     }
@@ -152,4 +177,19 @@ class DeliveryController extends AdminController
         return $this->actionUpdate(false);
     }
 
+
+    public function actionProcess($id)
+    {
+        $model = Delivery::findOne($id);
+        if (!$model)
+            $this->error404();
+
+        $system = $model->getDeliverySystemClass();
+
+        if ($system instanceof BaseDeliverySystem) {
+            return $system->processRequestAdmin($model);
+        } else {
+            throw new ForbiddenHttpException();
+        }
+    }
 }

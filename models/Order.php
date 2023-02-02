@@ -3,12 +3,16 @@
 namespace panix\mod\cart\models;
 
 use panix\engine\CMS;
+use panix\mod\cart\components\delivery\DeliverySystemManager;
 use panix\mod\cart\components\OrderCreateEvent;
 use panix\mod\cart\models\search\OrderSearch;
 use panix\mod\cart\Module;
 use panix\mod\news\models\search\NewsSearch;
+use panix\mod\novaposhta\models\Area;
+use panix\mod\novaposhta\models\Cities;
 use panix\mod\novaposhta\models\Warehouses;
 use panix\mod\shop\models\ProductType;
+use panix\mod\user\models\User;
 use Yii;
 use yii\base\ModelEvent;
 use yii\helpers\ArrayHelper;
@@ -16,6 +20,7 @@ use panix\engine\Html;
 use panix\engine\db\ActiveRecord;
 use panix\mod\cart\components\events\EventProduct;
 use panix\mod\cart\components\HistoricalBehavior;
+use yii\helpers\Json;
 
 /**
  * Class Order
@@ -34,9 +39,7 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property string $user_name
  * @property string $user_email
  * @property string $user_lastname
- * @property string $delivery_address
  * @property string $user_phone
- * @property string $delivery_city
  * @property string $user_comment
  * @property string $admin_comment
  * @property string $user_agent
@@ -49,7 +52,6 @@ use panix\mod\cart\components\HistoricalBehavior;
  * @property boolean $buyOneClick
  * @property boolean $apply_user_points
  * @property boolean $call_confirm
- * @property string $delivery_type
  * @property OrderStatus $status
  * @property OrderProduct[] $products
  * @property Delivery $deliveryMethod
@@ -76,7 +78,8 @@ class Order extends ActiveRecord
      * @var string
      */
     private $_ttn;
-    //public $delivery_type;
+    public $register = false;
+    public $deliveryModel;
 
     /**
      * @inheritdoc
@@ -182,35 +185,75 @@ class Order extends ActiveRecord
     {
         $scenarios = parent::scenarios();
         $scenarios['buyOneClick'] = ['user_phone'];
+
+        //NEW
+        $scenarios['create_order_guest'] = [
+            'register',
+            'delivery_id',
+            'payment_id',
+            'user_lastname',
+            'user_name',
+            'user_email',
+            'user_phone',
+            'user_comment',
+            'points',
+            'call_confirm',
+        ];
+        $scenarios['create_order'] = [
+            'register',
+            'delivery_id',
+            'payment_id',
+            'user_lastname',
+            'user_name',
+            'user_email',
+            'user_phone',
+            'user_comment',
+            'points',
+            'call_confirm',
+        ];
         return $scenarios;
     }
 
     public function rules()
     {
-        return [
-            ['user_phone', 'panix\ext\telinput\PhoneInputValidator', 'on' => self::SCENARIO_DEFAULT],
-            ['user_phone', 'string', 'on' => 'buyOneClick'],
-            [['user_name', 'delivery_id', 'payment_id', 'user_phone'], 'required'],
-            //'user_email',
-            ['user_email', 'email'],
-            [['user_comment', 'admin_comment', 'delivery_city'], 'string', 'max' => 500],
-            [['delivery_address'], 'string', 'max' => 255],
-            [['user_phone'], 'string', 'max' => 30],
-            [['user_name', 'user_email', 'discount', 'ttn'], 'string', 'max' => 100],
-            [['ttn'], 'default'],
-            [['invoice'], 'string', 'max' => 50],
-            [['paid', 'apply_user_points'], 'boolean'],
-            [['delivery_city_ref', 'delivery_warehouse_ref', 'delivery_type', 'user_lastname'], 'string'],
-            ['delivery_id', 'validateDelivery'],
-            ['payment_id', 'validatePayment'],
-            ['status_id', 'validateStatus'],
-            ['promocode_id', 'validatePromoCode'],
-        ];
+        $rules = [];
+        $rules[] = ['user_phone', 'panix\ext\telinput\PhoneInputValidator', 'on' => self::SCENARIO_DEFAULT];
+        $rules[] = ['user_phone', 'string', 'on' => 'buyOneClick'];
+        $rules[] = [['user_name', 'delivery_id', 'payment_id', 'user_phone'], 'required'];
+        //'user_email',
+        //$rules[] = ['user_email', 'email'];
+        $rules[] = [['user_comment', 'admin_comment'], 'string', 'max' => 500];
+        $rules[] = [['user_phone'], 'string', 'max' => 30];
+        $rules[] = [['user_name', 'user_email', 'discount', 'ttn'], 'string', 'max' => 100];
+        $rules[] = [['ttn'], 'default'];
+        $rules[] = [['invoice'], 'string', 'max' => 50];
+        $rules[] = [['paid', 'apply_user_points'], 'boolean'];
+        $rules[] = [['user_lastname'], 'string'];
+        $rules[] = ['delivery_id', 'validateDelivery'];
+        $rules[] = ['payment_id', 'validatePayment'];
+        $rules[] = ['status_id', 'validateStatus'];
+        $rules[] = ['promocode_id', 'validatePromoCode'];
+
+
+        //$rules[] = [['user_lastname'], 'required', 'on' => 'create_order'];
+        $rules[] = [['user_lastname'], 'required', 'on' => ['create_order']];
+        $rules[] = [['user_lastname'], 'required', 'on' => ['create_order_guest']];
+        if (Yii::$app->user->isGuest) {
+            $rules[] = [['register'], 'validateRegisterEmail', 'on' => ['create_order_guest']];
+        }
+
+        return $rules;
     }
 
-    public function attributeLabels()
+    public function validateRegisterEmail($attribute)
     {
-        return array_merge(['delivery_type' => self::t('DELIVERY_TYPE')], parent::attributeLabels());
+        if ($this->{$attribute}) {
+            $find = User::find()->where(['username' => $this->user_email])->count();
+            if ($find) {
+                $this->addError($attribute, 'Ошибка регистрации, данный E-mail уже зарегистрирован');
+            }
+        }
+
     }
 
     public function validatePromoCode($attribute)
@@ -234,13 +277,16 @@ class Order extends ActiveRecord
     public function validateDelivery()
     {
         if (Delivery::find()->where(['id' => $this->delivery_id])->count() == 0)
-            $this->addError('delivery_id', Yii::t('cart/admin', 'Необходимо выбрать способ доставки.'));
+            $this->addError('delivery_id', self::t('ERROR_DELIVERY'));
     }
 
+    /**
+     * Check if payment method exists
+     */
     public function validatePayment()
     {
         if (Payment::find()->where(['id' => $this->payment_id])->count() == 0)
-            $this->addError('payment_id', Yii::t('cart/admin', 'Необходимо выбрать способ оплаты.'));
+            $this->addError('payment_id', self::t('ERROR_PAYMENT'));
     }
 
     /**
@@ -250,6 +296,57 @@ class Order extends ActiveRecord
     {
         if ($this->status_id && OrderStatus::find()->where(['id' => $this->status_id])->count() == 0)
             $this->addError('status_id', Yii::t('cart/admin', 'Ошибка проверки статуса.'));
+    }
+
+    public function registerGuest()
+    {
+        if (Yii::$app->user->isGuest && $this->register) {
+            $pass = mb_strtoupper(CMS::gen(3)) . rand(1000, 9999);
+            $user = new User(['scenario' => 'register_fast']);
+            $user->password = $pass;
+            $user->username = $this->user_email;
+            $user->first_name = $this->user_name;
+            $user->email = $this->user_email;
+            $user->phone = $this->user_phone;
+            // $user->group_id = 2;
+            if ($user->validate()) {
+                $user->save();
+                $this->sendRegisterEmail($user, $pass);
+                Yii::$app->session->addFlash('success', Yii::t('cart/default', 'SUCCESS_REGISTER'));
+            } else {
+                $this->addError('register', 'Ошибка регистрации');
+                Yii::$app->session->addFlash('error', Yii::t('cart/default', 'ERROR_REGISTER'));
+                // print_r($user->getErrors());
+                // die('error register');
+            }
+        }
+    }
+
+    private function sendRegisterEmail(User $user, $password)
+    {
+        $mailer = Yii::$app->mailer;
+        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/register.tpl'], [
+            'user' => $user,
+            'order' => $this,
+            'password' => $password,
+            'form' => $this,
+        ])
+            //->setFrom(['noreply@' . Yii::$app->request->serverName => Yii::$app->name . ' robot'])
+            ->setTo($this->user_email)
+            ->setSubject(Yii::t('cart/default', 'Вы загеристрованы'))
+            ->send();
+    }
+
+    public function beforeValidate()
+    {
+        if ($this->deliveryModel) {
+            if (!$this->deliveryModel->validate()) {
+                return false;
+            }
+        }
+
+        return parent::beforeValidate();
+
     }
 
     /**
@@ -262,16 +359,13 @@ class Order extends ActiveRecord
             $this->secret_key = $this->createSecretKey();
             $this->ip_create = Yii::$app->request->getUserIP();
 
-
             if (!Yii::$app->user->isGuest)
                 $this->user_id = Yii::$app->user->id;
         }
 
-
         // Set `New` status
         if (!$this->status_id)
             $this->status_id = Order::STATUS_NEW;
-
 
         //isset($this->oldAttributes['status_id']) && $this->attributes['status_id'] &&
         if ($this->user_id && $this->apply_user_points) {
@@ -296,30 +390,20 @@ class Order extends ActiveRecord
         }
 
 
-        if ($this->isNewRecord) {
-            $delivery = Delivery::findOne($this->delivery_id);
-        } else {
-            $delivery = $this->deliveryMethod;
+        if ($this->deliveryModel) {
+            //CMS::dump($this->deliveryModel->attributes);die;
+            $this->delivery_data = Json::encode($this->deliveryModel->attributes);
         }
-        if ($delivery) {
-            if ($delivery->system == 'novaposhta') {
-
-                // $this->delivery_city_ref = $this->form->delivery_city_ref;
-                //$this->delivery_warehouse_ref = $this->form->delivery_warehouse;
-                $warehouse = Warehouses::findOne($this->delivery_warehouse_ref);
-                if ($warehouse) {
-                    $this->delivery_city = $warehouse->getCityDescription();
-                    $this->delivery_address = $warehouse->getDescription();
-                }
-            }
-        }
-
         return parent::beforeSave($insert);
     }
+
 
     public function afterFind()
     {
         $this->_ttn = $this->ttn;
+        //if ($this->deliveryModel) {
+        //     $this->deliveryModel->load(['DynamicModel'=>$this->getDeliveryData()]);
+        // }
         parent::afterFind();
     }
 
@@ -328,6 +412,8 @@ class Order extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
+
+        $this->registerGuest();
 
 
         $send_ttn = false;
@@ -668,13 +754,13 @@ class Order extends ActiveRecord
     /**
      * Load history
      *
-     * @return array
+     * @return OrderHistory[]
      */
     public function getHistory()
     {
         return OrderHistory::find()
             ->where(['order_id' => $this->id])
-            ->orderBy(['date_create' => SORT_ASC])
+            ->orderBy(['date_create' => SORT_DESC])
             ->all();
     }
 
@@ -720,6 +806,71 @@ class Order extends ActiveRecord
             return $mailer;
         }
         return false;
+    }
+
+//new
+    public function getDeliveryData()
+    {
+        if ($this->delivery_data) {
+            return Json::decode($this->delivery_data);
+        }
+        return null;
+    }
+
+    public function getDeliveryEach()
+    {
+        $data = $this->getDeliveryData();
+        $list = [];
+        if ($data) {
+            if ($this->deliveryMethod->system == 'novaposhta') {
+                $list[] = [
+                    'key' => 'Тип',
+                    'value' => Yii::t('cart/Delivery', ($data['type'] == 'warehouse') ? 'TYPE_WAREHOUSE' : 'TYPE_ADDRESS')
+                ];
+                if (isset($data['area'])) {
+                    $region = Area::findOne($data['area']);
+                    $list[] = [
+                        'key' => Yii::t('cart/Delivery', 'AREA'),
+                        'value' => $region->getDescription()
+                    ];
+                }
+                if (isset($data['city'])) {
+                    $city = Cities::findOne($data['city']);
+                    $list[] = [
+                        'key' => Yii::t('cart/Delivery', 'CITY'),
+                        'value' => $city->getDescription()
+                    ];
+                }
+                if ($data['type'] == 'warehouse') {
+                    if (isset($data['warehouse'])) {
+                        $warehouse = Warehouses::findOne($data['warehouse']);
+                        $list[] = [
+                            'key' => Yii::t('cart/Delivery', 'WAREHOUSE'),
+                            'value' => $warehouse->getDescription()
+                        ];
+                    }
+                } else {
+                    $list[] = [
+                        'key' => Yii::t('cart/Delivery', 'CITY'),
+                        'value' => Yii::t('cart/Delivery', 'ADDRESS') . ' ' . $data['address']
+                    ];
+                }
+            } elseif ($this->deliveryMethod->system == 'pickup') {
+                $manager = new DeliverySystemManager();
+                $system = $manager->getSystemClass($this->deliveryMethod->system);
+                $settings = $system->getSettings($this->delivery_id);
+                $list[] = [
+                    'key' => Yii::t('cart/Delivery', 'ADDRESS'),
+                    'value' => $settings->address[$data['address']]['name']
+                ];
+            } elseif ($this->deliveryMethod->system == 'address') {
+                $list[] = [
+                    'key' => Yii::t('cart/Delivery', 'ADDRESS'),
+                    'value' => $data['address']
+                ];
+            }
+        }
+        return $list;
     }
 
     public function getGridColumns()
@@ -806,12 +957,54 @@ class Order extends ActiveRecord
 
 
                 if ($model->deliveryMethod) {
-                    $city = '';
-                    $address = $model->delivery_address;
                     if ($model->deliveryMethod->system) {
-                        $city = 'г. ' . $model->delivery_city;
+                        $manager = new DeliverySystemManager();
+                        $system = $manager->getSystemClass($model->deliveryMethod->system);
+                        //$model->deliveryModel = $system->getModel();
                     }
-                    return $model->deliveryMethod->name . '<br/>' . $city . '<br>' . $address;
+                    $data = Json::decode($model->delivery_data);
+                    if ($model->deliveryMethod->system == 'novaposhta') {
+                        $html = '';
+                        if (isset($data['type'])) {
+                            if ($data['type'] == 'warehouse') {
+                                if (isset($data['area'])) {
+                                    $area = Area::findOne($data['area']);
+                                    if ($area) {
+                                        $html .= $area->getDescription() . ', ';
+                                    }
+                                }
+                                if (isset($data['city'])) {
+                                    $city = Cities::findOne($data['city']);
+                                    if ($city) {
+                                        $html .= Yii::t('cart/Delivery', 'CITY') . ' ' . $city->getDescription() . '';
+                                    }
+                                }
+                                if (isset($data['warehouse'])) {
+                                    $warehouse = Warehouses::findOne($data['warehouse']);
+                                    if ($warehouse) {
+                                        $html .= '<br/>' . $warehouse->getDescription();
+                                    }
+                                }
+
+                            } else {
+                                $html .= $data['address'];
+                            }
+                        }
+                        return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $html;
+                    } elseif ($model->deliveryMethod->system == 'address') {
+                        if (isset($data['address'])) {
+                            return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $data['address'];
+                        }
+                    } elseif ($model->deliveryMethod->system == 'pickup') {
+                        if (isset($data['address'])) {
+                            $settings = $system->getSettings($model->deliveryMethod->id);
+                            if (isset($settings->address[$data['address']]['name'])) {
+                                return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $settings->address[$data['address']]['name'];
+                            }
+
+                        }
+                    }
+                    //return $model->deliveryMethod->name;
                 }
             }
         ];

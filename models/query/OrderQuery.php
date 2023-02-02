@@ -2,6 +2,7 @@
 
 namespace panix\mod\cart\models\query;
 
+use panix\engine\CMS;
 use panix\engine\traits\query\DefaultQueryTrait;
 use yii\db\ActiveQuery;
 use yii\db\Exception;
@@ -26,14 +27,14 @@ class OrderQuery extends ActiveQuery
     {
         $modelClass = $this->modelClass;
         $tableName = $modelClass::tableName();
-        $this->addSelect([$tableName . '.*', "{$function}({$tableName}.`total_price`) AS aggregation_price"]);
-        $this->orderBy(["aggregation_price" => ($function === 'MIN') ? SORT_ASC : SORT_DESC]);
+        //$this->addSelect([$tableName . '.*', "{$function}({$tableName}.`total_price`) AS aggregation_price"]);
+        //$this->orderBy(["aggregation_price" => ($function === 'MIN') ? SORT_ASC : SORT_DESC]);
+
+        $this->addSelect(["{$function}({$tableName}.`total_price`) AS aggregation_price"]);
+
         $this->distinct(false);
         $this->limit(1);
-        //$result = \Yii::$app->db->cache(function ($db) {
         $result = $this->asArray()->one();
-        // }, 3600);
-
         if ($result) {
             return $result['aggregation_price'];
         }
@@ -45,8 +46,8 @@ class OrderQuery extends ActiveQuery
      * Filter orders by total_price
      * @param $value int
      * @param $operator string '=', '>=', '<='
-     * @throws Exception
      * @return $this
+     * @throws Exception
      */
     public function applyPrice($value, $operator = '=')
     {

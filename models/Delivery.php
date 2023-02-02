@@ -56,10 +56,10 @@ class Delivery extends ActiveRecord
     public function rules()
     {
         return [
-            ['name', 'required'],
+            [['name','system'], 'required'],
             [['system'], 'default'],
-            // ['price, free_from', 'number'],
-
+            //[['price','free_from'], 'number','max'=>100],
+            //[['price','free_from'], 'integer','max'=>10000],
             ['payment_methods', 'validatePaymentMethods'],
             ['name', 'string', 'max' => 255],
             [['description', 'price', 'free_from', 'system'], 'string'],
@@ -113,15 +113,11 @@ class Delivery extends ActiveRecord
 
     public function getDeliverySystemsArray()
     {
-
         $result = [];
-
         $systems = new DeliverySystemManager();
-
         foreach ($systems->getSystems() as $system) {
             $result[$system['id']] = $system['name'];
         }
-
         return $result;
     }
 

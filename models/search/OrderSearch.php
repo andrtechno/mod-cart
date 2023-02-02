@@ -20,7 +20,7 @@ class OrderSearch extends Order
         return [
             [['id', 'status_id', 'price_min', 'price_max', 'delivery_id', 'payment_id'], 'integer'],
             [['status_id', 'user_name', 'total_price', 'created_at', 'updated_at'], 'safe'],
-            [['user_phone', 'user_email', 'delivery_city', 'delivery_address', 'ttn'], 'string'],
+            [['user_phone', 'user_email', 'ttn'], 'string'],
             [['buyOneClick', 'call_confirm', 'paid', 'apply_user_points'], 'boolean'],
         ];
     }
@@ -32,9 +32,7 @@ class OrderSearch extends Order
             'buyOneClick' => Yii::t('cart/Order', 'BUYONECLICK'),
             'call_confirm' => Yii::t('cart/Order', 'CALL_CONFIRM'),
             'paid' => Yii::t('cart/Order', 'PAID'),
-            'delivery_city' => Yii::t('cart/Order', 'DELIVERY_CITY'),
             'apply_user_points' => Yii::t('cart/Order', 'Активированы бонусы?'),
-            'delivery_address' => Yii::t('cart/Order', 'DELIVERY_ADDRESS'),
             'ttn' => Yii::t('cart/Order', 'TTN'),
         ];
     }
@@ -110,8 +108,6 @@ class OrderSearch extends Order
 
         $query->andFilterWhere(['like', 'delivery_id', $this->delivery_id]);
         $query->andFilterWhere(['like', 'payment_id', $this->payment_id]);
-        $query->andFilterWhere(['like', 'delivery_city', $this->delivery_city]);
-        $query->andFilterWhere(['like', 'delivery_address', $this->delivery_address]);
         $query->andFilterWhere(['like', 'ttn', $this->ttn]);
 
         $query->andFilterWhere(['status_id' => $this->status_id]);

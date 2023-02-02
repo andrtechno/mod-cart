@@ -24,187 +24,122 @@ use yii\web\Response;
 class NovaPoshtaDeliverySystem extends BaseDeliverySystem
 {
 
-    public $json = [];
+    public $model;
 
-    /**
-     * This method will be triggered after redirection from payment system site.
-     * If payment accepted method must return Order model to make redirection to order view.
-     * @param Delivery $method
-     * @return boolean|Order
-     */
-
-    public function processRequest(Delivery $method)
+    public function __construct($config = [])
     {
-        $settings = $this->getSettings($method->id);
-        $result = [];
-        $form = new OrderCreateForm;
-        $post = Yii::$app->request->post();
-        $form->load($post);
-        //return $post;
-        $result['field'] = [];
-
-
-        $result['field']['delivery_city_ref']['type'] = 'dropdownlist';
-        $result['field']['delivery_city_ref']['items'] = array_merge([NULL => html_entity_decode('&mdash; Выберите город &mdash;')], Cities::getList());
-        if ($form->delivery_city_ref) {
-            $result['field']['delivery_city_ref']['value'] = $form->delivery_city_ref;
-        }
-
-        $result['field']['delivery_city_ref']['id'] = Html::getInputId($form, 'delivery_city_ref');
-        $result['field']['delivery_city_ref']['error'] = 'Необходимо выбрать город';
-        $result['field']['delivery_city_ref']['name'] = Html::getInputName($form, 'delivery_city_ref');
-        $result['field']['delivery_city_ref']['jsOptions'] = [
-            'liveSearch' => true,
-            'liveSearchPlaceholder' => 'Найти город',
-            //'dropupAuto'=>false,
-            'dropdownAlignRight' => 'auto',
-            'size' => '300px',
-            'width' => '100%',
-            //'container'=>'#'.Html::getInputId($form, 'delivery_city_ref')
-        ];
-        if ($form->delivery_city_ref) {
-            $result['field']['delivery_type']['type'] = 'dropdownlist';
-            //$result['field']['delivery_type']['error'] = 'Необходимо выбрать город';
-            $result['field']['delivery_type']['id'] = Html::getInputId($form, 'delivery_type');
-            $result['field']['delivery_type']['items'] = ['warehouse' => 'Доставка на отделение', 'address' => 'Доставка на адрес'];
-            $result['field']['delivery_type']['value'] = $form->delivery_type;
-            $result['field']['delivery_type']['name'] = Html::getInputName($form, 'delivery_type');
-            $result['field']['delivery_type']['jsOptions'] = [];
-        }
-        if ($form->delivery_city_ref && ($form->delivery_type == 'warehouse')) {
-
-
-            $result['field']['delivery_warehouse_ref']['type'] = 'dropdownlist';
-            $result['field']['delivery_warehouse_ref']['items'] = array_merge([NULL => html_entity_decode('&mdash; Выберите отделение &mdash;')], Warehouses::getList($form->delivery_city_ref));
-            if ($form->delivery_warehouse) {
-                $result['field']['delivery_warehouse_ref']['value'] = $form->delivery_warehouse;
-            }
-            $result['field']['delivery_warehouse_ref']['error'] = 'Необходимо выбрать отделение';
-            $result['field']['delivery_warehouse_ref']['id'] = Html::getInputId($form, 'delivery_warehouse');
-            $result['field']['delivery_warehouse_ref']['name'] = Html::getInputName($form, 'delivery_warehouse');
-            $result['field']['delivery_warehouse_ref']['jsOptions'] = [
-                'liveSearch' => true,
-                'liveSearchPlaceholder' => 'Найти отделение',
-                //'dropupAuto'=>false,
-                'dropdownAlignRight' => 'auto',
-                'size' => '300px',
-                'width' => '100%'
-            ];
-        }
-
-
-        /*if($form->delivery_type == 'warehouse'){
-            $result['warehouse']['type'] = 'dropdownlist';
-            $result['warehouse']['items'] = array_merge([NULL=>html_entity_decode('&mdash; Выберите отделение &mdash;')],Warehouses::getList($form->delivery_city_ref));
-            if($form->delivery_warehouse){
-                $result['warehouse']['value'] = $form->delivery_warehouse;
-            }
-
-            $result['warehouse']['id'] = Html::getInputId($form, 'user_address');
-            $result['warehouse']['name'] = Html::getInputName($form, 'user_address');
-            $result['warehouse']['jsOptions'] = [
-                'liveSearch' => true,
-                'liveSearchPlaceholder'=>'Найти отделение',
-                //'dropupAuto'=>false,
-                'dropdownAlignRight'=>'auto',
-                'size'=>'300px',
-                'width' => '100%'
-            ];
-
-
-
-        }else {
-            $result['warehouse']['type'] = 'text';
-            $result['warehouse']['id'] = Html::getInputId($form, 'user_address');
-            $result['warehouse']['name'] = Html::getInputName($form, 'user_address');
-
-        }*/
-
-
-        $result['attributes'] = $form->attributes;
-        $result['show_address'] = false;
-        if ($form->delivery_type == 'address') {
-            $result['show_address'] = true;
-        }
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        return $result;
-
+        $this->model = $this->getModel();
+        parent::__construct($config);
     }
 
+    /**
+     * This method will be triggered after redirection from delivery system site.
+     * @param Delivery $method
+     */
+    public function processRequest(Delivery $method, $deliveryModel = null)
+    {
+        $settings = $this->getSettings($method->id);
+        $post = Yii::$app->request->post();
+
+        if (!$deliveryModel) {
+            if (isset($post['DynamicModel']['type']) == 'warehouse') {
+                $this->model->addRule(['warehouse'], 'required');
+            } else {
+                $this->model->addRule(['address'], 'required');
+            }
+            $this->model->load($post);
+        } else {
+            $this->model = $deliveryModel;
+        }
+
+        $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
+
+        return Yii::$app->view->$render("@cart/widgets/delivery/novaposhta/_view", [
+            'model' => $this->model,
+            'delivery_id' => $method->id
+        ]);
+    }
+
+    public function processRequestAdmin(Delivery $method)
+    {
+
+
+        $post = Yii::$app->request->post();
+        if (isset($post['DynamicModel']['type']) == 'warehouse') {
+            $this->model->addRule(['warehouse'], 'required');
+        } else {
+            $this->model->addRule(['address'], 'required');
+        }
+        $this->model->load($post);
+//CMS::dump($this->model);
+        $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
+
+        return Yii::$app->view->$render("@cart/widgets/delivery/novaposhta/_view_admin", [
+            'model' => $this->model,
+            'delivery_id' => $method->id,
+            //'order_id' => $order_id
+        ]);
+    }
+
+    public function processRequestAdmin2(Delivery $method, $model = null)
+    {
+        $post = Yii::$app->request->post();
+        if($post){
+           $model->deliveryModel->load($post);
+        }else{
+            $data = $model->getDeliveryData();
+            if ($data) {
+                $model->deliveryModel->load(['DynamicModel' => $data]);
+            }
+        }
+
+        $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
+
+        return Yii::$app->view->$render("@cart/widgets/delivery/novaposhta/_view_admin", [
+            'model' => $model->deliveryModel,
+            'delivery_id' => $method->id,
+            //'order_id' => $order_id
+        ]);
+    }
 
     public function renderDeliveryFormHtml($model)
     {
-
         return Yii::$app->view->renderAjax("@cart/widgets/delivery/{$model->deliveryMethod->system}/_view", [
             'model' => $model
         ]);
     }
 
-    public function renderDeliveryForm2(Delivery $method)
+
+    public function getSettingsKey2($deliveryMethodId)
     {
-        $setting = $this->getSettings($method->id);
-        $postApi = new NovaPoshtaApi($setting->api_key);
-
-        return $postApi->getCities();
-
+        return $deliveryMethodId . '_NovaPoshtaDeliverySystem';
     }
 
-    public function cities($method)
+    public function getModelConfig()
     {
-
-
-        $cacheIdCities = 'cache_novaposhta_cities';
-        $value = Yii::$app->cache->get($cacheIdCities);
-        if ($method->system) {
-            if ($value === false) {
-                $response = $this->connect($method, ["modelName" => "Address", "calledMethod" => "getCities"]);
-
-                foreach ($response as $data) {
-                    $value[$data['DescriptionRu']] = $data['DescriptionRu'];
-                }
-
-                Yii::$app->cache->set($cacheIdCities, $value, 86400 * 346);
-            }
-        }
-        return $value;
-
-    }
-
-
-    private function connect($method, $config = [])
-    {
-        $settings = $this->getSettings($method->id);
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://api.novaposhta.ua/v2.0/json/')
-            ->setData(ArrayHelper::merge([
-                'apiKey' => $settings->api_key,
-                'Language' => 'ru',
-            ], $config))
-            ->setOptions([
-                CURLOPT_CONNECTTIMEOUT => 5, // connection timeout
-                CURLOPT_TIMEOUT => 10, // data receiving timeout
-            ])
-            ->setFormat(Client::FORMAT_JSON)
-            ->addHeaders(['content-type' => 'application/json'])
-            ->send();
-
-        if ($response->isOk) {
-            if ($response->data['success']) {
-                return $response->data['data'];
-            }
-        }
-    }
-
-
-    public function getSettingsKey2($paymentMethodId)
-    {
-        return $paymentMethodId . '_NovaPoshtaDeliverySystem';
+        return new NovaPoshtaConfigurationModel();
     }
 
     public function getModel()
     {
-        return new NovaPoshtaConfigurationModel();
+        $model = new \yii\base\DynamicModel(['type', 'city', 'warehouse', 'area', 'address','typesList']);
+        $model->addRule(['type', 'address', 'city', 'warehouse', 'area'], 'safe');
+        $model->addRule(['type', 'address', 'city', 'warehouse', 'area'], 'default');
+        $model->addRule(['city','area','type'], 'required');
+        $model->typesList = [
+            'warehouse' => Yii::t('cart/Delivery', 'DELIVERY_WAREHOUSE'),
+            'address' => Yii::t('cart/Delivery', 'DELIVERY_ADDRESS')
+        ];
+        $model->setAttributeLabels([
+            'type' => 'Тип доставки',
+            'address' => Yii::t('cart/Delivery', 'TYPE_ADDRESS'),
+            'city' => Yii::t('cart/Delivery', 'CITY'),
+            'warehouse' => Yii::t('cart/Delivery', 'WAREHOUSE'),
+            'area' => Yii::t('cart/Delivery', 'AREA')
+        ]);
+        $model->type = 'warehouse'; //to default
+        return $model;
     }
+
+
 }

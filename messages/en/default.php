@@ -36,7 +36,6 @@ return [
     'PROMO_CODE_ACTIVATED' => 'Promo code activated',
     'PRICE_PER_UNIT' => 'Price per unit',
     'TOTAL_PRICE' => 'Total price',
-    'SELECT_SYSTEM_DELIVERY' => '&mdash; Delivery system &mdash;',
     'SELECT_SYSTEM_PAYMENT' => '&mdash; Payment system &mdash;',
     'TOTAL_COST' => 'Total cost',
     'MAIL_ADMIN_SUBJECT' => 'A new order was issued #{0}',

@@ -2,11 +2,11 @@
 
 use yii\db\Query;
 use panix\mod\cart\models\Order;
+use yii\helpers\Html;
 
 /**
  * @var $this \yii\web\View
  */
-
 
 
 ?>
@@ -21,16 +21,24 @@ use panix\mod\cart\models\Order;
 
         <?php
 
-        $statuses = \panix\mod\cart\models\OrderStatus::find()->where(['use_in_stats'=>1])->all();
-        $listStatus = [];
-        foreach ($statuses as $status){
-            echo \yii\helpers\Html::tag('span',$status->name,['class'=>'badge','style'=>'background-color:'.$status->color]).' ';
+        $years = Yii::$app->db->createCommand('SELECT DISTINCT YEAR(FROM_UNIXTIME(created_at)) as year FROM {{%order}} ORDER BY created_at DESC')->queryAll();
+        $list = [];
+        foreach ($years as $year) {
+            $list[$year['year']] = $year['year'];
         }
+        echo Html::beginForm(['/admin/cart/graph'], 'GET');
+        echo Html::dropDownList('year', (int)Yii::$app->request->get('year', date('Y')), $list,['class'=>'custom-select w-auto']);
+        echo Html::dropDownList('status_id', (int)Yii::$app->request->get('status_id'), \yii\helpers\ArrayHelper::map($queryStatusIds, 'id', 'name'),['class'=>'custom-select w-auto']);
+        echo Html::submitButton('Показать',['class'=>'btn btn-secondary']);
+        echo Html::endForm();
+
+
+
 
 
         $title = Yii::t('cart/admin', 'INCOME_FOR', [
             'month' => '',
-            'year' => date('Y')
+            'year' => (int)Yii::$app->request->get('year', date('Y'))
         ]);
         $subTitle = 'Итого: ' . $total . ' ' . Yii::$app->currency->active['symbol'];
 
