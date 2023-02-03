@@ -1,6 +1,10 @@
 <?php
 use panix\engine\Html;
 use panix\engine\widgets\Pjax;
+use panix\mod\novaposhta\models\Area;
+use panix\mod\novaposhta\models\Cities;
+use panix\mod\novaposhta\models\Warehouses;
+use yii\helpers\Json;
 
 ?>
 
@@ -50,16 +54,66 @@ echo \panix\engine\grid\GridView::widget([
             }
         ],
         [
-            'header' => Yii::t('cart/Order', 'Доставка'),
+            'header' => Yii::t('cart/default', 'DELIVERY'),
             'attribute' => 'delivery_id',
             'format' => 'html',
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($model) {
-                return $model->deliveryMethod->name . '<br/>' . Yii::t('cart/OrderCreateForm', 'DELIVERY_ADDRESS') . ': ' . $model->delivery_address;
+                if ($model->deliveryMethod) {
+                    if ($model->deliveryMethod->system) {
+                        $manager = new DeliverySystemManager();
+                        $system = $manager->getSystemClass($model->deliveryMethod->system);
+                        //$model->deliveryModel = $system->getModel();
+                    }
+                    $data = Json::decode($model->delivery_data);
+                    if ($model->deliveryMethod->system == 'novaposhta') {
+                        $html = '';
+                        if (isset($data['type'])) {
+                            if ($data['type'] == 'warehouse') {
+                                if (isset($data['area'])) {
+                                    $area = Area::findOne($data['area']);
+                                    if ($area) {
+                                        $html .= $area->getDescription() . ', ';
+                                    }
+                                }
+                                if (isset($data['city'])) {
+                                    $city = Cities::findOne($data['city']);
+                                    if ($city) {
+                                        $html .= Yii::t('cart/Delivery', 'CITY') . ' ' . $city->getDescription() . '';
+                                    }
+                                }
+                                if (isset($data['warehouse'])) {
+                                    $warehouse = Warehouses::findOne($data['warehouse']);
+                                    if ($warehouse) {
+                                        $html .= '<br/>' . $warehouse->getDescription();
+                                    }
+                                }
+
+                            } else {
+                                $html .= $data['address'];
+                            }
+                        }
+                        return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $html;
+                    } elseif ($model->deliveryMethod->system == 'address') {
+                        if (isset($data['address'])) {
+                            return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $data['address'];
+                        }
+                    } elseif ($model->deliveryMethod->system == 'pickup') {
+                        if (isset($data['address'])) {
+                            $settings = $system->getSettings($model->deliveryMethod->id);
+                            if (isset($settings->address[$data['address']]['name'])) {
+                                return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $settings->address[$data['address']]['name'];
+                            }
+
+                        }
+                    }
+                    //return $model->deliveryMethod->name;
+                }
+                //return $model->deliveryMethod->name . '<br/>' . Yii::t('cart/OrderCreateForm', 'DELIVERY_ADDRESS') . ': ' . $model->delivery_address;
             }
         ],
         [
-            'header' => Yii::t('cart/Order', 'Оплата'),
+            'header' => Yii::t('cart/default', 'PAYMENT'),
             'attribute' => 'payment_id',
             'headerOptions' => ['class' => 'text-center'],
             'contentOptions' => ['class' => 'text-center'],
