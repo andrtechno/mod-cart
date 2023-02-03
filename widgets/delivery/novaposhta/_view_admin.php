@@ -36,7 +36,6 @@ use panix\engine\bootstrap\ActiveForm;
                         'id' => '-1',
                         'text' => '1111'
                     ],
-                    'allowClear' => true,
                     //'initSelection' => new \yii\web\JsExpression('function(element, callback) {}')
                 ],
             ]);
@@ -72,7 +71,6 @@ use panix\engine\bootstrap\ActiveForm;
                         'id' => '-1',
                         'text' => '1111'
                     ],
-                    'allowClear' => true,
                 ],
             ]);
             echo Html::error($model, 'city', ['class' => 'invalid-feedback d-block']);
@@ -125,7 +123,6 @@ use panix\engine\bootstrap\ActiveForm;
                             'id' => '-1',
                             'text' => '1111'
                         ],
-                        'allowClear' => true,
                     ],
                 ]);
                 echo Html::error($model, 'warehouse', ['class' => 'invalid-feedback d-block']);

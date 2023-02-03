@@ -34,7 +34,6 @@ use panix\ext\select2\Select2;
                         'id' => '-1',
                         'text' => '1111'
                     ],
-                    'allowClear' => true,
                     //'initSelection' => new \yii\web\JsExpression('function(element, callback) {}')
                 ],
             ]);
@@ -65,7 +64,6 @@ use panix\ext\select2\Select2;
                             'id' => '-1',
                             'text' => ''
                         ],
-                        'allowClear' => true,
                         //'initSelection' => new \yii\web\JsExpression('function(element, callback) {}')
                     ],
                 ]);
@@ -113,7 +111,6 @@ use panix\ext\select2\Select2;
                                 'id' => '-1',
                                 'text' => '1111'
                             ],
-                            'allowClear' => true,
                         ],
                     ]);
                     echo Html::error($model, 'warehouse', ['class' => 'invalid-feedback d-block']);
