@@ -49,7 +49,6 @@ use panix\ext\select2\Select2;
                     'attribute' => 'city',
                     'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Cities::find()
                         ->orderBy(['Description' => SORT_ASC])
-                        ->where(['warehouse' => 1])
                         ->andWhere(['Area' => $model->area])
                         ->all(), 'Ref', function ($model) {
                         return $model->getDescription();
