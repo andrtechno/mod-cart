@@ -38,6 +38,7 @@ class Module extends WebModule implements BootstrapInterface
         if ($this->hasEventHandlers(self::EVENT_ORDER_CREATE)) {
             $this->on(self::EVENT_ORDER_CREATE, [$this, 'onOrderCreate']);
         }
+        $this->count = [];
         if (!(Yii::$app instanceof yii\console\Application) && !Yii::$app->user->isGuest) {
             $count = Order::find()->where(['status_id' => Order::STATUS_NEW])->count();
             $this->count['num'] = (int)$count;
