@@ -23,7 +23,7 @@ class Module extends WebModule implements BootstrapInterface
     public $emptyView = '@cart/widgets/cart2/views/_empty';
 
     const EVENT_ORDER_CREATE = 'orderCreate';
-    public $cart;
+    //public $cart;
 
     public function onOrderCreate($order)
     {
@@ -96,14 +96,14 @@ class Module extends WebModule implements BootstrapInterface
             if ($this->count)
                 $app->counters[$this->id] = $this->count['num'];
 
-            $cart = Yii::$app->cart;
+            /*$cart = Yii::$app->cart;
             $items = $cart->getDataWithModels();
 
             $this->cart = [
                 'items' => isset($items['items']) ? $items['items'] : [],
                 'total' => $cart->getTotalPrice(),
                 'count' => $cart->countItems()
-            ];
+            ];*/
         }
 
 

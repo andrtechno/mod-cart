@@ -3,6 +3,7 @@
 namespace panix\mod\cart\models;
 
 use panix\engine\CMS;
+use panix\mod\admin\models\Timeline;
 use panix\mod\cart\components\delivery\DeliverySystemManager;
 use panix\mod\cart\components\OrderCreateEvent;
 use panix\mod\cart\models\search\OrderSearch;
@@ -415,7 +416,9 @@ class Order extends ActiveRecord
 
         $this->registerGuest();
 
-
+        if ($insert) {
+            Timeline::add('new_order');
+        }
         $send_ttn = false;
         if ($this->ttn) {
             if (isset($this->oldAttributes['ttn']) && $this->oldAttributes['ttn'] != $this->ttn) {

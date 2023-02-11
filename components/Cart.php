@@ -49,9 +49,6 @@ class Cart extends Component
             $this->session['cart_data'] = [];
         }
 
-        if (!isset($this->session['test']) || !is_array($this->session['test'])) {
-            $this->session['test'] = [];
-        }
         /** @var \panix\mod\shop\models\Product $productModel */
         $this->productModel = Yii::$app->getModule('shop')->model('Product');
 

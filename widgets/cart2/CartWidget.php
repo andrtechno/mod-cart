@@ -41,10 +41,16 @@ class CartWidget extends Widget
 
     public function init()
     {
-        $cart = Yii::$app->getModule('cart')->cart;
-        $this->items = $cart['items'];
-        $this->count = $cart['count'];
-        $this->total = $cart['total'];
+        /** @var \panix\mod\cart\components\Cart $cart */
+        $cart = Yii::$app->cart;
+        $items = $cart->getDataWithModels();
+        $this->items = isset($items['items']) ? $items['items'] : [];
+        $this->count = $cart->countItems();
+        $this->total = $cart->getTotalPrice();
+        //$cart = Yii::$app->getModule('cart')->cart;
+        //$this->items = $cart['items'];
+        //$this->count = $cart['count'];
+        //$this->total = $cart['total'];
         $this->title = 'Ваша корзина';
         parent::init();
     }
