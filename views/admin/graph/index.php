@@ -8,7 +8,11 @@ use yii\helpers\Html;
  * @var $this \yii\web\View
  */
 
-
+$years = Yii::$app->db->createCommand('SELECT DISTINCT YEAR(FROM_UNIXTIME(created_at)) as year FROM {{%order}} ORDER BY created_at DESC')->queryAll();
+$list = [];
+foreach ($years as $year) {
+    $list[$year['year']] = $year['year'];
+}
 ?>
 
 
@@ -18,26 +22,28 @@ use yii\helpers\Html;
     </div>
     <div class="card-body">
 
-
+        <div class="m-3">
+            <?= Html::beginForm(['/admin/cart/graph'], 'GET'); ?>
+            <div class="row">
+                <div class="col-auto mb-3 mb-md-3">
+                    <?= Html::dropDownList('year', (int)Yii::$app->request->get('year', date('Y')), $list, ['class' => 'custom-select w-auto']); ?>
+                </div>
+                <div class="col-auto mb-3 mb-md-3">
+                    <?= Html::dropDownList('status_id', (int)Yii::$app->request->get('status_id'), \yii\helpers\ArrayHelper::map($queryStatusIds, 'id', 'name'), ['class' => 'custom-select w-auto']); ?>
+                </div>
+                <div class="col-auto">
+                    <?= Html::dropDownList('type', Yii::$app->request->get('type', 'income'), ['income' => Yii::t('cart/admin', 'INCOME'), 'circulation' => Yii::t('cart/admin', 'CIRCULATION')], ['class' => 'custom-select']); ?>
+                </div>
+                <div class="col-auto">
+                    <?= Html::submitButton('Показать', ['class' => 'btn btn-secondary']); ?>
+                </div>
+            </div>
+            <?= Html::endForm(); ?>
+        </div>
         <?php
 
-        $years = Yii::$app->db->createCommand('SELECT DISTINCT YEAR(FROM_UNIXTIME(created_at)) as year FROM {{%order}} ORDER BY created_at DESC')->queryAll();
-        $list = [];
-        foreach ($years as $year) {
-            $list[$year['year']] = $year['year'];
-        }
-        echo Html::beginForm(['/admin/cart/graph'], 'GET');
-        echo Html::dropDownList('year', (int)Yii::$app->request->get('year', date('Y')), $list,['class'=>'custom-select w-auto']);
-        echo Html::dropDownList('status_id', (int)Yii::$app->request->get('status_id'), \yii\helpers\ArrayHelper::map($queryStatusIds, 'id', 'name'),['class'=>'custom-select w-auto']);
-        echo Html::dropDownList('type', Yii::$app->request->get('type','income'), ['income'=>Yii::t('cart/admin', 'INCOME'),'circulation'=>Yii::t('cart/admin', 'CIRCULATION')],['class'=>'custom-select w-auto']);
-        echo Html::submitButton('Показать',['class'=>'btn btn-secondary']);
-        echo Html::endForm();
 
-
-
-
-
-        $title = Yii::t('cart/admin', (Yii::$app->request->get('type','income') == 'income') ? 'INCOME_FOR' : 'CIRCULATION_FOR', [
+        $title = Yii::t('cart/admin', (Yii::$app->request->get('type', 'income') == 'income') ? 'INCOME_FOR' : 'CIRCULATION_FOR', [
             'month' => '',
             'year' => (int)Yii::$app->request->get('year', date('Y'))
         ]);
@@ -186,7 +192,7 @@ use yii\helpers\Html;
                 ],
                 'series' => [
                     [
-                        'name' => Yii::t('cart/admin', (Yii::$app->request->get('type','income') == 'income') ? 'INCOME' : 'CIRCULATION'),
+                        'name' => Yii::t('cart/admin', (Yii::$app->request->get('type', 'income') == 'income') ? 'INCOME' : 'CIRCULATION'),
                         'colorByPoint' => true,
                         'tooltip' => [
                             'pointFormat' => '<tr><td><span style="font-weight: bold; color: {series.color}">{series.name}</span>: 123<br/><b>Продано товаров: {point.products}<br/></b></td><td>dsadsa</td></tr>'
