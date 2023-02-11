@@ -29,6 +29,7 @@ use yii\helpers\Html;
         echo Html::beginForm(['/admin/cart/graph'], 'GET');
         echo Html::dropDownList('year', (int)Yii::$app->request->get('year', date('Y')), $list,['class'=>'custom-select w-auto']);
         echo Html::dropDownList('status_id', (int)Yii::$app->request->get('status_id'), \yii\helpers\ArrayHelper::map($queryStatusIds, 'id', 'name'),['class'=>'custom-select w-auto']);
+        echo Html::dropDownList('type', Yii::$app->request->get('type','income'), ['income'=>Yii::t('cart/admin', 'INCOME'),'circulation'=>Yii::t('cart/admin', 'CIRCULATION')],['class'=>'custom-select w-auto']);
         echo Html::submitButton('Показать',['class'=>'btn btn-secondary']);
         echo Html::endForm();
 
@@ -36,7 +37,7 @@ use yii\helpers\Html;
 
 
 
-        $title = Yii::t('cart/admin', 'INCOME_FOR', [
+        $title = Yii::t('cart/admin', (Yii::$app->request->get('type','income') == 'income') ? 'INCOME_FOR' : 'CIRCULATION_FOR', [
             'month' => '',
             'year' => (int)Yii::$app->request->get('year', date('Y'))
         ]);
@@ -74,7 +75,9 @@ use yii\helpers\Html;
                                         data:{
                                             name:e.point.name,
                                             year:e.point.year,
-                                            month:e.point.month
+                                            month:e.point.month,
+                                            type:e.point.type,
+                                            status_id:e.point.status_id
                                         },
                                         dataType:"json",
                                         beforeSend:function(){
@@ -183,7 +186,7 @@ use yii\helpers\Html;
                 ],
                 'series' => [
                     [
-                        'name' => 'Доход',
+                        'name' => Yii::t('cart/admin', (Yii::$app->request->get('type','income') == 'income') ? 'INCOME' : 'CIRCULATION'),
                         'colorByPoint' => true,
                         'tooltip' => [
                             'pointFormat' => '<tr><td><span style="font-weight: bold; color: {series.color}">{series.name}</span>: 123<br/><b>Продано товаров: {point.products}<br/></b></td><td>dsadsa</td></tr>'

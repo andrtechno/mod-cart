@@ -153,6 +153,12 @@ Pjax::end();
                         class="float-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <span
                             class="text-muted"><?= $symbol ?></span></strong>
             </li>
+            <li class="list-group-item">
+                <?= Yii::t('cart/admin', 'INCOME') ?>: <strong
+                        class="float-right"><?= Yii::$app->currency->number_format($model->diff_price) ?> <span
+                            class="text-muted"><?= $symbol ?></span></strong>
+            </li>
+
             <?php if ($model->discount) { ?>
                 <li class="list-group-item">
                     <?= $model::t('DISCOUNT') ?>:
@@ -170,6 +176,8 @@ Pjax::end();
                     <small class="text-muted"><?= $symbol; ?></small>
                 </h4>
             </li>
+
+
         </ul>
     </div>
 
@@ -196,6 +204,7 @@ Pjax::end();
                 <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('updated_at'); ?>:</span>
                 <span class="m-0"><?= CMS::date($model->updated_at); ?></span>
             </div>
+
             <div class="list-group-item d-flex justify-content-between">
                 <span class="d-flex align-items-center mr-4"><?= $model->getAttributeLabel('user_agent'); ?>:</span>
                 <span class="m-0 text-right">

@@ -36,7 +36,7 @@ class GraphController extends AdminController
         $data_total = [];
         $request = Yii::$app->request;
         $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())
-            ->where(['use_in_stats' => 1])
+            //->where(['use_in_stats' => 1])
             ->select(['id', 'name']);
         $statusIds = [];
         $queryStatusIds = $queryStatus->all();
@@ -50,9 +50,9 @@ class GraphController extends AdminController
         }
 
 
-
         $year = (int)$request->get('year', date('Y'));
         $month = (int)$request->get('month', date('n'));
+        $type = $request->get('type', 'income');
 
         $start_month = ($month) ? $month : '01';
         $end_month = ($month) ? $month : '12';
@@ -67,14 +67,22 @@ class GraphController extends AdminController
             $product_count = (isset($data[$index]['product_count'])) ? $data[$index]['product_count'] : 0;
             $queryData['sum'] = 0;
             //if (strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59") > $time) {
-                $query = (new \yii\db\Query())->from(Order::tableName())
-                    ->where(['between', 'created_at', strtotime("{$year}-{$index}-01 00:00:00"), strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59")])
-                    ->andWhere(['status_id' => $statusIds])
-                    ->andWhere(['not', ['diff_price' => null]])
-                    ->andWhere(['>', 'diff_price', 0])
-                    //->select(['id']);
-                    ->select(['SUM(diff_price) as sum']);
-                $queryData = $query->one();
+            $query = (new \yii\db\Query())->from(Order::tableName());
+            $query->where(['between', 'created_at', strtotime("{$year}-{$index}-01 00:00:00"), strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59")]);
+            $query->andWhere(['status_id' => $statusIds]);
+            if ($type == 'circulation') {
+                //$query->andWhere(['not', ['diff_price' => null]]);
+                //$query->andWhere(['>', 'diff_price', 0]);
+                $query->andWhere(['>', 'total_price', 0]);
+                $query->select(['SUM(total_price) as sum']);
+            } else {
+                $query->andWhere(['not', ['diff_price' => null]]);
+                $query->andWhere(['>', 'diff_price', 0]);
+                $query->select(['SUM(diff_price) as sum']);
+            }
+
+            $queryData = $query->one();
+            //echo $query->createCommand()->rawSql;die;
             //}
 
             $total += $queryData['sum'];
@@ -85,6 +93,8 @@ class GraphController extends AdminController
                 'name' => Yii::t('cart/admin', date('F', strtotime("{$year}-{$index}"))),
                 'year' => $year,
                 'month' => $index,
+                'type' => $type,
+                'status_id' => $request->get('status_id'),
                 'products' => $product_count,
                 'value' => Yii::$app->currency->number_format($queryData['sum']),
                 // 'color' => $this->getSeasonColor($index),
@@ -136,20 +146,24 @@ class GraphController extends AdminController
 
     public function actionTestajax()
     {
-
-
+        $request = Yii::$app->request;
         $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())
-            ->where(['use_in_stats' => 1])
+            //->where(['use_in_stats' => 1])
             ->select(['id']);
         $queryStatusIds = $queryStatus->all();
         $statusIds = [];
-        foreach ($queryStatusIds as $status) {
-            $statusIds[] = $status['id'];
+        if ($request->get('status_id')) {
+            $statusIds[] = (int)$request->get('status_id');
+        } else {
+            foreach ($queryStatusIds as $status) {
+                $statusIds[] = $status['id'];
+            }
         }
 
 
-        $year = Yii::$app->request->get('year');
+        $year = (int)Yii::$app->request->get('year');
         $month = Yii::$app->request->get('month');
+        $type = Yii::$app->request->get('type');
         $name = Yii::$app->request->get('name');
         $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
@@ -159,12 +173,17 @@ class GraphController extends AdminController
         foreach (range(1, $monthDaysCount) as $k => $day) {
             $queryData['sum'] = 0;
             if (strtotime("{$year}-{$month}-{$day} 23:59:59") < $time) {
-                $query = (new \yii\db\Query())->from(Order::tableName())
-                    ->where(['between', 'created_at', strtotime("{$year}-{$month}-{$day} 00:00:00"), strtotime("{$year}-{$month}-{$day} 23:59:59")])
-                    ->andWhere(['status_id' => $statusIds])
-                    ->andWhere(['not', ['diff_price' => null]])
-                    ->andWhere(['>', 'diff_price', 0])
-                    ->select(['SUM(diff_price) as sum']);
+                $query = (new \yii\db\Query())->from(Order::tableName());
+                $query->where(['between', 'created_at', strtotime("{$year}-{$month}-{$day} 00:00:00"), strtotime("{$year}-{$month}-{$day} 23:59:59")]);
+                $query->andWhere(['status_id' => $statusIds]);
+                if ($type == 'circulation') {
+                    $query->andWhere(['>', 'total_price', 0]);
+                    $query->select(['SUM(total_price) as sum']);
+                } else {
+                    $query->andWhere(['not', ['diff_price' => null]]);
+                    $query->andWhere(['>', 'diff_price', 0]);
+                    $query->select(['SUM(diff_price) as sum']);
+                }
                 $queryData = $query->one();
             }
 
@@ -192,7 +211,7 @@ class GraphController extends AdminController
         return $this->asJson([
             'data' => $response,
             'subtitle' => 'Итого: ' . Yii::$app->currency->number_format($total) . ' ' . Yii::$app->currency->active['symbol'],
-            'title' => Yii::t('cart/admin', 'INCOME_FOR', [
+            'title' => Yii::t('cart/admin', ($type == 'income') ? 'INCOME_FOR' : 'CIRCULATION_FOR', [
                 'month' => $name,
                 'year' => $year
             ])
