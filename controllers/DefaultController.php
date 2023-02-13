@@ -227,14 +227,10 @@ class DefaultController extends WebController
             }
 
 //CMS::dump($this->order->deliveryModel);die;
+            //CMS::dump(Yii::$app->session->id);die;
             $order = $this->createOrder();
 
             if ($order instanceof Order) {
-                //$this->order->registerGuest();
-
-                //CMS::dump($this->order);
-                //echo 'success';
-                //die;
                 Yii::$app->cart->clear();
                 Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                 return $this->redirect(['view', 'secret_key' => $order->secret_key]);
@@ -573,7 +569,7 @@ class DefaultController extends WebController
 
         //$delivery = Delivery::findOne($this->order->delivery_id);
 
-
+        $cartItems = Yii::$app->cart->getDataWithModels();
         $this->order->status_id = Order::STATUS_NEW;
         if ($this->order->validate()) {
 
@@ -586,7 +582,6 @@ class DefaultController extends WebController
                 $event->order = $this->order;
                 Yii::$app->getModule('cart')->trigger(Module::EVENT_ORDER_CREATE, $event);
             }
-
         } else {
             //print_r($this->order->getErrors());die;
             Yii::$app->session->setFlash('error', Yii::t('cart/default', 'SUCCESS_ORDER'));
@@ -599,7 +594,7 @@ class DefaultController extends WebController
 
         // Process products
         $productsCount = 0;
-        $cartItems = Yii::$app->cart->getDataWithModels();
+
         foreach ($cartItems['items'] as $item) {
 
             $ordered_product = new OrderProduct;

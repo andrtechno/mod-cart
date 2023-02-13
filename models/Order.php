@@ -1084,7 +1084,7 @@ class Order extends ActiveRecord
 
         $columns['DEFAULT_CONTROL'] = [
             'class' => 'panix\engine\grid\columns\ActionColumn',
-            'template' => '{update}'
+            'template' => '{update} {delete}'
         ];
         //  $columns['DEFAULT_COLUMNS'] = [
         //  ['class' => 'panix\engine\grid\sortable\Column'],
