@@ -14,8 +14,8 @@ use Yii;
  * Class Product
  * @package api\modules\models
  *
- * GET /api/cart/index?token={token} Список заказов
- * GET /api/cart/index/{order_id}?token={token} Заказ
+ * GET /api/cart/index?token={user->api_key} Список заказов
+ * GET /api/cart/index/{order_id}?token={user->api_key} Заказ
  */
 class Product extends BaseProduct
 {
