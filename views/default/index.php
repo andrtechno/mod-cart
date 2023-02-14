@@ -124,8 +124,7 @@ $formOrder = ActiveForm::begin([
                         <td>
                             <h5><?= Html::a(Html::encode($product['model']->name), $product['model']->getUrl()); ?></h5>
                             <?php
-//\panix\engine\CMS::dump($product['attributes_data']->attrbiutes);
-                          //  print_r($product['attributes_data']['attributes']);
+
                             $attributesData = (array) $product['attributes_data']->attributes;
 
                             $query = \panix\mod\shop\models\Attribute::find();

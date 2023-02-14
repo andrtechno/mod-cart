@@ -91,6 +91,16 @@ class Order extends ActiveRecord
     }
 
     /**
+     * @return array
+     */
+    public function fields()
+    {
+        $fields = parent::fields();
+        unset($fields['admin_comment']);
+        return $fields;
+    }
+
+    /**
      * @inheritdoc
      */
     public function behaviors()
