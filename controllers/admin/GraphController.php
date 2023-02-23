@@ -76,13 +76,14 @@ class GraphController extends AdminController
                 $query->andWhere(['>', 'total_price', 0]);
                 $query->select(['SUM(total_price) as sum']);
             } else {
-                $query->andWhere(['not', ['diff_price' => null]]);
+
+                //$query->andWhere(['not', ['diff_price' => null]]);
                 $query->andWhere(['>', 'diff_price', 0]);
                 $query->select(['SUM(diff_price) as sum']);
             }
-
-            $queryData = $query->one();
             //echo $query->createCommand()->rawSql;die;
+            $queryData = $query->one();
+
             //}
 
             $total += $queryData['sum'];
@@ -180,10 +181,11 @@ class GraphController extends AdminController
                     $query->andWhere(['>', 'total_price', 0]);
                     $query->select(['SUM(total_price) as sum']);
                 } else {
-                    $query->andWhere(['not', ['diff_price' => null]]);
+                    //$query->andWhere(['not', ['diff_price' => null]]);
                     $query->andWhere(['>', 'diff_price', 0]);
                     $query->select(['SUM(diff_price) as sum']);
                 }
+                //echo $query->createCommand()->rawSql;
                 $queryData = $query->one();
             }
 
@@ -199,7 +201,7 @@ class GraphController extends AdminController
 
 
         }
-
+       // die;
 
         $response = [
             'name' => Yii::$app->request->get('name'),

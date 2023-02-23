@@ -226,8 +226,7 @@ class DefaultController extends WebController
                 }
             }
 
-//CMS::dump($this->order->deliveryModel);die;
-            //CMS::dump(Yii::$app->session->id);die;
+
             $order = $this->createOrder();
 
             if ($order instanceof Order) {
