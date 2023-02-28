@@ -238,9 +238,6 @@ class m170908_134034_cart extends Migration
         $this->createIndex('updated_at', Order::tableName(), 'updated_at');
         $this->createIndex('diff_price', Order::tableName(), 'diff_price');
 
-        $this->createIndex('delivery_city_ref', Order::tableName(), 'delivery_city_ref');
-        $this->createIndex('delivery_warehouse_ref', Order::tableName(), 'delivery_warehouse_ref');
-
         // order status indexes
         $this->createIndex('ordern', OrderStatus::tableName(), 'ordern');
         $this->createIndex('use_in_stats', OrderStatus::tableName(), 'use_in_stats');
