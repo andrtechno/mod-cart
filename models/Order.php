@@ -232,7 +232,7 @@ class Order extends ActiveRecord
         $rules[] = ['user_phone', 'string', 'on' => 'buyOneClick'];
         $rules[] = [['user_name', 'delivery_id', 'payment_id', 'user_phone'], 'required'];
         //'user_email',
-        //$rules[] = ['user_email', 'email'];
+        $rules[] = ['user_email', 'email'];
         $rules[] = [['user_comment', 'admin_comment'], 'string', 'max' => 500];
         $rules[] = [['user_phone'], 'string', 'max' => 30];
         $rules[] = [['user_name', 'user_email', 'discount', 'ttn'], 'string', 'max' => 100];
