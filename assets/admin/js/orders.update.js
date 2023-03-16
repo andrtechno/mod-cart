@@ -27,6 +27,51 @@ function openAddProductDialog(order_id) {
     });
 }*/
 
+
+//Custom spinner
+$(document).on('keyup', '.spinner input', function () {
+    var input = $(this);
+    var step = (input.data("step")) ? parseInt(input.data("step")) : 1;
+    var value = (parseInt(input.val())) ? parseInt(input.val()) : step;
+    var product_id = parseInt(input.data("product_id"));
+
+    value = Math.round(value / step) * step;
+    input.val(value);
+    console.log(product_id);
+    if (product_id) {
+        if (value >= 1 && cart.spinnerRecount) {
+            cart.recount(value, product_id);
+        }
+    }
+});
+$(document).on('click', '.spinner button', function () {
+    var input = $(this).parent().find('input');
+    var step = (input.data("step")) ? parseInt(input.data("step")) : 1;
+    var value = (parseInt(input.val())) ? parseInt(input.val()) : step;
+    var product_id = parseInt(input.data("product_id"));
+    var event = $(this).data("event");
+
+    var min = parseInt(input.data("min"));
+    var max = parseInt(input.data("max"));
+
+    if (event === 'down') {
+        value = value - step;
+    } else {
+        value = value + step;
+    }
+    if (value > max) {
+        value = max;
+    } else if (value <= min) {
+        value = min;
+    }
+    if (product_id && value >= 1 && cart.spinnerRecount) {
+        cart.recount(value, product_id);
+    }
+    input.val(value);
+});
+//Custom spinner end
+
+
 /**
  * Add product to order
  * @param el

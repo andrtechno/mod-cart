@@ -10,7 +10,10 @@ class OrderAsset extends AssetBundle {
 
     public $sourcePath = __DIR__.'/assets';
     public $js = [
-         'admin/js/orders.update.js',
+        'admin/js/orders.update.js',
+    ];
+    public $css = [
+        'admin/css/orders.update.css',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

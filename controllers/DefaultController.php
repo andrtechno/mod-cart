@@ -441,7 +441,7 @@ class DefaultController extends WebController
             'weight_class_id' => $model->weight_class_id,
             'length_class_id' => $model->length_class_id,
             'configurable_id' => $configurable_id,
-            'quantity' => (int)Yii::$app->request->post('quantity', 1),
+            'quantity' => (int)Yii::$app->request->post('quantity', $model->in_box),
             'price' => $model->price
         ]);
         $totalPrice = $cart->getTotalPrice();

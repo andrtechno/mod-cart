@@ -47,7 +47,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                         [
                             'attribute' => 'id',
                             'format' => 'raw',
-                            'contentOptions' => ['class' => 'text-center', 'style'=>'width:100px'],
+                            'contentOptions' => ['class' => 'text-center', 'style' => 'width:100px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
                                 return $model->id;
@@ -83,7 +83,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                         [
                             'attribute' => 'price',
                             'format' => 'raw',
-                            'contentOptions' => ['class' => 'text-center', 'style'=>'width:150px'],
+                            'contentOptions' => ['class' => 'text-center', 'style' => 'width:150px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
                                 $discount = '';
@@ -110,16 +110,32 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                         [
                             'attribute' => 'quantity',
                             'format' => 'raw',
-                            'contentOptions' => ['class' => 'text-center', 'style'=>'width:80px'],
+                            'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
-                                return \yii\jui\Spinner::widget([
+
+
+                                $html = '<div class="spinner">';
+                                $html .= Html::button('-', ['class' => 'spinner--down', 'data-event' => 'down']);
+                                $html .= Html::textInput('quantity', $model->quantity_min, ['data' => [
+                                    'step' => $model->in_box,
+                                    'min' => $model->quantity_min,
+                                    'max' => 999
+                                ]]);
+                                $html .= Html::button('+', ['class' => 'spinner--up', 'data-event' => 'up']);
+                                $html .= '</div>';
+                                return $html;
+                                /*return \yii\jui\Spinner::widget([
                                     'id' => "count_{$model->id}",
                                     'name' => "count_{$model->id}",
-                                    'value' => 1,
-                                    'clientOptions' => ['max' => 999, 'min' => 1],
-                                    'options' => ['class' => 'cart-spinner', 'style'=>'width:80px']
-                                ]);
+                                    'value' => $model->quantity_min,
+                                    'clientOptions' => [
+                                        'max' => 999,
+                                        'min' => $model->quantity_min,
+                                        'step' => $model->in_box
+                                    ],
+                                    'options' => ['class' => 'cart-spinner', 'style' => 'width:80px']
+                                ]);*/
                             }
                         ],
                         [
