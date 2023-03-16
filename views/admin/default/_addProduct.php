@@ -47,7 +47,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                         [
                             'attribute' => 'id',
                             'format' => 'raw',
-                            'contentOptions' => ['class' => 'text-center', 'style' => 'width:100px'],
+                            'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
                                 return $model->id;
@@ -75,6 +75,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                             'attribute' => 'sku',
                             'format' => 'raw',
                             'contentOptions' => ['class' => 'text-left'],
+                            'headerOptions' => ['style' => 'width:150px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
                                 return $model->sku;
@@ -83,7 +84,8 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                         [
                             'attribute' => 'price',
                             'format' => 'raw',
-                            'contentOptions' => ['class' => 'text-center', 'style' => 'width:150px'],
+                            'contentOptions' => ['class' => 'text-center'],
+                            'headerOptions' => ['style' => 'width:150px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
                                 $discount = '';
@@ -105,7 +107,8 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                         [
                             'attribute' => 'quantity',
                             'format' => 'raw',
-                            'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px'],
+                            'contentOptions' => ['class' => 'text-center'],
+                            'headerOptions' => ['style' => 'width:80px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
 
@@ -137,6 +140,8 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                             'class' => 'panix\engine\grid\columns\ActionColumn',
                             'template' => '{add}',
                             'filter' => false,
+                            //'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px'],
+                            'headerOptions' => ['style' => 'width:80px'],
                             'buttons' => [
                                 'add' => function ($url, $data, $key) {
                                     return Html::a(Html::icon('add'), $data->id, [
