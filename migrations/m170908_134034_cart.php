@@ -78,7 +78,7 @@ class m170908_134034_cart extends Migration
             'order_id' => $this->integer()->notNull()->unsigned(),
             'product_id' => $this->integer()->notNull()->unsigned(),
             'currency_id' => $this->integer()->unsigned(),
-            'user_id' => $this->integer()->notNull()->unsigned()->comment('for reviews product is buy'),
+            'user_id' => $this->integer()->null()->unsigned()->comment('for reviews product is buy'),
             'supplier_id' => $this->integer()->unsigned(),
             'manufacturer_id' => $this->integer()->unsigned(),
             'configurable_id' => $this->integer()->unsigned(),
