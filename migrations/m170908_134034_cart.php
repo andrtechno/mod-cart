@@ -60,6 +60,7 @@ class m170908_134034_cart extends Migration
             'points_expire' => $this->integer()->null(),
             'apply_user_points' => $this->boolean()->defaultValue(false),
             'buyOneClick' => $this->boolean()->defaultValue(false),
+            'delivery_data' => $this->text()->null(),
         ], $this->tableOptions);
 
         // create table order status
@@ -78,7 +79,7 @@ class m170908_134034_cart extends Migration
             'order_id' => $this->integer()->notNull()->unsigned(),
             'product_id' => $this->integer()->notNull()->unsigned(),
             'currency_id' => $this->integer()->unsigned(),
-            'user_id' => $this->integer()->notNull()->unsigned()->comment('for reviews product is buy'),
+            'user_id' => $this->integer()->null()->unsigned()->comment('for reviews product is buy'),
             'supplier_id' => $this->integer()->unsigned(),
             'manufacturer_id' => $this->integer()->unsigned(),
             'configurable_id' => $this->integer()->unsigned(),

@@ -872,10 +872,18 @@ class Order extends ActiveRecord
                 $manager = new DeliverySystemManager();
                 $system = $manager->getSystemClass($this->deliveryMethod->system);
                 $settings = $system->getSettings($this->delivery_id);
-                $list[] = [
-                    'key' => Yii::t('cart/Delivery', 'ADDRESS'),
-                    'value' => $settings->address[$data['address']]['name']
-                ];
+                if(isset($settings->address[$data['address']])){
+                    $list[] = [
+                        'key' => Yii::t('cart/Delivery', 'ADDRESS'),
+                        'value' => $settings->address[$data['address']]['name']
+                    ];
+                }else{
+                    $list[] = [
+                        'key' => Yii::t('cart/Delivery', 'ADDRESS'),
+                        'value' => $data['address']
+                    ];
+                }
+
             } elseif ($this->deliveryMethod->system == 'address') {
                 $list[] = [
                     'key' => Yii::t('cart/Delivery', 'ADDRESS'),

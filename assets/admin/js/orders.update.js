@@ -45,7 +45,7 @@ $(document).on('keyup', '.spinner input', function () {
     }
 });
 $(document).on('click', '.spinner button', function () {
-    var input = $(this).parent().find('input');
+    var input = $(this).closest('.spinner').find('input');
     var step = (input.data("step")) ? parseInt(input.data("step")) : 1;
     var value = (parseInt(input.val())) ? parseInt(input.val()) : step;
     var product_id = parseInt(input.data("product_id"));

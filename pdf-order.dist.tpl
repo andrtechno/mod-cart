@@ -51,14 +51,18 @@
         </td>
         <td width="50%" valign="top">
             <table border="0" cellspacing="0" cellpadding="5" style="width:100%;">
-                {if $model->delivery_address}
-                    <tr>
-                        <td align="left" class="text-left" style="border-bottom: 1px solid #ccc;">
-                            {$model->getAttributeLabel('delivery_address')}:
-                            <strong>{$model->delivery_address}</strong>
-                        </td>
-                    </tr>
+                {if $model->getDeliveryEach()}
+                    {foreach from=$model->getDeliveryEach() item=value}
+                        <tr>
+                            <td align="left" class="text-left" style="border-bottom: 1px solid #ccc;">
+                                {$value['key']}:
+                                <strong>{$value['value']}</strong>
+                            </td>
+                        </tr>
+                        <p>: <strong></strong></p>
+                    {/foreach}
                 {/if}
+
                 {if $model->deliveryMethod}
                     <tr>
                         <td align="left" class="text-left" style="border-bottom: 1px solid #ccc;">
@@ -166,7 +170,7 @@
 
         {if $model->discount}
             <p>{Yii::t('cart/Order', 'DISCOUNT')}:
-            {if ('%' === $model->discount|substr:-1:1)}
+            {if ('%' === $model->discount)} //|substr:-1:1
                 <strong>{$model->discount}</strong>
             {else}
                 <strong>{Yii::$app->currency->number_format($model->discount)}</strong> {Yii::$app->currency->active['symbol']}
