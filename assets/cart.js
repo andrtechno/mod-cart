@@ -131,7 +131,7 @@ cart = {
                     common.notify(data.errors, 'error');
                 } else {
                     cart.popup();
-                    $(that).text(data.buttonText);
+                    $(that).text(data.buttonText).addClass('btn-already-in-cart');
                     $(that).attr('onclick', 'cart.popup(false);');
                     //cart.renderBlockCart();
                     $(cart.selectorCount).html(data.countItems);
@@ -142,7 +142,6 @@ cart = {
             },
             complete: function () {
                 $(that).removeClass('btn-loading').attr('disabled', false);
-                ;
             },
         });
         return this;
