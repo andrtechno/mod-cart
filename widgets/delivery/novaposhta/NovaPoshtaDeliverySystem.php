@@ -4,6 +4,7 @@ namespace panix\mod\cart\widgets\delivery\novaposhta;
 
 use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\widgets\delivery\novaposhta\api\NovaPoshtaApi;
+use panix\mod\cart\widgets\delivery\novaposhta\DeliveryAsset;
 use panix\mod\novaposhta\models\Cities;
 use panix\mod\novaposhta\models\Warehouses;
 use Yii;
@@ -40,7 +41,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
     {
         $settings = $this->getSettings($method->id);
         $post = Yii::$app->request->post();
-
+        DeliveryAsset::register(Yii::$app->view);
         if (!$deliveryModel) {
             if (isset($post['DynamicModel']['type']) == 'warehouse') {
                 $this->model->addRule(['warehouse'], 'required');
@@ -62,8 +63,6 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
 
     public function processRequestAdmin(Delivery $method)
     {
-
-
         $post = Yii::$app->request->post();
         if (isset($post['DynamicModel']['type']) == 'warehouse') {
             $this->model->addRule(['warehouse'], 'required');

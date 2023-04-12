@@ -32,7 +32,7 @@ echo GridView::widget([
     'tableOptions' => ['class' => 'table table-striped'],
     'dataProvider' => $model->getOrderedProducts(),
     // 'filterModel' => $searchModel,
-    'showFooter' => true,
+    'showFooter' => false,
     'footerRowOptions' => ['style' => 'font-weight:bold;', 'class' => 'text-center'],
     'layoutOptions' => [
         'title' => Yii::t('cart/admin', 'ORDER_PRODUCTS'),
@@ -91,8 +91,20 @@ echo GridView::widget([
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center quantity'],
             'value' => function ($model) {
+                $value = $model->quantity;
+                $units = \panix\mod\shop\models\Product::unitsList();
+                //  $unit=' <small>'.$units[$model->unit].'</small>';
+                $unit = ' <span>' . Yii::t('shop/Product', 'UNITS_CUT', ['n' => $model->unit]) . '</span>';
+                if (Yii::$app->settings->get('cart', 'quantity_convert')) {
+                    $value = $model->quantity / $model->in_box . $unit;
+                } else {
+                    $unit = ' <span>' . Yii::t('shop/Product', 'UNITS_CUT', ['n' => 1]) . '</span>';
+                    $value = $model->quantity . $unit;
+                }
+
+
                 //return Html::textInput('quantity[' . $model->product_id . ']', $model->quantity, ['data-title'=>$model->name,'data-product'=>$model->product_id,'readonly' => 'readonly','tabindex'=>-1, 'class' => 'form-control d-inline text-center', 'style' => 'max-width:50px']);
-                return Html::button($model->quantity, ['data-value'=>$model->quantity,'data-title'=>$model->name,'data-product'=>$model->product_id,'class' => 'btn', 'style' => '']);
+                return Html::button($value, ['data-value' => $model->quantity, 'data-title' => $model->name, 'data-product' => $model->product_id, 'data-step' => $model->product->in_box, 'class' => 'btn2 badge badge-light', 'style' => 'border:0;']);
             }
 
         ],
@@ -217,8 +229,6 @@ Pjax::end();
     </div>
 
 
-
-
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -239,26 +249,24 @@ Pjax::end();
         </div>
     </div>
 <?php
-if(!$model->isNewRecord){
-$this->registerJs("
+if (!$model->isNewRecord) {
+    $this->registerJs("
 
 var locale = {
     OK: 'OK',
-    CONFIRM: 'CONFIRM',
+    CONFIRM: 'Confirm',
     CANCEL: 'Cancel'
 };
 
 bootbox.addLocale('custom', locale);
 
 
-
-
 $(document).on('click','.quantity button',function(e){
-console.log(e);
-var title = $(this).data('title');
-var product_id = $(this).data('product');
-//var value = $(this).val();
-var value = $(this).html();
+    var title = $(this).data('title');
+    var product_id = $(this).data('product');
+    var step = $(this).data('step');
+
+    var value = $(this).html();
     if($(this).prop('readonly')){
         $(this).prop('readonly',false);
     }else{
@@ -266,57 +274,55 @@ var value = $(this).html();
     }
 
 
-bootbox.prompt({
-    value:value,
-    title: title, 
-    message: 'Укажите количество',
-    locale: 'custom',
-    inputType: 'number',
-    backdrop:true,
-    onEscape:true,
-    //centerVertical: true,
-    callback: function (result) {
-    
-console.log(result);
-
-        var pattern = /^\d+$/;
-        var valid = false;
-        
-        if(pattern.test(result) && result <= 999 && result >= 1)
-            valid=true;
-
-        
-        console.log('valid',valid);
-        if(valid){
-            $(this).find('input').removeClass('error');
-            if(value != result && valid){
-                $.ajax({
-                    url:'/admin/cart/default/quantity?id=".$model->id."',
-                    type:'POST',
-                    data:{product_id:product_id,quantity:result},
-                    dataType:'json',
-                    success:function(response){
-                        if(response.success){
-                            common.notify(response.message,'success');
-                            $.pjax.reload({container:\"#pjax-container-products\",timeout:false});
-                        }else{
-                        }
-                    }
-                });
+    bootbox.prompt({
+        value:value,
+        title: title, 
+        message: 'Укажите количество',
+        locale: 'custom',
+        inputType: 'number',
+        backdrop:true,
+        onEscape:true,
+        min:step,
+        step:step,
+        //centerVertical: true,
+        callback: function (result) {
+            if(!result){
+                bootbox.hideAll();
             }
-            return true;
-        }else{
-            $(this).find('input').addClass('error');
-            return false;
+            var pattern = /^\d+$/;
+            var valid = false;
+
+            if(pattern.test(result) && result <= 999 && result >= step){
+                valid=true;
+            }
+
+            if(valid){
+                $(this).find('input').removeClass('error');
+
+                if(value != result && valid){
+                    $.ajax({
+                        url:'/admin/cart/default/quantity?id=" . $model->id . "',
+                        type:'POST',
+                        data:{product_id:product_id,quantity:result},
+                        dataType:'json',
+                        success:function(response){
+                            if(response.success){
+                                common.notify(response.message,'success');
+                                $.pjax.reload({container:\"#pjax-container-products\",timeout:false});
+                            }
+                        }
+                    });
+                }
+                return true;
+            }else{
+                $(this).find('input').addClass('error');
+                return false;
+            }
         }
-
-    }
+    });
 });
 
-
-});
-
-
+/*
 $(document).on('keyup','.quantity input',function(e){
     console.log(e,e.keyCode);
     var value = $(this).val();
@@ -334,7 +340,7 @@ $(document).on('keyup','.quantity input',function(e){
         }
     }
     console.log('das');
-});
+});*/
 
 ");
 }

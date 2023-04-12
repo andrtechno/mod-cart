@@ -5,7 +5,7 @@ namespace panix\mod\cart\widgets\promocode;
 
 use panix\engine\Html;
 use panix\mod\shop\models\Category;
-use panix\mod\shop\models\Manufacturer;
+use panix\mod\shop\models\Brand;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Response;
@@ -53,12 +53,12 @@ if($accept){
                 }
 
 
-                if ($query->manufacturers) {
-                    $manufacturerList = Manufacturer::find()->where(['id' => $query->manufacturers])->all();
-                    $json['manufacturers'] = [];
-                    foreach ($manufacturerList as $manufacturer) {
-                        $json['manufacturers'][$manufacturer->id] = $manufacturer->name;
-                        $json['message'] .= Html::tag('span',$manufacturer->name,['class'=>'badge badge-secondary']).' ';
+                if ($query->brands) {
+                    $brandsList = Brand::find()->where(['id' => $query->brands])->all();
+                    $json['brands'] = [];
+                    foreach ($brandsList as $brand) {
+                        $json['brands'][$brand->id] = $brand->name;
+                        $json['message'] .= Html::tag('span',$brand->name,['class'=>'badge badge-secondary']).' ';
                     }
                 }
 

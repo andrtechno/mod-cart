@@ -230,6 +230,7 @@ class DefaultController extends WebController
             $order = $this->createOrder();
 
             if ($order instanceof Order) {
+                die('ok');
                 Yii::$app->cart->clear();
                 Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                 return $this->redirect(['view', 'secret_key' => $order->secret_key]);
@@ -603,18 +604,15 @@ class DefaultController extends WebController
             $ordered_product->configurable_id = $item['configurable_id'];
             $ordered_product->currency_id = $item['model']->currency_id;
             $ordered_product->supplier_id = $item['model']->supplier_id;
+            $ordered_product->brand_id = $item['model']->brand_id;
+            $ordered_product->discount = $item['model']->discount;
+            $ordered_product->in_box = $item['model']->in_box;
+            $ordered_product->unit = $item['model']->unit;
             if ($ordered_product->currency_id)
                 $ordered_product->currency_rate = Yii::$app->currency->getById($ordered_product->currency_id)->rate;
 
 
-            $box = $item['model']->eav_par_v_asiku;
-            if (isset($box)) {
-                $ordered_product->price_purchase = Yii::$app->currency->convert($item['model']->price_purchase * $box->value, $ordered_product->currency_id);
-            } else {
-                $ordered_product->price_purchase = Yii::$app->currency->convert($item['model']->price_purchase, $ordered_product->currency_id);
-            }
-
-
+            $ordered_product->price_purchase = Yii::$app->currency->convert($item['model']->price_purchase, $ordered_product->currency_id);
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;

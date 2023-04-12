@@ -52,8 +52,8 @@ class PromoCodeController extends AdminController
         $isNew = $model->isNewRecord;
         $post = Yii::$app->request->post();
 
-        if (!isset($post['PromoCode']['manufacturers'])) {
-           // $model->manufacturers = [];
+        if (!isset($post['PromoCode']['brands'])) {
+           // $model->brands = [];
         }
         if (!isset($post['PromoCode']['categories']))
           //  $model->categories = [];
@@ -61,8 +61,8 @@ class PromoCodeController extends AdminController
             if (!$model->categories) {
                 $model->categories = [];
             }
-        if (!$model->manufacturers) {
-            $model->manufacturers = [];
+        if (!$model->brands) {
+            $model->brands = [];
         }
 
         if ($model->load($post)) {

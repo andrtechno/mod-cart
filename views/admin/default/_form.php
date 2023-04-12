@@ -112,10 +112,14 @@ $form = ActiveForm::begin([
     'fieldConfig' => [
         'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-4\">{label}</div>\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
         'horizontalCssClasses' => [
+            'label' => 'col-form-label',
             'offset' => 'offset-sm-4 offset-lg-3 offset-xl-4',
             'wrapper' => 'col-sm-8 col-md-8 col-lg-9 col-xl-8',
+            'error' => '',
+            'hint' => '',
         ],
     ]
+
 ]);
 ?>
 

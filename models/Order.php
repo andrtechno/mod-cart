@@ -12,6 +12,7 @@ use panix\mod\news\models\search\NewsSearch;
 use panix\mod\novaposhta\models\Area;
 use panix\mod\novaposhta\models\Cities;
 use panix\mod\novaposhta\models\Warehouses;
+use panix\mod\shop\models\Product;
 use panix\mod\shop\models\ProductType;
 use panix\mod\user\models\User;
 use Yii;
@@ -628,7 +629,7 @@ class Order extends ActiveRecord
      * @param integer $quantity
      * @param float $price
      */
-    public function addProduct($product, $quantity, $price)
+    public function addProduct(Product $product, $quantity, $price)
     {
 
         if (!$this->isNewRecord) {
@@ -637,17 +638,15 @@ class Order extends ActiveRecord
             $ordered_product->product_id = $product->id;
             $ordered_product->currency_id = $product->currency_id;
             $ordered_product->supplier_id = $product->supplier_id;
-            $ordered_product->manufacturer_id = $product->brand_id;
+            $ordered_product->brand_id = $product->brand_id;
+            $ordered_product->in_box = $product->in_box;
             $ordered_product->currency_rate = ($product->currency_id) ? Yii::$app->currency->getById($product->currency_id)->rate : NULL;
-            $box = $product->eav_par_v_asiku;
-            if (isset($box)) {
-                $ordered_product->price_purchase = $product->price_purchase * $box->value;
-            } else {
-                $ordered_product->price_purchase = $product->price_purchase;
-            }
+            $ordered_product->price_purchase = $product->price_purchase;
             $ordered_product->name = $product->name;
             $ordered_product->quantity = $quantity;
             $ordered_product->sku = $product->sku;
+            $ordered_product->unit = $product->unit;
+            $ordered_product->discount = $product->discount;
             $ordered_product->price = $price;
             $ordered_product->save();
 
@@ -872,12 +871,12 @@ class Order extends ActiveRecord
                 $manager = new DeliverySystemManager();
                 $system = $manager->getSystemClass($this->deliveryMethod->system);
                 $settings = $system->getSettings($this->delivery_id);
-                if(isset($settings->address[$data['address']])){
+                if (isset($settings->address[$data['address']])) {
                     $list[] = [
                         'key' => Yii::t('cart/Delivery', 'ADDRESS'),
                         'value' => $settings->address[$data['address']]['name']
                     ];
-                }else{
+                } else {
                     $list[] = [
                         'key' => Yii::t('cart/Delivery', 'ADDRESS'),
                         'value' => $data['address']

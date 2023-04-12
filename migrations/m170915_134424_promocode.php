@@ -42,15 +42,15 @@ class m170915_134424_promocode extends Migration
         ], $tableOptions);
 
 
-        $this->createTable(PromoCode::$manufacturerTable, [
+        $this->createTable(PromoCode::$brandTable, [
             'id' => $this->primaryKey()->unsigned(),
             'promocode_id' => $this->integer()->unsigned(),
-            'manufacturer_id' => $this->integer()->unsigned(),
+            'brand_id' => $this->integer()->unsigned(),
         ], $tableOptions);
 
         $this->createIndex('code', PromoCode::tableName(), 'code');
-        $this->createIndex('promocode_id', PromoCode::$manufacturerTable, 'promocode_id');
-        $this->createIndex('manufacturer_id', PromoCode::$manufacturerTable, 'manufacturer_id');
+        $this->createIndex('promocode_id', PromoCode::$brandTable, 'promocode_id');
+        $this->createIndex('brand_id', PromoCode::$brandTable, 'brand_id');
 
         $this->createIndex('promocode_id', PromoCode::$categoryTable, 'promocode_id');
         $this->createIndex('category_id', PromoCode::$categoryTable, 'category_id');
@@ -64,7 +64,7 @@ class m170915_134424_promocode extends Migration
         }
         $this->dropTable(PromoCode::tableName());
         $this->dropTable(PromoCode::$categoryTable);
-        $this->dropTable(PromoCode::$manufacturerTable);
+        $this->dropTable(PromoCode::$brandTable);
     }
 
 }

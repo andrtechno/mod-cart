@@ -1,7 +1,6 @@
 <?php
 
 use panix\engine\Html;
-use panix\engine\CMS;
 use panix\ext\select2\Select2;
 
 
@@ -129,7 +128,9 @@ use panix\ext\select2\Select2;
 
     </div>
 <?php
-
+//if(!Yii::$app->request->isAjax){
+//$this->registerJs("var delivery_id = " . $delivery_id . ";", \yii\web\View::POS_END, 'delivery-novaposhta');
+/*
 $this->registerJs("
     $(document).on('change', '#dynamicmodel-city, #dynamicmodel-type, #dynamicmodel-area', function(e) {
         $.ajax({
@@ -177,4 +178,5 @@ $this->registerJs("
     var deliveryCheck = $('#order-delivery_id input[type=\"radio\"]:checked');
     $('#delivery').html($(\"label[for='\"+deliveryCheck.attr('id')+\"']\").text());
 
-", \yii\web\View::POS_END, 'delivery-novaposhta');
+", \yii\web\View::POS_END, 'delivery-novaposhta');*/
+//}

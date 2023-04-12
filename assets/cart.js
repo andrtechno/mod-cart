@@ -572,7 +572,7 @@ $(function () {
     });
 
 
-    select.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+    /*select.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
         cart.log.debug('CHNAGE?', clickedIndex, isSelected, previousValue, $(this).selectpicker('val'));
         $.ajax({
             url: common.url('/cart/delivery/process'),
@@ -591,7 +591,7 @@ $(function () {
 
             }
         });
-    });
+    });*/
 
     var deliveryCheck = $('#order-delivery_id input[type="radio"]:checked');
     $('#delivery').html($("label[for='"+deliveryCheck.attr('id')+"']").text());

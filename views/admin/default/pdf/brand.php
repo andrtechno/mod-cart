@@ -22,8 +22,8 @@ foreach ($model as $order) {
             $original = $item->originalProduct;
 
             if ($original) {
-                if ($original->manufacturer) {
-                    $title = ($original->manufacturer) ? $original->manufacturer->name : null;
+                if ($original->brand) {
+                    $title = ($original->brand) ? $original->brand->name : null;
                     if ($original->mainImage) {
                         $image = $original->getMainImage('50x50')->url;
                     } else {

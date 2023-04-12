@@ -28,6 +28,7 @@ class SettingsForm extends \panix\engine\SettingsModel
     protected $_pdf_tpl_supplier_path;
     public $delivery_id;
     public $notify_changed_status;
+    public $quantity_convert;
 
     public static function defaultSettings()
     {
@@ -38,6 +39,7 @@ class SettingsForm extends \panix\engine\SettingsModel
             'pdf_tpl_brand' => '@cart/pdf_brand.dist.tpl',
             'pdf_tpl_supplier' => '@cart/pdf_supplier.dist.tpl',
             'delivery_id' => 1,
+            'quantity_convert'=>false,
         ];
     }
 
@@ -45,7 +47,7 @@ class SettingsForm extends \panix\engine\SettingsModel
     public function rules()
     {
         return [
-            [['notify_changed_status'], 'boolean'],
+            [['notify_changed_status','quantity_convert'], 'boolean'],
             [['order_emails', 'mail_tpl_order', 'pdf_tpl_order', 'pdf_tpl_brand', 'pdf_tpl_supplier', 'delivery_id'], 'required'],
             [['order_emails'], '\panix\engine\validators\EmailListValidator'],
             [['mail_tpl_order', 'pdf_tpl_order', 'pdf_tpl_brand', 'pdf_tpl_supplier'], 'string'],

@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use panix\engine\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
-use panix\mod\shop\models\Manufacturer;
+use panix\mod\shop\models\Brand;
 use panix\mod\shop\models\Category;
 
 $form = ActiveForm::begin();
@@ -24,8 +24,8 @@ print_r($model->categories);
                 'multiple' => 'multiple'
             ]);
         ?>
-        <?= $form->field($model, 'manufacturers')
-            ->dropDownList(ArrayHelper::map(Manufacturer::find()->all(), 'id', 'name'), [
+        <?= $form->field($model, 'brands')
+            ->dropDownList(ArrayHelper::map(Brand::find()->all(), 'id', 'name'), [
                 //  'prompt' => 'Укажите производителя',
                 'multiple' => 'multiple'
             ]);

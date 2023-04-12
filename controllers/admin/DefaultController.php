@@ -407,7 +407,7 @@ class DefaultController extends AdminController
 
         /* $model = Order::find()->with([
           'products' => function (\yii\db\ActiveQuery $query) {
-               $query->andWhere(['not', ['manufacturer_id' => null]]);
+               $query->andWhere(['not', ['brand_id' => null]]);
            },
        ]);*/
 
@@ -432,8 +432,8 @@ class DefaultController extends AdminController
             if ($render == 'brand') {
                 //$view = 'pdf/brand';
                 $view = Yii::$app->settings->get('cart', 'pdf_tpl_brand');
-                $query->andWhere(['not', ['p.manufacturer_id' => null]]);
-                $query->orderBy(['p.manufacturer_id' => SORT_DESC]);
+                $query->andWhere(['not', ['p.brand_id' => null]]);
+                $query->orderBy(['p.brand_id' => SORT_DESC]);
             } elseif ($render == 'supplier') {
                 //$view = 'pdf/supplier';
                 $view = Yii::$app->settings->get('cart', 'pdf_tpl_supplier');

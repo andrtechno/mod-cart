@@ -16,8 +16,12 @@ use yii\helpers\Url;
  * @property integer $order_id
  * @property integer $product_id
  * @property integer $configurable_id
+ * @property integer $brand_id
+ * @property integer $in_box
  * @property integer $currency_id
  * @property integer $supplier_id
+ * @property integer $unit
+ * @property string $discount
  * @property float $currency_rate
  * @property string $name
  * @property string $configurable_name

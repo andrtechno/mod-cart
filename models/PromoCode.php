@@ -9,7 +9,7 @@ use panix\engine\db\ActiveRecord;
  * Class PromoCode
  *
  * @property array $categories Category ids
- * @property array $manufacturers Manufacturer ids
+ * @property array $brands Brands ids
  *
  * @property integer $id
  * @property string $discount
@@ -23,16 +23,16 @@ class PromoCode extends ActiveRecord
 
     const MODULE_ID = 'cart';
     public static $categoryTable = '{{%order__promocode_categories}}';
-    public static $manufacturerTable = '{{%order__promocode_manufacturer}}';
+    public static $brandTable = '{{%order__promocode_brand}}';
     /**
      * @var array ids of categories to apply promo-code
      */
     protected $_categories;
 
     /**
-     * @var array ids of manufacturers to apply promo-code
+     * @var array ids of brands to apply promo-code
      */
-    protected $_manufacturers;
+    protected $_brands;
 
     /**
      * @inheritdoc
@@ -45,7 +45,7 @@ class PromoCode extends ActiveRecord
     public function attributeLabels()
     {
         return \yii\helpers\ArrayHelper::merge([
-            'manufacturers' => self::t('MANUFACTURERS'),
+            'brands' => self::t('BRANDS'),
             'categories' => self::t('CATEGORIES'),
         ], parent::attributeLabels());
     }
@@ -65,7 +65,7 @@ class PromoCode extends ActiveRecord
             [['max_use', 'used'], 'number'],
             ['code', 'string', 'max' => 50],
             ['discount', 'string', 'max' => 10],
-            [['manufacturers', 'categories'], 'validateArray'],
+            [['brands', 'categories'], 'validateArray'],
             //[['code'], 'string'],
         ];
     }
@@ -105,36 +105,36 @@ class PromoCode extends ActiveRecord
     /**
      * @param array $data
      */
-    public function setManufacturers($data)
+    public function setBrands($data)
     {
-        $this->_manufacturers = $data;
+        $this->_brands = $data;
     }
 
 
     /**
      * @return array
      */
-    public function getManufacturers()
+    public function getBrands()
     {
-        if (is_array($this->_manufacturers))
-            return $this->_manufacturers;
+        if (is_array($this->_brands))
+            return $this->_brands;
 
-        $table = self::$manufacturerTable;
-        $this->_manufacturers = Yii::$app->db->createCommand("SELECT manufacturer_id FROM {$table} WHERE promocode_id=:id")
+        $table = self::$brandTable;
+        $this->_brands = Yii::$app->db->createCommand("SELECT brand_id FROM {$table} WHERE promocode_id=:id")
             ->bindValue(':id', $this->id)
             ->queryColumn();
 
 
-        return $this->_manufacturers;
+        return $this->_brands;
     }
 
     /**
-     * Clear discount manufacturer and category
+     * Clear discount brand and category
      */
     public function clearRelations()
     {
         Yii::$app->db->createCommand()
-            ->delete(self::$manufacturerTable, 'promocode_id=:id', [':id' => $this->id])
+            ->delete(self::$brandTable, 'promocode_id=:id', [':id' => $this->id])
             ->execute();
         Yii::$app->db->createCommand()
             ->delete(self::$categoryTable, 'promocode_id=:id', [':id' => $this->id])
@@ -155,12 +155,12 @@ class PromoCode extends ActiveRecord
     {
         $this->clearRelations();
 
-        // Process manufacturers
-        if (!empty($this->_manufacturers)) {
-            foreach ($this->_manufacturers as $id) {
-                Yii::$app->db->createCommand()->insert(self::$manufacturerTable, [
+        // Process brands
+        if (!empty($this->_brands)) {
+            foreach ($this->_brands as $id) {
+                Yii::$app->db->createCommand()->insert(self::$brandTable, [
                     'promocode_id' => $this->id,
-                    'manufacturer_id' => $id,
+                    'brand_id' => $id,
                 ])->execute();
             }
         }

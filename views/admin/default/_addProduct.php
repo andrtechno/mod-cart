@@ -112,14 +112,17 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
 
-
                                 $html = '<div class="spinner">';
                                 $html .= Html::button('-', ['class' => 'spinner--down', 'data-event' => 'down']);
-                                $html .= Html::textInput('quantity', $model->quantity_min, ['data' => [
-                                    'step' => $model->in_box,
-                                    'min' => $model->quantity_min,
-                                    'max' => 999
-                                ]]);
+                                $html .= Html::textInput("count_{$model->id}", $model->quantity_min, [
+                                    'id' => "count_{$model->id}",
+                                    'data' => [
+                                        'step' => $model->in_box,
+                                        'min' => $model->quantity_min,
+                                        'max' => 999,
+
+                                    ]
+                                ]);
                                 $html .= Html::button('+', ['class' => 'spinner--up', 'data-event' => 'up']);
                                 $html .= '</div>';
                                 return $html;
@@ -145,7 +148,6 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                             'buttons' => [
                                 'add' => function ($url, $data, $key) {
                                     return Html::a(Html::icon('add'), $data->id, [
-                                        'title' => Yii::t('yii', 'VIEW'),
                                         'class' => 'btn btn-sm btn-success addProductToOrder',
                                         'onClick' => 'return addProductToOrder(this, ' . Yii::$app->request->get('id') . ');'
                                     ]);

@@ -81,7 +81,7 @@ class m170908_134034_cart extends Migration
             'currency_id' => $this->integer()->unsigned(),
             'user_id' => $this->integer()->null()->unsigned()->comment('for reviews product is buy'),
             'supplier_id' => $this->integer()->unsigned(),
-            'manufacturer_id' => $this->integer()->unsigned(),
+            'brand_id' => $this->integer()->unsigned(),
             'configurable_id' => $this->integer()->unsigned(),
             'weight_class_id' => $this->integer()->null(),
             'length_class_id' => $this->integer()->null(),
@@ -97,6 +97,8 @@ class m170908_134034_cart extends Migration
             'attributes_data' => $this->text()->null(),
             'variants' => $this->text()->null(),
             'quantity' => $this->smallInteger(8),
+            'in_box' => $this->integer()->defaultValue(1),
+            'unit' => $this->smallInteger()->defaultValue(1),
             'sku' => $this->string(100),
             'price' => $this->money(10, 2),
             'price_purchase' => $this->money(10, 2)->comment('Цена закупки'),
@@ -250,7 +252,7 @@ class m170908_134034_cart extends Migration
         $this->createIndex('currency_id', OrderProduct::tableName(), 'currency_id');
         $this->createIndex('supplier_id', OrderProduct::tableName(), 'supplier_id');
         $this->createIndex('configurable_id', OrderProduct::tableName(), 'configurable_id');
-        $this->createIndex('manufacturer_id', OrderProduct::tableName(), 'manufacturer_id');
+        $this->createIndex('brand_id', OrderProduct::tableName(), 'brand_id');
         $this->createIndex('weight_class_id', OrderProduct::tableName(), 'weight_class_id');
         $this->createIndex('length_class_id', OrderProduct::tableName(), 'length_class_id');
 
