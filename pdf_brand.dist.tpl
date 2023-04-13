@@ -88,7 +88,7 @@
                 <td>
                     {$row['item']->name}<br/>
                     <strong>{Yii::$app->currency->number_format($row['price'])}</strong> {Yii::$app->currency->active['symbol']}
-                    / {$row['model']->units[$row['model']->unit]}
+                    / {Yii::t('shop/Product', 'UNITS_CUT', ['n' => 1])}
                     <br/>
                     {if ($row['model']->sku)}
                         {$row['item']->getAttributeLabel('sku')}:
@@ -105,7 +105,7 @@
 
                 </td>
                 <td align="center">
-                    <strong>{$row['item']->quantity}</strong> {$row['model']->units[$row['model']->unit]}
+                    <strong>{$row['item']->quantity}</strong> {Yii::t('shop/Product', 'UNITS_CUT', ['n' => $row['model']->unit])}
                 </td>
                 <td align="center">
                     <strong>{Yii::$app->currency->number_format($row['price_total'])}</strong> {Yii::$app->currency->active['symbol']}

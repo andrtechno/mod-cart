@@ -93,12 +93,14 @@ class Cart extends Component
 
     public function acceptPoint($bonus = 0)
     {
-        $data = $this->getData();
+        if (Yii::$app->settings->get('user', 'bonus_enable')) {
+            $data = $this->getData();
 
-        $this->session['cart_data'] = [
-            'items' => $data['items'],
-            'bonus' => $bonus
-        ];
+            $this->session['cart_data'] = [
+                'items' => $data['items'],
+                'bonus' => $bonus
+            ];
+        }
     }
 
     /**
@@ -409,6 +411,7 @@ class Cart extends Component
 
         return $index;
     }
+
     public function buy($value, Product $model, array $options)
     {
 
@@ -424,24 +427,24 @@ class Cart extends Component
         ];*/
         $options['data'] = [
             'product' => $model->primaryKey,
-          //  'configurable' => $configurable_id,
-           // 'quantity' => 1
+            //  'configurable' => $configurable_id,
+            // 'quantity' => 1
         ];
 
-        if(Yii::$app->cart->hasIndex($model->id)){
+        if (Yii::$app->cart->hasIndex($model->id)) {
             Html::addCssClass($options, 'btn-already-in-cart');
-            $options['onclick']='cart.popup(false)';
-            return Html::button(Yii::t('cart/default','BUTTON_ALREADY_CART'), $options);
-        }else{
+            $options['onclick'] = 'cart.popup(false)';
+            return Html::button(Yii::t('cart/default', 'BUTTON_ALREADY_CART'), $options);
+        } else {
             if ($model->isAvailable) {
 
                 Html::addCssClass($options, 'btn-buy');
                 //$options['data-toggle']='modal';
                 //$options['data-target']='#myModal';
-                if($model->availability == $model::STATUS_PREORDER){
-                    $value = Yii::t('shop/Product','AVAILABILITY_2');
+                if ($model->availability == $model::STATUS_PREORDER) {
+                    $value = Yii::t('shop/Product', 'AVAILABILITY_2');
                 }
-                $options['onclick']='cart.add(this)';
+                $options['onclick'] = 'cart.add(this)';
                 return Html::button($value, $options);
 
 

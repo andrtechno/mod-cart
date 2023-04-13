@@ -142,7 +142,7 @@
                 </td>
 
                 <td align="center">
-                    <strong>{$row['item']->quantity}</strong> {$row['model']->units[$row['model']->unit]}
+                    <strong>{$row['item']->quantity}</strong> {Yii::t('shop/Product', 'UNITS_CUT', ['n' => $row['model']->unit])}
                 </td>
                 <td align="center">
                     {$row['in_box']->value}

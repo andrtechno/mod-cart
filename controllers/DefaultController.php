@@ -616,7 +616,7 @@ class DefaultController extends WebController
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
-            $ordered_product->attributes_data = json_encode($item['attributes_data']);
+            $ordered_product->attributes_data = json_encode($item['attributes_data'],JSON_UNESCAPED_UNICODE);
             $ordered_product->weight = $item['weight'];
             $ordered_product->height = $item['height'];
             $ordered_product->length = $item['length'];

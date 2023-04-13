@@ -147,7 +147,7 @@ Pjax::end();
 
     <div class="panel-container">
         <ul class="list-group">
-            <?php if ($model->user_id) { ?>
+            <?php if ($model->user_id && Yii::$app->settings->get('user', 'bonus_enable')) { ?>
                 <li class="list-group-item">
                     Бонусы к зачаслению:
                     <h5 class="m-0 float-right"><?= floor($model->total_price * Yii::$app->settings->get('user', 'bonus_ratio')) ?>

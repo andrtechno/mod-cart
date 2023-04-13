@@ -134,10 +134,10 @@
                     <br/>
                     <strong>{Yii::$app->currency->number_format($price)}</strong>
                     {Yii::$app->currency->active['symbol']}
-                    / {$product->originalProduct->units[$product->originalProduct->unit]}
+                    / {Yii::t('shop/Product', 'UNITS_CUT', ['n' => 1])}
                 </td>
                 <td align="center">
-                    <strong>{$product->quantity}</strong> {$product->originalProduct->units[$product->originalProduct->unit]}
+                    <strong>{$product->quantity}</strong> {Yii::t('shop/Product', 'UNITS_CUT', ['n' => $product->unit])}
                 </td>
                 <td align="center">{Yii::$app->currency->number_format($price)}
                     {Yii::$app->currency->active['symbol']}</td>

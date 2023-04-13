@@ -68,7 +68,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                             'contentOptions' => ['class' => 'text-left'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
-                                return $model->name;
+                                return Html::a($model->name, $model->getUrl(), ['target' => '_blank', 'data-pjax' => 0]);
                             },
                         ],
                         [
@@ -95,7 +95,7 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                                 $html = $discount;
                                 $html .= '<div class="input-group">';
 
-                                $price = $model->getFrontPrice();
+                                $price = $model->price;
 
                                 $html .= Html::textInput("price_{$model->id}", $price, ['id' => "price_{$model->id}", 'class' => 'form-control']);
                                 $html .= '<div class="input-group-append">';
