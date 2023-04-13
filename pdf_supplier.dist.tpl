@@ -3,6 +3,8 @@
 {use class="panix\engine\Html"}
 {use class="panix\mod\shop\models\Attribute"}
 
+{$units = \panix\mod\shop\models\Product::unitsList()}
+
 {if Yii::$app->request->get('image')}
     {$small=false}
     {$rowsCount=6}
@@ -45,11 +47,7 @@
                             {$newprice = 0}
                         {/if}
                     {/if}
-                    {$box = $original->eav_par_v_asiku}
-                    {$price = 0}
-                    {if (isset($box))}
-                        {$price = $newprice / $box->value}
-                    {/if}
+                    {$price = $newprice}
 
                     {$total_price = ($newprice * $item->quantity)}
 
@@ -62,7 +60,6 @@
                     'username' => $order->user_name,
                     'price' => $price,
                     'model' => $original,
-                    'in_box'=>$box,
                     'url' => Url::to($original->getUrl()),
                     'price_total' => $total_price
                     ]}
@@ -142,10 +139,14 @@
                 </td>
 
                 <td align="center">
-                    <strong>{$row['item']->quantity}</strong> {Yii::t('shop/Product', 'UNITS_CUT', ['n' => $row['model']->unit])}
+                    {if Yii::$app->settings->get('cart', 'quantity_convert')}
+                        {$row['item']->quantity / $row['item']->in_box} {Yii::t('shop/Product', 'UNITS_CUT', ['n' => $row['item']->unit])}
+                    {else}
+                        {$row['item']->quantity} {Yii::t('shop/Product', 'UNITS_CUT', ['n' => 1])}
+                    {/if}
                 </td>
                 <td align="center">
-                    {$row['in_box']->value}
+                    {$row['item']->in_box}
                 </td>
                 <td align="center">
                     {if ($row['price_total']) }

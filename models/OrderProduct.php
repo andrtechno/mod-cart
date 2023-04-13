@@ -213,7 +213,6 @@ class OrderProduct extends ActiveRecord
         return $this->name;
     }
 
-
     public function getProductUrl()
     {
         if ($this->configurable_id) {

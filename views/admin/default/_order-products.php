@@ -91,9 +91,9 @@ echo GridView::widget([
             'format' => 'raw',
             'contentOptions' => ['class' => 'text-center quantity'],
             'value' => function ($model) {
+
                 $value = $model->quantity;
                 $units = \panix\mod\shop\models\Product::unitsList();
-                //  $unit=' <small>'.$units[$model->unit].'</small>';
                 $unit = ' <span>' . Yii::t('shop/Product', 'UNITS_CUT', ['n' => $model->unit]) . '</span>';
                 if (Yii::$app->settings->get('cart', 'quantity_convert')) {
                     $value = $model->quantity / $model->in_box . $unit;
@@ -101,7 +101,6 @@ echo GridView::widget([
                     $unit = ' <span>' . Yii::t('shop/Product', 'UNITS_CUT', ['n' => 1]) . '</span>';
                     $value = $model->quantity . $unit;
                 }
-
 
                 //return Html::textInput('quantity[' . $model->product_id . ']', $model->quantity, ['data-title'=>$model->name,'data-product'=>$model->product_id,'readonly' => 'readonly','tabindex'=>-1, 'class' => 'form-control d-inline text-center', 'style' => 'max-width:50px']);
                 return Html::button($value, ['data-value' => $model->quantity, 'data-title' => $model->name, 'data-product' => $model->product_id, 'data-step' => $model->product->in_box, 'class' => 'btn2 badge badge-light', 'style' => 'border:0;']);

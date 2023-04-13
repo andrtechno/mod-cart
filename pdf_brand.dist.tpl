@@ -4,6 +4,8 @@
 {use class="panix\mod\shop\models\Product"}
 {use class="panix\mod\shop\models\Attribute"}
 
+{$units = \panix\mod\shop\models\Product::unitsList()}
+
 {if Yii::$app->request->get('image')}
     {$small=false}
     {$rowsCount=5}
@@ -75,9 +77,17 @@
         {$num = 0}
         {$i = 1}
         {foreach from=$items item=row}
-            {assign var="brand_count" value=$brand_count+$row['item']->quantity}
+
             {assign var="brand_price" value=$brand_price+$row['price_total']}
-            {assign var="num" value=$num+$row['item']->quantity}
+
+            {if Yii::$app->settings->get('cart', 'quantity_convert')}
+                {assign var="num" value=$num+($row['item']->quantity / $row['item']->in_box)}
+                {assign var="brand_count" value=$brand_count+($row['item']->quantity / $row['item']->in_box)}
+            {else}
+                {assign var="num" value=$num+$row['item']->quantity}
+                {assign var="brand_count" value=$brand_count+$row['item']->quantity}
+            {/if}
+
             <tr>
                 <td align="center">{$i}</td>
                 {if (!$small)}
@@ -99,13 +109,16 @@
                     {$attributes = $row['model']->eavAttributes}
                     {foreach from=$result item=q}
                         {$q->title}:
-                        <strong>{$q->renderValue($attributes[$q->name])}</strong>
-                        ;
+                        <strong>{$q->renderValue($attributes[$q->name])}</strong>;
                     {/foreach}
 
                 </td>
                 <td align="center">
-                    <strong>{$row['item']->quantity}</strong> {Yii::t('shop/Product', 'UNITS_CUT', ['n' => $row['model']->unit])}
+                    {if Yii::$app->settings->get('cart', 'quantity_convert')}
+                        <strong>{$row['item']->quantity / $row['item']->in_box}</strong> {Yii::t('shop/Product', 'UNITS_CUT', ['n' => $row['item']->unit])}
+                    {else}
+                        <strong>{$row['item']->quantity}</strong> {Yii::t('shop/Product', 'UNITS_CUT', ['n' => 1])}
+                    {/if}
                 </td>
                 <td align="center">
                     <strong>{Yii::$app->currency->number_format($row['price_total'])}</strong> {Yii::$app->currency->active['symbol']}
