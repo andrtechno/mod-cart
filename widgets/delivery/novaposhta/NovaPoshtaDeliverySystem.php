@@ -40,6 +40,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
     public function processRequest(Delivery $method, $deliveryModel = null)
     {
         $settings = $this->getSettings($method->id);
+
         $post = Yii::$app->request->post();
         DeliveryAsset::register(Yii::$app->view);
         if (!$deliveryModel) {
@@ -57,7 +58,8 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
 
         return Yii::$app->view->$render("@cart/widgets/delivery/novaposhta/_view", [
             'model' => $this->model,
-            'delivery_id' => $method->id
+            'delivery_id' => $method->id,
+            'settings' => $settings,
         ]);
     }
 

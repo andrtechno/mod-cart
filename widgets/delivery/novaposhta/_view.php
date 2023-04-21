@@ -18,11 +18,12 @@ use panix\ext\select2\Select2;
             echo Select2::widget([
                 'model' => $model,
                 'attribute' => 'area',
-                'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Area::find()->cache(86000 * 30)
+                'items' => \panix\mod\novaposhta\models\Area::getList2(),
+                /*'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Area::find()->cache(86000 * 30)
                     ->orderBy(['Description' => SORT_ASC])
                     ->all(), 'Ref', function ($model) {
                     return $model->getDescription();
-                }),
+                }),*/
                 'options' => [
                     'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_AREA') . ' &mdash;'),
                     'class' => ($model->getErrors('area')) ? 'is-invalid' : ''
@@ -93,10 +94,21 @@ use panix\ext\select2\Select2;
                 <div class="form-group field-order-warehouse required <?php if ($model->getErrors('warehouse')) echo "has-error" ?>">
                     <?= Html::activeLabel($model, 'warehouse', ['class' => 'col-form-label']); ?>
                     <?php
+
+                    $queryWarehouse = \panix\mod\novaposhta\models\Warehouses::find();
+
+                    $queryWarehouse->where(['CityRef' => $model->city]);
+                    if ($settings->type_warehouse) {
+                        $queryWarehouse->andWhere(['TypeOfWarehouse' => $settings->type_warehouse]);
+                    }
+                    //$queryWarehouse->cache(8600 * 7);
+                    $queryWarehouse->orderBy(['number' => SORT_ASC]);
+                    $resultWarehouses = $queryWarehouse->all();
+
                     echo Select2::widget([
                         'model' => $model,
                         'attribute' => 'warehouse',
-                        'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Warehouses::find()->cache(8600 * 7)->where(['CityRef' => $model->city])->orderBy(['number' => SORT_ASC])->all(), 'Ref', function ($model) {
+                        'items' => \yii\helpers\ArrayHelper::map($resultWarehouses, 'Ref', function ($model) {
                             return $model->getDescription();
                         }),
                         'options' => [

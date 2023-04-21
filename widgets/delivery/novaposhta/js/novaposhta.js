@@ -3,7 +3,8 @@ $(document).on('change', '#dynamicmodel-city, #dynamicmodel-type, #dynamicmodel-
     var delivery_id = $('input[name="Order[delivery_id]"]:checked').val();
 //console.log($('input[name="Order[delivery_id]"]:checked').val());
     $.ajax({
-        url: common.url('/cart/delivery/process?id='+delivery_id),
+        //url: common.url('cart/delivery/process?id='+delivery_id),
+        url: 'cart/delivery/process?id='+delivery_id,
         type: 'POST',
         data: $('#cartForm').serialize(),
         dataType: 'html',

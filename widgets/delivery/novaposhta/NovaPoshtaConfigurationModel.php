@@ -9,6 +9,7 @@ class NovaPoshtaConfigurationModel extends Model
 {
 
     public $api_key;
+    public $type_warehouse;
 
     public function rules()
     {
@@ -16,6 +17,7 @@ class NovaPoshtaConfigurationModel extends Model
             [['api_key'], 'required'],
             [['api_key'], 'string'],
             [['api_key'], 'trim'],
+            [['type_warehouse'], 'safe'],
         ];
     }
 
@@ -23,7 +25,9 @@ class NovaPoshtaConfigurationModel extends Model
     {
         return [
             'api_key' => Yii::t('cart/delivery', 'API key'),
+            'type_warehouse' => Yii::t('cart/delivery', 'Types Warehouse'),
         ];
     }
+
 
 }
