@@ -90,12 +90,13 @@ use panix\ext\select2\Select2;
             </div>
 
             <?php
+
             if ($model->type == 'warehouse') { ?>
                 <div class="form-group field-order-warehouse required <?php if ($model->getErrors('warehouse')) echo "has-error" ?>">
                     <?= Html::activeLabel($model, 'warehouse', ['class' => 'col-form-label']); ?>
                     <?php
 
-                    $queryWarehouse = \panix\mod\novaposhta\models\Warehouses::find();
+                    /*$queryWarehouse = \panix\mod\novaposhta\models\Warehouses::find();
 
                     $queryWarehouse->where(['CityRef' => $model->city]);
                     if ($settings->type_warehouse) {
@@ -103,7 +104,7 @@ use panix\ext\select2\Select2;
                     }
                     //$queryWarehouse->cache(8600 * 7);
                     $queryWarehouse->orderBy(['number' => SORT_ASC]);
-                    $resultWarehouses = $queryWarehouse->all();
+                    $resultWarehouses = $queryWarehouse->all();*/
 
                     echo Select2::widget([
                         'model' => $model,
@@ -127,6 +128,7 @@ use panix\ext\select2\Select2;
                     ?>
                 </div>
             <?php } else { ?>
+
                 <div class="form-group field-delivery-address required <?php if ($model->getErrors('address')) echo "has-error" ?>">
                     <?= Html::activeLabel($model, 'address', ['class' => 'col-form-label']); ?>
                     <?= Html::activeTextInput($model, 'address', ['class' => 'form-control ' . (($model->getErrors('address')) ? 'is-invalid' : '')]); ?>

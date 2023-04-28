@@ -54,9 +54,9 @@ use panix\engine\bootstrap\ActiveForm;
             echo Select2::widget([
                 'model' => $model,
                 'attribute' => 'city',
-                'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Cities::find()->cache(8600 * 7)
+                'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Cities::find()
                     ->orderBy(['Description' => SORT_ASC])
-                    ->where(['warehouse' => 1])
+                    //->where(['warehouse' => 1])
                     ->andWhere(['Area' => $model->area])
                     ->all(), 'Ref', function ($model) {
                     return $model->getDescription();

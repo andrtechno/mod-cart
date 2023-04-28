@@ -102,7 +102,7 @@ cart = {
         $('#cart-modal').modal('show');
     },
     popup: function (reload = true) {
-        cart.log.debug('popup', '[reload: ' + reload + ']',);
+        cart.log.debug('popup', '[reload: ' + reload + ']');
         if (reload) {
             $("#cart-modal .modal-body").load(common.url('/cart/popup'), {}, function () {
                 cart.popupCallback();
@@ -110,7 +110,6 @@ cart = {
         } else {
             cart.popupCallback();
         }
-
     },
     add: function (that) {
         var form = $(that).closest('form');
@@ -164,8 +163,6 @@ cart = {
                 if (data.errors) {
                     common.notify(data.errors, 'error');
                 } else {
-
-
                     $.fancybox.open({
                         src: '/cart/popup',
                         type: 'ajax',
@@ -181,9 +178,7 @@ cart = {
                                 }
                             }
                         },
-
                     });
-
 
                     cart.renderBlockCart();
                     $.notify({
@@ -231,6 +226,9 @@ cart = {
         if (cart_recount_xhr !== undefined)
             cart_recount_xhr.abort();
 
+
+        $('#row-total-price13588').addClass('sssssssssss').html('111111111111111');
+console.log('111111111111');
         cart_recount_xhr = $.ajax({
             type: 'POST',
             url: common.url('/cart/recount'),
@@ -243,8 +241,9 @@ cart = {
             },
             dataType: 'json',
             success: function (data) {
-                //$('#row-total-price' + data.product_id).addClass('TTTTTTTTTTTTTTTTTTTT').html('dsadsa')
-                $('#row-total-price' + data.product_id).find('span:first-child').html(data.rowTotal);
+
+                $('#row-total-price' + data.product_id).html(data.rowTotal);
+                //$('#row-total-price13590').html(data.rowTotal);
                 $('.price-unit-' + data.product_id).find('span:first-child').html(data.unit_price);
                 //var delprice = 0;
                 //if ($('.delivery-choose').prop("checked")) { //for april
@@ -498,10 +497,8 @@ $(function () {
         var product = $(this).data('product');
         var isPopup = $(this).data('ispopup');
 
-
-        var success;
         $.ajax({
-            url: common.url('/cart/remove'),
+            url: $(that).attr('href'),
             type: 'POST',
             dataType: 'json',
             data: {id: product, isPopup: isPopup},
@@ -527,7 +524,6 @@ $(function () {
                     }
                     $(document).trigger("cart:remove:success", response);
                 } else {
-
                     common.notify(response.message, 'error');
                 }
             },

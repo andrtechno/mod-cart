@@ -85,15 +85,18 @@ class DefaultController extends WebController
 
     public function actionPopup()
     {
-        $cart = Yii::$app->cart;
-        $items = $cart->getDataWithModels();
+        if (Yii::$app->request->isAjax) {
+            $cart = Yii::$app->cart;
+            $items = $cart->getDataWithModels();
 
-        return $this->renderAjax($this->module->modalView, [
-            'total' => $cart->getTotalPrice(),
-            'items' => isset($items['items']) ? $items['items'] : [],
-            'isPopup' => true
-        ]);
-
+            return $this->renderAjax($this->module->modalView, [
+                'total' => $cart->getTotalPrice(),
+                'items' => isset($items['items']) ? $items['items'] : [],
+                'isPopup' => true
+            ]);
+        } else {
+            throw new ForbiddenHttpException(Yii::t('app/error', '403'));
+        }
     }
 
     public function actionPreCheckout()
@@ -616,7 +619,7 @@ class DefaultController extends WebController
             $ordered_product->name = $item['model']->name;
             $ordered_product->quantity = $item['quantity'];
             $ordered_product->sku = $item['model']->sku;
-            $ordered_product->attributes_data = json_encode($item['attributes_data'],JSON_UNESCAPED_UNICODE);
+            $ordered_product->attributes_data = json_encode($item['attributes_data'], JSON_UNESCAPED_UNICODE);
             $ordered_product->weight = $item['weight'];
             $ordered_product->height = $item['height'];
             $ordered_product->length = $item['length'];
