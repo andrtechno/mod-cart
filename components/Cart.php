@@ -204,6 +204,7 @@ class Cart extends Component
                 } else {
                     $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
                 }
+                //$result = $result * $item['model']->in_box;
 
             }
         }
@@ -248,7 +249,6 @@ class Cart extends Component
         $currentData = $this->getData();
         $rowTotal = 0;
         $calcPrice = 0;
-
         foreach ($data as $index => $quantity) {
             if ((int)$quantity < 1)
                 $quantity = 1;
@@ -265,7 +265,7 @@ class Cart extends Component
                 $calcPrice = $this->productModel::calculatePrices($productModel, $data['variants'], $data['configurable_id'], $data['quantity']);
                 if ($data['configurable_id']) {
 
-                    $rowTotal = $calcPrice * $data['quantity'];
+                    $rowTotal = $calcPrice * ($data['quantity']);
                 } else {
                     //if ($productModel->hasDiscount) {
                     //$priceTotal = ;
@@ -277,14 +277,16 @@ class Cart extends Component
                     //    $calcPrice = $pr->value;
                     //}
 
-                    $rowTotal = $calcPrice * $data['quantity'];
+                    $rowTotal = $calcPrice * ($data['quantity']);
 
                 }
+
                 $response['rowQuantity'] = $data['quantity'];
             }
+
             //$total+=$rowTotal;
         }
-
+        // $countBoxs += $quantity / $data['in_box'];
         // $this->session['cart_data'] = $currentData;
 
 
@@ -338,13 +340,12 @@ class Cart extends Component
 
         //$this->session['cart_data'] = $currentData;
 
-
+        $counter = $this->countItems();
         $response['unit_price'] = Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice));
         $response['rowTotal'] = Yii::$app->currency->number_format($rowTotal);
         $response['total_price'] = Yii::$app->currency->number_format((isset($total)) ? $total : $this->getTotalPrice());
-        $response['countItems'] = $this->countItems();
-
-
+        $response['countItems'] = $counter['quantity'];
+        $response['countBoxes'] = $counter['boxes'];
         return $response;
     }
 
@@ -385,11 +386,14 @@ class Cart extends Component
      */
     public function countItems()
     {
-        $result = 0;
-
+        $result['quantity'] = 0;
+        $result['boxes'] = 0;
         if (isset($this->session['cart_data']['items'])) {
-            foreach ($this->session['cart_data']['items'] as $row)
-                $result += $row['quantity'];
+            foreach ($this->session['cart_data']['items'] as $row) {
+                $result['quantity'] += $row['quantity'];
+                $result['boxes'] += $row['quantity'] / $row['in_box'];
+            }
+
         }
         return $result;
     }

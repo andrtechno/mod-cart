@@ -92,7 +92,7 @@ class DefaultController extends WebController
             return $this->renderAjax($this->module->modalView, [
                 'total' => $cart->getTotalPrice(),
                 'items' => isset($items['items']) ? $items['items'] : [],
-                'isPopup' => true
+                'popup' => true
             ]);
         } else {
             throw new ForbiddenHttpException(Yii::t('app/error', '403'));
@@ -233,7 +233,7 @@ class DefaultController extends WebController
             $order = $this->createOrder();
 
             if ($order instanceof Order) {
-                die('ok');
+                //die('ok');
                 Yii::$app->cart->clear();
                 Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                 return $this->redirect(['view', 'secret_key' => $order->secret_key]);
@@ -265,6 +265,7 @@ class DefaultController extends WebController
 
         $items = Yii::$app->cart->getDataWithModels();
         $totalPrice = Yii::$app->cart->getTotalPrice();
+        $counter = Yii::$app->cart->countItems();
         if (Yii::$app->settings->get('seo', 'google_tag_manager') && isset($items['items'])) {
             $dataLayer['ecomm_pagetype'] = 'conversionintent';
             $dataLayer['ecomm_totalvalue'] = (string)$totalPrice;
@@ -278,6 +279,7 @@ class DefaultController extends WebController
         return $this->render('index', [
             'items' => isset($items['items']) ? $items['items'] : [],
             'totalPrice' => $totalPrice,
+            'counter' => $counter,
             'deliveryMethods' => $deliveryMethods,
             'paymentMethods' => $paymentMethods,
         ]);
@@ -438,6 +440,7 @@ class DefaultController extends WebController
             ], JSON_UNESCAPED_UNICODE),
             'currency_id' => $model->currency_id,
             'supplier_id' => $model->supplier_id,
+            'in_box' => $model->in_box,
             'weight' => $model->weight,
             'height' => $model->height,
             'length' => $model->length,
@@ -479,7 +482,8 @@ class DefaultController extends WebController
      */
     public function actionRemove()
     {
-        $id = Yii::$app->request->post('id');
+        $id = Yii::$app->request->get('id');
+        $popup = Yii::$app->request->get('popup');
         $cart = Yii::$app->cart;
 
         if (!Yii::$app->request->isAjax) {
@@ -495,8 +499,10 @@ class DefaultController extends WebController
                 $result['message'] = Yii::t('cart/default', 'ERROR_PRODUCT_NO_FIND');
             }
             $countItems = $cart->countItems();
-            if (!Yii::$app->request->post('isPopup') && !$countItems) {
-                return $this->redirect(Yii::$app->homeUrl);
+
+            if (!$popup && !$countItems['quantity']) {
+                //return $this->redirect(Yii::$app->homeUrl);
+                return $this->redirect(['/cart/default/index']);
             }
             $total = $cart->getTotalPrice();
             $result['id'] = $id;
@@ -505,7 +511,6 @@ class DefaultController extends WebController
             $result['button_text_add'] = Yii::t('cart/default', 'BUY');
             $result['total_price'] = Yii::$app->currency->number_format($total);
             $result['countItems'] = $countItems;
-
             $result['reload'] = ($total) ? false : true;
 
 

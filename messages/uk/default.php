@@ -8,7 +8,7 @@ return [
     'CART_EMPTY_BTN' => 'Повернутися до покупок',
     'WP_COUNT' => 'Нових замовлень ({num})',
     'SUCCESS_ORDER' => 'Дякую. Ваше замовлення прийнято.',
-    'SUCCESS_ADDCART' => 'Товар <strong> {product_name} </ strong> успішно доданий до кошика.',
+    'SUCCESS_ADDCART' => 'Товар <strong> {product_name} </strong> успішно доданий до кошика.',
     'ERROR_PRODUCT_NO_FIND' => 'Помилка. Товар не знайдено. ',
     'BUY' => 'Купити',
     'ERROR_REGISTER' => 'Помилка реєстрації',

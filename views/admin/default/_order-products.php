@@ -3,7 +3,7 @@
 use yii\widgets\Pjax;
 use panix\engine\grid\GridView;
 use panix\mod\cart\models\OrderProduct;
-use yii\helpers\Html;
+use panix\engine\Html;
 use panix\engine\CMS;
 
 /**
@@ -66,7 +66,11 @@ echo GridView::widget([
                 } else {
                     $priceValue = $model->price;
                 }
-
+                $discount='';
+                if ($model->discount) {
+                    $priceValue = $priceValue - $model->discount;
+                    $discount = ' <span class="badge badge-danger">-'.$model->discount.'</span>';
+                }
                 $variantsConfigure = '';
                 if ($model->variantsConfigure) {
                     foreach ($model->variantsConfigure as $configure) {
@@ -82,7 +86,7 @@ echo GridView::widget([
 
                 }*/
                 $price = Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
-                return $model->getProductName(false, ['data-pjax' => '0']) . '<br/>' . $variantsConfigure . $price;
+                return $model->getProductName(false, ['data-pjax' => '0']) . '<br/>' . $variantsConfigure . $price.$discount;
             },
         ],
         [
@@ -103,7 +107,7 @@ echo GridView::widget([
                 }
 
                 //return Html::textInput('quantity[' . $model->product_id . ']', $model->quantity, ['data-title'=>$model->name,'data-product'=>$model->product_id,'readonly' => 'readonly','tabindex'=>-1, 'class' => 'form-control d-inline text-center', 'style' => 'max-width:50px']);
-                return Html::button($value, ['data-value' => $model->quantity, 'data-title' => $model->name, 'data-product' => $model->product_id, 'data-step' => $model->product->in_box, 'class' => 'btn2 badge badge-light', 'style' => 'border:0;']);
+                return Html::button($value.' '.Html::icon('edit'), ['data-value' => $model->quantity, 'data-title' => $model->name, 'data-product' => $model->product_id, 'data-step' => $model->product->in_box, 'class' => 'btn2 badge badge-light', 'style' => 'border:0;']);
             }
 
         ],
@@ -117,8 +121,13 @@ echo GridView::widget([
                 //if ($model->currency_id && $model->currency_rate) {
                 //    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
                 // } else {
-                $priceValue = $model->price * $model->quantity;
+
                 //  }
+                if ($model->discount) {
+                    $priceValue = ($model->price - $model->discount) * $model->quantity;
+                }else{
+                    $priceValue = $model->price * $model->quantity;
+                }
                 return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
             }
         ],
