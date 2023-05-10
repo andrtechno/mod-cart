@@ -15,9 +15,11 @@ return [
     'ADDRESS' => 'Address',
     'TYPE_WAREHOUSE' => 'Warehouse',
     'TYPE_ADDRESS' => 'To address',
+    'TYPE_DELIVERY' => 'Delivery type',
     'DELIVERY_WAREHOUSE' => 'Delivery to department',
     'DELIVERY_ADDRESS' => 'Delivery to address',
     'PROMPT_CITY' => 'Select a city',
     'PROMPT_AREA' => 'Select region',
     'PROMPT_WAREHOUSE' => 'Select department',
+    'PICKUP_FROM_ADDRESS' => 'Pick up from address'
 ];

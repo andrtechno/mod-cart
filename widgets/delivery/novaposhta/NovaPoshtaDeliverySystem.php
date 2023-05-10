@@ -163,7 +163,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
             'address' => Yii::t('cart/Delivery', 'DELIVERY_ADDRESS')
         ];
         $model->setAttributeLabels([
-            'type' => Yii::t('cart/Delivery', 'Тип доставки'),
+            'type' => Yii::t('cart/Delivery', 'TYPE_DELIVERY'),
             'address' => Yii::t('cart/Delivery', 'TYPE_ADDRESS'),
             'city' => Yii::t('cart/Delivery', 'CITY'),
             'warehouse' => Yii::t('cart/Delivery', 'WAREHOUSE'),

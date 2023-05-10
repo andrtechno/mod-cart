@@ -116,7 +116,7 @@ class PickupDeliverySystem extends BaseDeliverySystem
         $model = new \yii\base\DynamicModel(['address']);
         $model->addRule(['address'], 'required');
         $model->addRule(['address'], 'safe');
-        $model->setAttributeLabels(['address' => 'Забрать из адреса']);
+        $model->setAttributeLabels(['address' => Yii::t('cart/Delivery', 'PICKUP_FROM_ADDRESS')]);
         return $model;
     }
 

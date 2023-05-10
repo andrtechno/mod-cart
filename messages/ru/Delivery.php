@@ -15,10 +15,11 @@ return [
     'ADDRESS' => 'Адрес',
     'TYPE_WAREHOUSE' => 'На отделение',
     'TYPE_ADDRESS' => 'На адрес',
+    'TYPE_DELIVERY' => 'Тип доставки',
     'DELIVERY_WAREHOUSE' => 'Доставка на отделение',
     'DELIVERY_ADDRESS' => 'Доставка на адрес',
     'PROMPT_CITY' => 'Выберите город',
     'PROMPT_AREA' => 'Выберите область',
     'PROMPT_WAREHOUSE' => 'Выберите отделение',
-
+    'PICKUP_FROM_ADDRESS' => 'Забрать из адреса'
 ];

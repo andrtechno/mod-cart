@@ -15,9 +15,11 @@ return [
     'ADDRESS' => 'Адреса',
     'TYPE_WAREHOUSE' => 'На відділення',
     'TYPE_ADDRESS' => 'На адресу',
+    'TYPE_DELIVERY' => 'Тип доставки',
     'DELIVERY_WAREHOUSE' => 'Доставка на відділення',
     'DELIVERY_ADDRESS' => 'Доставка на адресу',
     'PROMPT_CITY' => 'Виберіть місто',
     'PROMPT_AREA' => 'Виберіть область',
     'PROMPT_WAREHOUSE' => 'Виберіть відділення',
+    'PICKUP_FROM_ADDRESS' => 'Забрати з адреси'
 ];
