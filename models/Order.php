@@ -752,6 +752,7 @@ class Order extends ActiveRecord
                 }
 
                 $product->quantity = (int)$data[$product->id];
+               // print_r($product->quantity);die;
                 //  print_r($product);die;
                 $product->save(false);
             }

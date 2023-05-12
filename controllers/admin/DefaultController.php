@@ -48,6 +48,7 @@ class DefaultController extends AdminController
             //$product = Yii::$app->request->post();
             //$quantity = $post['quantity'][$key];
             $product = OrderProduct::find()->where(['order_id' => $id, 'product_id' => $product_id])->one();
+            $in_box = $product->originalProduct->in_box;
             $oldQuantity = $product->quantity;
             // $product->quantity = $quantity;
             //$event = new EventProduct([
@@ -63,7 +64,7 @@ class DefaultController extends AdminController
             // $order = $product->order;
 
 
-            $order->setProductQuantities([$product->id => $quantity]);
+            $order->setProductQuantities([$product->id => $quantity * $in_box]);
             //$order->eventProductQuantityChanged($event);
             // $order->updateTotalPrice();
             $result['success'] = true;

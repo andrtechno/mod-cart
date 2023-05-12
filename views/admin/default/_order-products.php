@@ -97,17 +97,20 @@ echo GridView::widget([
             'value' => function ($model) {
 
                 $value = $model->quantity;
+                $dataValue = $model->quantity;
                 $units = \panix\mod\shop\models\Product::unitsList();
                 $unit = ' <span>' . Yii::t('shop/Product', 'UNITS_CUT', ['n' => $model->unit]) . '</span>';
                 if (Yii::$app->settings->get('cart', 'quantity_convert')) {
                     $value = $model->quantity / $model->in_box . $unit;
+                    $dataValue = $model->quantity / $model->in_box;
                 } else {
                     $unit = ' <span>' . Yii::t('shop/Product', 'UNITS_CUT', ['n' => 1]) . '</span>';
                     $value = $model->quantity . $unit;
+                    $dataValue = $model->quantity;
                 }
 
                 //return Html::textInput('quantity[' . $model->product_id . ']', $model->quantity, ['data-title'=>$model->name,'data-product'=>$model->product_id,'readonly' => 'readonly','tabindex'=>-1, 'class' => 'form-control d-inline text-center', 'style' => 'max-width:50px']);
-                return Html::button($value.' '.Html::icon('edit'), ['data-value' => $model->quantity, 'data-title' => $model->name, 'data-product' => $model->product_id, 'data-step' => $model->product->in_box, 'class' => 'btn2 badge badge-light', 'style' => 'border:0;']);
+                return Html::button($value.' '.Html::icon('edit'), ['data-value' => $dataValue, 'data-title' => $model->name, 'data-product' => $model->product_id, 'data-step' => 1, 'class' => 'btn2 badge badge-light', 'style' => 'border:0;']);
             }
 
         ],
@@ -274,7 +277,7 @@ $(document).on('click','.quantity button',function(e){
     var product_id = $(this).data('product');
     var step = $(this).data('step');
 
-    var value = $(this).html();
+    var value = $(this).data('value');
     if($(this).prop('readonly')){
         $(this).prop('readonly',false);
     }else{
@@ -303,7 +306,7 @@ $(document).on('click','.quantity button',function(e){
             if(pattern.test(result) && result <= 999 && result >= step){
                 valid=true;
             }
-
+console.log(valid);
             if(valid){
                 $(this).find('input').removeClass('error');
 
