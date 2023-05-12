@@ -96,7 +96,25 @@ class CartWidget extends Widget
             'items' => $this->items,
             'isPopup' => true
         ];
-
+        $this->view->registerJs("
+            $('#cart-modal').on('shown.bs.modal', function (e) {
+                if ($(window).width() <= 992) {
+                    var footerHeight = $('.modal-footer', this).outerHeight();
+                    var headerHeight = $('.modal-header', this).outerHeight();
+                    $(this).find('.cart-items').css({'max-height': $(window).height() - footerHeight - headerHeight});
+                }
+            });
+            $(window).resize(function () {
+                if ($(this).width() <= 992) {
+                    var footerHeight = $('.modal-footer', '.modal').outerHeight();
+                    var headerHeight = $('.modal-header', '.modal').outerHeight();
+                    var mh = $(this).height() - footerHeight - headerHeight;
+                } else {
+                    var mh = 'inherit';
+                }
+                $('.modal').find('.cart-items').css({'max-height': mh});
+            });
+        ");
         return $this->render($this->skin, $dataRender);
         /*return strtr($this->templateBs3, [
             '{title}' => $this->renderTitle(),
