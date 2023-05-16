@@ -104,7 +104,7 @@ cart = {
     popup: function (reload = true) {
         cart.log.debug('popup', '[reload: ' + reload + ']');
         if (reload) {
-            $("#cart-modal .modal-body").load(common.url('/cart/popup'), {}, function () {
+            $("#cart-modal .modal-ajax").load(common.url('/cart/popup'), {}, function () {
                 cart.popupCallback();
             });
         } else {
