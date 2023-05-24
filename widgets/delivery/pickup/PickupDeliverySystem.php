@@ -98,15 +98,17 @@ class PickupDeliverySystem extends BaseDeliverySystem
     public function getList($settings)
     {
         $list = [];
-        foreach ($settings->address as $address) {
-            $html = '';
-            if ($address['from']) {
-                $html .= '<small class="text-muted">(c ' . $address['from'];
+        if (isset($settings->address)) {
+            foreach ($settings->address as $address) {
+                $html = '';
+                if ($address['from']) {
+                    $html .= '<small class="text-muted">(c ' . $address['from'];
+                }
+                if ($address['to']) {
+                    $html .= ' по ' . $address['to'] . ')</small>';
+                }
+                $list[] = $address['name'] . ' ' . $html;
             }
-            if ($address['to']) {
-                $html .= ' по ' . $address['to'] . ')</small>';
-            }
-            $list[] = $address['name'] . ' ' . $html;
         }
         return $list;
     }
