@@ -34,6 +34,7 @@ class PickupDeliverySystem extends BaseDeliverySystem
 
         $settings = $this->getSettings($method->id);
         $post = Yii::$app->request->post();
+        $list = $this->getList($settings);
         if ($this->model->load($post)) {
             $this->model->validate($post);
         }
@@ -42,7 +43,7 @@ class PickupDeliverySystem extends BaseDeliverySystem
         return Yii::$app->view->$render("@cart/widgets/delivery/pickup/_view", [
             'model' => $this->model,
             'deliveryModel' => $this->model,
-            'list' => $this->getList($settings)
+            'list' => $list
         ]);
     }
 
