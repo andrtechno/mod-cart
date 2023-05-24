@@ -19,8 +19,8 @@ class Module extends WebModule implements BootstrapInterface
     public $buyOneClick = [
         'skinForm' => '@cart/widgets/buyOneClick/views/_form'
     ];
-    public $modalView = '@cart/widgets/cart2/views/_items';
-    public $emptyView = '@cart/widgets/cart2/views/_empty';
+    public $modalView = '@cart/widgets/cart/views/_items';
+    public $emptyView = '@cart/widgets/cart/views/_empty';
 
     const EVENT_ORDER_CREATE = 'orderCreate';
     //public $cart;

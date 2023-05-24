@@ -139,6 +139,7 @@ class CartWidget extends Widget
             'total' => $this->total,
             'items' => $this->items
         ];
+
         return $this->render($this->skin, $dataRender);
     }
 
