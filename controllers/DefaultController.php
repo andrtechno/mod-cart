@@ -89,7 +89,8 @@ class DefaultController extends WebController
             $cart = Yii::$app->cart;
             $items = $cart->getDataWithModels();
 
-            return $this->renderAjax($this->module->modalView, [
+            //$this->module->modalView
+            return $this->renderAjax('@cart/views/default/_items', [
                 'total' => $cart->getTotalPrice(),
                 'items' => isset($items['items']) ? $items['items'] : [],
                 'popup' => true

@@ -96,7 +96,8 @@ class CartWidget extends Widget
             'items' => $this->items,
             'isPopup' => true
         ];
-        $this->view->registerJs("
+        /*$this->view->registerJs("
+            //No work with IPhone
             $('#cart-modal').on('shown.bs.modal', function (e) {
                 if ($(window).width() <= 992) {
                     var footerHeight = $('.modal-footer', this).outerHeight();
@@ -114,7 +115,7 @@ class CartWidget extends Widget
                 }
                 $('.modal').find('.cart-items').css({'max-height': mh});
             });
-        ");
+        ");*/
         return $this->render($this->skin, $dataRender);
         /*return strtr($this->templateBs3, [
             '{title}' => $this->renderTitle(),
