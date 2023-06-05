@@ -520,11 +520,11 @@ class Order extends ActiveRecord
                 //    $this->total_price += $product->price / $product->currency_rate * $product->quantity;
                 //     $this->total_price_purchase += $product->price_purchase * $product->currency_rate * $product->quantity;
                 // }else{
-                if($product->discount){
-                    $this->total_price += ($product->price - $product->discount) * $product->quantity;
-                }else{
+                //if($product->discount){
+               //    $this->total_price += ($product->price - $product->discount) * $product->quantity;
+                //}else{
                     $this->total_price += $product->price * $product->quantity;
-                }
+               // }
                 $this->total_price_purchase += $product->price_purchase * $product->quantity;
 
                 if ($product->price_purchase) {

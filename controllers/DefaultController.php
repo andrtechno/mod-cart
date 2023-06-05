@@ -234,7 +234,7 @@ class DefaultController extends WebController
             $order = $this->createOrder();
 
             if ($order instanceof Order) {
-                //die('ok');
+                die('ok');
                 Yii::$app->cart->clear();
                 Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                 return $this->redirect(['view', 'secret_key' => $order->secret_key]);

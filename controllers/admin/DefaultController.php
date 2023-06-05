@@ -319,7 +319,16 @@ class DefaultController extends AdminController
                 if ($find) {
                     $result['message'] = Yii::t('cart/admin', 'ERR_ORDER_PRODUCT_EXISTS');
                 } else {
-                    $order->addProduct($product, $request->post('quantity'), $request->post('price'));
+                    $price = $request->post('price');
+                    if($product->discount){
+                        if ('%' === substr($product->discount, -1, 1)) {
+                            $price = $price * ((double)$product->discount) / 100;
+                        }else{
+                            $price = $price - $product->discount;
+                        }
+                    }
+
+                    $order->addProduct($product, $request->post('quantity'), $price);
                     $result['success'] = true;
                     $result['message'] = Yii::t('cart/admin', 'SUCCESS_ADD_PRODUCT_ORDER');
                 }

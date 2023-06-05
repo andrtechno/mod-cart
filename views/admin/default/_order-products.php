@@ -68,7 +68,7 @@ echo GridView::widget([
                 }
                 $discount='';
                 if ($model->discount) {
-                    $priceValue = $priceValue - $model->discount;
+                    $priceValue = $priceValue;
                     $discount = ' <span class="badge badge-danger">-'.$model->discount.'</span>';
                 }
                 $variantsConfigure = '';

@@ -199,10 +199,10 @@ class Cart extends Component
                 $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
                 if ($onlyDiscount) {
                     if (!$item['model']->hasDiscount) {
-                        $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
+                        $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']);
                     }
                 } else {
-                    $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['quantity'];
+                    $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']);
                 }
                 //$result = $result * $item['model']->in_box;
 
@@ -265,7 +265,7 @@ class Cart extends Component
                 $calcPrice = $this->productModel::calculatePrices($productModel, $data['variants'], $data['configurable_id'], $data['quantity']);
                 if ($data['configurable_id']) {
 
-                    $rowTotal = $calcPrice * ($data['quantity']);
+                    $rowTotal = $calcPrice;
                 } else {
                     //if ($productModel->hasDiscount) {
                     //$priceTotal = ;
@@ -277,7 +277,7 @@ class Cart extends Component
                     //    $calcPrice = $pr->value;
                     //}
 
-                    $rowTotal = $calcPrice * ($data['quantity']);
+                    $rowTotal = $calcPrice;
 
                 }
 
