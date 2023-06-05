@@ -65,8 +65,11 @@ class DefaultController extends AdminController
 
             $order->setProductQuantities([$product->id => $quantity * $product->in_box]);
             //$order->eventProductQuantityChanged($event);
-            // $order->updateTotalPrice();
+             $order->updateTotalPrice();
             $result['success'] = true;
+            $result['total'] = $order->total_price;
+            $result['total_formatted'] = Yii::$app->currency->number_format($order->total_price);
+
             $result['message'] = "Количество <strong>{$product->name}</strong> успешно изменено.";
 
         }
