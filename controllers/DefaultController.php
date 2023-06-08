@@ -513,6 +513,9 @@ class DefaultController extends WebController
             $result['total_price'] = Yii::$app->currency->number_format($total);
             $result['countItems'] = $countItems;
             $result['reload'] = ($total) ? false : true;
+            if(!$total){
+                $result['emptyHtml'] = $this->render(Yii::$app->getModule('cart')->emptyView);
+            }
 
 
             return $this->asJson($result);
