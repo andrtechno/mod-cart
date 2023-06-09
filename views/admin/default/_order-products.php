@@ -66,10 +66,10 @@ echo GridView::widget([
                 } else {
                     $priceValue = $model->price;
                 }
-                $discount='';
+                $discount = '';
                 if ($model->discount) {
                     $priceValue = $priceValue;
-                    $discount = ' <span class="badge badge-danger">-'.$model->discount.'</span>';
+                    $discount = ' <span class="badge badge-danger">-' . $model->discount . '</span>';
                 }
                 $variantsConfigure = '';
                 if ($model->variantsConfigure) {
@@ -86,7 +86,7 @@ echo GridView::widget([
 
                 }*/
                 $price = Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
-                return $model->getProductName(false, ['data-pjax' => '0']) . '<br/>' . $variantsConfigure . $price.$discount;
+                return $model->getProductName(false, ['data-pjax' => '0']) . '<br/>' . $variantsConfigure . $price . $discount;
             },
         ],
         [
@@ -110,7 +110,7 @@ echo GridView::widget([
                 }
 
                 //return Html::textInput('quantity[' . $model->product_id . ']', $model->quantity, ['data-title'=>$model->name,'data-product'=>$model->product_id,'readonly' => 'readonly','tabindex'=>-1, 'class' => 'form-control d-inline text-center', 'style' => 'max-width:50px']);
-                return Html::button($value.' '.Html::icon('edit'), ['data-value' => $dataValue, 'data-title' => $model->name, 'data-product' => $model->product_id, 'data-step' => 1, 'class' => 'btn2 badge badge-light', 'style' => 'border:0;']);
+                return Html::button($value . ' ' . Html::icon('edit'), ['data-value' => $dataValue, 'data-title' => $model->name, 'data-product' => $model->product_id, 'data-step' => 1, 'class' => 'btn2 badge badge-light', 'style' => 'border:0;']);
             }
 
         ],
@@ -128,7 +128,7 @@ echo GridView::widget([
                 //  }
                 if ($model->discount) {
                     $priceValue = ($model->price - $model->discount) * $model->quantity;
-                }else{
+                } else {
                     $priceValue = $model->price * $model->quantity;
                 }
                 return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
@@ -176,12 +176,6 @@ Pjax::end();
                         class="float-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <span
                             class="text-muted"><?= $symbol ?></span></strong>
             </li>
-            <li class="list-group-item">
-                <?= Yii::t('cart/admin', 'INCOME') ?>: <strong
-                        class="float-right"><?= Yii::$app->currency->number_format($model->diff_price) ?> <span
-                            class="text-muted"><?= $symbol ?></span></strong>
-            </li>
-
             <?php if ($model->discount) { ?>
                 <li class="list-group-item">
                     <?= $model::t('DISCOUNT') ?>:
@@ -193,6 +187,32 @@ Pjax::end();
                     <?php } ?>
                 </li>
             <?php } ?>
+            <?php if ($model->diff_price) { ?>
+                <li class="list-group-item">
+                    <?= Yii::t('cart/admin', 'INCOME') ?>:
+                    <?php if ($model->discount) { ?>
+                        <?php if ('%' === substr($model->discount, -1, 1)) {
+                            $sum = $model->diff_price * ((double)$model->discount) / 100;
+                            ?>
+                            <strong class="float-right">
+                                <?= Yii::$app->currency->number_format($model->diff_price - $sum) ?>
+                                <span class="text-muted"><?= $symbol ?></span>
+                            </strong>
+                        <?php } else { ?>
+                            <strong class="float-right">
+                                <?= Yii::$app->currency->number_format($model->diff_price - $model->discount) ?>
+                                <span class="text-muted"><?= $symbol ?></span>
+                            </strong>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <strong class="float-right">
+                            <?= Yii::$app->currency->number_format($model->diff_price) ?>
+                            <span class="text-muted"><?= $symbol ?></span>
+                        </strong>
+                    <?php } ?>
+                </li>
+            <?php } ?>
+
             <li class="list-group-item d-flex justify-content-between">
                 <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>
                 <h4 class="m-0">
