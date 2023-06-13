@@ -64,7 +64,7 @@ class HistoricalBehavior extends Behavior
             'data_before' => serialize([
                 'deleted' => false,
                 'name' => $event->ordered_product->getRenderFullName(),
-                'price' => $event->ordered_product->price,
+                'price' => ($event->ordered_product->currency_id) ? $event->ordered_product->price / $event->ordered_product->currency_rate  : $event->ordered_product->price,
                 'currency' => ($event->ordered_product->currency_id) ? Yii::$app->currency->getById($event->ordered_product->currency_id)->iso : Yii::$app->currency->main['iso'],
                 'image' => $event->ordered_product->originalProduct->getMainImage()->url,
                 'quantity' => $event->ordered_product->quantity
@@ -83,7 +83,7 @@ class HistoricalBehavior extends Behavior
             'data_before' => serialize([
                 'deleted' => true,
                 'name' => $event->ordered_product->getRenderFullName(),
-                'price' => $event->ordered_product->price,
+                'price' => ($event->ordered_product->currency_id) ? $event->ordered_product->price / $event->ordered_product->currency_rate  : $event->ordered_product->price,
                 'currency' => ($event->ordered_product->currency_id) ? Yii::$app->currency->getById($event->ordered_product->currency_id)->iso : Yii::$app->currency->main['iso'],
                 'image' => ($event->ordered_product->originalProduct) ? $event->ordered_product->originalProduct->getMainImage('50x50')->url : 'no image',
                 'quantity' => $event->ordered_product->quantity

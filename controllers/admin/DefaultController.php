@@ -65,7 +65,7 @@ class DefaultController extends AdminController
 
             $order->setProductQuantities([$product->id => $quantity * $product->in_box]);
             //$order->eventProductQuantityChanged($event);
-             $order->updateTotalPrice();
+            $order->updateTotalPrice();
             $result['success'] = true;
             $result['total'] = $order->total_price;
             $result['total_formatted'] = Yii::$app->currency->number_format($order->total_price);
@@ -182,7 +182,6 @@ class DefaultController extends AdminController
         $post = Yii::$app->request->post();
 
 
-
         //LOAD
         if (!$post && !$model->isNewRecord && $model->delivery_id) {
             $delivery = Delivery::findOne($model->delivery_id);
@@ -203,12 +202,12 @@ class DefaultController extends AdminController
                 $system = $manager->getSystemClass($delivery->system);
                 $model->deliveryModel = $system->getModel();
                 $model->deliveryModel->load($post);
-                if(isset($model->deliveryModel->type)){
-                if ($model->deliveryModel->type == 'warehouse') {
-                    $model->deliveryModel->addRule(['warehouse'], 'required');
-                } else {
-                    $model->deliveryModel->addRule(['address'], 'required');
-                }
+                if (isset($model->deliveryModel->type)) {
+                    if ($model->deliveryModel->type == 'warehouse') {
+                        $model->deliveryModel->addRule(['warehouse'], 'required');
+                    } else {
+                        $model->deliveryModel->addRule(['address'], 'required');
+                    }
                 }
                 //$model->deliveryModel->validate();
             }
@@ -320,14 +319,18 @@ class DefaultController extends AdminController
                     $result['message'] = Yii::t('cart/admin', 'ERR_ORDER_PRODUCT_EXISTS');
                 } else {
                     $price = $request->post('price');
-                    if($product->discount){
+                    if ($product->discount) {
                         if ('%' === substr($product->discount, -1, 1)) {
                             $price = $price * ((double)$product->discount) / 100;
-                        }else{
+                        } else {
                             $price = $price - $product->discount;
                         }
                     }
-
+                    //@Todo Вообше лучше сделать чтобы записывалась оригинальная цена, а не уже конвертирущая
+                    if ($product->currency_id) {
+                        $product->price_purchase = Yii::$app->currency->convert($product->price_purchase, $product->currency_id);
+                        $price = Yii::$app->currency->convert($price, $product->currency_id);
+                    }
                     $order->addProduct($product, $request->post('quantity'), $price);
                     $result['success'] = true;
                     $result['message'] = Yii::t('cart/admin', 'SUCCESS_ADD_PRODUCT_ORDER');
