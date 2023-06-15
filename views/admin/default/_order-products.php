@@ -126,11 +126,11 @@ echo GridView::widget([
                 // } else {
 
                 //  }
-                if ($model->discount) {
-                    $priceValue = ($model->price - $model->discount) * $model->quantity;
-                } else {
+                //if ($model->discount) {
+                //    $priceValue = ($model->price) * $model->quantity; // - $model->discount
+                //} else {
                     $priceValue = $model->price * $model->quantity;
-                }
+                //}
                 return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
             }
         ],

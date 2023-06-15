@@ -869,8 +869,8 @@ class Order extends ActiveRecord
                     }
                 } else {
                     $list[] = [
-                        'key' => Yii::t('cart/Delivery', 'CITY'),
-                        'value' => Yii::t('cart/Delivery', 'ADDRESS') . ' ' . $data['address']
+                        'key' => Yii::t('cart/Delivery', 'ADDRESS'),
+                        'value' => $data['address']
                     ];
                 }
             } elseif ($this->deliveryMethod->system == 'pickup') {

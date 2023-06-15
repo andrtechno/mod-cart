@@ -48,7 +48,7 @@ use panix\ext\select2\Select2;
                     'model' => $model,
                     'attribute' => 'city',
                     'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Cities::find()
-                        ->orderBy(['Description' => SORT_ASC])
+                        ->orderBy(['CityID' => SORT_ASC,'Description' => SORT_ASC])
                         ->andWhere(['Area' => $model->area])
                         ->all(), 'Ref', function ($model) {
                         return $model->getDescription();
@@ -180,11 +180,11 @@ $this->registerJs("
     if($('#dynamicmodel-area option:selected').val()){
         $('#delivery-1').html($('#dynamicmodel-area option:selected').text());
     }
-    
+
     if($('#dynamicmodel-city option:selected').val()){
         $('#delivery-2').html($('#dynamicmodel-city option:selected').text());
     }
-    
+
     if($('#dynamicmodel-warehouse option:selected').val()){
         $('#delivery-3').html($('#dynamicmodel-warehouse option:selected').text());
     }
