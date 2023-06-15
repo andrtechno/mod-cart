@@ -842,7 +842,7 @@ class Order extends ActiveRecord
         if ($data) {
             if ($this->deliveryMethod->system == 'novaposhta') {
                 $list[] = [
-                    'key' => 'Тип',
+                    'key' => Yii::t('cart/Delivery', 'TYPE_DELIVERY'),
                     'value' => Yii::t('cart/Delivery', ($data['type'] == 'warehouse') ? 'TYPE_WAREHOUSE' : 'TYPE_ADDRESS')
                 ];
                 if (isset($data['area'])) {
