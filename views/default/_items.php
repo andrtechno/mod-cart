@@ -1,6 +1,6 @@
 <?php
 
-use app\modules\shop\models\Product;
+use panix\mod\shop\models\Product;
 use panix\engine\Html;
 use yii\helpers\Url;
 
