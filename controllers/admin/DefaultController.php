@@ -63,7 +63,11 @@ class DefaultController extends AdminController
             // $order = $product->order;
 
 
-            $order->setProductQuantities([$product->id => $quantity * $product->in_box]);
+            if (Yii::$app->settings->get('cart', 'quantity_convert')) {
+                $order->setProductQuantities([$product->id => $quantity * $product->in_box]);
+            } else {
+                $order->setProductQuantities([$product->id => $quantity]);
+            }
             //$order->eventProductQuantityChanged($event);
             $order->updateTotalPrice();
             $result['success'] = true;

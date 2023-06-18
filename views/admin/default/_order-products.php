@@ -90,6 +90,26 @@ echo GridView::widget([
             },
         ],
         [
+            'attribute' => 'price',
+            'format' => 'raw',
+            'contentOptions' => ['class' => 'text-center', 'style' => 'min-width:120px'],
+            'footer' => Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main['symbol'],
+            'value' => function ($model) {
+                /** @var $model OrderProduct */
+                //if ($model->currency_id && $model->currency_rate) {
+                //    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
+                // } else {
+
+                //  }
+                //if ($model->discount) {
+                //    $priceValue = ($model->price) * $model->quantity; // - $model->discount
+                //} else {
+                $priceValue = $model->price * $model->quantity;
+                //}
+                return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
+            }
+        ],
+        [
             'attribute' => 'quantity',
             'footer' => $model->productsCount,
             'format' => 'raw',
@@ -113,26 +133,6 @@ echo GridView::widget([
                 return Html::button($value . ' ' . Html::icon('edit'), ['data-value' => $dataValue, 'data-title' => $model->name, 'data-product' => $model->product_id, 'data-step' => 1, 'class' => 'btn2 badge badge-light', 'style' => 'border:0;']);
             }
 
-        ],
-        [
-            'attribute' => 'price',
-            'format' => 'raw',
-            'contentOptions' => ['class' => 'text-center', 'style' => 'min-width:120px'],
-            'footer' => Yii::$app->currency->number_format($model->total_price) . ' ' . Yii::$app->currency->main['symbol'],
-            'value' => function ($model) {
-                /** @var $model OrderProduct */
-                //if ($model->currency_id && $model->currency_rate) {
-                //    $priceValue = Yii::$app->currency->convert($model->price, $model->currency_id);
-                // } else {
-
-                //  }
-                //if ($model->discount) {
-                //    $priceValue = ($model->price) * $model->quantity; // - $model->discount
-                //} else {
-                    $priceValue = $model->price * $model->quantity;
-                //}
-                return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
-            }
         ],
         [
             'class' => 'panix\engine\grid\columns\ActionColumn',
