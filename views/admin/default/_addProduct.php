@@ -111,16 +111,20 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                             'headerOptions' => ['style' => 'width:80px'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
-
+                                if (Yii::$app->settings->get('cart', 'quantity_convert')) {
+                                    $step = $model->in_box;
+                                    $min = $model->quantity_min;
+                                } else {
+                                    $step = 1;
+                                    $min = 1;
+                                }
                                 $html = '<div class="spinner">';
                                 $html .= Html::button('-', ['class' => 'spinner--down', 'data-event' => 'down']);
-                                $html .= Html::textInput("count_{$model->id}", $model->quantity_min, [
+                                $html .= Html::textInput("count_{$model->id}", $min, [
                                     'id' => "count_{$model->id}",
                                     'data' => [
-                                        'step' => $model->in_box,
-                                        'min' => $model->quantity_min,
-                                        'max' => 999,
-
+                                        'step' => $step,
+                                        'min' => $min,
                                     ]
                                 ]);
                                 $html .= Html::button('+', ['class' => 'spinner--up', 'data-event' => 'up']);
