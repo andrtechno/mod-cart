@@ -2,16 +2,14 @@
 
 namespace panix\mod\cart\widgets\buyOneClick\actions;
 
-use panix\engine\CMS;
-use panix\mod\cart\models\forms\OrderCreateForm;
-use panix\mod\cart\models\Order;
-use panix\mod\cart\models\OrderProduct;
-use panix\mod\shop\models\Attribute;
-use yii\base\Action;
-use panix\mod\shop\models\Product;
 use Yii;
 use yii\web\HttpException;
 use yii\web\Response;
+use yii\base\Action;
+use panix\mod\cart\models\Order;
+use panix\mod\cart\models\OrderProduct;
+use panix\mod\shop\models\Attribute;
+use panix\mod\shop\models\Product;
 
 /**
  * Форма купить в один клик.
@@ -31,10 +29,17 @@ class BuyOneClickAction extends Action
     public function run()
     {
         $result['success'] = false;
-        $quantity = Yii::$app->request->post('quantity');
+        $quantity = (int)Yii::$app->request->post('quantity', 1);
         $configurable_id = Yii::$app->request->post('configurable_id');
         if (Yii::$app->request->isAjax) {
-
+            Yii::$app->assetManager->bundles = [
+                //'yii\bootstrap\BootstrapPluginAsset' => false,
+                //'yii\bootstrap\BootstrapAsset' => false,
+                'yii\jui\JuiAsset' => false,
+                'yii\web\YiiAsset' => false,
+                'yii\web\JqueryAsset' => false,
+                //'panix\ext\telinput\Asset' => false,
+            ];
             if ($configurable_id) {
                 $productModel = Product::findOne($configurable_id);
             } else {
@@ -42,10 +47,10 @@ class BuyOneClickAction extends Action
             }
 
             if (!$productModel) {
-                throw new HttpException(404);
+                throw new HttpException(404, '404!');
             }
             //
-            $model = new OrderCreateForm();
+            $model = new Order();
             $model->setScenario('buyOneClick');
 
             $post = Yii::$app->request->post();
@@ -77,16 +82,16 @@ class BuyOneClickAction extends Action
             return $this->controller->render(Yii::$app->getModule('cart')->buyOneClick['skinForm'], [
                 'model' => $model,
                 'productModel' => $productModel,
-                'quantity' => (is_numeric($quantity)) ? $quantity : 1,
+                'quantity' => $quantity,
                 'configurable_id' => ($configurable_id) ? $configurable_id : 0
             ]);
         } else {
-            throw new HttpException(404);
+            throw new HttpException(404, 'error!');
         }
     }
 
     /**
-     * @param $model OrderCreateForm
+     * @param $model Order
      * @param $productModel Product
      * @param $quantity integer
      * @param $configurable_id integer
@@ -117,7 +122,6 @@ class BuyOneClickAction extends Action
         }
 
 
-        $price = 0;
         $ordered_product = new OrderProduct();
         $ordered_product->order_id = $order->id;
         $ordered_product->product_id = $productModel->id;
@@ -129,12 +133,19 @@ class BuyOneClickAction extends Action
         $ordered_product->name = $productModel->name;
         $ordered_product->quantity = $quantity;
         $ordered_product->sku = $productModel->sku;
-        $ordered_product->price_purchase = $productModel->price_purchase;
+
+        if ($productModel->in_box) {
+            $ordered_product->price_purchase = Yii::$app->currency->convert($productModel->price_purchase * $productModel->in_box, $ordered_product->currency_id);
+        } else {
+            $ordered_product->price_purchase = Yii::$app->currency->convert($productModel->price_purchase, $ordered_product->currency_id);
+        }
+
+
         // if($item['currency_id']){
         //     $currency = Currency::model()->findByPk($item['currency_id']);
         //$ordered_product->price = ShopProduct::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;
         // }else{
-        // 
+        //
 
         //  $options = $item['options'];
         if (isset($productModel->hasDiscount)) {
@@ -179,9 +190,9 @@ class BuyOneClickAction extends Action
 
         $order->refresh();
         $order->updateDeliveryPrice();
-
+        $order->updateTotalPrice();
         $order->sendAdminEmail(explode(',', Yii::$app->settings->get('cart', 'order_emails')));
-
+        //Yii::$app->user->unsetPoints($this->order->points);
         return $order;
     }
 

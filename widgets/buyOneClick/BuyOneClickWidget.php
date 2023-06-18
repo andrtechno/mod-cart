@@ -27,6 +27,12 @@ class BuyOneClickWidget extends Widget
     /** @var Product */
     public $model;
 
+    public static function modal($config = [])
+    {
+        $config['class'] = get_called_class();
+        $widget = Yii::createObject($config);
+        return $widget->renderModal($config);
+    }
     public function init()
     {
 
@@ -39,26 +45,28 @@ class BuyOneClickWidget extends Widget
                     data:form.serialize(),
                     success:function(response){
                         if(response.success){
-                            $.fancybox.close();
+                            $('#buyOneClick-modal').modal('hide');
                             common.notify(response.message,'success');
-                            window.dataLayer = window.dataLayer || [];
-                            dataLayer.push({event: 'buy_one_click'});
                             
-                            var transaction= {
-                                event: 'transaction',
-                                transactionId: response.data.order_id,
-                                transactionAffiliation: '" . Yii::$app->settings->get('app', 'sitename') . "',
-                                transactionTotal: response.data.total,
-                                transactionProducts:[]
-                            };
-                            var transactionProducts = [];
-                            $.each(response.data.products,function( index,item ) {
-                                transactionProducts[index]={sku: item.id,name: item.name,price: item.price,quantity: item.quantity};
-                            });
-                            transaction.transactionProducts = transactionProducts;
-    
-                            dataLayer.push(transaction);
-
+                            if(response.data){
+                                window.dataLayer = window.dataLayer || [];
+                                dataLayer.push({event: 'buy_one_click'});
+                                
+                                var transaction= {
+                                    event: 'transaction',
+                                    transactionId: response.data.order_id,
+                                    transactionAffiliation: '" . Yii::$app->settings->get('app', 'sitename') . "',
+                                    transactionTotal: response.data.total,
+                                    transactionProducts:[]
+                                };
+                                var transactionProducts = [];
+                                $.each(response.data.products,function( index,item ) {
+                                    transactionProducts[index]={sku: item.id,name: item.name,price: item.price,quantity: item.quantity};
+                                });
+                                transaction.transactionProducts = transactionProducts;
+        
+                                dataLayer.push(transaction);
+                            }
                         }
                        
                     }
@@ -75,6 +83,26 @@ class BuyOneClickWidget extends Widget
 
         return $this->render($this->skin, ['model' => $this->model]);
     }
+    protected function renderModal($config = [])
+    {
 
+        $this->skin = 'modal';
+        if (isset($config['skin'])) {
+            $this->skin = $config['skin'];
+        }
 
+        $currency = Yii::$app->currency->active;
+        $dataRender = [
+            'currency' => $currency,
+            'isPopup' => true
+        ];
+
+        return $this->render($this->skin, $dataRender);
+        /*return strtr($this->templateBs3, [
+            '{title}' => $this->renderTitle(),
+            '{close}' => $this->renderCloseButton(),
+            '{body}' => $this->render($this->skin, $dataRender)
+        ]);*/
+        //
+    }
 }
