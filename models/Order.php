@@ -533,6 +533,13 @@ class Order extends ActiveRecord
 
                 // }
 
+            }else{
+                $this->total_price += $product->price * $product->quantity;
+                $this->total_price_purchase += $product->price_purchase * $product->quantity;
+
+                if ($product->price_purchase) {
+                    $this->diff_price += ($product->price * $product->quantity) - ($product->price_purchase * $product->quantity);
+                }
             }
 
         }
