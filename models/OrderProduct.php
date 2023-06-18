@@ -15,6 +15,7 @@ use yii\helpers\Url;
  *
  * @property integer $order_id
  * @property integer $product_id
+ * @property integer $type_id
  * @property integer $configurable_id
  * @property integer $brand_id
  * @property integer $in_box
