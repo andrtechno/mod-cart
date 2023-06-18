@@ -521,24 +521,24 @@ class Order extends ActiveRecord
                 //     $this->total_price_purchase += $product->price_purchase * $product->currency_rate * $product->quantity;
                 // }else{
                 //if($product->discount){
-               //    $this->total_price += ($product->price - $product->discount) * $product->quantity;
+                //    $this->total_price += ($product->price - $product->discount) * $product->quantity;
                 //}else{
-                    $this->total_price += $product->price * $product->quantity;
-               // }
-                $this->total_price_purchase += $product->price_purchase * $product->quantity;
+                $this->total_price += $product->price * $product->in_box * $product->quantity;
+                // }
+                $this->total_price_purchase += $product->price_purchase * $product->in_box * $product->quantity;
 
                 if ($product->price_purchase) {
-                    $this->diff_price += ($product->price * $product->quantity) - ($product->price_purchase * $product->quantity);
+                    $this->diff_price += ($product->price * $product->in_box * $product->quantity) - ($product->price_purchase * $product->in_box * $product->quantity);
                 }
 
                 // }
 
             }else{
-                $this->total_price += $product->price * $product->quantity;
-                $this->total_price_purchase += $product->price_purchase * $product->quantity;
+                $this->total_price += $product->price * $product->in_box * $product->quantity;
+                $this->total_price_purchase += $product->price_purchase * $product->in_box * $product->quantity;
 
                 if ($product->price_purchase) {
-                    $this->diff_price += ($product->price * $product->quantity) - ($product->price_purchase * $product->quantity);
+                    $this->diff_price += ($product->price * $product->in_box * $product->quantity) - ($product->price_purchase * $product->in_box * $product->quantity);
                 }
             }
 

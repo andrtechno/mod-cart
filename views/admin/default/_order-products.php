@@ -104,7 +104,7 @@ echo GridView::widget([
                 //if ($model->discount) {
                 //    $priceValue = ($model->price) * $model->quantity; // - $model->discount
                 //} else {
-                $priceValue = $model->price * $model->quantity;
+                $priceValue = $model->price * $model->in_box * $model->quantity;
                 //}
                 return Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
             }
