@@ -104,7 +104,7 @@ echo GridView::widget([
                     $value = $model->quantity / $model->in_box . $unit;
                     $dataValue = $model->quantity / $model->in_box;
                 } else {
-                    $unit = ' <span>' . Yii::t('shop/Product', 'UNITS_CUT', ['n' => 1]) . '</span>';
+                    //$unit = ' <span>' . Yii::t('shop/Product', 'UNITS_CUT', ['n' => $model->unit]) . '</span>';
                     $value = $model->quantity . $unit;
                     $dataValue = $model->quantity;
                 }
