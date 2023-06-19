@@ -199,12 +199,12 @@ class Cart extends Component
                 $configurable = isset($item['configurable_model']) ? $item['configurable_model'] : 0;
                 if ($onlyDiscount) {
                     if (!$item['model']->hasDiscount) {
-                        $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']);
+                        $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['model']->in_box;
                     }
                 } else {
-                    $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']);
+                    $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']) * $item['model']->in_box;
                 }
-                $result = $result * $item['model']->in_box;
+                //$result = $result * $item['model']->in_box;
 
             }
         }
