@@ -107,7 +107,7 @@
             {$totalCountPriceAll = {$product->price * $product->quantity + $totalCountPriceAll}}
             {$price=$product->price}
             {if $product->originalProduct}
-                {$image=$product->originalProduct->getMainImage('50x50')->url}
+                {$image=$product->originalProduct->getMainImage('small')->url}
             {else}
                 {$image='/uploads/no-image.png'}
             {/if}

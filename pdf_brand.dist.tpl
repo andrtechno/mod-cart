@@ -28,7 +28,7 @@
                 {if ($original->brand)}
                     {$title = ($original->brand) ? $original->brand->name : null}
                     {if ($original->mainImage)}
-                        {$image = $original->getMainImage('50x50')->url}
+                        {$image = $original->getMainImage('small')->url}
                     {else}
                         {$image = '/uploads/no-image.png'}
                     {/if}
