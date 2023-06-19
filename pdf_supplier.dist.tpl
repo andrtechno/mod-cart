@@ -7,11 +7,11 @@
 
 {if Yii::$app->request->get('image')}
     {$small=false}
-    {$rowsCount=6}
+    {$rowsCount=7}
     {$nums=2}
     {$footnum=3}
 {else}
-    {$rowsCount=5}
+    {$rowsCount=6}
     {$nums=1}
     {$footnum=2}
     {$small=true}
@@ -32,7 +32,7 @@
                     'phone' => ($supplier) ? $supplier->phone : null
                     ]}
                     {if ($original->mainImage)}
-                        {$image = $original->getMainImage('small')->url}
+                        {$image = $original->getMainImage('50x50')->url}
                     {else}
                         {$image = '/uploads/no-image.png'}
                     {/if}
@@ -49,7 +49,7 @@
                     {/if}
                     {$price = $newprice}
 
-                    {$total_price = ($newprice * $item->quantity)}
+                    {$total_price = ($newprice * $item['in_box'] * $item->quantity)}
 
                     {$array[$supplierData['id']][] = [
                     'item' => $item,
@@ -79,11 +79,12 @@
 
 {foreach from=$array key=key item=items}
     {$brand = explode('|', $key)}
+
     <table border="1" cellspacing="0" cellpadding="2" style="width:100%;" class="table table-bordered table-striped">
         <tbody>
         <tr>
             <th colspan="{$rowsCount}" align="center" class="text-center">
-                <strong>{Yii::$app->settings->get('app', 'sitename')} ({implode(', ', $phones)})</strong>
+                <strong>Дата: {Yii::$app->formatter->asDate(time())} | {Yii::$app->settings->get('app', 'sitename')} / {implode(', ', $phones)}</strong>
             </th>
         </tr>
         <tr>
@@ -99,7 +100,8 @@
                 class="text-center">{Yii::t('cart/default', 'TABLE_PRODUCT')}</th>
             <th width="10%" align="center" class="text-center">{Yii::t('cart/default', 'QUANTITY')}</th>
             <th width="10%" align="center" class="text-center">{Yii::t('cart/default', 'Пар в ящику')}</th>
-            <th width="25%" align="center" class="text-center">Сума</th>
+            <th width="15%" align="center" class="text-center">Ціна за пару</th>
+            <th width="15%" align="center" class="text-center">Сума</th>
         </tr>
         {$brand_count = 0}
         {$brand_price = 0}
@@ -119,9 +121,6 @@
 
                 <td>
                     {$row['item']->name}<br/>
-                    <strong>{Yii::$app->currency->number_format($row['price'])}</strong> {Yii::$app->currency->active['symbol']}
-                    <br/>
-
                     {if ($row['model']->sku)}
                         {$row['item']->getAttributeLabel('sku')}:
                         <strong>{$row['model']->sku}</strong>
@@ -148,6 +147,7 @@
                 <td align="center">
                     {$row['item']->in_box}
                 </td>
+                <td align="center"><strong>{Yii::$app->currency->number_format($row['price'])}</strong> {Yii::$app->currency->active['symbol']}</td>
                 <td align="center">
                     {if ($row['price_total']) }
                         <strong>{Yii::$app->currency->number_format($row['price_total'])}</strong>

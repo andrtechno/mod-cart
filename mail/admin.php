@@ -44,7 +44,7 @@ $thStyle = 'border-color:#D8D8D8; border-width:1px; border-style:solid;';
 
         <tr>
             <td style="<?= $thStyle; ?>" align="center">
-                <?= Html::img(Url::to($row->originalProduct->getMainImage('100x')->url,true), ['alt' => $row->originalProduct->name]); ?>
+                <?= Html::img(Url::to($row->originalProduct->getMainImage('small')->url,true), ['alt' => $row->originalProduct->name]); ?>
             </td>
             <td style="<?= $thStyle; ?>">
                 <?= Html::a($row->name, Url::toRoute($row->originalProduct->getUrl(), true), ['target' => '_blank']); ?>

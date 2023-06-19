@@ -49,12 +49,12 @@
         <th style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{Yii::t('cart/default', 'TOTAL_PRICE')}</th>
     </tr>
     {foreach from=$model.products item=product}
-
         <tr>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 5%" align="center">
-                {Html::a(Html::img(Url::to($product->getProductImage('x100'),true), [
+                {Html::a(Html::img(Url::to($product->getProductImage('small'),true), [
                 'alt' => $product->name,
-                'title' => $product->name
+                'title' => $product->name,
+                'style'=>'max-width:50px'
                 ]),{Url::to($product->getProductUrl(),true)},['target'=>'_blank'])}
             </td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;">{$product->getProductName(true,['target' => '_blank'])}
@@ -67,10 +67,10 @@
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;"
                 align="center">{$product->quantity}</td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 15%" align="center">
-                <strong>{$app->currency->number_format($app->currency->convert($product->price))}</strong>
+                <strong>{$app->currency->number_format($app->currency->convert($product->price * $product->in_box))}</strong>
                 <sup>{$app->currency->active['symbol']}</sup></td>
             <td style="border-color:#D8D8D8; border-width:1px; border-style:solid;width: 15%" align="center">
-                <strong>{$app->currency->number_format($app->currency->convert($product->price * $product->quantity))}</strong>
+                <strong>{$app->currency->number_format($app->currency->convert($product->price * $product->in_box * $product->quantity))}</strong>
                 <sup>{$app->currency->active['symbol']}</sup>
             </td>
         </tr>
