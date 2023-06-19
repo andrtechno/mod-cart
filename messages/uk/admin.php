@@ -67,4 +67,5 @@ return [
     'ORDER_NOT_FOUND' => 'Замовлення не найден.',
     'STATUS_CHANGE_NOTIFY' => 'Після зміна статусу клієнт буде повідомлений про зміну статусу.',
     'PRINT_PDF' => 'Друк (pdf)',
+    'QUANTITY_CHANGED' => 'Кількість <strong>{0}</strong> успішно змінено.'
 ];

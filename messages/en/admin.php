@@ -67,4 +67,5 @@ return [
     'ORDER_NOT_FOUND' => 'Order not found.',
     'STATUS_CHANGE_NOTIFY' => 'After the status change, the client will be notified of the status change.',
     'PRINT_PDF' => 'Print (pdf)',
+    'QUANTITY_CHANGED' => 'Quantity <strong>{0}</strong> successfully modified.'
 ];

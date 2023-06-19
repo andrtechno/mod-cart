@@ -91,8 +91,7 @@ class DefaultController extends AdminController
             $result['total_formatted'] = Yii::$app->currency->number_format($order->total_price);
             $result['diff_price_formatted'] = $diff_price;
             $result['full_price_formatted'] = Yii::$app->currency->number_format($order->full_price);
-
-            $result['message'] = "Количество <strong>{$product->name}</strong> успешно изменено.";
+            $result['message'] = Yii::t('cart/admin', 'QUANTITY_CHANGED', [$product->name]);
 
         }
         return $this->asJson($result);
