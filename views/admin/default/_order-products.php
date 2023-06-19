@@ -171,7 +171,7 @@ Pjax::end();
             <?php } ?>
             <li class="list-group-item">
                 <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong
-                        class="float-right"><?= Yii::$app->currency->number_format($model->total_price) ?> <span
+                        class="float-right"><span class="total-price"><?= Yii::$app->currency->number_format($model->total_price) ?></span> <span
                             class="text-muted"><?= $symbol ?></span></strong>
             </li>
             <?php if ($model->discount) { ?>
@@ -193,18 +193,18 @@ Pjax::end();
                             $sum = $model->diff_price * ((double)$model->discount) / 100;
                             ?>
                             <strong class="float-right">
-                                <?= Yii::$app->currency->number_format($model->diff_price - $sum) ?>
+                                <span class="diff-price"><?= Yii::$app->currency->number_format($model->diff_price - $sum) ?></span>
                                 <span class="text-muted"><?= $symbol ?></span>
                             </strong>
                         <?php } else { ?>
                             <strong class="float-right">
-                                <?= Yii::$app->currency->number_format($model->diff_price - $model->discount) ?>
+                                <span class="diff-price"><?= Yii::$app->currency->number_format($model->diff_price - $model->discount) ?></span>
                                 <span class="text-muted"><?= $symbol ?></span>
                             </strong>
                         <?php } ?>
                     <?php } else { ?>
                         <strong class="float-right">
-                            <?= Yii::$app->currency->number_format($model->diff_price) ?>
+                            <span class="diff-price"><?= Yii::$app->currency->number_format($model->diff_price) ?></span>
                             <span class="text-muted"><?= $symbol ?></span>
                         </strong>
                     <?php } ?>
@@ -214,7 +214,7 @@ Pjax::end();
             <li class="list-group-item d-flex justify-content-between">
                 <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>
                 <h4 class="m-0">
-                    <span class="total-price"><?= Yii::$app->currency->number_format($model->full_price); ?></span>
+                    <span class="full-price"><?= Yii::$app->currency->number_format($model->full_price); ?></span>
                     <small class="text-muted"><?= $symbol; ?></small>
                 </h4>
             </li>
@@ -339,7 +339,9 @@ console.log(valid);
                             if(response.success){
                                 common.notify(response.message,'success');
                                 $.pjax.reload({container:\"#pjax-container-products\",timeout:false});
+                                $('.full-price').html(response.full_price_formatted);
                                 $('.total-price').html(response.total_formatted);
+                                $('.diff-price').html(response.diff_price_formatted);
                             }
                         }
                     });

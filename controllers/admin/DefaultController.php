@@ -70,9 +70,27 @@ class DefaultController extends AdminController
             }
             //$order->eventProductQuantityChanged($event);
             $order->updateTotalPrice();
+
+            $diff_price = 0;
+            if ($order->diff_price) {
+                if ($order->discount) {
+                    if ('%' === substr($order->discount, -1, 1)) {
+                        $sum = $order->diff_price * ((double)$order->discount) / 100;
+                        $diff_price = Yii::$app->currency->number_format($order->diff_price - $sum);
+                    } else {
+                        $diff_price = Yii::$app->currency->number_format($order->diff_price - $order->discount);
+                    }
+                } else {
+                    $diff_price = Yii::$app->currency->number_format($order->diff_price);
+                }
+
+            }
+
             $result['success'] = true;
             $result['total'] = $order->total_price;
             $result['total_formatted'] = Yii::$app->currency->number_format($order->total_price);
+            $result['diff_price_formatted'] = $diff_price;
+            $result['full_price_formatted'] = Yii::$app->currency->number_format($order->full_price);
 
             $result['message'] = "Количество <strong>{$product->name}</strong> успешно изменено.";
 

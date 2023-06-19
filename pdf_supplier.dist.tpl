@@ -157,6 +157,7 @@
                     {/if}
                 </td>
             </tr>
+            {$i++}
         {/foreach}
         </tbody>
     </table>
