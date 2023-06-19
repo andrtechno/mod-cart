@@ -204,7 +204,7 @@ class Cart extends Component
                 } else {
                     $result += $this->productModel::calculatePrices($item['model'], $item['variants'], $configurable, $item['quantity']);
                 }
-                //$result = $result * $item['model']->in_box;
+                $result = $result * $item['model']->in_box;
 
             }
         }
@@ -277,7 +277,7 @@ class Cart extends Component
                     //    $calcPrice = $pr->value;
                     //}
 
-                    $rowTotal = $calcPrice;
+                    $rowTotal = $calcPrice * $data['in_box'];
 
                 }
 
@@ -391,7 +391,11 @@ class Cart extends Component
         if (isset($this->session['cart_data']['items'])) {
             foreach ($this->session['cart_data']['items'] as $row) {
                 $result['quantity'] += $row['quantity'];
-                $result['boxes'] += $row['quantity'] / $row['in_box'];
+                if (Yii::$app->settings->get('cart', 'quantity_convert')) {
+                    $result['boxes'] += $row['quantity'] / $row['in_box'];
+                }else{
+                    $result['boxes'] += $row['quantity'];
+                }
             }
 
         }
