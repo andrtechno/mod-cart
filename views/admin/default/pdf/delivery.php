@@ -7,8 +7,8 @@
             <th width="5%" align="center" class="text-center">№</th>
             <th width="20%" align="center" class="text-center">ФИО<br></th>
             <th width="45%" align="center" class="text-center">Адрес доставки<br></th>
-            <th width="20%" align="center" class="text-center">Телефон<br></th>
-            <th width="10%" align="center" class="text-center">товаров<br></th>
+            <th width="20%" align="center" class="text-center"><?= Yii::t('cart/Order','USER_PHONE'); ?><br></th>
+            <th width="10%" align="center" class="text-center">Товаров<br></th>
         </tr>
         </thead>
         <tbody>
@@ -24,7 +24,8 @@
         <?php foreach ($array as $delivery_name => $items) { ?>
             <tr>
                 <th colspan="5" align="center" class="text-center" style="background-color:#9b9b9b;color:#fff">
-                    <b><?= $delivery_name ?></b><br/></th>
+                    <?= $delivery_name ?>
+                </th>
             </tr>
             <?php
             $i = 1;
@@ -36,7 +37,7 @@
                         <?= $row['order']->user_name; ?>
                         <p><strong><?= Yii::t('cart/default', 'PAYMENT'); ?>:</strong> <?= $row['payment'] ?></p>
                     </td>
-                    <td align="center" style="vertical-align:middle">
+                    <td style="vertical-align:middle">
                         <?php foreach ($row['order']->getDeliveryEach() as $delivery) { ?>
                             <p><?= $delivery['key']; ?>: <strong><?= $delivery['value']; ?></strong></p>
                         <?php } ?>

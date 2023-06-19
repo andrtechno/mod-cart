@@ -10,7 +10,7 @@
             <h1>№{CMS::idToNumber($model->id)}</h1>
         </td>
         <td width="40%" style="text-align: right">{$model->getAttributeLabel('created_at')}:
-            <strong>{Yii::$app->formatter->asDatetime($model->created_at)}</strong>
+            <strong>{Yii::$app->formatter->asDate($model->created_at)}</strong>
         </td>
     </tr>
 </table>
