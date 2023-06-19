@@ -76,10 +76,10 @@ class DefaultController extends AdminController
                 if ($order->discount) {
                     if ('%' === substr($order->discount, -1, 1)) {
                         $sum = $order->total_price * ((double)$order->discount / 100);
-                        $diff_price = Yii::$app->currency->number_format($order->diff_price - $sum);
                     } else {
-                        $diff_price = Yii::$app->currency->number_format($order->diff_price - $order->discount);
+                        $sum = $order->discount;
                     }
+                    $diff_price = Yii::$app->currency->number_format($order->diff_price - $sum);
                 } else {
                     $diff_price = Yii::$app->currency->number_format($order->diff_price);
                 }

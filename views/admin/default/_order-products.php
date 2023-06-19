@@ -13,7 +13,6 @@ use panix\engine\CMS;
 $symbol = Yii::$app->currency->active['symbol'];
 
 
-
 Pjax::begin([
     'id' => 'pjax-container-products',
     // 'enablePushState' => false,
@@ -49,7 +48,7 @@ echo GridView::widget([
             'value' => function ($model) {
                 /** @var $model OrderProduct */
                 if ($model->getProduct()) {
-                    return Html::a(Html::img($model->getProductImage('small'),['style'=>'max-width:50px']), $model->getProductImage(), ['data-pjax' => false]);
+                    return Html::a(Html::img($model->getProductImage('small'), ['style' => 'max-width:50px']), $model->getProductImage(), ['data-pjax' => false]);
                 } else {
                     return \panix\engine\Html::tag('span', 'товар удален', ['class' => 'badge badge-danger']);
                 }
@@ -173,7 +172,9 @@ Pjax::end();
             <?php } ?>
             <li class="list-group-item">
                 <?= Yii::t('cart/default', 'ORDER_PRICE') ?>: <strong
-                        class="float-right"><span class="total-price"><?= Yii::$app->currency->number_format($model->total_price) ?></span> <span
+                        class="float-right"><span
+                            class="total-price"><?= Yii::$app->currency->number_format($model->total_price) ?></span>
+                    <span
                             class="text-muted"><?= $symbol ?></span></strong>
             </li>
             <?php if ($model->discount) { ?>
@@ -192,18 +193,15 @@ Pjax::end();
                     <?= Yii::t('cart/admin', 'INCOME') ?>:
                     <?php if ($model->discount) { ?>
                         <?php if ('%' === substr($model->discount, -1, 1)) {
-                            $sum= $model->total_price * ((double)$model->discount / 100);
-                            ?>
-                            <strong class="float-right">
-                                <span class="diff-price"><?= Yii::$app->currency->number_format($model->diff_price - $sum) ?></span>
-                                <span class="text-muted"><?= $symbol ?></span>
-                            </strong>
-                        <?php } else { ?>
-                            <strong class="float-right">
-                                <span class="diff-price"><?= Yii::$app->currency->number_format($model->diff_price - $model->discount) ?></span>
-                                <span class="text-muted"><?= $symbol ?></span>
-                            </strong>
-                        <?php } ?>
+                            $sum = $model->total_price * ((double)$model->discount / 100);
+                        } else {
+                            $sum = $model->discount;
+                        }
+                        ?>
+                        <strong class="float-right">
+                            <span class="diff-price"><?= Yii::$app->currency->number_format($model->diff_price - $sum) ?></span>
+                            <span class="text-muted"><?= $symbol ?></span>
+                        </strong>
                     <?php } else { ?>
                         <strong class="float-right">
                             <span class="diff-price"><?= Yii::$app->currency->number_format($model->diff_price) ?></span>
