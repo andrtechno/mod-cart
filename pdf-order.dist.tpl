@@ -170,11 +170,11 @@
 
         {if $model->discount}
             <p>{Yii::t('cart/Order', 'DISCOUNT')}:
-            {if ('%' === $model->discount)} //|substr:-1:1
-                <strong>{$model->discount}</strong>
-            {else}
-                <strong>{Yii::$app->currency->number_format($model->discount)}</strong> {Yii::$app->currency->active['symbol']}
-            {/if}</p>
+                {if ('%' === substr($model->discount,-1,1))}
+                    <strong>{$model->discount}</strong>
+                {else}
+                    <strong>{Yii::$app->currency->number_format($model->discount)}</strong> {Yii::$app->currency->active['symbol']}
+                {/if}</p>
         {/if}
 
 
