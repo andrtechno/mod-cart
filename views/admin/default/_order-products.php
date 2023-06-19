@@ -12,6 +12,8 @@ use panix\engine\CMS;
  */
 $symbol = Yii::$app->currency->active['symbol'];
 
+
+
 Pjax::begin([
     'id' => 'pjax-container-products',
     // 'enablePushState' => false,
@@ -190,7 +192,7 @@ Pjax::end();
                     <?= Yii::t('cart/admin', 'INCOME') ?>:
                     <?php if ($model->discount) { ?>
                         <?php if ('%' === substr($model->discount, -1, 1)) {
-                            $sum = $model->diff_price * ((double)$model->discount) / 100;
+                            $sum= $model->total_price * ((double)$model->discount / 100);
                             ?>
                             <strong class="float-right">
                                 <span class="diff-price"><?= Yii::$app->currency->number_format($model->diff_price - $sum) ?></span>
