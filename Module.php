@@ -21,7 +21,8 @@ class Module extends WebModule implements BootstrapInterface
     ];
     public $modalView = '@cart/widgets/cart/views/_items';
     public $emptyView = '@cart/widgets/cart/views/_empty';
-
+    public $modalBodyView = '@cart/widgets/cart/views/_body';
+    
     const EVENT_ORDER_CREATE = 'orderCreate';
     //public $cart;
 

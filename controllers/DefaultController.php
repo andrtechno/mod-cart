@@ -90,7 +90,7 @@ class DefaultController extends WebController
             $items = $cart->getDataWithModels();
 
             //$this->module->modalView
-            return $this->renderAjax('@cart/views/default/_items', [
+            return $this->renderAjax(Yii::$app->getModule('cart')->modalBodyView, [
                 'total' => $cart->getTotalPrice(),
                 'items' => isset($items['items']) ? $items['items'] : [],
                 'popup' => true
