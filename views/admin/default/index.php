@@ -29,6 +29,18 @@ $(document).on("click", "#collapse-grid-filter button" , function(event,k) {
     });
     return false;
 });
+
+var timer;
+$("#grid-orders tr[data-url]").on("touchstart", function(e){
+    var that = this;
+    timer = setTimeout(function(){
+    window.location.href = $(that).data("url");
+        }, 1000);
+});
+$("#grid-orders tr[data-url]").on("touchend", function(e){
+    clearTimeout(timer);
+});
+
 ');
 Pjax::begin(['id' => 'pjax-grid-orders']);
 
@@ -70,6 +82,9 @@ echo GridView::widget([
     //'rowOptions' => function ($model, $index, $widget, $grid) {
     //    return ['style' => 'background-color:' . $model->status->color . ';'];
     //},
+    'rowOptions' => function ($model, $index, $widget, $grid){
+        return ['data-url'=>\yii\helpers\Url::to(['update','id'=>$model->id])];
+    },
     'layoutOptions' => [
         'title' => $this->context->pageName,
         'beforeContent' => $this->render('_grid_filter', ['model' => $searchModel]),
