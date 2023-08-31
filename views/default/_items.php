@@ -22,7 +22,7 @@ use yii\helpers\Url;
         <tbody>
         <?php foreach ($items as $index => $product) { ?>
             <?php
-            $price = Product::calculatePrices($product['model'], $product['variant_models'], $product['configurable_id']);
+            $price = Product::calculatePrices($product['model'], $product['variant_models'], $product['configurable_id'], $product['quantity']);
             ?>
             <tr id="product-<?= $index; ?>">
 
@@ -58,19 +58,19 @@ use yii\helpers\Url;
                 </td>
                 <td data-label="<?= Yii::t('default', 'PRICE_PER'); ?>">
                        <span class="price">
-                              <?= Yii::$app->currency->number_format($price); ?>
+                              <?= Yii::$app->currency->number_format($price / $product['quantity']); ?>
                               <span class="currency"><?= Yii::$app->currency->active['symbol']; ?></span>
                        </span>
                 </td>
                 <td data-label="<?= Yii::t('default', 'PRICE_PER_BOX'); ?>">
                        <span class="price">
-                            <?= Yii::$app->currency->number_format($price * $product['in_box']); ?>
+                            <?= Yii::$app->currency->number_format($price / $product['quantity'] * $product['in_box']); ?>
                             <span class="currency"><?= Yii::$app->currency->active['symbol']; ?></span>
                        </span>
                 </td>
                 <td data-label="<?= Yii::t('default', 'SUM'); ?>" id="price-<?= $index ?>">
                                 <span class="price">
-                                    <span class="row-total-price<?= $index ?>"><?= Yii::$app->currency->number_format($price * $product['in_box'] * $product['quantity']); ?></span>
+                                    <span class="row-total-price<?= $index ?>"><?= Yii::$app->currency->number_format($price / $product['quantity'] * $product['in_box'] * $product['quantity']); ?></span>
                                      <span class="currency"><?= Yii::$app->currency->active['symbol']; ?></span>
                                 </span>
                 </td>

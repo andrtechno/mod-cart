@@ -431,6 +431,15 @@ class DefaultController extends WebController
 
 
         // print_r($items);die;
+
+        $quantity= (int)Yii::$app->request->post('quantity', (Yii::$app->settings->get('cart', 'quantity_convert')) ? $model->in_box : 1);
+        $pr = $model->getPriceByQuantity($quantity);
+        $price = $model->price;
+        if ($pr) {
+            $price = Yii::$app->currency->convert($pr->value, $model->currency_id);
+        }
+
+
         $cart->add([
             'product_id' => $model->id,
             'variants' => $variants,
@@ -448,8 +457,8 @@ class DefaultController extends WebController
             'weight_class_id' => $model->weight_class_id,
             'length_class_id' => $model->length_class_id,
             'configurable_id' => $configurable_id,
-            'quantity' => (int)Yii::$app->request->post('quantity', (Yii::$app->settings->get('cart', 'quantity_convert')) ? $model->in_box : 1),
-            'price' => $model->price
+            'quantity' => $quantity,
+            'price' => $price
         ]);
         $totalPrice = $cart->getTotalPrice();
         $items = $cart->getDataWithModels();
