@@ -46,6 +46,10 @@ class DefaultController extends WebController
      * @var bool
      */
     protected $_errors = false;
+
+    /**
+     * @var $order Order
+     */
     public $order;
     protected $delivery;
 
@@ -432,7 +436,7 @@ class DefaultController extends WebController
 
         // print_r($items);die;
 
-        $quantity= (int)Yii::$app->request->post('quantity', (Yii::$app->settings->get('cart', 'quantity_convert')) ? $model->in_box : 1);
+        $quantity = (int)Yii::$app->request->post('quantity', (Yii::$app->settings->get('cart', 'quantity_convert')) ? $model->in_box : 1);
         $pr = $model->getPriceByQuantity($quantity);
         $price = $model->price;
         if ($pr) {
@@ -521,7 +525,7 @@ class DefaultController extends WebController
             $result['total_price'] = Yii::$app->currency->number_format($total);
             $result['countItems'] = $countItems;
             $result['reload'] = ($total) ? false : true;
-            if(!$total){
+            if (!$total) {
                 $result['emptyHtml'] = $this->render(Yii::$app->getModule('cart')->emptyView);
             }
 
@@ -602,14 +606,10 @@ class DefaultController extends WebController
                 $event->order = $this->order;
                 Yii::$app->getModule('cart')->trigger(Module::EVENT_ORDER_CREATE, $event);
             }
+
         } else {
-            //print_r($this->order->getErrors());die;
             Yii::$app->session->setFlash('error', Yii::t('cart/default', 'SUCCESS_ORDER'));
             return 'error';
-            //echo 'ERRR';
-            //print_r($this->order->getErrors());
-            //die;
-            //throw new Exception(503, Yii::t('cart/default', 'ERROR_CREATE_ORDER'));
         }
 
         // Process products
@@ -685,7 +685,6 @@ class DefaultController extends WebController
             $ordered_product->save();
             $productsCount++;
         }
-
         // Reload order data.
         $this->order->refresh(); //@todo panix text email tpl
         // All products added. Update delivery price.
@@ -710,6 +709,18 @@ class DefaultController extends WebController
         // Send email to admin.
         $this->order->sendAdminEmail(explode(',', Yii::$app->settings->get('cart', 'order_emails')));
         // $order->detachBehavior('notification');
+
+        //FCM push notification
+        if (Yii::$app->hasModule('fcm')) {
+            $text = "Сумма 5543.55 грн".PHP_EOL;
+            $text .= Yii::t('cart/default','DELIVERY').": Новая почта".PHP_EOL;
+            $text .= Yii::t('cart/default','PAYMENT').": Приват банк {TEST}";
+            $notify = Yii::$app->fcm->privateTokens()
+                ->setTitle(Yii::t('cart/default', 'MAIL_ADMIN_SUBJECT', $this->order->id))
+                ->setBody($text);
+
+            $result = Yii::$app->fcm->send($notify);
+        }
 
         Yii::$app->user->unsetPoints($this->order->points);
         //\machour\yii2\notifications\components\Notification::notify(\machour\yii2\notifications\components\Notification::KEY_NEW_ORDER, 1,$order->primaryKey);
