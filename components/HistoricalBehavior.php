@@ -58,7 +58,7 @@ class HistoricalBehavior extends Behavior
      */
     public function onProductAdded($event)
     {
-
+        $original = $event->ordered_product->originalProduct ? $event->ordered_product->originalProduct : null;
         $this->log([
             'handler' => self::PRODUCT_HANDLER,
             'data_before' => serialize([
@@ -66,7 +66,7 @@ class HistoricalBehavior extends Behavior
                 'name' => $event->ordered_product->getRenderFullName(),
                 'price' => ($event->ordered_product->currency_id) ? $event->ordered_product->price / $event->ordered_product->currency_rate  : $event->ordered_product->price,
                 'currency' => ($event->ordered_product->currency_id) ? Yii::$app->currency->getById($event->ordered_product->currency_id)->iso : Yii::$app->currency->main['iso'],
-                'image' => $event->ordered_product->originalProduct->getMainImage()->url,
+                'image' => ($original) ? $original->getMainImage('small')->url : 'no image',
                 'quantity' => $event->ordered_product->quantity
             ]),
             'data_after' => '',
@@ -78,6 +78,7 @@ class HistoricalBehavior extends Behavior
      */
     public function onProductDeleted($event)
     {
+        $original = $event->ordered_product->originalProduct ? $event->ordered_product->originalProduct : null;
         $this->log([
             'handler' => self::PRODUCT_HANDLER,
             'data_before' => serialize([
@@ -85,7 +86,7 @@ class HistoricalBehavior extends Behavior
                 'name' => $event->ordered_product->getRenderFullName(),
                 'price' => ($event->ordered_product->currency_id) ? $event->ordered_product->price / $event->ordered_product->currency_rate  : $event->ordered_product->price,
                 'currency' => ($event->ordered_product->currency_id) ? Yii::$app->currency->getById($event->ordered_product->currency_id)->iso : Yii::$app->currency->main['iso'],
-                'image' => ($event->ordered_product->originalProduct) ? $event->ordered_product->originalProduct->getMainImage('50x50')->url : 'no image',
+                'image' => ($original) ? $original->getMainImage('small')->url : 'no image',
                 'quantity' => $event->ordered_product->quantity
             ]),
             'data_after' => '',
@@ -103,7 +104,7 @@ class HistoricalBehavior extends Behavior
             'data_before' => serialize([
                 'changed' => true,
                 'name' => Html::a($event->ordered_product->name, $original->getUrl()),
-                'image' => ($original) ? $original->getMainImage('50x50')->url : 'no image',
+                'image' => ($original) ? $original->getMainImage('small')->url : 'no image',
                 'quantity' => $event->ordered_product->quantity
             ]),
             'data_after' => serialize([

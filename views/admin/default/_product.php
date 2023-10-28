@@ -9,7 +9,7 @@ $data_after = $data->getDataAfter();
     <td>
         <?php if ($data_before['image']) { ?>
             <div class="float-left mr-3">
-                <?php echo Html::img($data_before['image'], ['height' => 50, 'class' => '']); ?>
+                <?php echo Html::img($data_before['image'], ['height' => 50]); ?>
             </div>
         <?php } ?>
         <?php
@@ -26,24 +26,15 @@ $data_after = $data->getDataAfter();
     </td>
     <?php if (isset($data_before['changed'])) { ?>
         <td>
-
-            <?php
-
-            echo Yii::t('cart/admin', 'QUANTITY') . ': ' . $data_before['quantity'];
-            ?>
+            <?= Yii::t('cart/admin', 'QUANTITY') . ': ' . $data_before['quantity']; ?>
         </td>
         <td>
-            <?php
-
-            echo Yii::t('cart/admin', 'QUANTITY') . ': ' . $data_after['quantity'];
-            ?>
+            <?= Yii::t('cart/admin', 'QUANTITY') . ': ' . $data_after['quantity']; ?>
         </td>
     <?php } elseif ($data_before['deleted']) { ?>
         <td colspan="2">
-
             <div class="float-left">
                 <?php
-
                 echo Yii::t('cart/default', 'COST') . ': <strong>' . $data_before['price'] . ' '.$data_before['currency'].'</strong><br>';
                 echo Yii::t('cart/admin', 'QUANTITY') . ': <strong>' . $data_before['quantity'].'</strong>';
                 ?>
@@ -51,13 +42,10 @@ $data_after = $data->getDataAfter();
         </td>
     <?php } else { ?>
         <td colspan="2">
-
             <div class="float-left">
                 <?php
-
                 echo Yii::t('cart/default', 'COST') . ': <strong>' . $data_before['price'] . ' '.$data_before['currency'].'</strong><br>';
                 echo Yii::t('cart/admin', 'QUANTITY') . ': <strong>' . $data_before['quantity'].'</strong>';
-
                 ?>
             </div>
         </td>
