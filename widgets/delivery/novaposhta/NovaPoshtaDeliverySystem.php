@@ -6,6 +6,7 @@ use panix\mod\cart\models\forms\OrderCreateForm;
 use panix\mod\cart\widgets\delivery\novaposhta\api\NovaPoshtaApi;
 use panix\mod\cart\widgets\delivery\novaposhta\DeliveryAsset;
 use panix\mod\novaposhta\models\Cities;
+use panix\mod\novaposhta\models\RecipientDynamicModel;
 use panix\mod\novaposhta\models\Warehouses;
 use Yii;
 use panix\engine\CMS;
@@ -188,6 +189,69 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
             'warehouses' => $warehouses
         ]);
     }
+
+
+    public function processRequestRecipient($modelep = null)
+    {
+        $config = Yii::$app->settings->get('novaposhta');
+        $post = Yii::$app->request->post();
+
+
+        $model = new RecipientDynamicModel(['type', 'city', 'warehouse', 'area', 'address', 'typesList']);
+        $model->addRule(['type', 'address', 'city', 'warehouse', 'area'], 'safe');
+        $model->addRule(['type', 'address', 'city', 'warehouse', 'area'], 'default');
+        $model->addRule(['city', 'area', 'type'], 'required');
+        $model->typesList = [
+            'warehouse' => Yii::t('cart/Delivery', 'DELIVERY_WAREHOUSE'),
+            'address' => Yii::t('cart/Delivery', 'DELIVERY_ADDRESS')
+        ];
+        $model->setAttributeLabels([
+            'type' => Yii::t('cart/Delivery', 'TYPE_DELIVERY'),
+            'address' => Yii::t('cart/Delivery', 'TYPE_ADDRESS'),
+            'city' => Yii::t('cart/Delivery', 'CITY'),
+            'warehouse' => Yii::t('cart/Delivery', 'WAREHOUSE'),
+            'area' => Yii::t('cart/Delivery', 'AREA')
+        ]);
+
+        $model->type = array_keys($model->typesList)[0]; //to default first item
+
+
+
+        if ($post) {
+            $model->load($post);
+        } else {
+            if (isset($modelep->RecipientRegionRef)) {
+                $model->area = $modelep->RecipientRegionRef;
+            }
+            if (isset($modelep->CityRecipientRef)) {
+                $model->city = $modelep->CityRecipientRef;
+            }
+            if (isset($modelep->RecipientAddressRef)) {
+                $model->warehouse = $modelep->RecipientAddressRef;
+            }
+        }
+
+        $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
+
+        $warehouses = Yii::$app->cache->get("warehouses-{$model->city}");
+        if ($model->city) {
+            if ($warehouses === false) {
+                $np = Yii::$app->novaposhta->model('Address')->method('getWarehouses');
+                $result = $np->params(['CityRef' => $model->city])->execute();
+                if ($result['success']) {
+                    Yii::$app->cache->set("warehouses-{$model->city}", $result['data'], 86400);
+                    $warehouses = $result['data'];
+                }
+            }
+        }
+
+
+        return Yii::$app->view->$render("@novaposhta/views/admin/default/_config_recipient", [
+            'model' => $model,
+            'warehouses' => $warehouses
+        ]);
+    }
+
 
     public function renderDeliveryFormHtml($model)
     {
