@@ -110,9 +110,13 @@ use panix\engine\bootstrap\ActiveForm;
                 echo Select2::widget([
                     'model' => $model,
                     'attribute' => 'warehouse',
-                    'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Warehouses::find()->cache(8600 * 7)->where(['CityRef' => $model->city])->orderBy(['number' => SORT_ASC])->all(), 'Ref', function ($model) {
-                        return $model->getDescription();
+                    'items' => \yii\helpers\ArrayHelper::map($resultWarehouses, 'Ref', function ($model) {
+                        //return $model->getDescription();
+                        return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
                     }),
+                    //'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Warehouses::find()->cache(8600 * 7)->where(['CityRef' => $model->city])->orderBy(['number' => SORT_ASC])->all(), 'Ref', function ($model) {
+                    //    return $model->getDescription();
+                    //}),
                     'options' => [
                         'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_WAREHOUSE') . ' &mdash;'),
                         'class' => ($model->getErrors('warehouse')) ? 'is-invalid' : ''

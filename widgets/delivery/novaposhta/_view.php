@@ -48,7 +48,7 @@ use panix\ext\select2\Select2;
                     'model' => $model,
                     'attribute' => 'city',
                     'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Cities::find()
-                        ->orderBy(['CityID' => SORT_ASC,'Description' => SORT_ASC])
+                        ->orderBy(['CityID' => SORT_ASC, 'Description' => SORT_ASC])
                         ->andWhere(['Area' => $model->area])
                         ->all(), 'Ref', function ($model) {
                         return $model->getDescription();
@@ -96,21 +96,12 @@ use panix\ext\select2\Select2;
                     <?= Html::activeLabel($model, 'warehouse', ['class' => 'col-form-label']); ?>
                     <?php
 
-                    /*$queryWarehouse = \panix\mod\novaposhta\models\Warehouses::find();
-
-                    $queryWarehouse->where(['CityRef' => $model->city]);
-                    if ($settings->type_warehouse) {
-                        $queryWarehouse->andWhere(['TypeOfWarehouse' => $settings->type_warehouse]);
-                    }
-                    //$queryWarehouse->cache(8600 * 7);
-                    $queryWarehouse->orderBy(['number' => SORT_ASC]);
-                    $resultWarehouses = $queryWarehouse->all();*/
-
                     echo Select2::widget([
                         'model' => $model,
                         'attribute' => 'warehouse',
                         'items' => \yii\helpers\ArrayHelper::map($resultWarehouses, 'Ref', function ($model) {
-                            return $model->getDescription();
+                            //return $model->getDescription();
+                            return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
                         }),
                         'options' => [
                             'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_WAREHOUSE') . ' &mdash;'),
