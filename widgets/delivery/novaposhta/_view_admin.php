@@ -55,7 +55,7 @@ use panix\engine\bootstrap\ActiveForm;
                 'model' => $model,
                 'attribute' => 'city',
                 'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Cities::find()
-                    ->orderBy(['Description' => SORT_ASC])
+                    ->orderBy(['CityID' => SORT_ASC, 'Description' => SORT_ASC])
                     //->where(['warehouse' => 1])
                     ->andWhere(['Area' => $model->area])
                     ->all(), 'Ref', function ($model) {
