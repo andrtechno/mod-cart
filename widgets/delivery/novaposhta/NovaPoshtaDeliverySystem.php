@@ -150,6 +150,45 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         ]);
     }
 
+    public function processRequestSender()
+    {
+        $config = Yii::$app->settings->get('novaposhta');
+        $post = Yii::$app->request->post();
+        if ($post) {
+            $this->model->load($post);
+        } else {
+            if (isset($config->sender_area)) {
+                $this->model->area = $config->sender_area;
+            }
+            if (isset($config->sender_city)) {
+                $this->model->city = $config->sender_city;
+            }
+            if (isset($config->sender_warehouse)) {
+                $this->model->warehouse = $config->sender_warehouse;
+            }
+        }
+
+        $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
+
+        $warehouses = Yii::$app->cache->get("warehouses-{$this->model->city}");
+        if ($this->model->city) {
+            if ($warehouses === false) {
+                $np = Yii::$app->novaposhta->model('Address')->method('getWarehouses');
+                $result = $np->params(['CityRef' => $this->model->city])->execute();
+                if ($result['success']) {
+                    Yii::$app->cache->set("warehouses-{$this->model->city}", $result['data'], 86400);
+                    $warehouses = $result['data'];
+                }
+            }
+        }
+
+
+        return Yii::$app->view->$render("@novaposhta/views/admin/default/_config_sender", [
+            'model' => $this->model,
+            'warehouses' => $warehouses
+        ]);
+    }
+
     public function renderDeliveryFormHtml($model)
     {
         return Yii::$app->view->renderAjax("@cart/widgets/delivery/{$model->deliveryMethod->system}/_view", [
