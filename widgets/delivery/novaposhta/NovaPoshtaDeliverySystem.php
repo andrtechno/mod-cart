@@ -65,7 +65,6 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
 
                 $np = Yii::$app->novaposhta->model('Address')->method('getWarehouses');
                 $warehouses = $np->params(['CityRef' => $this->model->city])->execute();
-                var_dump($warehouses);die;
                 if ($warehouses['success']) {
                     Yii::$app->cache->set("warehouses-{$this->model->city}", $warehouses['data'], 86400);
                 }
