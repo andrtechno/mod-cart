@@ -64,9 +64,10 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
             if ($warehouses === false) {
 
                 $np = Yii::$app->novaposhta->model('Address')->method('getWarehouses');
-                $warehouses = $np->params(['CityRef' => $this->model->city])->execute();
-                if ($warehouses['success']) {
-                    Yii::$app->cache->set("warehouses-{$this->model->city}", $warehouses['data'], 86400);
+                $result = $np->params(['CityRef' => $this->model->city])->execute();
+                if ($result['success']) {
+                    Yii::$app->cache->set("warehouses-{$this->model->city}", $result['data'], 86400);
+                    $warehouses = $result['data'];
                 }
             }
 
@@ -93,13 +94,14 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
 
 
-        $warehouses = Yii::$app->cache->get("warehouses-{$model->city}");
+        $warehouses = Yii::$app->cache->get("warehouses-{$this->model->city}");
         if ($warehouses === false) {
 
             $np = Yii::$app->novaposhta->model('Address')->method('getWarehouses');
-            $warehouses = $np->params(['CityRef' => $model->city])->execute();
-            if ($warehouses['success']) {
-                Yii::$app->cache->set("warehouses-{$model->city}", $warehouses['data'], 86400);
+            $result = $np->params(['CityRef' => $this->model->city])->execute();
+            if ($result['success']) {
+                Yii::$app->cache->set("warehouses-{$this->model->city}", $result['data'], 86400);
+                $warehouses = $result['data'];
             }
         }
 
@@ -131,9 +133,10 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
             if ($warehouses === false) {
 
                 $np = Yii::$app->novaposhta->model('Address')->method('getWarehouses');
-                $warehouses = $np->params(['CityRef' => $model->deliveryModel->city])->execute();
-                if ($warehouses['success']) {
-                    Yii::$app->cache->set("warehouses-{$model->deliveryModel->city}", $warehouses['data'], 86400);
+                $result = $np->params(['CityRef' => $model->deliveryModel->city])->execute();
+                if ($result['success']) {
+                    Yii::$app->cache->set("warehouses-{$model->deliveryModel->city}", $result['data'], 86400);
+                    $warehouses = $result['data'];
                 }
             }
         }

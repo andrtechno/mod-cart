@@ -96,10 +96,12 @@ use panix\ext\select2\Select2;
                     <?= Html::activeLabel($model, 'warehouse', ['class' => 'col-form-label']); ?>
                     <?php
 
+   // var_dump($warehouses);
+
                     echo Select2::widget([
                         'model' => $model,
                         'attribute' => 'warehouse',
-                        'items' => \yii\helpers\ArrayHelper::map(($warehouses) ? $warehouses : [], 'Ref', function ($model) {
+                        'items' => \yii\helpers\ArrayHelper::map((($warehouses) ? $warehouses : []), 'Ref', function ($model) {
                             //return $model->getDescription();
                             return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
                         }),
