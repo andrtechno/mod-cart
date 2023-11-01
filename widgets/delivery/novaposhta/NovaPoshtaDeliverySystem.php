@@ -111,7 +111,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
 
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
 
-        $result = Yii::$app->novaposhta->getWarehouses($this->deliveryModel->city, 0, 9999);
+        $result = Yii::$app->novaposhta->getWarehouses($model->deliveryModel->city, 0, 9999);
         $warehouses = $result['data'];
 
         return Yii::$app->view->$render("@cart/widgets/delivery/novaposhta/_view_admin", [
