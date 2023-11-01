@@ -8,7 +8,7 @@ use panix\ext\select2\Select2;
  * @var \yii\web\View $this
  */
 
-
+$areas = Yii::$app->novaposhta->getAreas();
 ?>
     <div class="mb-4">
         <div class="form-group field-delivery-area required <?php if ($model->getErrors('area')) echo "has-error" ?>">
@@ -18,12 +18,9 @@ use panix\ext\select2\Select2;
             echo Select2::widget([
                 'model' => $model,
                 'attribute' => 'area',
-                'items' => \panix\mod\novaposhta\models\Area::getList2(),
-                /*'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Area::find()->cache(86000 * 30)
-                    ->orderBy(['Description' => SORT_ASC])
-                    ->all(), 'Ref', function ($model) {
-                    return $model->getDescription();
-                }),*/
+                'items' => \yii\helpers\ArrayHelper::map($areas['data'], 'Ref', function ($model) {
+                    return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
+                }),
                 'options' => [
                     'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_AREA') . ' &mdash;'),
                     'class' => ($model->getErrors('area')) ? 'is-invalid' : ''

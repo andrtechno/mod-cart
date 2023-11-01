@@ -853,10 +853,13 @@ class Order extends ActiveRecord
                     'value' => Yii::t('cart/Delivery', ($data['type'] == 'warehouse') ? 'TYPE_WAREHOUSE' : 'TYPE_ADDRESS')
                 ];
                 if (isset($data['area'])) {
-                    $region = Area::findOne($data['area']);
+                    $areas = Yii::$app->novaposhta->getAreas();
+                    $area = ArrayHelper::map($areas['data'], 'Ref', function ($model) {
+                        return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
+                    });
                     $list[] = [
                         'key' => Yii::t('cart/Delivery', 'AREA'),
-                        'value' => $region->getDescription()
+                        'value' => $area[$data['area']]
                     ];
                 }
                 if (isset($data['city'])) {
@@ -1019,9 +1022,13 @@ class Order extends ActiveRecord
                         if (isset($data['type'])) {
                             if ($data['type'] == 'warehouse') {
                                 if (isset($data['area'])) {
-                                    $area = Area::findOne($data['area']);
+                                    $areas = Yii::$app->novaposhta->getAreas();
+                                    $area = ArrayHelper::map($areas['data'], 'Ref', function ($model) {
+                                        return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
+                                    });
+
                                     if ($area) {
-                                        $html .= $area->getDescription() . ', ';
+                                        $html .= $area[$data['area']] . ', ';
                                     }
                                 }
                                 if (isset($data['city'])) {

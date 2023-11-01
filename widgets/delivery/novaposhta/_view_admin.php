@@ -9,7 +9,7 @@ use panix\engine\bootstrap\ActiveForm;
 /**
  * @var \yii\web\View $this
  */
-
+$areas = Yii::$app->novaposhta->getAreas();
 ?>
 
     <div class="form-group row field-delivery-area required">
@@ -21,10 +21,8 @@ use panix\engine\bootstrap\ActiveForm;
             echo Select2::widget([
                 'model' => $model,
                 'attribute' => 'area',
-                'items' => \yii\helpers\ArrayHelper::map(\panix\mod\novaposhta\models\Area::find()->cache(86000 * 30)
-                    ->orderBy(['Description' => SORT_ASC])
-                    ->all(), 'Ref', function ($model) {
-                    return $model->getDescription();
+                'items' => \yii\helpers\ArrayHelper::map($areas['data'], 'Ref', function ($model) {
+                    return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
                 }),
                 'options' => [
                     'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_AREA') . ' &mdash;'),
@@ -147,9 +145,8 @@ use panix\engine\bootstrap\ActiveForm;
 <?php } ?>
 
 <?php
-
-
-$this->registerJs("
+if (!Yii::$app->request->isAjax) {
+    $this->registerJs("
     $(document).on('change', '#dynamicmodel-city, #dynamicmodel-type, #dynamicmodel-area', function(e, clickedIndex, isSelected, previousValue) {
         $.ajax({
             url: common.url('/admin/cart/delivery/process?id=" . $delivery_id . "'),
@@ -166,4 +163,5 @@ $this->registerJs("
         });
     });
 
-",\yii\web\View::POS_END,'np');
+", \yii\web\View::POS_END, 'np');
+}
