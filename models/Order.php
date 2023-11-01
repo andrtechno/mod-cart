@@ -872,19 +872,9 @@ class Order extends ActiveRecord
                 if ($data['type'] == 'warehouse') {
                     if (isset($data['warehouse'])) {
 
-
-                        $warehouses = Yii::$app->cache->get("warehouses-{$data['city']}");
-                        if ($warehouses === false) {
-                            $np = Yii::$app->novaposhta->model('Address')->method('getWarehouses');
-                            $result = $np->params(['CityRef' => $data['city']])->execute();
-                            if ($result['success']) {
-                                Yii::$app->cache->set("warehouses-{$data['city']}", $result['data'], 86400);
-                                $warehouses = $result['data'];
-                            }
-                        }
-
-                        if ($warehouses) {
-                            $warehouses = ArrayHelper::map($warehouses, 'Ref', function ($data) {
+                        $result = Yii::$app->novaposhta->getWarehouses($data['city'], 0, 9999);
+                        if ($result) {
+                            $warehouses = ArrayHelper::map($result['data'], 'Ref', function ($data) {
                                 return $data['Description'];
                             });
                             if (isset($warehouses[$data['warehouse']])) {
@@ -894,6 +884,8 @@ class Order extends ActiveRecord
                                 ];
                             }
                         }
+
+
                     }
                 } else {
                     $list[] = [
@@ -1039,18 +1031,9 @@ class Order extends ActiveRecord
                                 }
                                 if (isset($data['warehouse'])) {
 
-                                    $warehouses = Yii::$app->cache->get("warehouses-{$data['city']}");
-                                    if ($warehouses === false) {
-                                        $np = Yii::$app->novaposhta->model('Address')->method('getWarehouses');
-                                        $result = $np->params(['CityRef' => $data['city']])->execute();
-                                        if ($result['success']) {
-                                            Yii::$app->cache->set("warehouses-{$data['city']}", $result['data'], 86400);
-                                            $warehouses = $result['data'];
-                                        }
-                                    }
-
-                                    if ($warehouses) {
-                                        $warehouses = ArrayHelper::map($warehouses, 'Ref', function ($data) {
+                                    $result = Yii::$app->novaposhta->getWarehouses($data['city'], 0, 9999);
+                                    if ($result) {
+                                        $warehouses = ArrayHelper::map($result['data'], 'Ref', function ($data) {
                                             return $data['Description'];
                                         });
                                         if (isset($warehouses[$data['warehouse']])) {
