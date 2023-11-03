@@ -12,7 +12,7 @@ class MeestApi
 
     private $api_url = 'https://publicapi.meest.com/';
 
-    public function getList()
+    public static function getList()
     {
         return [
             'poshtomat' => 'почтоматы',
