@@ -98,7 +98,7 @@ class MeestDeliverySystem extends BaseDeliverySystem
 
     public function getSettingsKey2($deliveryMethodId)
     {
-        return $deliveryMethodId . '_NovaPoshtaDeliverySystem';
+        return $deliveryMethodId . '_MeestDeliverySystem';
     }
 
     public function getModelConfig()
