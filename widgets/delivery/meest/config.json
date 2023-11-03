@@ -1,0 +1,6 @@
+{
+  "id": "meest",
+  "name": "Meest",
+  "class": "panix\\mod\\cart\\widgets\\delivery\\meest\\MeestDeliverySystem",
+  "version": "1.0"
+}

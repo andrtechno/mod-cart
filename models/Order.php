@@ -893,6 +893,57 @@ class Order extends ActiveRecord
                         'value' => $data['address']
                     ];
                 }
+            } elseif ($this->deliveryMethod->system == 'meest') {
+                $api = new \panix\mod\cart\widgets\delivery\meest\api\MeestApi();
+                if ($data['type'] == 'warehouse') {
+                    if (isset($data['warehouse'])) {
+                        $ware = $api->getBranchesById($data['warehouse']);
+                    }
+                }else{
+                    $ware = '';
+                }
+                $list[] = [
+                    'key' => Yii::t('cart/Delivery', 'TYPE_DELIVERY'),
+                    'value' => Yii::t('cart/Delivery', ($data['type'] == 'warehouse') ? 'TYPE_WAREHOUSE' : 'TYPE_ADDRESS')
+                ];
+                if (isset($data['area'])) {
+                    if(isset($ware[0])){
+                        $value = $ware[0]['region']['ua'];
+                    }else{
+                        $regions = $api->getGeoRegions();
+                        $region = ArrayHelper::map($regions, 'region_id', function ($model) {
+                            return $model['ua'];
+                        });
+                        $value = (isset($region[$data['area']])) ? $region[$data['area']]: 'unknown';
+                    }
+                    $list[] = [
+                        'key' => Yii::t('cart/Delivery', 'AREA'),
+                        'value' => $value
+                    ];
+                }
+                if (isset($data['city'])) {
+                    $list[] = [
+                        'key' => Yii::t('cart/Delivery', 'CITY'),
+                        'value' => $data['city']
+                    ];
+                }
+                if ($data['type'] == 'warehouse') {
+                    if (isset($data['warehouse'])) {
+                        $warehouse = ArrayHelper::map($ware, 'br_id', function ($model) {
+                            return '№' . $model['num_showcase'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'] . ' (до ' . $model['limits']['place_max_kg'] . 'кг)';
+                        });
+
+                        $list[] = [
+                            'key' => Yii::t('cart/Delivery', 'WAREHOUSE'),
+                            'value' => $warehouse[$data['warehouse']]
+                        ];
+                    }
+                } else {
+                    $list[] = [
+                        'key' => Yii::t('cart/Delivery', 'ADDRESS'),
+                        'value' => $data['address']
+                    ];
+                }
             } elseif ($this->deliveryMethod->system == 'pickup') {
                 $manager = new DeliverySystemManager();
                 $system = $manager->getSystemClass($this->deliveryMethod->system);
@@ -1045,6 +1096,45 @@ class Order extends ActiveRecord
                             } else {
                                 $html .= $data['address'];
                             }
+                        }
+                        return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $html;
+
+                    }elseif ($model->deliveryMethod->system == 'meest'){
+                        $api = new \panix\mod\cart\widgets\delivery\meest\api\MeestApi();
+
+                        if ($data['type'] == 'warehouse') {
+                            if (isset($data['warehouse'])) {
+                                $ware = $api->getBranchesById($data['warehouse']);
+                            }
+                        }else{
+                            $ware = '';
+                        }
+
+                        if (isset($data['area'])) {
+                            if(isset($ware[0])){
+                                $value = $ware[0]['region']['ua'];
+                            }else{
+                                $regions = $api->getGeoRegions();
+                                $region = ArrayHelper::map($regions, 'region_id', function ($model) {
+                                    return $model['ua'];
+                                });
+                                $value = (isset($region[$data['area']])) ? $region[$data['area']]: 'unknown';
+                            }
+
+                            $html .= $value.', ';
+                        }
+                        if (isset($data['city'])) {
+                            $html .= $data['city'].'<br/>';
+                        }
+                        if ($data['type'] == 'warehouse') {
+                            if (isset($data['warehouse'])) {
+                                $warehouse = ArrayHelper::map($ware, 'br_id', function ($model) {
+                                    return '№' . $model['num_showcase'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'] . ' (до ' . $model['limits']['place_max_kg'] . 'кг)';
+                                });
+                                $html .= $warehouse[$data['warehouse']];
+                            }
+                        } else {
+                            $html .= $data['address'];
                         }
                         return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $html;
                     } elseif ($model->deliveryMethod->system == 'address') {
