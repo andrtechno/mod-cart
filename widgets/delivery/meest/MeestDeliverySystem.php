@@ -2,24 +2,14 @@
 
 namespace panix\mod\cart\widgets\delivery\meest;
 
-use panix\mod\cart\models\forms\OrderCreateForm;
-use panix\mod\cart\widgets\delivery\meest\api\MeestApi;
-use panix\mod\cart\widgets\delivery\novaposhta\api\NovaPoshtaApi;
-use panix\mod\cart\widgets\delivery\novaposhta\DeliveryAsset;
-use panix\mod\novaposhta\models\Cities;
-use panix\mod\novaposhta\models\RecipientDynamicModel;
-use panix\mod\novaposhta\models\Warehouses;
+
 use Yii;
-use panix\engine\CMS;
 use panix\mod\cart\models\Delivery;
-use panix\mod\cart\models\Order;
 use panix\mod\cart\components\delivery\BaseDeliverySystem;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
-use yii\helpers\Json;
-use yii\helpers\Url;
 use yii\httpclient\Client;
 use yii\web\Response;
+use panix\mod\cart\widgets\delivery\meest\api\MeestApi;
+use panix\mod\cart\widgets\delivery\meest\DeliveryAsset;
 
 /**
  * Meest delivery system
@@ -44,24 +34,10 @@ class MeestDeliverySystem extends BaseDeliverySystem
     {
         $settings = $this->getSettings($method->id);
 
-
-        /*$client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('GET')
-            ->setUrl('https://publicapi.meest.com/geo_regions')
-            ->send();
-        if ($response->isOk) {
-
-            if($response->data['status'] == 1){
-                CMS::dump($response->data['result']);
-            }
-        }*/
-
         $api = new MeestApi();
 
-
         $post = Yii::$app->request->post();
-        //DeliveryAsset::register(Yii::$app->view);
+        DeliveryAsset::register(Yii::$app->view);
         if (!$deliveryModel) {
             if (isset($post['DynamicModel']['type']) == 'warehouse') {
                 $this->model->addRule(['warehouse'], 'required');
@@ -75,12 +51,6 @@ class MeestDeliverySystem extends BaseDeliverySystem
 
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
         $sd = [];
-        $streets = [];
-        $warehouses = false;
-        if ($this->model->city) {
-            $result = Yii::$app->novaposhta->getWarehouses($this->model->city, 0, 9999);
-            $warehouses = $result['data'];
-        }
 
         return Yii::$app->view->$render("@cart/widgets/delivery/meest/_view", [
             'model' => $this->model,
@@ -88,7 +58,6 @@ class MeestDeliverySystem extends BaseDeliverySystem
             'settings' => $settings,
             'api' => $api,
             'areas'=>$api->getGeoRegions(),
-            'warehouses' => $warehouses
         ]);
     }
 
