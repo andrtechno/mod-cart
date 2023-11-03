@@ -37,7 +37,7 @@ class MeestDeliverySystem extends BaseDeliverySystem
         $api = new MeestApi();
 
         $post = Yii::$app->request->post();
-        DeliveryAsset::register(Yii::$app->view);
+        //DeliveryAsset::register(Yii::$app->view); duplicate novaposhta!!!
         if (!$deliveryModel) {
             if (isset($post['DynamicModel']['type']) == 'warehouse') {
                 $this->model->addRule(['warehouse'], 'required');
