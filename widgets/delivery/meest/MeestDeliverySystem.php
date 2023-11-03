@@ -50,7 +50,6 @@ class MeestDeliverySystem extends BaseDeliverySystem
         }
 
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
-        $sd = [];
 
         return Yii::$app->view->$render("@cart/widgets/delivery/meest/_view", [
             'model' => $this->model,
@@ -81,7 +80,6 @@ class MeestDeliverySystem extends BaseDeliverySystem
         return Yii::$app->view->$render("@cart/widgets/delivery/meest/_view_admin", [
             'model' => $model->deliveryModel,
             'delivery_id' => $method->id,
-
             'areas'=>$api->getGeoRegions(),
             'api' => $api
         ]);
