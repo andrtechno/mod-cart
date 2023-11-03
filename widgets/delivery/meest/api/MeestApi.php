@@ -12,13 +12,15 @@ class MeestApi
 
     private $api_url = 'https://publicapi.meest.com/';
 
-    public $options = [];
-
-    private $response;
-
-    public function __construct()
+    public function getList()
     {
-
+        return [
+            'poshtomat' => 'почтоматы',
+            'minibranch' => 'мини отделения',
+            'mainbranch' => 'основное отделение',
+            'cargobranch' => 'грузовые отделения',
+            'internationalcargobranch' => 'международные грузовые отделения',
+        ];
 
     }
 
@@ -36,10 +38,12 @@ class MeestApi
     {
         return $this->run('geo_districts', $options);
     }
+
     public function getGeoStreets($options = [])
     {
         return $this->run('geo_streets', $options);
     }
+
     public function getBranches($options = [])
     {
         return $this->run('branches', $options);

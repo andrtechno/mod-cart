@@ -1,10 +1,9 @@
 <?php
 use panix\engine\bootstrap\ActiveForm;
-
+use panix\mod\cart\widgets\delivery\meest\api\MeestApi;
 
 $form = ActiveForm::begin();
 
 ?>
-<?php echo $form->field($model, 'api_key')->textInput(['maxlength' => 255]) ?>
-<?php //echo $form->field($model, 'type_warehouse')->checkboxList(\panix\mod\novaposhta\models\WarehouseTypes::getList2()) ?>
+<?php echo $form->field($model, 'type_warehouse')->checkboxList(MeestApi::getList()) ?>
 <?php //ActiveForm::end(); ?>
