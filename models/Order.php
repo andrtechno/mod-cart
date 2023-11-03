@@ -1052,7 +1052,7 @@ class Order extends ActiveRecord
             'value' => function ($model) {
                 /** @var static $model */
 
-
+                $html = '';
                 if ($model->deliveryMethod) {
                     if ($model->deliveryMethod->system) {
                         $manager = new DeliverySystemManager();
@@ -1061,7 +1061,7 @@ class Order extends ActiveRecord
                     }
                     $data = Json::decode($model->delivery_data);
                     if ($model->deliveryMethod->system == 'novaposhta') {
-                        $html = '';
+
                         if (isset($data['type'])) {
                             if ($data['type'] == 'warehouse') {
                                 if (isset($data['area'])) {
