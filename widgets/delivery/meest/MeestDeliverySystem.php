@@ -61,6 +61,25 @@ class MeestDeliverySystem extends BaseDeliverySystem
     }
 
 
+    public function processRequestAdmin(Delivery $method)
+    {
+        $post = Yii::$app->request->post();
+        if (isset($post['MeestModel']['type']) == 'warehouse') {
+            $this->model->addRule(['warehouse'], 'required');
+        } else {
+            $this->model->addRule(['address'], 'required');
+        }
+        $this->model->load($post);
+
+        $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
+        $api = new MeestApi();
+        return Yii::$app->view->$render("@cart/widgets/delivery/meest/_view_admin", [
+            'model' => $this->model,
+            'delivery_id' => $method->id,
+            'areas' => $api->getGeoRegions(),
+            'api' => $api
+        ]);
+    }
 
     public function processRequestAdmin2(Delivery $method, $model = null)
     {
