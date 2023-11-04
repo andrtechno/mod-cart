@@ -46,7 +46,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         $post = Yii::$app->request->post();
         DeliveryAsset::register(Yii::$app->view);
         if (!$deliveryModel) {
-            if (isset($post['DynamicModel']['type']) == 'warehouse') {
+            if (isset($post['NovaposhtaModel']['type']) == 'warehouse') {
                 $this->model->addRule(['warehouse'], 'required');
             } else {
                 $this->model->addRule(['address'], 'required');
@@ -76,7 +76,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
     public function processRequestAdmin(Delivery $method)
     {
         $post = Yii::$app->request->post();
-        if (isset($post['DynamicModel']['type']) == 'warehouse') {
+        if (isset($post['NovaposhtaModel']['type']) == 'warehouse') {
             $this->model->addRule(['warehouse'], 'required');
         } else {
             $this->model->addRule(['address'], 'required');
@@ -105,7 +105,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         } else {
             $data = $model->getDeliveryData();
             if ($data) {
-                $model->deliveryModel->load(['DynamicModel' => $data]);
+                $model->deliveryModel->load(['NovaposhtaModel' => $data]);
             }
         }
 
@@ -257,7 +257,7 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
 
     public function getModel()
     {
-        $model = new \yii\base\DynamicModel(['type', 'city', 'warehouse', 'area', 'address', 'typesList']);
+        $model = new NovaposhtaModel(['type', 'city', 'warehouse', 'area', 'address', 'typesList']);
         $model->addRule(['type', 'address', 'city', 'warehouse', 'area'], 'safe');
         $model->addRule(['type', 'address', 'city', 'warehouse', 'area'], 'default');
         $model->addRule(['city', 'area', 'type'], 'required');

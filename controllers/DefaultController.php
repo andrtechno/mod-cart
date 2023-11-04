@@ -188,21 +188,16 @@ class DefaultController extends WebController
                 $manager = new DeliverySystemManager();
                 $system = $manager->getSystemClass($this->delivery->system);
                 $deliveryModel = $system->getModel();
-
-                if ($this->delivery->system == 'novaposhta') {
-                    if (isset($post['DynamicModel'])) {
+                $modelName = ucfirst($this->delivery->system).'Model';
+                if ($this->delivery->system == 'novaposhta' || $this->delivery->system == 'meest') {
+                    if (isset($post[$modelName])) {
 
                         if ($deliveryModel->load($post)) {
-                            // CMS::dump($deliveryModel);
-                            //die;
-                            //if (isset($post['DynamicModel']['type'])) {
                             if ($deliveryModel->type == 'warehouse') {
-                                //if ($post['DynamicModel']['type'] == 'warehouse') {
                                 $deliveryModel->addRule(['warehouse'], 'required');
                             } else {
                                 $deliveryModel->addRule(['address'], 'required');
                             }
-                            //}
                             if (Yii::$app->request->isAjax) {
                                 Yii::$app->response->format = Response::FORMAT_JSON;
                                 return ActiveForm::validate($deliveryModel);
@@ -238,6 +233,7 @@ class DefaultController extends WebController
             $order = $this->createOrder();
 
             if ($order instanceof Order) {
+                die;
                 Yii::$app->cart->clear();
                 Yii::$app->session->setFlash('success', Yii::t('cart/default', 'SUCCESS_ORDER'));
                 return $this->redirect(['view', 'secret_key' => $order->secret_key]);
@@ -711,7 +707,7 @@ class DefaultController extends WebController
         // $order->detachBehavior('notification');
 
         //FCM push notification
-        if (Yii::$app->hasModule('fcm')) {
+        /*if (Yii::$app->hasModule('fcm')) {
             $text = "Сумма 5543.55 грн".PHP_EOL;
             $text .= Yii::t('cart/default','DELIVERY').": Новая почта".PHP_EOL;
             $text .= Yii::t('cart/default','PAYMENT').": Приват банк {TEST}";
@@ -720,7 +716,7 @@ class DefaultController extends WebController
                 ->setBody($text);
 
             $result = Yii::$app->fcm->send($notify);
-        }
+        }*/
 
         Yii::$app->user->unsetPoints($this->order->points);
         //\machour\yii2\notifications\components\Notification::notify(\machour\yii2\notifications\components\Notification::KEY_NEW_ORDER, 1,$order->primaryKey);

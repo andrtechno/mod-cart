@@ -406,7 +406,6 @@ class Order extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
-
     /**
      * @inheritdoc
      */
@@ -418,6 +417,7 @@ class Order extends ActiveRecord
         if ($insert) {
             Timeline::add('new_order');
         }
+
         if ($this->ttn) {
             if(isset($changedAttributes['ttn'])){
                 if ($this->oldAttributes['ttn'] != $changedAttributes['ttn']) {
