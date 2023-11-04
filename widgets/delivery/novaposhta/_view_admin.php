@@ -143,25 +143,3 @@ $areas = Yii::$app->novaposhta->getAreas();
         </div>
     <?php } ?>
 <?php } ?>
-
-<?php
-if (!Yii::$app->request->isAjax) {
-    $this->registerJs("
-    $(document).on('change', '#novaposhtamodel-city, #novaposhtamodel-type, #novaposhtamodel-area', function(e, clickedIndex, isSelected, previousValue) {
-        $.ajax({
-            url: common.url('/admin/cart/delivery/process?id=" . $delivery_id . "'),
-            type: 'POST',
-            data: $('#order-form').serialize(),
-            dataType: 'html',
-            success: function (data) {
-                $('#delivery-form').html(data);
-                $('#delivery-form').removeClass('pjax-loader');
-            },
-            beforeSend:function(){
-                $('#delivery-form').addClass('pjax-loader');
-            }
-        });
-    });
-
-", \yii\web\View::POS_END, 'np');
-}

@@ -73,19 +73,31 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
         ]);
     }
 
-    public function processRequestAdmin(Delivery $method)
+
+    public function processRequestAdmin(Delivery $method, $model = null)
     {
+        DeliveryAdminAsset::register(Yii::$app->view);
         $post = Yii::$app->request->post();
-        if (isset($post['NovaposhtaModel']['type']) == 'warehouse') {
-            $this->model->addRule(['warehouse'], 'required');
+        if ($post) {
+            if (isset($post['NovaposhtaModel']['type']) == 'warehouse') {
+                $this->model->addRule(['warehouse'], 'required');
+            } else {
+                $this->model->addRule(['address'], 'required');
+            }
         } else {
-            $this->model->addRule(['address'], 'required');
+            if ($model) {
+                $data = $model->getDeliveryData();
+                if ($data) {
+                    $post = ['NovaposhtaModel' => $data];
+                }
+            }
         }
+
+
         $this->model->load($post);
 
+
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
-
-
         $result = Yii::$app->novaposhta->getWarehouses($this->model->city, 0, 9999);
         $warehouses = $result['data'];
 
@@ -93,32 +105,6 @@ class NovaPoshtaDeliverySystem extends BaseDeliverySystem
             'model' => $this->model,
             'delivery_id' => $method->id,
             'warehouses' => $warehouses
-            //'order_id' => $order_id
-        ]);
-    }
-
-    public function processRequestAdmin2(Delivery $method, $model = null)
-    {
-        $post = Yii::$app->request->post();
-        if ($post) {
-            $model->deliveryModel->load($post);
-        } else {
-            $data = $model->getDeliveryData();
-            if ($data) {
-                $model->deliveryModel->load(['NovaposhtaModel' => $data]);
-            }
-        }
-
-        $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
-
-        $result = Yii::$app->novaposhta->getWarehouses($model->deliveryModel->city, 0, 9999);
-        $warehouses = $result['data'];
-
-        return Yii::$app->view->$render("@cart/widgets/delivery/novaposhta/_view_admin", [
-            'model' => $model->deliveryModel,
-            'delivery_id' => $method->id,
-            'warehouses' => $warehouses
-            //'order_id' => $order_id
         ]);
     }
 

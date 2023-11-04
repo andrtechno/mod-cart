@@ -61,49 +61,37 @@ class MeestDeliverySystem extends BaseDeliverySystem
     }
 
 
-    public function processRequestAdmin(Delivery $method)
+    public function processRequestAdmin(Delivery $method, $model = null)
     {
-        $post = Yii::$app->request->post();
-        if (isset($post['MeestModel']['type']) == 'warehouse') {
-            $this->model->addRule(['warehouse'], 'required');
-        } else {
-            $this->model->addRule(['address'], 'required');
-        }
-        $this->model->load($post);
-
-        $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
-        $api = new MeestApi();
-        return Yii::$app->view->$render("@cart/widgets/delivery/meest/_view_admin", [
-            'model' => $this->model,
-            'delivery_id' => $method->id,
-            'areas' => $api->getGeoRegions(),
-            'api' => $api
-        ]);
-    }
-
-    public function processRequestAdmin2(Delivery $method, $model = null)
-    {
+        DeliveryAdminAsset::register(Yii::$app->view);
         $post = Yii::$app->request->post();
         if ($post) {
-            $model->deliveryModel->load($post);
+            if (isset($post['MeestModel']['type']) == 'warehouse') {
+                $this->model->addRule(['warehouse'], 'required');
+            } else {
+                $this->model->addRule(['address'], 'required');
+            }
         } else {
-            $data = $model->getDeliveryData();
-            if ($data) {
-                $model->deliveryModel->load(['MeestModel' => $data]);
+            if ($model) {
+                $data = $model->getDeliveryData();
+                if ($data) {
+                    $post = ['MeestModel' => $data];
+                }
             }
         }
+
+        $this->model->load($post);
+
         $api = new MeestApi();
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
 
-
         return Yii::$app->view->$render("@cart/widgets/delivery/meest/_view_admin", [
-            'model' => $model->deliveryModel,
+            'model' => $this->model,
             'delivery_id' => $method->id,
             'areas'=>$api->getGeoRegions(),
             'api' => $api
         ]);
     }
-
 
     public function renderDeliveryFormHtml($model)
     {

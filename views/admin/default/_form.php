@@ -146,9 +146,7 @@ $form = ActiveForm::begin([
                 $delivery = \panix\mod\cart\models\Delivery::findOne($model->delivery_id);
                 $system = $delivery->getDeliverySystemClass();
                 if ($system instanceof \panix\mod\cart\components\delivery\BaseDeliverySystem) {
-                    //echo $system->processRequestAdmin($delivery, $model->getDeliveryData());
-                    //CMS::dump($model->deliveryModel);
-                    echo $system->processRequestAdmin2($delivery, $model);
+                    echo $system->processRequestAdmin($delivery, $model);
                 }
             }
             ?>
