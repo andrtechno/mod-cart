@@ -103,14 +103,18 @@ use panix\engine\bootstrap\ActiveForm;
             <div class="col-sm-8 col-md-8 col-lg-9 col-xl-8">
                 <?php
                 $value2= substr($model->city, 0, -strlen($model->city)+8);
-                $test2 = $api->getBranches(['city' => $value2, 'viewdata' => 'full', 'type2' => 'cargobranch,minibranch,poshtomat,mainbranch']);
+                $branches = $api->getBranches(['city' => $value2, 'viewdata' => 'full', 'type2' => 'cargobranch,minibranch,poshtomat,mainbranch']);
 
 
                 echo Select2::widget([
                     'model' => $model,
                     'attribute' => 'warehouse',
-                    'items' => \yii\helpers\ArrayHelper::map($test2, 'br_id', function ($model) {
-                        return '№' . $model['num'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'] . ' (до ' . $model['limits']['place_max_kg'] . 'кг)';
+                    'items' => \yii\helpers\ArrayHelper::map($branches, 'br_id', function ($model) {
+                        $value = '№' . $model['num'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'];
+                        if ($model['limits']['parcel_max_kg']) {
+                            $value .= ' (до ' . floor($model['limits']['parcel_max_kg']) . 'кг)';
+                        }
+                        return $value;
                     }),
                     'options' => [
                         'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_WAREHOUSE') . ' &mdash;'),
@@ -144,7 +148,7 @@ use panix\engine\bootstrap\ActiveForm;
 <?php
 if (!Yii::$app->request->isAjax) {
     $this->registerJs("
-    $(document).on('change', '#dynamicmodel-city, #dynamicmodel-type, #dynamicmodel-area', function(e, clickedIndex, isSelected, previousValue) {
+    $(document).on('change', '#meestmodel-city, #meestmodel-type, #meestmodel-area', function(e, clickedIndex, isSelected, previousValue) {
         $.ajax({
             url: common.url('/admin/cart/delivery/process?id=" . $delivery_id . "'),
             type: 'POST',

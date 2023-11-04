@@ -105,7 +105,11 @@ use panix\ext\select2\Select2;
                     'model' => $model,
                     'attribute' => 'warehouse',
                     'items' => \yii\helpers\ArrayHelper::map($branches, 'br_id', function ($model) {
-                        return '№' . $model['num'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'] . ' (до ' . $model['limits']['place_max_kg'] . 'кг)';
+                        $value = '№' . $model['num'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'];
+                        if ($model['limits']['parcel_max_kg']) {
+                            $value .= ' (до ' . floor($model['limits']['parcel_max_kg']) . 'кг)';
+                        }
+                        return $value;
                     }),
                     'options' => [
                         'prompt' => html_entity_decode('&mdash; ' . Yii::t('cart/Delivery', 'PROMPT_WAREHOUSE') . ' &mdash;'),
