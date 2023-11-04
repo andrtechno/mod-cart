@@ -60,8 +60,6 @@ use yii\helpers\Json;
  * @property Payment $paymentMethod
  * @property PromoCode $promoCode
  *
- * @property string $_ttn
- *
  * @package panix\mod\cart\models
  */
 class Order extends ActiveRecord
@@ -79,7 +77,6 @@ class Order extends ActiveRecord
     /**
      * @var string
      */
-    private $_ttn;
     public $register = false;
     public $deliveryModel;
 
@@ -410,15 +407,6 @@ class Order extends ActiveRecord
     }
 
 
-    public function afterFind()
-    {
-        $this->_ttn = $this->ttn;
-        //if ($this->deliveryModel) {
-        //     $this->deliveryModel->load(['DynamicModel'=>$this->getDeliveryData()]);
-        // }
-        parent::afterFind();
-    }
-
     /**
      * @inheritdoc
      */
@@ -430,23 +418,17 @@ class Order extends ActiveRecord
         if ($insert) {
             Timeline::add('new_order');
         }
-        $send_ttn = false;
         if ($this->ttn) {
-            if (isset($this->oldAttributes['ttn']) && $this->oldAttributes['ttn'] != $this->ttn) {
-                $send_ttn = true;
-            }
-
-            if ($this->ttn != $this->_ttn) {
-                $send_ttn = true;
-            }
-            if ($send_ttn) {
-                if ($this->user_email) {
-                    $mailer = Yii::$app->mailer;
-                    $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
-                    $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/ttn.tpl'], ['order' => $this])
-                        ->setTo($this->user_email)
-                        ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($this->id)))
-                        ->send();
+            if(isset($changedAttributes['ttn'])){
+                if ($this->oldAttributes['ttn'] != $changedAttributes['ttn']) {
+                    if ($this->user_email) {
+                        $mailer = Yii::$app->mailer;
+                        $mailer->htmlLayout = Yii::$app->getModule('cart')->mailPath . '/layouts/client';
+                        $mailer->compose(['html' => Yii::$app->getModule('cart')->mailPath . '/ttn.tpl'], ['order' => $this])
+                            ->setTo($this->user_email)
+                            ->setSubject(Yii::t('cart/default', 'MAIL_TTN_SUBJECT', CMS::idToNumber($this->id)))
+                            ->send();
+                    }
                 }
             }
         }
