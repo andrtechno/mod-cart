@@ -30,7 +30,7 @@ use yii\helpers\Url;
                     <?= Html::a('<i class="icon-delete"></i> <span class="d-inline-block d-lg-none">' . Yii::t('app/default', 'DELETE') . '</span>', ['/cart/default/remove', 'id' => $index], ['data-product' => $index, 'class' => 'cart-remove remove d-block d-md-none mb-3']) ?>
                     <div class="d-flex align-items-center">
                         <div class="text-left">
-                            <?= Html::a(Html::img(Url::to($product['model']->getMainImage('240x')->url), ['class' => 'img-fluid1', 'width' => 120, 'alt' => $product['model']->name]), $product['model']->getUrl()); ?>
+                            <?= Html::a(Html::img(Url::to($product['model']->getMainImage('medium')->url), ['class' => '', 'width' => 120, 'alt' => $product['model']->name]), $product['model']->getUrl()); ?>
                         </div>
                         <div class="text-left">
                             <?= Html::a(Html::encode($product['model']->name), $product['model']->getUrl(), ['class' => 'product-name']); ?>
