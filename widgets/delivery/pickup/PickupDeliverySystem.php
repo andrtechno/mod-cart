@@ -47,7 +47,7 @@ class PickupDeliverySystem extends BaseDeliverySystem
         ]);
     }
 
-    public function processRequestAdmin(Delivery $method, $data = null)
+    public function processRequestAdmin2222(Delivery $method, $data = null)
     {
 
         $settings = $this->getSettings($method->id);
@@ -61,23 +61,25 @@ class PickupDeliverySystem extends BaseDeliverySystem
         ]);
     }
 
-    public function processRequestAdmin2(Delivery $method, $model = null)
+    public function processRequestAdmin(Delivery $method, $model = null)
     {
         $settings = $this->getSettings($method->id);
         $post = Yii::$app->request->post();
-        $model->deliveryModel->address = 1;
         $activeIndex = 0;
-        $data = $model->getDeliveryData();
-        if ($data) {
-            if (isset($data['address'])) {
-                $activeIndex = $data['address'];
+
+        if ($model) {
+            $this->model->address = 1;
+            $data = $model->getDeliveryData();
+            if ($data) {
+                if (isset($data['address'])) {
+                    $activeIndex = $data['address'];
+                }
             }
         }
-
-
+        $this->model->load($post);
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
         return Yii::$app->view->$render("@cart/widgets/delivery/pickup/_view_admin", [
-            'model' => $model->deliveryModel,
+            'model' => $this->model,
             //'deliveryModel' => $model->deliveryModel,
             'activeIndex' => $activeIndex,
             'list' => $this->getList($settings)

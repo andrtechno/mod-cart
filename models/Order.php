@@ -419,7 +419,7 @@ class Order extends ActiveRecord
         }
 
         if ($this->ttn) {
-            if(isset($changedAttributes['ttn'])){
+            if (isset($changedAttributes['ttn'])) {
                 if ($this->oldAttributes['ttn'] != $changedAttributes['ttn']) {
                     if ($this->user_email) {
                         $mailer = Yii::$app->mailer;
@@ -515,7 +515,7 @@ class Order extends ActiveRecord
 
                 // }
 
-            }else{
+            } else {
                 $this->total_price += $product->price * $product->in_box * $product->quantity;
                 $this->total_price_purchase += $product->price_purchase * $product->in_box * $product->quantity;
 
@@ -741,7 +741,7 @@ class Order extends ActiveRecord
                 }
 
                 $product->quantity = (int)$data[$product->id];
-               // print_r($product->quantity);die;
+                // print_r($product->quantity);die;
                 //  print_r($product);die;
                 $product->save(false);
             }
@@ -830,7 +830,7 @@ class Order extends ActiveRecord
         $list = [];
         if ($data) {
             if ($this->deliveryMethod->system == 'novaposhta') {
-                $list[] = [
+                $list['type'] = [
                     'key' => Yii::t('cart/Delivery', 'TYPE_DELIVERY'),
                     'value' => Yii::t('cart/Delivery', ($data['type'] == 'warehouse') ? 'TYPE_WAREHOUSE' : 'TYPE_ADDRESS')
                 ];
@@ -839,14 +839,14 @@ class Order extends ActiveRecord
                     $area = ArrayHelper::map($areas['data'], 'Ref', function ($model) {
                         return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
                     });
-                    $list[] = [
+                    $list['area'] = [
                         'key' => Yii::t('cart/Delivery', 'AREA'),
                         'value' => $area[$data['area']]
                     ];
                 }
                 if (isset($data['city'])) {
                     $city = Cities::findOne($data['city']);
-                    $list[] = [
+                    $list['city'] = [
                         'key' => Yii::t('cart/Delivery', 'CITY'),
                         'value' => $city->getDescription()
                     ];
@@ -860,7 +860,7 @@ class Order extends ActiveRecord
                                 return $data['Description'];
                             });
                             if (isset($warehouses[$data['warehouse']])) {
-                                $list[] = [
+                                $list['warehouse'] = [
                                     'key' => Yii::t('cart/Delivery', 'WAREHOUSE'),
                                     'value' => $warehouses[$data['warehouse']]
                                 ];
@@ -870,7 +870,7 @@ class Order extends ActiveRecord
 
                     }
                 } else {
-                    $list[] = [
+                    $list['address'] = [
                         'key' => Yii::t('cart/Delivery', 'ADDRESS'),
                         'value' => $data['address']
                     ];
@@ -881,30 +881,30 @@ class Order extends ActiveRecord
                     if (isset($data['warehouse'])) {
                         $ware = $api->getBranchesById($data['warehouse']);
                     }
-                }else{
+                } else {
                     $ware = '';
                 }
-                $list[] = [
+                $list['type'] = [
                     'key' => Yii::t('cart/Delivery', 'TYPE_DELIVERY'),
                     'value' => Yii::t('cart/Delivery', ($data['type'] == 'warehouse') ? 'TYPE_WAREHOUSE' : 'TYPE_ADDRESS')
                 ];
                 if (isset($data['area'])) {
-                    if(isset($ware[0])){
+                    if (isset($ware[0])) {
                         $value = $ware[0]['region']['ua'];
-                    }else{
+                    } else {
                         $regions = $api->getGeoRegions();
                         $region = ArrayHelper::map($regions, 'region_id', function ($model) {
                             return $model['ua'];
                         });
-                        $value = (isset($region[$data['area']])) ? $region[$data['area']]: 'unknown';
+                        $value = (isset($region[$data['area']])) ? $region[$data['area']] : 'unknown';
                     }
-                    $list[] = [
+                    $list['area'] = [
                         'key' => Yii::t('cart/Delivery', 'AREA'),
                         'value' => $value
                     ];
                 }
                 if (isset($data['city'])) {
-                    $list[] = [
+                    $list['city'] = [
                         'key' => Yii::t('cart/Delivery', 'CITY'),
                         'value' => $data['city']
                     ];
@@ -919,13 +919,13 @@ class Order extends ActiveRecord
                             return $value;
                         });
 
-                        $list[] = [
+                        $list['warehouse'] = [
                             'key' => Yii::t('cart/Delivery', 'WAREHOUSE'),
                             'value' => $warehouse[$data['warehouse']]
                         ];
                     }
                 } else {
-                    $list[] = [
+                    $list['address'] = [
                         'key' => Yii::t('cart/Delivery', 'ADDRESS'),
                         'value' => $data['address']
                     ];
@@ -935,25 +935,48 @@ class Order extends ActiveRecord
                 $system = $manager->getSystemClass($this->deliveryMethod->system);
                 $settings = $system->getSettings($this->delivery_id);
                 if (isset($settings->address[$data['address']])) {
-                    $list[] = [
+                    $list['address'] = [
                         'key' => Yii::t('cart/Delivery', 'ADDRESS'),
                         'value' => $settings->address[$data['address']]['name']
                     ];
                 } else {
-                    $list[] = [
+                    $list['address'] = [
                         'key' => Yii::t('cart/Delivery', 'ADDRESS'),
                         'value' => $data['address']
                     ];
                 }
 
             } elseif ($this->deliveryMethod->system == 'address') {
-                $list[] = [
+                $list['address'] = [
                     'key' => Yii::t('cart/Delivery', 'ADDRESS'),
                     'value' => $data['address']
                 ];
             }
         }
         return $list;
+    }
+
+    public function getDeliveryHtml($model = null)
+    {
+        $html = '';
+        if(!$model){
+            $model = $this;
+        }
+        foreach ($model->getDeliveryEach() as $key => $data) {
+            if ($key == 'area') {
+                $html .= $data['value'] . ', ';
+            }
+            if ($key == 'city') {
+                $html .= $data['value'] . '<br/>';
+            }
+            if ($key == 'warehouse') {
+                $html .= $data['value'];
+            }
+            if ($key == 'address') {
+                $html .= $data['key'] . ': ' . $data['value'];
+            }
+        }
+        return $html;
     }
 
     public function getGridColumns()
@@ -1041,106 +1064,10 @@ class Order extends ActiveRecord
                 $html = '';
                 if ($model->deliveryMethod) {
                     if ($model->deliveryMethod->system) {
-                        $manager = new DeliverySystemManager();
-                        $system = $manager->getSystemClass($model->deliveryMethod->system);
-                        //$model->deliveryModel = $system->getModel();
+                        $html .= '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>';
+                        $html .= $model->getDeliveryHtml();
+                        return $html;
                     }
-                    $data = Json::decode($model->delivery_data);
-                    if ($model->deliveryMethod->system == 'novaposhta') {
-
-                        if (isset($data['type'])) {
-                            if ($data['type'] == 'warehouse') {
-                                if (isset($data['area'])) {
-                                    $areas = Yii::$app->novaposhta->getAreas();
-                                    $area = ArrayHelper::map($areas['data'], 'Ref', function ($model) {
-                                        return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
-                                    });
-
-                                    if ($area) {
-                                        $html .= $area[$data['area']] . ', ';
-                                    }
-                                }
-                                if (isset($data['city'])) {
-                                    $city = Cities::findOne($data['city']);
-                                    if ($city) {
-                                        $html .= Yii::t('cart/Delivery', 'CITY') . ' ' . $city->getDescription() . '';
-                                    }
-                                }
-                                if (isset($data['warehouse'])) {
-
-                                    $result = Yii::$app->novaposhta->getWarehouses($data['city'], 0, 9999);
-                                    if ($result) {
-                                        $warehouses = ArrayHelper::map($result['data'], 'Ref', function ($data) {
-                                            return $data['Description'];
-                                        });
-                                        if (isset($warehouses[$data['warehouse']])) {
-                                            $html .= '<br/>' . $warehouses[$data['warehouse']];
-                                        }
-                                    }
-                                }
-
-                            } else {
-                                $html .= $data['address'];
-                            }
-                        }
-                        return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $html;
-
-                    }elseif ($model->deliveryMethod->system == 'meest'){
-                        $api = new \panix\mod\cart\widgets\delivery\meest\api\MeestApi();
-
-                        if ($data['type'] == 'warehouse') {
-                            if (isset($data['warehouse'])) {
-                                $ware = $api->getBranchesById($data['warehouse']);
-                            }
-                        }else{
-                            $ware = '';
-                        }
-
-                        if (isset($data['area'])) {
-                            if(isset($ware[0])){
-                                $value = $ware[0]['region']['ua'];
-                            }else{
-                                $regions = $api->getGeoRegions();
-                                $region = ArrayHelper::map($regions, 'region_id', function ($model) {
-                                    return $model['ua'];
-                                });
-                                $value = (isset($region[$data['area']])) ? $region[$data['area']]: 'unknown';
-                            }
-
-                            $html .= $value.', ';
-                        }
-                        if (isset($data['city'])) {
-                            $html .= $data['city'].'<br/>';
-                        }
-                        if ($data['type'] == 'warehouse') {
-                            if (isset($data['warehouse'])) {
-                                $warehouse = ArrayHelper::map($ware, 'br_id', function ($model) {
-                                    $value = '№' . $model['num_showcase'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'];
-                                    if ($model['limits']['parcel_max_kg']) {
-                                        $value .= ' (до ' . floor($model['limits']['parcel_max_kg']) . 'кг)';
-                                    }
-                                    return $value;
-                                });
-                                $html .= $warehouse[$data['warehouse']];
-                            }
-                        } else {
-                            $html .= $data['address'];
-                        }
-                        return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $html;
-                    } elseif ($model->deliveryMethod->system == 'address') {
-                        if (isset($data['address'])) {
-                            return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $data['address'];
-                        }
-                    } elseif ($model->deliveryMethod->system == 'pickup') {
-                        if (isset($data['address'])) {
-                            $settings = $system->getSettings($model->deliveryMethod->id);
-                            if (isset($settings->address[$data['address']]['name'])) {
-                                return '<span class="badge badge-light">' . $model->deliveryMethod->name . '</span><br/>' . $settings->address[$data['address']]['name'];
-                            }
-
-                        }
-                    }
-                    //return $model->deliveryMethod->name;
                 }
             }
         ];

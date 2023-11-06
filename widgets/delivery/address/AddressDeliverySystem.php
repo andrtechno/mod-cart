@@ -34,7 +34,7 @@ class AddressDeliverySystem extends BaseDeliverySystem
 
         $settings = $this->getSettings($method->id);
         $post = Yii::$app->request->post();
-        if($this->model->load($post)){
+        if ($this->model->load($post)) {
             $this->model->validate();
         }
 
@@ -44,7 +44,7 @@ class AddressDeliverySystem extends BaseDeliverySystem
         ]);
     }
 
-    public function processRequestAdmin(Delivery $method, $data = null)
+    public function processRequestAdminOKL(Delivery $method, $data = null)
     {
 
         $settings = $this->getSettings($method->id);
@@ -56,19 +56,23 @@ class AddressDeliverySystem extends BaseDeliverySystem
         ]);
     }
 
-    public function processRequestAdmin2(Delivery $method, $model = null)
+    public function processRequestAdmin(Delivery $method, $model = null)
     {
         $settings = $this->getSettings($method->id);
         $post = Yii::$app->request->post();
-        $data = $model->getDeliveryData();
-        if ($data) {
-            if(isset($data['address'])){
-                $model->deliveryModel->address = $data['address'];
+        if ($model) {
+            $data = $model->getDeliveryData();
+            if (isset($data)) {
+                if (isset($data['address'])) {
+                    $this->model->address = $data['address'];
+                }
             }
         }
+
+        $this->model->load($post);
         $render = (Yii::$app->request->isAjax) ? 'renderAjax' : 'render';
         return Yii::$app->view->$render("@cart/widgets/delivery/address/_view_admin", [
-            'model' => $model->deliveryModel,
+            'model' => $this->model,
         ]);
     }
 
@@ -83,6 +87,7 @@ class AddressDeliverySystem extends BaseDeliverySystem
     {
         return false;
     }
+
     public function getModel()
     {
         return new AddressModel;
