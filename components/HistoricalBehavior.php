@@ -17,6 +17,7 @@ use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderHistory;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 /**
@@ -221,9 +222,12 @@ class HistoricalBehavior extends Behavior
 
                         if (isset($data['type']) && $data['type'] == 'warehouse') {
                             if (isset($data['area'])) {
-                                $area = Area::findOne($data['area']);
+                                $areas = Yii::$app->novaposhta->getAreas();
+                                $area = ArrayHelper::map($areas['data'], 'Ref', function ($model) {
+                                    return (Yii::$app->language == 'ru') ? $model['DescriptionRu'] : $model['Description'];
+                                });
                                 if ($area) {
-                                    $html .= $area->getDescription() . ', ';
+                                    $html .= $area[$data['area']] . ', ';
                                 }
                             }
                             if (isset($data['city'])) {
@@ -233,9 +237,14 @@ class HistoricalBehavior extends Behavior
                                 }
                             }
                             if (isset($data['warehouse'])) {
-                                $warehouse = Warehouses::findOne($data['warehouse']);
-                                if ($warehouse) {
-                                    $html .= '<br/>' . $warehouse->getDescription();
+                                $result = Yii::$app->novaposhta->getWarehouses($data['city'], 0, 9999);
+                                if ($result) {
+                                    $warehouses = ArrayHelper::map($result['data'], 'Ref', function ($data) {
+                                        return $data['Description'];
+                                    });
+                                    if (isset($warehouses[$data['warehouse']])) {
+                                        $html .= '<br/>' . $warehouses[$data['warehouse']];
+                                    }
                                 }
                             }
 
@@ -243,7 +252,47 @@ class HistoricalBehavior extends Behavior
                             $html .= $data['address'];
                         }
 
+                    } elseif ($model->system == 'meest') {
+                        $api = new \panix\mod\cart\widgets\delivery\meest\api\MeestApi();
 
+                        if ($data['type'] == 'warehouse') {
+                            if (isset($data['warehouse'])) {
+                                $ware = $api->getBranchesById($data['warehouse']);
+                            }
+                        }else{
+                            $ware = '';
+                        }
+
+                        if (isset($data['area'])) {
+                            if(isset($ware[0])){
+                                $value = $ware[0]['region']['ua'];
+                            }else{
+                                $regions = $api->getGeoRegions();
+                                $region = ArrayHelper::map($regions, 'region_id', function ($model) {
+                                    return $model['ua'];
+                                });
+                                $value = (isset($region[$data['area']])) ? $region[$data['area']]: 'unknown';
+                            }
+
+                            $html .= $value.', ';
+                        }
+                        if (isset($data['city'])) {
+                            $html .= $data['city'].'<br/>';
+                        }
+                        if ($data['type'] == 'warehouse') {
+                            if (isset($data['warehouse'])) {
+                                $warehouse = ArrayHelper::map($ware, 'br_id', function ($model) {
+                                    $value = '№' . $model['num_showcase'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'];
+                                    if ($model['limits']['parcel_max_kg']) {
+                                        $value .= ' (до ' . floor($model['limits']['parcel_max_kg']) . 'кг)';
+                                    }
+                                    return $value;
+                                });
+                                $html .= $warehouse[$data['warehouse']];
+                            }
+                        } else {
+                            $html .= $data['address'];
+                        }
                     } elseif ($model->system == 'pickup') {
                         $settings = $system->getSettings($model->id);
                         $list = $system->getList($settings);

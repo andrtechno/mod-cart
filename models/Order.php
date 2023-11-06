@@ -912,7 +912,11 @@ class Order extends ActiveRecord
                 if ($data['type'] == 'warehouse') {
                     if (isset($data['warehouse'])) {
                         $warehouse = ArrayHelper::map($ware, 'br_id', function ($model) {
-                            return '№' . $model['num_showcase'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'] . ' (до ' . $model['limits']['place_max_kg'] . 'кг)';
+                            $value = '№' . $model['num_showcase'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'];
+                            if ($model['limits']['parcel_max_kg']) {
+                                $value .= ' (до ' . floor($model['limits']['parcel_max_kg']) . 'кг)';
+                            }
+                            return $value;
                         });
 
                         $list[] = [
@@ -1111,7 +1115,11 @@ class Order extends ActiveRecord
                         if ($data['type'] == 'warehouse') {
                             if (isset($data['warehouse'])) {
                                 $warehouse = ArrayHelper::map($ware, 'br_id', function ($model) {
-                                    return '№' . $model['num_showcase'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'] . ' (до ' . $model['limits']['place_max_kg'] . 'кг)';
+                                    $value = '№' . $model['num_showcase'] . ' ' . $model['type_public']['ua'] . ' ' . $model['street']['ua'] . ' ' . $model['street_number'];
+                                    if ($model['limits']['parcel_max_kg']) {
+                                        $value .= ' (до ' . floor($model['limits']['parcel_max_kg']) . 'кг)';
+                                    }
+                                    return $value;
                                 });
                                 $html .= $warehouse[$data['warehouse']];
                             }
