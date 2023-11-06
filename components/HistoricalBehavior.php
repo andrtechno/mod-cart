@@ -213,6 +213,40 @@ class HistoricalBehavior extends Behavior
             if ($model) {
                 $val = $model->name;
                 if ($model->system) {
+
+                 // $data = Json::decode($modelOrder->delivery_data);
+                    //$manager = new DeliverySystemManager();
+                   // $system = $manager->getSystemClass($model->system);
+
+                    $html = '<br/>';
+                    $html .= $modelOrder->getDeliveryHtml();
+                    $val .= $html;
+                }
+            }
+        } elseif ('payment_id' === $key) {
+            $model = Payment::findOne($id);
+            if ($model)
+                $val = $model->name;
+        } elseif ('status_id' === $key) {
+            $model = OrderStatus::findOne($id);
+            if ($model)
+                $val = Html::tag('span', $model->name, ['class' => 'badge', 'style' => 'background:' . $model->color]);
+        }
+
+        return $val;
+    }
+
+
+    public function idToText_old($key, $id, $modelOrder)
+    {
+        $val = $id;
+
+        if ('delivery_id' === $key) {
+            $model = Delivery::findOne($id);
+            if ($model) {
+                $val = $model->name;
+                if ($model->system) {
+
                     $data = Json::decode($modelOrder->delivery_data);
                     $manager = new DeliverySystemManager();
                     $system = $manager->getSystemClass($model->system);
