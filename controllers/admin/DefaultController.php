@@ -383,7 +383,7 @@ class DefaultController extends AdminController
         ));
     }
 
-    public function actionPdfOrders($render = 'delivery', $type = 0, $start, $end)
+    public function actionPdfOrders($start, $end, $render = 'delivery', $type = 0)
     {
 
 
