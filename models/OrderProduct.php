@@ -125,7 +125,7 @@ class OrderProduct extends ActiveRecord
         if (!empty($this->configurable_name) && $appendConfigurableName)
             $result .= '<br/>' . $this->configurable_name;
 
-        $variants = unserialize($this->variants);
+        $variants = unserialize(($this->variants) ? $this->variants : '');
 
         if ($this->configurable_data !== '' && is_string($this->configurable_data))
             $this->configurable_data = unserialize($this->configurable_data);
@@ -167,7 +167,7 @@ class OrderProduct extends ActiveRecord
         //if (!empty($this->configurable_name) && $appendConfigurableName)
         //    $result .= '<br/>' . $this->configurable_name;
 
-        $variants = unserialize($this->variants);
+        $variants = unserialize(($this->variants) ? $this->variants : '');
 
         if ($this->configurable_data !== '' && is_string($this->configurable_data))
             $this->configurable_data = unserialize($this->configurable_data);
