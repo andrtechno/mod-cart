@@ -121,10 +121,20 @@ class OrderSearch extends Order
         if ($this->apply_user_points)
             $query->andFilterWhere(['apply_user_points' => $this->apply_user_points]);
 
+
+        $timezone = Yii::$app->settings->get('app', 'timezone');
+        $date_utc2 = new \DateTime();
+        $date_utc2->setTimezone(new \DateTimeZone($timezone));
+        $date_utc2->setDate(date('Y',strtotime($this->created_at)), date('m',strtotime($this->created_at)), date('d',strtotime($this->created_at)))->setTime(0, 0, 0, 0);
+
+        $from_date = $date_utc2->getTimestamp();
+        $to_date = $date_utc2->modify('+1 day')->getTimestamp() - 1;
+
         if ($this->created_at)
-            $query->andFilterWhere(['between', 'created_at', strtotime($this->created_at . ' 00:00:00'), strtotime($this->created_at . ' 23:59:59')]);
+            $query->andFilterWhere(['between', 'created_at', $from_date, $to_date]);
         if ($this->updated_at)
-            $query->andFilterWhere(['between', 'updated_at', strtotime($this->updated_at . ' 00:00:00'), strtotime($this->updated_at . ' 23:59:59')]);
+            $query->andFilterWhere(['between', 'updated_at', $from_date, $to_date]);
+
 
         return $dataProvider;
     }
