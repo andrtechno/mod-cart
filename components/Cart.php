@@ -333,7 +333,7 @@ class Cart extends Component
 
 
         $this->session['cart_data'] = [
-            'items' => $currentData['items'],
+            'items' => (isset($currentData['items'])) ? $currentData['items'] : [],
             'bonus' => $points2
         ];
 
@@ -393,7 +393,7 @@ class Cart extends Component
                 $result['quantity'] += $row['quantity'];
                 if (Yii::$app->settings->get('cart', 'quantity_convert')) {
                     $result['boxes'] += $row['quantity'] / $row['in_box'];
-                }else{
+                } else {
                     $result['boxes'] += $row['quantity'];
                 }
             }
