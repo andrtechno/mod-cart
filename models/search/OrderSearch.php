@@ -125,7 +125,8 @@ class OrderSearch extends Order
         $timezone = Yii::$app->settings->get('app', 'timezone');
         $date_utc2 = new \DateTime();
         $date_utc2->setTimezone(new \DateTimeZone($timezone));
-        $date_utc2->setDate(date('Y',strtotime($this->created_at)), date('m',strtotime($this->created_at)), date('d',strtotime($this->created_at)))->setTime(0, 0, 0, 0);
+        list($year, $month, $day) = explode('-',$this->created_at);
+        $date_utc2->setDate($year, $month, $day)->setTime(0, 0, 0, 0);
 
         $from_date = $date_utc2->getTimestamp();
         $to_date = $date_utc2->modify('+1 day')->getTimestamp() - 1;
