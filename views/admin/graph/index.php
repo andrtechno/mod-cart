@@ -77,11 +77,14 @@ foreach ($years as $year) {
                                 if (!e.seriesOptions) {
                                     $.ajax({
                                         type:"GET",
-                                        url:"' . \yii\helpers\Url::toRoute(['testajax']) . '",
+                                        //url:"' . \yii\helpers\Url::toRoute(['testajax']) . '",
+                                        url: common.url("/admin/cart/graph/"+e.point.action),
                                         data:{
+                                            action: e.point.action,
                                             name:e.point.name,
                                             year:e.point.year,
                                             month:e.point.month,
+                                            day:e.point.day,
                                             type:e.point.type,
                                             status_id:e.point.status_id
                                         },
@@ -94,10 +97,10 @@ foreach ($years as $year) {
                                            // chart.addSingleSeriesAsDrilldown(e.point, 123);
                                             chart.addSeriesAsDrilldown(e.point, response.data);
 
-                                            chart.applyDrilldown();
-                                            chart.series.forEach(function(el, inx) {
-                                                el.update({type: "bar"});
-                                            });
+                                            //chart.applyDrilldown();
+                                            //chart.series.forEach(function(el, inx) {
+                                            //    el.update({type: "bar"});
+                                            //});
                                             
                                             chart.update({
                                                 height: 700,
@@ -106,7 +109,6 @@ foreach ($years as $year) {
                                             })
                                         }
                                     })
-      
                                 }
                             }
                         '),
@@ -195,7 +197,7 @@ foreach ($years as $year) {
                         'name' => Yii::t('cart/admin', (Yii::$app->request->get('type', 'income') == 'income') ? 'INCOME' : 'CIRCULATION'),
                         'colorByPoint' => true,
                         'tooltip' => [
-                            'pointFormat' => '<tr><td><span style="font-weight: bold; color: {series.color}">{series.name}</span>: 123<br/><b>Продано товаров: {point.products}<br/></b></td><td>dsadsa</td></tr>'
+                            'pointFormat' => '<tr><td><span style="font-weight: bold; color: {series.color}">{series.name}</span>: {point.value}<br/><div>Продано товаров: {point.products}<br/></div></td></tr>'
                         ],
                         'data' => $highchartsData
                     ],

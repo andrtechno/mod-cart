@@ -67,7 +67,7 @@ class GraphController extends AdminController
             $product_count = (isset($data[$index]['product_count'])) ? $data[$index]['product_count'] : 0;
             $queryData['sum'] = 0;
             //if (strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59") > $time) {
-            $query = (new \yii\db\Query())->from(Order::tableName());
+            $query = Order::find(); //(new \yii\db\Query())->from(Order::tableName());
             $query->where(['between', 'created_at', strtotime("{$year}-{$index}-01 00:00:00"), strtotime("{$year}-{$index}-{$monthDaysCount} 23:59:59")]);
             $query->andWhere(['status_id' => $statusIds]);
             if ($type == 'circulation') {
@@ -82,8 +82,8 @@ class GraphController extends AdminController
                 $query->select(['SUM(diff_price) as sum']);
             }
             //echo $query->createCommand()->rawSql;die;
-            $queryData = $query->one();
-
+            $queryData = $query->asArray()->one();
+            $product_count = '-'; //$query->one()->getProducts()->count();
             //}
 
             $total += $queryData['sum'];
@@ -95,6 +95,7 @@ class GraphController extends AdminController
                 'year' => $year,
                 'month' => $index,
                 'type' => $type,
+                'action' => 'view-month',
                 'status_id' => $request->get('status_id'),
                 'products' => $product_count,
                 'value' => Yii::$app->currency->number_format($queryData['sum']),
@@ -145,7 +146,7 @@ class GraphController extends AdminController
 
     }
 
-    public function actionTestajax()
+    public function actionViewMonth()
     {
         $request = Yii::$app->request;
         $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())
@@ -195,7 +196,6 @@ class GraphController extends AdminController
                     $query->andWhere(['>', 'diff_price', 0]);
                     $query->select(['SUM(diff_price) as sum']);
                 }
-                //echo $query->createCommand()->rawSql;
                 $queryData = $query->one();
             }
 
@@ -205,23 +205,27 @@ class GraphController extends AdminController
             $data[] = [
                 'name' => Yii::t('cart/admin', date('l', $from_date)) . ', ' . $day,
                 'y' => (double)$value,
+                'action' => 'view-day',
+                //'timestamp' => $from_date,
+                'day' => $day,
+                'year' => $year,
+                'month' => $month,
+                'status_id' => $statusIds,
                 'value' => Yii::$app->currency->number_format($value),
                 //'products' => 10
+                'drilldown' => []
             ];
 
 
         }
-        // die;
-
-        $response = [
-            'name' => Yii::$app->request->get('name'),
-            'value' => 'test',
-            'data' => $data
-        ];
 
 
         return $this->asJson([
-            'data' => $response,
+            'data' => [
+                'name' => Yii::$app->request->get('name'),
+                'value' => 'test',
+                'data' => $data
+            ],
             'subtitle' => 'Итого: ' . Yii::$app->currency->number_format($total) . ' ' . Yii::$app->currency->active['symbol'],
             'title' => Yii::t('cart/admin', ($type == 'income') ? 'INCOME_FOR' : 'CIRCULATION_FOR', [
                 'month' => $name,
@@ -229,5 +233,79 @@ class GraphController extends AdminController
             ])
         ]);
     }
+
+    public function actionViewDay()
+    {
+
+        $request = Yii::$app->request;
+
+        $year = (int)Yii::$app->request->get('year');
+        $month = Yii::$app->request->get('month');
+        $type = Yii::$app->request->get('type');
+        $name = Yii::$app->request->get('name');
+        $day = Yii::$app->request->get('day');
+
+        $data = [];
+        $total = 0;
+
+
+        $range = range(0, 24, 2);
+
+        unset($range[array_key_last($range)]);
+        $timezone = Yii::$app->settings->get('app', 'timezone');
+        foreach ($range as $k => $hr) {
+
+            $queryData['sum'] = 0;
+            $date_utc2 = new \DateTime();
+            $date_utc2->setTimezone(new \DateTimeZone($timezone));
+            $date_utc2->setDate($year, $month, $day)->setTime($hr, 0, 0, 0);
+
+
+            $from_date = $date_utc2->getTimestamp(); //->format('Y-m-d H:i:s')
+            $to_date = $date_utc2->modify('+2 hour')->getTimestamp() - 1;
+            $name = $hr . ':00-' . $date_utc2->modify('-1 sec')->format('H:i');
+
+
+            $query = Order::find();
+            $query->orderBy = false;
+            $query->where(['between', 'created_at', $from_date, $to_date]);
+            $query->andWhere(['status_id' => $request->get('status_id')]);
+            if ($type == 'circulation') {
+                $query->andWhere(['>', 'total_price', 0]);
+                $query->select(['SUM(total_price) as sum']);
+            } else {
+                $query->andWhere(['>', 'diff_price', 0]);
+                $query->select(['SUM(diff_price) as sum']);
+            }
+            $queryData = $query->asArray()->one();
+
+
+            $value = ($queryData['sum']) ? $queryData['sum'] : 0;
+            $total += $value;
+            $data[] = [
+                'name' => $name,
+                'y' => (double)$value,
+                'action' => 'view-day',
+                'day' => $from_date,
+                'value' => Yii::$app->currency->number_format($value),
+            ];
+
+
+        }
+
+        return $this->asJson([
+            'data' => [
+                'name' => Yii::$app->request->get('name'),
+                'value' => 'test',
+                'data' => $data
+            ],
+            'subtitle' => '' . Yii::$app->currency->number_format($total),
+            'title' => Yii::t('cart/admin', 'INCOME_FOR', [
+                    'month' => $month,
+                    'year' => $year
+                ]) . ' ' . Yii::$app->request->get('name')
+        ]);
+    }
+
 
 }
