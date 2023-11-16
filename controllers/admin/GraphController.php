@@ -171,11 +171,21 @@ class GraphController extends AdminController
         $data = [];
         $total = 0;
         $time = time();
+
+        $timezone = Yii::$app->settings->get('app', 'timezone');
         foreach (range(1, $monthDaysCount) as $k => $day) {
             $queryData['sum'] = 0;
-            if (strtotime("{$year}-{$month}-{$day} 23:59:59") < $time) {
+            $date_utc2 = new \DateTime();
+            $date_utc2->setTimezone(new \DateTimeZone($timezone));
+            $date_utc2->setDate($year, $month, $day)->setTime(0, 0, 0, 0);
+
+            $from_date = $date_utc2->getTimestamp();
+            $to_date = $date_utc2->modify('+1 day')->getTimestamp() - 1;
+
+
+            if ($to_date < $time) {
                 $query = (new \yii\db\Query())->from(Order::tableName());
-                $query->where(['between', 'created_at', strtotime("{$year}-{$month}-{$day} 00:00:00"), strtotime("{$year}-{$month}-{$day} 23:59:59")]);
+                $query->where(['between', 'created_at', $from_date, $to_date]);
                 $query->andWhere(['status_id' => $statusIds]);
                 if ($type == 'circulation') {
                     $query->andWhere(['>', 'total_price', 0]);
@@ -193,7 +203,7 @@ class GraphController extends AdminController
             $value = ($queryData['sum']) ? $queryData['sum'] : 0;
             $total += $value;
             $data[] = [
-                'name' => Yii::t('cart/admin', date('l', strtotime("{$year}-{$month}-{$day}"))) . ', ' . date('d', strtotime("{$year}-{$month}-{$day}")),
+                'name' => Yii::t('cart/admin', date('l', $from_date)) . ', ' . $day,
                 'y' => (double)$value,
                 'value' => Yii::$app->currency->number_format($value),
                 //'products' => 10
@@ -201,7 +211,7 @@ class GraphController extends AdminController
 
 
         }
-       // die;
+        // die;
 
         $response = [
             'name' => Yii::$app->request->get('name'),
