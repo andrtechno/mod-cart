@@ -75,6 +75,25 @@ echo GridView::widget([
                         $variantsConfigure .= "<div>{$configure->name}: <strong>{$configure->value}</strong></div>";
                     }
                 }
+
+
+                $html = '';
+                $labels = [];
+                $class = '';
+                if ($model->originalProduct->availability == $model->originalProduct::STATUS_OUT_STOCK) {
+                    $class = 'light';
+                } elseif ($model->originalProduct->availability == $model->originalProduct::STATUS_PREORDER) {
+                    $class = 'warning';
+                } elseif ($model->originalProduct->availability == $model->originalProduct::STATUS_ARCHIVE) {
+                    $class = 'secondary';
+                }
+                if (!empty($class)) {
+                    $labels[] = Html::tag('span', $model->originalProduct::getAvailabilityItems()[$model->originalProduct->availability], ['class' => 'badge badge-' . $class]);
+                }
+                $html .= implode('', $labels);
+                if ($labels) {
+                    $html .= '<br/>';
+                }
                 /*$productName = $model->name;
                 if ($model->configurable_name) {
                     $productName = $model->configurable_name;
@@ -84,7 +103,7 @@ echo GridView::widget([
 
                 }*/
                 $price = Yii::$app->currency->number_format($priceValue) . ' ' . Yii::$app->currency->main['symbol'];
-                return $model->getProductName(false, ['data-pjax' => '0']) . '<br/>' . $variantsConfigure . $price . $discount;
+                return $model->getProductName(false, ['data-pjax' => '0']) . '<br/>' . $html . $variantsConfigure . $price . $discount;
             },
         ],
         [

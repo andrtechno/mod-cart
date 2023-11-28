@@ -68,7 +68,22 @@ $dataProvider->pagination->route = '/admin/cart/default/add-product-list';
                             'contentOptions' => ['class' => 'text-left'],
                             'value' => function ($model) {
                                 /** @var \panix\mod\shop\models\Product $model */
-                                return Html::a($model->name, $model->getUrl(), ['target' => '_blank', 'data-pjax' => 0]);
+
+                                $html = '';
+                                $labels = [];
+                                $class = '';
+                                if ($model->availability == $model::STATUS_OUT_STOCK) {
+                                    $class = 'light';
+                                } elseif ($model->availability == $model::STATUS_PREORDER) {
+                                    $class = 'warning';
+                                } elseif ($model->availability == $model::STATUS_ARCHIVE) {
+                                    $class = 'secondary';
+                                }
+                                if (!empty($class)) {
+                                    $labels[] = Html::tag('span', $model::getAvailabilityItems()[$model->availability], ['class' => 'badge badge-' . $class]);
+                                }
+                                $html .= implode('', $labels);
+                                return Html::a($model->name, $model->getUrl(), ['target' => '_blank', 'data-pjax' => 0]).'<br/>'.$html;
                             },
                         ],
                         [
