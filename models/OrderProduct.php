@@ -2,6 +2,8 @@
 
 namespace panix\mod\cart\models;
 
+use panix\mod\shop\models\Brand;
+use panix\mod\shop\models\Category;
 use Yii;
 use panix\engine\CMS;
 use panix\mod\shop\models\Product;
@@ -65,6 +67,11 @@ class OrderProduct extends ActiveRecord
     public function getOriginalProduct()
     {
         return $this->hasOne(Product::class, ['id' => 'product_id']);
+    }
+
+    public function getBrand()
+    {
+        return $this->hasOne(Brand::class, ['id' => 'brand_id']);
     }
 
     public function getPriceDisplay()
