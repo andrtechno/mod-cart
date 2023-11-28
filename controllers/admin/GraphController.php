@@ -6,6 +6,7 @@ namespace panix\mod\cart\controllers\admin;
 use panix\engine\CMS;
 use panix\mod\cart\models\Order;
 use panix\mod\cart\models\OrderStatus;
+use panix\mod\shop\models\Category;
 use Yii;
 use yii\db\Query;
 use yii\web\NotFoundHttpException;
@@ -19,7 +20,7 @@ use yii\web\Response;
 
 class GraphController extends AdminController
 {
-
+    public $icon = 'stats';
 
     public function actionIndex()
     {
@@ -307,5 +308,291 @@ class GraphController extends AdminController
         ]);
     }
 
+    public function actionTopBrand()
+    {
+
+        $this->pageName = Yii::t('cart/admin', 'Популярные бренды');
+
+        $this->view->params['breadcrumbs'] = [
+            [
+                'label' => Yii::t('cart/admin', 'ORDERS'),
+                'url' => ['/cart/admin/default/index']
+            ],
+            $this->pageName
+        ];
+
+        $data = [];
+        $data_total = [];
+        $request = Yii::$app->request;
+        $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())
+            //->where(['use_in_stats' => 1])
+            ->select(['id', 'name']);
+        $statusIds = [];
+        $queryStatusIds = $queryStatus->all();
+
+        if ($request->get('status_id')) {
+            $statusIds[] = (int)$request->get('status_id');
+        } else {
+            foreach ($queryStatusIds as $status) {
+                //$statusIds[] = $status['id'];
+            }
+        }
+        $topLimit = (int)$request->get('top', 10);
+        if ($topLimit > 50) {
+            $topLimit = 50;
+        }
+
+        $year = (int)$request->get('year', date('Y'));
+        $months = $request->get('months', [date('m')]);
+
+
+        $highchartsData = [];
+        $time = time();
+        $total = 0;
+
+
+        $topsQuery = OrderProduct::find()->alias('order_product');
+        $topsQuery->addSelect(['count(*) as top', 'brand.id as brand_id', 'order.id as order_id']);
+        $topsQuery->joinWith([
+            'brand' => function ($query) {
+                $query->alias('brand');
+            },
+            'order' => function ($query) use ($statusIds, $year, $months) {
+                $query->alias('order')
+                    ->orderBy(false);
+                //->where(['between', 'order.created_at', strtotime("{$year}-{$month}-01 00:00:00"), strtotime("{$year}-{$month}-{$monthDaysCount} 23:59:59")]);
+            }
+        ]);
+        if ($statusIds) {
+            $topsQuery->joinWith([
+                'order' => function ($query) use ($statusIds, $year, $months) {
+                    $query->alias('order')
+                        ->orderBy(false)
+                        ->where(['status_id' => $statusIds]);
+                    //->andWhere(['between', 'order.created_at', strtotime("{$year}-{$month}-01 00:00:00"), strtotime("{$year}-{$month}-{$monthDaysCount} 23:59:59")]);
+                }
+            ]);
+
+        }
+
+        $topsQuery->andWhere(['YEAR(FROM_UNIXTIME(order.created_at))' => $year]);
+        $topsQuery->andWhere(['MONTH(FROM_UNIXTIME(order.created_at))' => $months]);
+
+        $topsQuery->groupBy(['order_product.brand_id']);
+        $topsQuery->orderBy(['top' => SORT_DESC]);
+        $topsQuery->limit($topLimit);
+        $topsQuery->asArray();
+
+        $tops = $topsQuery->all();
+
+        $i = 1;
+        foreach ($tops as $top) {
+
+            $topsQuery = OrderProduct::find();
+            $topsQuery->alias('order_product');
+            $topsQuery->addSelect([
+                'SUM(order_product.price * order_product.in_box * order_product.quantity) as circulation',
+                'SUM((order_product.price - order_product.price_purchase) * order_product.in_box * order_product.quantity) as income'
+            ]);
+            if (isset($top['brand']['id'])) {
+                $topsQuery->where(['order_product.brand_id' => $top['brand']['id']]);
+            }
+
+            if ($statusIds) {
+                $topsQuery->joinWith([
+                    'order' => function ($query) use ($statusIds) {
+                        $query->alias('order')->orderBy(false)->where(['status_id' => $statusIds]);
+                    }
+                ]);
+
+            } else {
+                $topsQuery->joinWith([
+                    'order' => function ($query) {
+                        $query->alias('order')->orderBy(false);
+                    }
+                ]);
+            }
+            $topsQuery->andWhere(['YEAR(FROM_UNIXTIME(order.created_at))' => $year]);
+            $topsQuery->andWhere(['MONTH(FROM_UNIXTIME(order.created_at))' => $months]);
+            $topsQuery->asArray();
+            $result = $topsQuery->one();
+            if (isset($top['brand']['id'])) {
+                $circulation = $result['circulation'];
+                $income = $result['income'];
+            } else {
+                $circulation = 0;
+                $income = 0;
+            }
+
+            $highchartsData[] = [
+                'y' => (double)$top['top'],
+                'name' => (isset($top['brand']['id'])) ? $top['brand']['name_uk'] . ' #' . $i : '_No Brand_',
+                'status_id' => $request->get('status_id'),
+                'income' => Yii::$app->currency->number_format($income),
+                'circulation' => Yii::$app->currency->number_format($circulation),
+                'value' => Yii::$app->currency->number_format($top['top']),
+                //'drilldown' => []
+            ];
+            $i++;
+        }
+
+        return $this->render('top-brand', [
+            'highchartsData' => $highchartsData,
+            'data_total' => $data_total,
+            'year' => $year,
+            //'month' => $month,
+            'queryStatusIds' => $queryStatusIds,
+            'topLimit' => $topLimit,
+        ]);
+    }
+
+
+    public function actionTopCategory()
+    {
+
+        $this->pageName = Yii::t('cart/admin', 'Популярные категории');
+
+        $this->view->params['breadcrumbs'] = [
+            [
+                'label' => Yii::t('cart/admin', 'ORDERS'),
+                'url' => ['/cart/admin/default/index']
+            ],
+            $this->pageName
+        ];
+
+
+        $data = [];
+        $data_total = [];
+        $request = Yii::$app->request;
+        $queryStatus = (new \yii\db\Query())->from(OrderStatus::tableName())
+            //->where(['use_in_stats' => 1])
+            ->select(['id', 'name']);
+        $statusIds = [];
+        $queryStatusIds = $queryStatus->all();
+
+        if ($request->get('status_id')) {
+            $statusIds[] = (int)$request->get('status_id');
+        } else {
+            foreach ($queryStatusIds as $status) {
+                //$statusIds[] = $status['id'];
+            }
+        }
+        $topLimit = (int)$request->get('top', 10);
+        if ($topLimit > 50) {
+            $topLimit = 50;
+        }
+
+        $year = (int)$request->get('year', date('Y'));
+        $months = $request->get('months', [date('m')]);
+
+
+
+        $highchartsData = [];
+        $time = time();
+        $total = 0;
+
+        $monthDaysCount = cal_days_in_month(CAL_GREGORIAN, 12, $year);
+        $topsQuery = OrderProduct::find()->alias('order_product');
+        //$topsQuery->select(['*', 'count(*) as top']);
+        $topsQuery->addSelect(['count(*) as top', 'originalProduct.id as product_id']);
+        $topsQuery->joinWith([
+            'originalProduct' => function ($query) {
+                $query->alias('originalProduct');
+                $query->joinWith('mainCategory as mainCategory');
+                //$query->joinWith(['categories as categories']);
+            },
+        ]);
+
+        if ($statusIds) {
+            $topsQuery->joinWith([
+                'order' => function ($query) use ($statusIds) {
+                    $query->alias('order')->orderBy(false)->where(['status_id' => $statusIds]);
+                }
+            ]);
+        }else{
+            $topsQuery->joinWith([
+                'order' => function ($query) use ($statusIds) {
+                    $query->alias('order')->orderBy(false);
+                }
+            ]);
+        }
+
+        $topsQuery->andWhere(['YEAR(FROM_UNIXTIME(order.created_at))' => $year]);
+        $topsQuery->andWhere(['MONTH(FROM_UNIXTIME(order.created_at))' => $months]);
+        $topsQuery->groupBy('originalProduct.main_category_id');
+        $topsQuery->orderBy(['top' => SORT_DESC]);
+        $topsQuery->limit($topLimit);
+//echo $topsQuery->createCommand()->rawSql;die;
+        $topsQuery->asArray();
+        $tops = $topsQuery->all();
+        //   CMS::dump($tops);die;
+        $i = 1;
+        foreach ($tops as $top) {
+
+            if (isset($top['originalProduct']['mainCategory'])) {
+                $parentCategory = Category::find()->where(['id' => $top['originalProduct']['mainCategory']['id']])->one();
+                if ($parentCategory) {
+                    $parentCategory = $parentCategory->parent()->asArray()->one();
+                }
+
+                $topsQuery = OrderProduct::find()->alias('order_product');
+                $topsQuery->joinWith([
+                    'originalProduct' => function ($query) use ($top) {
+                        $query->andWhere(['main_category_id' => $top['originalProduct']['mainCategory']['id']]);
+                    }
+                ]);
+                if ($statusIds) {
+                    $topsQuery->joinWith([
+                        'order' => function ($query) use ($statusIds) {
+                            $query->alias('order')->orderBy(false)->andWhere(['status_id' => $statusIds]);
+                        }
+                    ]);
+                } else {
+                    $topsQuery->joinWith([
+                        'order' => function ($query) {
+                            $query->alias('order')->orderBy(false);
+                        }
+                    ]);
+                }
+
+                $topsQuery->addSelect([
+                    'SUM(order_product.price * order_product.in_box * order_product.quantity) as circulation',
+                    'SUM((order_product.price - order_product.price_purchase) * order_product.in_box * order_product.quantity) as income'
+                ]);
+
+                //  echo $topsQuery->createCommand()->rawSql;die;
+                $topsQuery->andWhere(['YEAR(FROM_UNIXTIME(order.created_at))' => $year]);
+                $topsQuery->andWhere(['MONTH(FROM_UNIXTIME(order.created_at))' => $months]);
+                $topsQuery->asArray();
+                $result = $topsQuery->one();
+//CMS::dump($result);die;
+                $circulation = $result['circulation'];
+                $income = $result['income'];
+
+                $highchartsData[] = [
+                    'y' => (double)$top['top'],
+                    'name' => (isset($top['originalProduct']['mainCategory']['name_uk'])) ? $parentCategory['name_uk'] . ' > ' . $top['originalProduct']['mainCategory']['name_uk'] . ' #' . $i : 'Unknown',
+                    //'name' => (isset($top['originalProduct']['mainCategory']['name_uk'])) ? $top['originalProduct']['mainCategory']['name_uk'] : 'Unknown',
+                    'status_id' => $request->get('status_id'),
+                    'income' => Yii::$app->currency->number_format($income),
+                    'circulation' => Yii::$app->currency->number_format($circulation),
+                    'value' => (double)$top['top'],
+                    //'drilldown' => []
+                ];
+                $i++;
+            }
+
+
+        }
+//CMS::dump($highchartsData);die;
+        return $this->render('top-brand', [
+            'highchartsData' => $highchartsData,
+            'data_total' => $data_total,
+            'year' => $year,
+            'queryStatusIds' => $queryStatusIds,
+            'topLimit' => $topLimit,
+            'total' => Yii::$app->currency->number_format($total)
+        ]);
+    }
 
 }
