@@ -97,9 +97,9 @@ if ($related) {
                                 <td><?= $user->email; ?></td>
                                 <td>
                                     <?php
-                                    $d = similar_text($model->user_email, $user->email, $percent_ip);
+                                    $d = similar_text($model->user_email, $user->email, $percent);
                                     ?>
-                                    <?= Html::tag('span', round($percent_ip, 0) . '%', ['class' => 'text-' . (($percent_ip > 80) ? 'success' : 'danger')]); ?>
+                                    <?= Html::tag('span', round($percent, 0) . '%', ['class' => 'text-' . (($percent > 80) ? 'success' : 'danger')]); ?>
                                 </td>
                             </tr>
                         </table>
