@@ -22,8 +22,9 @@ class Module extends WebModule implements BootstrapInterface
     public $modalView = '@cart/widgets/cart/views/_items';
     public $emptyView = '@cart/widgets/cart/views/_empty';
     public $modalBodyView = '@cart/widgets/cart/views/_body';
-    
+
     const EVENT_ORDER_CREATE = 'orderCreate';
+
     //public $cart;
 
     public function onOrderCreate($order)
@@ -156,10 +157,28 @@ class Module extends WebModule implements BootstrapInterface
                         'visible' => Yii::$app->user->can('/cart/admin/statuses/index') || Yii::$app->user->can('/cart/admin/statuses/*')
                     ],
                     [
-                        'label' => Yii::t('cart/admin', 'INCOME'),
-                        "url" => ['/admin/cart/graph'],
+                        'label' => Yii::t('cart/admin', 'STATS'),
+                       // "url" => ['/admin/cart/graph'],
                         'icon' => 'stats',
-                        'visible' => Yii::$app->user->can('/cart/admin/graph/index') || Yii::$app->user->can('/cart/admin/graph/*')
+                        'visible' => Yii::$app->user->can('/cart/admin/graph/index') || Yii::$app->user->can('/cart/admin/graph/*'),
+                        'items' => [
+                            [
+
+                                'label' => Yii::t('cart/admin', 'INCOME'),
+                                "url" => ['/admin/cart/graph'],
+                                'icon' => 'stats',
+                            ],
+                            [
+
+                                'label' => Yii::t('cart/admin', 'Популярные категории'),
+                                "url" => ['/admin/cart/graph/top-category'],
+                            ],
+                            [
+
+                                'label' => Yii::t('cart/admin', 'Популярные бренды'),
+                                "url" => ['/admin/cart/graph/top-brand'],
+                            ]
+                        ]
                     ],
                     [
                         'label' => Yii::t('cart/admin', 'DELIVERY'),
