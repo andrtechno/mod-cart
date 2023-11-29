@@ -37,61 +37,73 @@ if ($related) {
                     </button>
                 </div>
                 <div class="modal-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered m-0">
+                            <tr>
+                                <th></th>
+                                <th>Заказ</th>
+                                <th>Пользователь</th>
+                                <th>% сходство</th>
+                            </tr>
 
-                    <table class="table table-striped table-bordered m-0">
-                        <tr>
-                            <th></th>
-                            <th>Заказ</th>
-                            <th>Пользователь</th>
-                            <th>% сходство</th>
-                        </tr>
+                            <tr>
+                                <td><strong>Имя</strong></td>
+                                <td><?= trim($model->user_name); ?></td>
+                                <td><?= (!empty($user->first_name)) ? trim($user->first_name) : ''; ?></td>
+                                <td>
+                                    <?php
+                                    similar_text(trim($model->user_name), trim($user->first_name), $percent);
+                                    ?>
+                                    <?= Html::tag('span', round($percent, 0) . '%', ['class' => 'text-' . (($percent > 80) ? 'success' : 'danger')]); ?>
+                                </td>
+                            </tr>
 
-                        <tr>
-                            <td><strong>Имя</strong></td>
-                            <td><?= trim($model->user_name); ?></td>
-                            <td><?= (!empty($user->first_name)) ? trim($user->first_name) : ''; ?></td>
-                            <td>
-                                <?php
-                                similar_text(trim($model->user_name), trim($user->first_name), $percent);
-                                ?>
-                                <?= Html::tag('span', round($percent, 0) . '%', ['class' => 'text-' . (($percent > 80) ? 'success' : 'danger')]); ?>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Фамилия</strong></td>
-                            <td><?= trim($model->user_lastname); ?></td>
-                            <td><?= trim($user->last_name); ?></td>
-                            <td>
-                                <?php
-                                $d = similar_text(trim($model->user_lastname), trim($user->last_name), $percent12);
-                                ?>
-                                <?= Html::tag('span', round($percent12, 0) . '%', ['class' => 'text-' . (($percent12 > 80) ? 'success' : 'danger')]); ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>IP</strong></td>
-                            <td><?= $model->ip_create; ?></td>
-                            <td><?= $user->login_ip; ?></td>
-                            <td>
-                                <?php
-                                $d = similar_text($model->ip_create, $user->login_ip, $percent_ip);
-                                ?>
-                                <?= Html::tag('span', round($percent_ip, 0) . '%', ['class' => 'text-' . (($percent_ip > 80) ? 'success' : 'danger')]); ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Тел.</strong></td>
-                            <td><?= CMS::phone_format($model->user_phone); ?></td>
-                            <td><?= CMS::phone_format($user->phone); ?></td>
-                            <td>
-                                <?php
-                                $d = similar_text($model->user_phone, $user->phone, $percent13);
-                                ?>
-                                <?= Html::tag('span', round($percent13, 0) . '%', ['class' => 'text-' . (($percent13 > 80) ? 'success' : 'danger')]); ?>
-                            </td>
-                        </tr>
-                    </table>
+                            <tr>
+                                <td><strong>Фамилия</strong></td>
+                                <td><?= trim($model->user_lastname); ?></td>
+                                <td><?= trim($user->last_name); ?></td>
+                                <td>
+                                    <?php
+                                    $d = similar_text(trim($model->user_lastname), trim($user->last_name), $percent12);
+                                    ?>
+                                    <?= Html::tag('span', round($percent12, 0) . '%', ['class' => 'text-' . (($percent12 > 80) ? 'success' : 'danger')]); ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>IP</strong></td>
+                                <td><?= $model->ip_create; ?></td>
+                                <td><?= $user->login_ip; ?></td>
+                                <td>
+                                    <?php
+                                    $d = similar_text($model->ip_create, $user->login_ip, $percent_ip);
+                                    ?>
+                                    <?= Html::tag('span', round($percent_ip, 0) . '%', ['class' => 'text-' . (($percent_ip > 80) ? 'success' : 'danger')]); ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Тел.</strong></td>
+                                <td><?= CMS::phone_format($model->user_phone); ?></td>
+                                <td><?= CMS::phone_format($user->phone); ?></td>
+                                <td>
+                                    <?php
+                                    $d = similar_text($model->user_phone, $user->phone, $percent13);
+                                    ?>
+                                    <?= Html::tag('span', round($percent13, 0) . '%', ['class' => 'text-' . (($percent13 > 80) ? 'success' : 'danger')]); ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>E-mail</strong></td>
+                                <td><?= $model->user_email; ?></td>
+                                <td><?= $user->email; ?></td>
+                                <td>
+                                    <?php
+                                    $d = similar_text($model->user_email, $user->email, $percent_ip);
+                                    ?>
+                                    <?= Html::tag('span', round($percent_ip, 0) . '%', ['class' => 'text-' . (($percent_ip > 80) ? 'success' : 'danger')]); ?>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <?php \yii\widgets\ActiveForm::begin(['action' => ['related']]); ?>
