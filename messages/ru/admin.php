@@ -1,17 +1,5 @@
 <?php
 return [
-    'January' => 'Январь',
-    'February' => 'Февраль',
-    'March' => 'Март',
-    'April' => 'Апрель',
-    'May' => 'Май',
-    'June' => 'Июнь',
-    'July' => 'Июль',
-    'August' => 'Август',
-    'September' => 'Сентябрь',
-    'October' => 'Октябрь',
-    'November' => 'Ноябрь',
-    'December' => 'Декабрь',
     'Friday' => 'Пятница',
     'Saturday' => 'Суббота',
     'Sunday' => 'Воскресенье',
@@ -67,5 +55,12 @@ return [
     'ORDER_NOT_FOUND' => 'Заказ не найден.',
     'STATUS_CHANGE_NOTIFY' => 'После изменение статуса клиент будет уведомлен об изменение статуса.',
     'PRINT_PDF' => 'Печать (pdf)',
-    'QUANTITY_CHANGED' => 'Количество <strong>{0}</strong> успешно изменено.'
+    'QUANTITY_CHANGED' => 'Количество <strong>{0}</strong> успешно изменено.',
+    'LINK_ORDER_FOUND_USER' => 'Связать заказ с найденным пользователем?',
+    'TO_TIE' => 'Связать',
+    'SIMILARTY_IN' => 'Сходство по',
+    'MATCH_USER' => 'Найдено совпадение &mdash; связать с этим заказом?',
+    'CALL_CONFIRM' => 'Мне можно не звонить!',
+    'ORDER_UNREGISTERED_USER' => 'Заказ оформлен <strong>незарегистрированным</strong> пользователем',
+    'CALL' => 'Позвонить'
 ];

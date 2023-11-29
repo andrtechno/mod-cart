@@ -65,23 +65,14 @@ $(document).on('change','#order-delivery_id',function(e, clickedIndex, isSelecte
 
 JS;
 //$this->registerJs($js);
-/*
-$pattern = '#^catalog/(?P<slug>[0-9a-zA-Z_\/\-]+)/(?P<filter>\/[\w,\/]+)$#u';
-
-$pathInfo = 'catalog/ukhod-dla-volos/kondicioner-dla-volos/filter/size/13,5/brand/1';
-if (!preg_match($pattern, $pathInfo, $matches)) {
-  //  return false;
-}
-CMS::dump($matches);die;
-*/
 
 ?>
 <?php if ($model->call_confirm) { ?>
-    <div class="alert alert-info">Мне можно не звонить!</div>
+    <div class="alert alert-info"><?= Yii::t('cart/admin', 'CALL_CONFIRM'); ?></div>
 <?php } ?>
 
 <?php if (!$model->user_id && !$model->isNewRecord) { ?>
-    <div class="alert alert-warning">Заказ оформлен <strong>незарегистрированным</strong> пользователем</div>
+    <div class="alert alert-warning"><?= Yii::t('cart/admin', 'ORDER_UNREGISTERED_USER'); ?></div>
 <?php } ?>
 
 <?php if ($model->buyOneClick) { ?>

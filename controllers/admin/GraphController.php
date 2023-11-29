@@ -92,7 +92,7 @@ class GraphController extends AdminController
 
                 //'y' => (double)$queryData['sum'],
                 'y' => (double)$queryData['sum'],
-                'name' => Yii::t('cart/admin', date('F', strtotime("{$year}-{$index}"))),
+                'name' => Yii::t('app/month', date('F', strtotime("{$year}-{$index}")),['n'=>2]),
                 'year' => $year,
                 'month' => $index,
                 'type' => $type,

@@ -1,17 +1,5 @@
 <?php
 return [
-    'January' => 'January',
-    'February' => 'February',
-    'March' => 'March',
-    'April' => 'April',
-    'May' => 'May',
-    'June' => 'June',
-    'July' => 'July',
-    'August' => 'August',
-    'September' => 'September',
-    'October' => 'October',
-    'November' => 'November',
-    'December' => 'December',
     'Friday' => 'Friday',
     'Saturday' => 'Saturday',
     'Sunday' => 'Sunday',
@@ -67,5 +55,12 @@ return [
     'ORDER_NOT_FOUND' => 'Order not found.',
     'STATUS_CHANGE_NOTIFY' => 'After the status change, the client will be notified of the status change.',
     'PRINT_PDF' => 'Print (pdf)',
-    'QUANTITY_CHANGED' => 'Quantity <strong>{0}</strong> successfully modified.'
+    'QUANTITY_CHANGED' => 'Quantity <strong>{0}</strong> successfully modified.',
+    'LINK_ORDER_FOUND_USER' => 'Link an order to a found user?',
+    'TO_TIE' => 'Tie',
+    'SIMILARTY_IN' => 'Similarity in',
+    'MATCH_USER' => 'Match found &mdash; link to this order?',
+    'CALL_CONFIRM' => 'You don\'t have to call me!',
+    'ORDER_UNREGISTERED_USER' => 'Order is processed <strong>unregistered</strong> user',
+    'CALL' => 'Call'
 ];

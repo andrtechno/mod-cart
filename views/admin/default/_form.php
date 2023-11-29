@@ -8,6 +8,7 @@ use panix\mod\cart\models\Delivery;
 use panix\engine\bootstrap\ActiveForm;
 use panix\ext\telinput\PhoneInput;
 use panix\engine\CMS;
+use panix\mod\user\models\User;
 
 /**
  * @var $this \yii\web\View
@@ -17,7 +18,7 @@ use panix\engine\CMS;
 <?php
 $related = false;
 if (!$model->user_id) {
-    $user = \panix\mod\user\models\User::findOne(['email' => $model->user_email]);
+    $user = User::find()->where(['email' => $model->user_email])->one();
     if ($user) {
         $related = true;
     }
@@ -31,7 +32,7 @@ if ($related) {
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Сходство по почте <?= $model->user_email; ?></h5>
+                    <h6 class="modal-title" id="exampleModalLabel"><?= Yii::t('cart/admin','SIMILARTY_IN'); ?> <strong><?= $model->user_email; ?></strong></h6>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -42,14 +43,14 @@ if ($related) {
                             <tr>
                                 <th></th>
                                 <th>Заказ</th>
-                                <th>Пользователь</th>
+                                <th><?= Yii::t('cart/Order','USER_ID'); ?></th>
                                 <th>% сходство</th>
                             </tr>
 
                             <tr>
-                                <td><strong>Имя</strong></td>
+                                <td><strong><?= Yii::t('cart/Order','USER_NAME'); ?></strong></td>
                                 <td><?= trim($model->user_name); ?></td>
-                                <td><?= (!empty($user->first_name)) ? trim($user->first_name) : ''; ?></td>
+                                <td><?= (!empty($user->first_name)) ? trim($user->first_name) : Yii::$app->formatter->asHtml(null); ?></td>
                                 <td>
                                     <?php
                                     similar_text(trim($model->user_name), trim($user->first_name), $percent);
@@ -59,9 +60,9 @@ if ($related) {
                             </tr>
 
                             <tr>
-                                <td><strong>Фамилия</strong></td>
+                                <td><strong><?= Yii::t('cart/Order','USER_LASTNAME'); ?></strong></td>
                                 <td><?= trim($model->user_lastname); ?></td>
-                                <td><?= trim($user->last_name); ?></td>
+                                <td><?= ($user->last_name) ? trim($user->last_name) : Yii::$app->formatter->asHtml(null); ?></td>
                                 <td>
                                     <?php
                                     $d = similar_text(trim($model->user_lastname), trim($user->last_name), $percent12);
@@ -70,36 +71,25 @@ if ($related) {
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>IP</strong></td>
+                                <td><strong>IP created</strong></td>
                                 <td><?= $model->ip_create; ?></td>
-                                <td><?= $user->login_ip; ?></td>
+                                <td><?= $user->ip_create; ?></td>
                                 <td>
                                     <?php
-                                    $d = similar_text($model->ip_create, $user->login_ip, $percent_ip);
+                                    $d = similar_text($model->ip_create, $user->ip_create, $percent_ip);
                                     ?>
                                     <?= Html::tag('span', round($percent_ip, 0) . '%', ['class' => 'text-' . (($percent_ip > 80) ? 'success' : 'danger')]); ?>
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>Тел.</strong></td>
+                                <td><strong><?= Yii::t('cart/Order','USER_PHONE'); ?></strong></td>
                                 <td><?= CMS::phone_format($model->user_phone); ?></td>
-                                <td><?= CMS::phone_format($user->phone); ?></td>
+                                <td><?= ($user->phone) ? CMS::phone_format($user->phone) : Yii::$app->formatter->asHtml(null); ?></td>
                                 <td>
                                     <?php
                                     $d = similar_text($model->user_phone, $user->phone, $percent13);
                                     ?>
                                     <?= Html::tag('span', round($percent13, 0) . '%', ['class' => 'text-' . (($percent13 > 80) ? 'success' : 'danger')]); ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>E-mail</strong></td>
-                                <td><?= $model->user_email; ?></td>
-                                <td><?= $user->email; ?></td>
-                                <td>
-                                    <?php
-                                    $d = similar_text($model->user_email, $user->email, $percent);
-                                    ?>
-                                    <?= Html::tag('span', round($percent, 0) . '%', ['class' => 'text-' . (($percent > 80) ? 'success' : 'danger')]); ?>
                                 </td>
                             </tr>
                         </table>
@@ -109,9 +99,10 @@ if ($related) {
                     <?php \yii\widgets\ActiveForm::begin(['action' => ['related']]); ?>
                     <?= Html::hiddenInput('order_id', $model->id); ?>
                     <?= Html::hiddenInput('user_id', $user->id); ?>
-                    <span class="text-danger"><i
-                                class="icon-warning"></i> Связать заказ с найденным пользователем?</span>
-                    <?= Html::submitButton('Связать', ['class' => 'btn btn-success']) ?>
+                    <span class="text-danger">
+                        <i class="icon-warning"></i> <?= Yii::t('cart/admin','LINK_ORDER_FOUND_USER') ?>
+                    </span>
+                    <?= Html::submitButton(Yii::t('cart/admin','TO_TIE'), ['class' => 'btn btn-success']) ?>
                     <?php \yii\widgets\ActiveForm::end(); ?>
                 </div>
             </div>
@@ -137,7 +128,7 @@ $form = ActiveForm::begin([
 
 
     <div class="card-body">
-        <h5 class="mt-3 mb-3 text-center">Оплата и доставка</h5>
+        <h5 class="mt-3 mb-3 text-center"><?= Yii::t('cart/default','DELIVERY_PAYMENT'); ?></h5>
         <?=
         $form->field($model, 'status_id')->dropDownList(ArrayHelper::map(OrderStatus::find()->all(), 'id', 'name'));
         ?>
@@ -174,7 +165,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'user_email', [
             'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-4\">{label}</div>\n{hint}\n{beginWrapper}{input}{related}\n{error}{endWrapper}",
             'parts' => [
-                '{related}' => ($related) ? '<button type="button" class="btn text-danger btn-sm btn-link" data-toggle="modal" data-target="#diffModal"><i class="icon-warning text-danger"></i> Найдено совпадение &mdash; связать с этим заказом?</button>' : ''
+                '{related}' => ($related) ? '<button type="button" class="btn text-danger btn-sm btn-link" data-toggle="modal" data-target="#diffModal"><i class="icon-warning text-danger"></i> '.Yii::t('cart/admin','MATCH_USER').'</button>' : ''
             ]
         ])->textInput(); ?>
         <?php
@@ -182,7 +173,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'user_phone', [
                 'template' => "<div class=\"col-sm-4 col-md-4 col-lg-3 col-xl-4\">{label}</div>\n{hint}\n{beginWrapper}{input}{call}\n{error}{endWrapper}",
                 'parts' => [
-                    '{call}' => Html::a(Html::icon('phone') . ' Позвонить', 'tel:' . $model->user_phone, ['class' => 'mt-2 mt-lg-0 float-none float-lg-right btn btn-light'])
+                    '{call}' => Html::a(Html::icon('phone') . ' '.Yii::t('cart/admin','CALL'), 'tel:' . $model->user_phone, ['class' => 'mt-2 mt-lg-0 float-none float-lg-right btn btn-light'])
                 ]
             ])->widget(PhoneInput::class, [
                 'jsOptions' => [
