@@ -88,6 +88,7 @@ $form = ActiveForm::begin();
             ->hint('Введите E-mail и нажмите Enter');
         ?>
 
+        <?php echo $form->field($model, 'min_sum')->textInput()->hint('0 = No restrictions'); ?>
         <?php echo $form->field($model, 'quantity_convert')->checkbox(); ?>
         <?php echo $form->field($model, 'notify_changed_status')->checkbox(); ?>
         <?php echo $form->field($model, 'delivery_id')->dropdownList(\yii\helpers\ArrayHelper::map(Delivery::find()

@@ -9,6 +9,7 @@ use panix\ext\select2\Select2;
  */
 
 $areas = Yii::$app->novaposhta->getAreas();
+
 ?>
     <div class="mb-4">
         <div class="form-group field-delivery-area required <?php if ($model->getErrors('area')) echo "has-error" ?>">
@@ -40,6 +41,7 @@ $areas = Yii::$app->novaposhta->getAreas();
         <?php if ($model->area) { ?>
             <div class="form-group field-delivery-city required <?php if ($model->getErrors('city')) echo "has-error" ?>">
                 <?php
+
                 echo Html::activeLabel($model, 'city', ['class' => 'col-form-label']);
                 echo Select2::widget([
                     'model' => $model,

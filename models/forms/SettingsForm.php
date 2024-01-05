@@ -17,6 +17,11 @@ class SettingsForm extends \panix\engine\SettingsModel
     public $pdf_tpl_brand;
     public $pdf_tpl_supplier;
 
+    public $delivery_id;
+    public $notify_changed_status;
+    public $quantity_convert;
+    public $min_sum;
+
     protected $_pdf_tpl_order;
     protected $_mail_tpl_order;
     protected $_pdf_tpl_brand;
@@ -26,9 +31,6 @@ class SettingsForm extends \panix\engine\SettingsModel
     protected $_mail_tpl_order_path;
     protected $_pdf_tpl_brand_path;
     protected $_pdf_tpl_supplier_path;
-    public $delivery_id;
-    public $notify_changed_status;
-    public $quantity_convert;
 
     public static function defaultSettings()
     {
@@ -39,7 +41,8 @@ class SettingsForm extends \panix\engine\SettingsModel
             'pdf_tpl_brand' => '@cart/pdf_brand.dist.tpl',
             'pdf_tpl_supplier' => '@cart/pdf_supplier.dist.tpl',
             'delivery_id' => 1,
-            'quantity_convert'=>false,
+            'quantity_convert' => false,
+            'min_sum' => 0,
         ];
     }
 
@@ -47,11 +50,11 @@ class SettingsForm extends \panix\engine\SettingsModel
     public function rules()
     {
         return [
-            [['notify_changed_status','quantity_convert'], 'boolean'],
-            [['order_emails', 'mail_tpl_order', 'pdf_tpl_order', 'pdf_tpl_brand', 'pdf_tpl_supplier', 'delivery_id'], 'required'],
+            [['notify_changed_status', 'quantity_convert'], 'boolean'],
+            [['order_emails', 'mail_tpl_order', 'pdf_tpl_order', 'pdf_tpl_brand', 'pdf_tpl_supplier', 'delivery_id', 'min_sum'], 'required'],
             [['order_emails'], '\panix\engine\validators\EmailListValidator'],
             [['mail_tpl_order', 'pdf_tpl_order', 'pdf_tpl_brand', 'pdf_tpl_supplier'], 'string'],
-            [['delivery_id'], 'integer'],
+            [['delivery_id', 'min_sum'], 'integer'],
         ];
     }
 
@@ -92,8 +95,6 @@ class SettingsForm extends \panix\engine\SettingsModel
 
     public function save()
     {
-
-
         FileHelper::createDirectory(Yii::getAlias('@app/views/pdf'));
 
         file_put_contents(Yii::getAlias('@app/mail') . '/order.tpl', $this->mail_tpl_order);
@@ -106,7 +107,7 @@ class SettingsForm extends \panix\engine\SettingsModel
         $this->mail_tpl_order = '@app/mail/order.tpl';
         $this->pdf_tpl_brand = '@app/views/pdf/pdf_brand.tpl';
         $this->pdf_tpl_supplier = '@app/views/pdf/pdf_supplier.tpl';
-        //}
+
         parent::save();
     }
 }

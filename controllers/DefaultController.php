@@ -188,7 +188,7 @@ class DefaultController extends WebController
                 $manager = new DeliverySystemManager();
                 $system = $manager->getSystemClass($this->delivery->system);
                 $deliveryModel = $system->getModel();
-                $modelName = ucfirst($this->delivery->system).'Model';
+                $modelName = ucfirst($this->delivery->system) . 'Model';
                 if ($this->delivery->system == 'novaposhta' || $this->delivery->system == 'meest') {
                     if (isset($post[$modelName])) {
 
@@ -564,34 +564,12 @@ class DefaultController extends WebController
             return false;
         }
 
-
-        /*$order = new Order;
-
-        // Set main data
-        $order->user_id = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
-        $order->user_name = $this->form->user_name;
-        $order->user_email = $this->form->user_email;
-        $order->user_lastname = $this->form->user_lastname;
-        $order->user_phone = $this->form->user_phone;
-        $order->delivery_address = $this->form->delivery_address;
-        $order->user_comment = $this->form->user_comment;
-        $order->delivery_id = $this->form->delivery_id;
-        $order->payment_id = $this->form->payment_id;
-        $order->promocode_id = $this->form->promocode_id;
-        $order->call_confirm = $this->form->call_confirm;
-        $order->points = $this->form->points;*/
-
-        //if (isset($this->order->delivery_type))
-        //    $this->order->delivery_type = $this->order->delivery_type;
-        //$order->status_id = 1; //set New status
-
-
-        //$delivery = Delivery::findOne($this->order->delivery_id);
+        $productClass = Yii::$app->getModule('shop')->model('Product');
 
         $cartItems = Yii::$app->cart->getDataWithModels();
+
         $this->order->status_id = Order::STATUS_NEW;
         if ($this->order->validate()) {
-
             if ($this->order->points > 0) {
                 $this->order->discount = $this->order->points;
             }
@@ -606,7 +584,6 @@ class DefaultController extends WebController
             Yii::$app->session->setFlash('error', Yii::t('cart/default', 'SUCCESS_ORDER'));
             return 'error';
         }
-
         // Process products
         $productsCount = 0;
 
@@ -640,7 +617,7 @@ class DefaultController extends WebController
             $ordered_product->weight_class_id = $item['weight_class_id'];
             $ordered_product->length_class_id = $item['length_class_id'];
 
-            $productClass = Yii::$app->getModule('shop')->model('Product');
+            //$productClass = Yii::$app->getModule('shop')->model('Product');
             // if($item['currency_id']){
             //     $currency = Currency::model()->findByPk($item['currency_id']);
             //$ordered_product->price = Product::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']) * $currency->rate;

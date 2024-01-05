@@ -79,6 +79,7 @@ class Order extends ActiveRecord
      */
     public $register = false;
     public $deliveryModel;
+    public $min_sum = 0; //only for validate
 
     /**
      * @inheritdoc
@@ -198,6 +199,7 @@ class Order extends ActiveRecord
         //NEW
         $scenarios['create_order_guest'] = [
             'register',
+            'min_sum',
             'delivery_id',
             'payment_id',
             'user_lastname',
@@ -210,6 +212,7 @@ class Order extends ActiveRecord
         ];
         $scenarios['create_order'] = [
             'register',
+            'min_sum',
             'delivery_id',
             'payment_id',
             'user_lastname',
@@ -243,8 +246,8 @@ class Order extends ActiveRecord
         $rules[] = ['status_id', 'validateStatus'];
         $rules[] = ['promocode_id', 'validatePromoCode'];
 
+        $rules[] = [['min_sum'], 'validateMinSum', 'on' => ['create_order', 'create_order_guest']];
 
-        //$rules[] = [['user_lastname'], 'required', 'on' => 'create_order'];
         $rules[] = [['user_lastname'], 'required', 'on' => ['create_order']];
         $rules[] = [['user_lastname'], 'required', 'on' => ['create_order_guest']];
         if (Yii::$app->user->isGuest) {
@@ -253,7 +256,28 @@ class Order extends ActiveRecord
 
         return $rules;
     }
+    public function validateMinSum($attribute)
+    {
+       // if ($this->{$attribute}) {
 
+            $productClass = Yii::$app->getModule('shop')->model('Product');
+
+            $cartItems = Yii::$app->cart->getDataWithModels();
+
+            $min_sum = (int)Yii::$app->settings->get('cart', 'min_sum');
+            if ($min_sum > 0) {
+                $price_check = 0;
+                foreach ($cartItems['items'] as $item) {
+                    $price = $productClass::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
+                    $price_check += $price * $item['in_box'] * $item['quantity'];
+                }
+                if ($price_check < $min_sum) {
+                   // echo $this->order->scenario;
+                    $this->addError($attribute, 'Минимальная сумма заказа ' . $min_sum . ' грн.');
+                }
+            }
+       // }
+    }
     public function validateRegisterEmail($attribute)
     {
         if ($this->{$attribute}) {
@@ -262,7 +286,6 @@ class Order extends ActiveRecord
                 $this->addError($attribute, 'Ошибка регистрации, данный E-mail уже зарегистрирован');
             }
         }
-
     }
 
     public function validatePromoCode($attribute)

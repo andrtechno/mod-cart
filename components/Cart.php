@@ -291,11 +291,11 @@ class Cart extends Component
 
 
         $points2 = 0;
-        if (isset(Yii::$app->request->post('OrderCreateForm')['points'])) {
+        if (isset(Yii::$app->request->post('Order')['points'])) {
             $totalSummary = $this->getTotalPrice(true);
             $total = $this->getTotalPrice();
 
-            $points2 = (Yii::$app->request->post('OrderCreateForm')['points']) ? Yii::$app->request->post('OrderCreateForm')['points'] : 0;
+            $points2 = (Yii::$app->request->post('Order')['points']) ? Yii::$app->request->post('Order')['points'] : 0;
             $bonusData = [];
             $config = Yii::$app->settings->get('user');
             $points = ($points2 * (int)$config->bonus_value);
@@ -306,24 +306,23 @@ class Cart extends Component
             if ($points2 > 0) {
                 if ($points2 <= Yii::$app->user->identity->points) {
                     if ($profit >= (int)$config->bonus_max_use_order) {
-                        $bonusData['message'] = Yii::t('default', 'BONUS_ACTIVE', $points2);
+                        $bonusData['message'] = Yii::t('user/default', 'BONUS_ACTIVE', $points2);
                         $bonusData['success'] = true;
-                        $bonusData['value'] = $points2;
+                        $bonusData['value'] = (int)$points2;
                         $total -= $points2;
                     } else {
                         $points2 = 0;
-                        $bonusData['message'] = Yii::t('default', 'BONUS_NOT_ENOUGH');
+                        $bonusData['message'] = Yii::t('user/default', 'BONUS_NOT_ENOUGH');
                         $bonusData['success'] = false;
                     }
-
                 } else {
                     $points2 = 0;
-                    $bonusData['message'] = Yii::t('default', 'BONUS_NOT_ENOUGH');
+                    $bonusData['message'] = Yii::t('user/default', 'BONUS_NOT_ENOUGH');
                     $bonusData['success'] = false;
                 }
             } else {
                 $points2 = 0;
-                $bonusData['message'] = 'Вы отменили бонусы';
+                $bonusData['message'] = Yii::t('user/default', 'BONUS_CANCELED');
                 $bonusData['success'] = false;
 
             }
