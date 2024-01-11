@@ -438,7 +438,7 @@ class Order extends ActiveRecord
         $this->registerGuest();
 
         if ($insert) {
-            Timeline::add('new_order');
+            //Timeline::add('new_order');
         }
 
         if ($this->ttn) {
