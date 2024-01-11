@@ -169,9 +169,10 @@ Pjax::end();
             <?php if ($model->user_id && Yii::$app->settings->get('user', 'bonus_enable')) { ?>
                 <li class="list-group-item">
                     Бонусы к зачаслению:
-                    <h5 class="m-0 float-right"><?= floor($model->total_price * Yii::$app->settings->get('user', 'bonus_ratio')) ?>
+                    <strong class="float-right"><?= floor($model->total_price * Yii::$app->settings->get('user', 'bonus_ratio')) ?>
+
                         <span class="text-muted"><?= $symbol ?></span>
-                    </h5>
+                    </strong>
                 </li>
             <?php } ?>
             <?php if ($model->delivery_price > 0) { ?>
@@ -225,10 +226,10 @@ Pjax::end();
 
             <li class="list-group-item d-flex justify-content-between">
                 <span class="d-flex align-items-center mr-4"><?= $model::t('FULL_PRICE') ?>:</span>
-                <h4 class="m-0">
-                    <span class="full-price"><?= Yii::$app->currency->number_format($model->full_price); ?></span>
+                <h5 class="m-0">
+                    <strong class="full-price"><?= Yii::$app->currency->number_format($model->full_price); ?></strong>
                     <small class="text-muted"><?= $symbol; ?></small>
-                </h4>
+                </h5>
             </li>
 
 
