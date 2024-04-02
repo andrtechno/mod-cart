@@ -229,6 +229,7 @@ class Order extends ActiveRecord
     public function rules()
     {
         $rules = [];
+        $rules[] = [['user_email'], 'trim'];
         $rules[] = ['user_phone', 'panix\ext\telinput\PhoneInputValidator', 'on' => [self::SCENARIO_DEFAULT, 'buyOneClick']];
         $rules[] = ['user_phone', 'string', 'on' => 'buyOneClick'];
         $rules[] = [['user_name', 'delivery_id', 'payment_id', 'user_phone'], 'required'];
@@ -256,28 +257,30 @@ class Order extends ActiveRecord
 
         return $rules;
     }
+
     public function validateMinSum($attribute)
     {
-       // if ($this->{$attribute}) {
+        // if ($this->{$attribute}) {
 
-            $productClass = Yii::$app->getModule('shop')->model('Product');
+        $productClass = Yii::$app->getModule('shop')->model('Product');
 
-            $cartItems = Yii::$app->cart->getDataWithModels();
+        $cartItems = Yii::$app->cart->getDataWithModels();
 
-            $min_sum = (int)Yii::$app->settings->get('cart', 'min_sum');
-            if ($min_sum > 0) {
-                $price_check = 0;
-                foreach ($cartItems['items'] as $item) {
-                    $price = $productClass::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
-                    $price_check += $price * $item['in_box'] * $item['quantity'];
-                }
-                if ($price_check < $min_sum) {
-                   // echo $this->order->scenario;
-                    $this->addError($attribute, 'Минимальная сумма заказа ' . $min_sum . ' грн.');
-                }
+        $min_sum = (int)Yii::$app->settings->get('cart', 'min_sum');
+        if ($min_sum > 0) {
+            $price_check = 0;
+            foreach ($cartItems['items'] as $item) {
+                $price = $productClass::calculatePrices($item['model'], $item['variant_models'], $item['configurable_id']);
+                $price_check += $price * $item['in_box'] * $item['quantity'];
             }
-       // }
+            if ($price_check < $min_sum) {
+                // echo $this->order->scenario;
+                $this->addError($attribute, 'Минимальная сумма заказа ' . $min_sum . ' грн.');
+            }
+        }
+        // }
     }
+
     public function validateRegisterEmail($attribute)
     {
         if ($this->{$attribute}) {
@@ -400,7 +403,9 @@ class Order extends ActiveRecord
             $this->status_id = Order::STATUS_NEW;
 
         //isset($this->oldAttributes['status_id']) && $this->attributes['status_id'] &&
-        if ($this->user_id && $this->apply_user_points) {
+        $configUser = Yii::$app->settings->get('user');
+
+        if ($configUser->bonus_enable && $this->user_id && $this->apply_user_points) {
             if ($this->attributes['status_id'] == self::STATUS_RETURN) {
                 $this->user->unsetPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
                 $this->apply_user_points = false;
@@ -416,7 +421,7 @@ class Order extends ActiveRecord
         }*/
 
 
-        if ($this->status_id == self::STATUS_SUBMITTED && $this->user_id && !$this->apply_user_points) {
+        if ($configUser->bonus_enable && $this->status_id == self::STATUS_SUBMITTED && $this->user_id && !$this->apply_user_points) {
             $this->user->setPoints(floor($this->total_price * Yii::$app->settings->get('user', 'bonus_ratio')));
             $this->apply_user_points = true;
         }
@@ -944,7 +949,7 @@ class Order extends ActiveRecord
 
                         $list['warehouse'] = [
                             'key' => Yii::t('cart/Delivery', 'WAREHOUSE'),
-                            'value' => $warehouse[$data['warehouse']]
+                            'value' => (isset($warehouse[$data['warehouse']])) ? $warehouse[$data['warehouse']] : Html::tag('span','Ошибка: отделение не найдено "' . $data['warehouse'] . '"', ['class'=>'text-danger'])
                         ];
                     }
                 } else {
@@ -982,7 +987,7 @@ class Order extends ActiveRecord
     public function getDeliveryHtml($model = null)
     {
         $html = '';
-        if(!$model){
+        if (!$model) {
             $model = $this;
         }
         foreach ($model->getDeliveryEach() as $key => $data) {
