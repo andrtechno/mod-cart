@@ -1015,6 +1015,46 @@ class Order extends ActiveRecord
 
         $columns = [];
 
+        $columns[] = [
+            'class' => 'panix\engine\grid\columns\ActionColumn',
+            'template' => '{update}'
+        ];
+        $columns['checkbox']=[
+            'class' => 'panix\engine\grid\columns\CheckboxColumn',
+            'enableDelete'=>false,
+            'customActions' => [
+                [
+                    'label' => self::t('CHANGE_STATUS'),
+                    'url' => '#',
+                    //'icon' => 'eye',
+                    'linkOptions' => [
+                        'onClick' => 'return setProductsStatus(1, this);',
+                        'data-confirm-info' => self::t('CONFIRM_SHOW'),
+                        'data-pjax' => 0
+                    ],
+                ],
+                [
+                    'label' => self::t('PRINT_BRAND'),
+                    'url' => '#',
+                    //'icon' => 'eye-close',
+                    'linkOptions' => [
+                        'onClick' => 'return setProductsStatus(0, this);',
+                        'data-confirm-info' => self::t('CONFIRM_HIDE'),
+                        'data-pjax' => 0
+                    ],
+                ],
+                [
+                    'label' => self::t('PRINT_SUPPLIER'),
+                    'url' => '#',
+                    //'icon' => 'folder-open',
+                    'linkOptions' => [
+                        'onClick' => 'return showCategoryAssignWindow(this);',
+                        'data-title' => self::t('CONFIRM_CATEGORY'),
+                        'data-pjax' => 0
+                    ],
+                ],
+            ]
+        ];
 
         $columns['id'] = [
             'attribute' => 'id',

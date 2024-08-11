@@ -8,7 +8,7 @@ use panix\mod\cart\models\Order;
 /**
  * @var $this \yii\web\View
  */
-
+\panix\mod\cart\HammerAsset::register($this);
 ?>
 <?= Html::beginForm('/admin/cart/default/pdf-orders', 'GET'); ?>
 <?php echo $this->render('_filter_pdf'); ?>
@@ -30,15 +30,9 @@ $(document).on("click", "#collapse-grid-filter button" , function(event,k) {
     return false;
 });
 
-var timer;
-$("#grid-orders tr[data-url]").on("touchstart", function(e){
-    var that = this;
-    timer = setTimeout(function(){
-    window.location.href = $(that).data("url");
-        }, 1000);
-});
-$("#grid-orders tr[data-url]").on("touchend", function(e){
-    clearTimeout(timer);
+$("#grid-orders tr[data-url]").hammer({}).bind("doubletap", function(e){
+	$("#grid-orders").addClass("pjax-loader");
+	 window.location.href = $(this).data("url");
 });
 
 ');

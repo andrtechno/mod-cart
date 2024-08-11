@@ -138,6 +138,7 @@ cart = {
                     //cart.renderBlockCart();
                     $(cart.selectorCount).html(data.countItems.boxes);
                     $(cart.selectorTotal).html(data.total_price_format);
+                    $('#bonuses').html(data.bonuses);
                     $(document).trigger("cart:add:success", data);
                 }
 
@@ -230,7 +231,6 @@ cart = {
             cart_recount_xhr.abort();
 
 
-
         cart_recount_xhr = $.ajax({
             type: 'POST',
             url: common.url('/cart/recount'),
@@ -263,7 +263,8 @@ cart = {
                 //$(cart.selectorTotal).text(price_format(total));
                 $(cart.selectorTotal).html(data.total_price);
                 $(cart.selectorCount).html(data.countBoxes);
-                $('.product-' + data.product_id + ' .spinner input').val(data.rowQuantity)
+                $('.product-' + data.product_id + ' .spinner input').val(data.rowQuantity);
+                $('#bonuses').html(data.bonuses);
                 cart.removeLoader();
                 //cart.renderBlockCart();
             }
@@ -328,26 +329,26 @@ cart = {
             type: 'GET',
             // dataType:'json',
             dataType: 'html',
-            beforeSend:function(){
+            beforeSend: function () {
                 $('.delivery-form').html('');
                 $('#order-delivery_id').addClass('loading');
-                $('#cartForm').find('button[type="submit"]').attr('disabled','disabled');
+                $('#cartForm').find('button[type="submit"]').attr('disabled', 'disabled');
             },
             success: function (data) {
                 $('#delivery-1,#delivery-2,#delivery-3').html('');
                 //$('#delivery-form').html(data);
-                $(that).closest('.delivery-radio').find('.delivery-form-'+delivery_id).html(data);
+                $(that).closest('.delivery-radio').find('.delivery-form-' + delivery_id).html(data);
                 $('#order-delivery_id').removeClass('loading');
 
                 var deliveryCheck = $('#order-delivery_id input[type="radio"]:checked');
-                $('#delivery').html($("label[for='"+deliveryCheck.attr('id')+"']").text());
+                $('#delivery').html($("label[for='" + deliveryCheck.attr('id') + "']").text());
             },
-            complete:function(jqXHR, textStatus){
+            complete: function (jqXHR, textStatus) {
                 $('#delivery-1,#delivery-2,#delivery-3').html('');
                 $('#cartForm').find('button[type="submit"]').removeAttr('disabled');
                 $('#order-delivery_id').removeClass('loading');
             },
-            error:function( jqXHR, textStatus, errorThrown ){
+            error: function (jqXHR, textStatus, errorThrown) {
                 $('#delivery-1,#delivery-2,#delivery-3').html('');
                 $('#order-delivery_id').removeClass('loading');
             }
@@ -406,20 +407,24 @@ $(function () {
     });*/
     //Custom spinner
     $(document).on('keyup', '.spinner input', function () {
+        //var value, step;
         var input = $(this);
+        var max = parseInt(input.data("max"));
+        var min = parseInt(input.data("min"));
+        var product_id = parseInt(input.data("product_id"));
         var step = (input.data("step")) ? parseInt(input.data("step")) : 1;
         var value = (parseInt(input.val())) ? parseInt(input.val()) : step;
-        var product_id = parseInt(input.data("product_id"));
 
         value = Math.round(value / step) * step;
+
         input.val(value);
-        console.log(product_id);
         if (product_id) {
             if (value >= 1 && cart.spinnerRecount) {
                 cart.recount(value, product_id);
             }
         }
     });
+
     $(document).on('click', '.spinner button', function () {
         var input = $(this).closest('.spinner').find('input');
         var step = (input.data("step")) ? parseInt(input.data("step")) : 1;
@@ -528,7 +533,7 @@ $(function () {
                     if (button) {
                         button.attr('onclick', 'cart.add(this)').text(response.button_text_add)
                     }
-                    if(response.emptyHtml){
+                    if (response.emptyHtml) {
                         $('#cart-modal .cart-items').html(response.emptyHtml);
                     }
                     $(document).trigger("cart:remove:success", response);
@@ -599,10 +604,10 @@ $(function () {
     });*/
 
     var deliveryCheck = $('#order-delivery_id input[type="radio"]:checked');
-    $('#delivery').html($("label[for='"+deliveryCheck.attr('id')+"']").text());
+    $('#delivery').html($("label[for='" + deliveryCheck.attr('id') + "']").text());
 
     var paymentCheck = $('#order-payment_id input[type="radio"]:checked');
-    $('#payment').html($("label[for='"+paymentCheck.attr('id')+"']").text());
+    $('#payment').html($("label[for='" + paymentCheck.attr('id') + "']").text());
 
     /*$('#delivery-form select').change(function (e, clickedIndex, isSelected, previousValue) {
 

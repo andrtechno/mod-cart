@@ -208,9 +208,9 @@ class Cart extends Component
 
             }
         }
-        //if(isset($data['bonus'])){
-        //     $result -= $data['bonus'];
-        // }
+        if (isset($data['bonus'])) {
+            $result -= $data['bonus'];
+        }
         return $result;
     }
     /*
@@ -289,30 +289,59 @@ class Cart extends Component
         // $countBoxs += $quantity / $data['in_box'];
         // $this->session['cart_data'] = $currentData;
 
+//print_r($currentData);die;
+
+        $get_bonus = 0;
+        if (isset($currentData['bonus'])) {
+            $get_bonus = $currentData['bonus'];
+        }
+        if (isset(Yii::$app->request->post('Order')['points'])) {
+            $get_bonus = Yii::$app->request->post('Order')['points'];
+        }
 
         $points2 = 0;
         if (isset(Yii::$app->request->post('Order')['points'])) {
-            $totalSummary = $this->getTotalPrice(true);
-            $total = $this->getTotalPrice();
 
-            $points2 = (Yii::$app->request->post('Order')['points']) ? Yii::$app->request->post('Order')['points'] : 0;
+            $total = $this->getTotalPrice();
+            $totalSummary = $total; //false
+            //$totalSummary = $this->getTotalPrice(); //false
+
+            $points2 = (int)((Yii::$app->request->post('Order')['points']) ? Yii::$app->request->post('Order')['points'] : 0);
             $bonusData = [];
             $config = Yii::$app->settings->get('user');
+            $bonusData['points2'] = $points2;
             $points = ($points2 * (int)$config->bonus_value);
+            $bonusData['points'] = $points;
             // $profit = round((($totalPrice-$pc)/$totalPrice)*100,2);
-            $profit = (($totalSummary - $points) / $totalSummary) * 100;
-            // echo $total;die;
+            $profit = (($totalSummary - (int)$points) / $totalSummary) * 100; //OLD
+            //$bonusData['profit_old'] = $profit;
+            //$profit = (($totalSummary - (int)$points) * 100) / $totalSummary; //разница в процентах
 
+
+            //$profit = $totalSummary - (($totalSummary - (int)$points) * ($profit / 100));
+
+            $profit = (100 - $profit);
+            if ($profit > 100) {
+                $profit = 100;
+            }
+
+//percent
+            $maxBonusPercent = (int)$config->bonus_max_use_order;
             if ($points2 > 0) {
-                if ($points2 <= Yii::$app->user->identity->points) {
-                    if ($profit >= (int)$config->bonus_max_use_order) {
+                if ($points2 > ceil($total)) { //new if 2024
+                    $bonusData['message'] = Yii::t('user/default', 'Вы не можете применить больше бонусов чем ' . ceil($total) . ' ');
+                    $bonusData['success'] = false;
+                } elseif ($points2 <= Yii::$app->user->identity->points) {
+                    $bonusData['profit'] = $profit;
+                    $bonusData['bonus_max_use_order'] = $maxBonusPercent;
+                    if ($profit <= $maxBonusPercent) { //if ($profit <= (int)$config->bonus_max_use_order) {
                         $bonusData['message'] = Yii::t('user/default', 'BONUS_ACTIVE', $points2);
                         $bonusData['success'] = true;
-                        $bonusData['value'] = (int)$points2;
+                        $bonusData['value'] = $points2;
                         $total -= $points2;
                     } else {
                         $points2 = 0;
-                        $bonusData['message'] = Yii::t('user/default', 'BONUS_NOT_ENOUGH');
+                        $bonusData['message'] = Yii::t('user/default', 'BONUS_NOT_ENOUGH') . ' ' . $maxBonusPercent . '%';
                         $bonusData['success'] = false;
                     }
                 } else {
@@ -338,13 +367,14 @@ class Cart extends Component
 
 
         //$this->session['cart_data'] = $currentData;
-
+        $t = (isset($total)) ? $total : $this->getTotalPrice();
         $counter = $this->countItems();
         $response['unit_price'] = Yii::$app->currency->number_format(Yii::$app->currency->convert($calcPrice));
         $response['rowTotal'] = Yii::$app->currency->number_format($rowTotal);
-        $response['total_price'] = Yii::$app->currency->number_format((isset($total)) ? $total : $this->getTotalPrice());
+        $response['total_price'] = Yii::$app->currency->number_format($t);
         $response['countItems'] = $counter['quantity'];
         $response['countBoxes'] = $counter['boxes'];
+        $response['bonuses'] = Yii::$app->currency->number_format(floor($t * Yii::$app->settings->get('user')->bonus_ratio));
         return $response;
     }
 

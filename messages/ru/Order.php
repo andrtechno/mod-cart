@@ -33,5 +33,6 @@ return [
     'CREATE_ORDER' => 'Добавить заказ',
     'SELECT_PAYMENT' => '&mdash; Оплата &mdash;',
     'SELECT_DELIVERY' => '&mdash; Доставка &mdash;',
-    'CALL_CONFIRM' => 'Не звонить для подтверждения заказа'
+    'CALL_CONFIRM' => 'Не звонить для подтверждения заказа',
+    'SUM'=>'Сумма'
 ];

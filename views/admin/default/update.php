@@ -81,7 +81,7 @@ JS;
 
 
 <?php if ($model->points > 0) { ?>
-    <div class="alert alert-info"><?= Yii::t('default', 'BONUS_ACTIVE', $model->points); ?></div>
+    <div class="alert alert-info"><?= Yii::t('user/default', 'BONUS_ACTIVE', $model->points); ?></div>
 <?php } ?>
 <?php if (Yii::$app->hasModule('novaposhta') && $model->deliveryMethod) { ?>
     <?php if ($model->deliveryMethod->system == 'novaposhta') { ?>

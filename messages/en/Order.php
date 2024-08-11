@@ -33,5 +33,6 @@ return [
     'CREATE_ORDER' => 'Add order',
     'SELECT_PAYMENT' => '&mdash; Payment &mdash;',
     'SELECT_DELIVERY' => '&mdash; Delivery &mdash;',
-    'CALL_CONFIRM' => 'Don\'t call for order confirmation'
+    'CALL_CONFIRM' => 'Don\'t call for order confirmation',
+    'SUM'=>'Sum'
 ];

@@ -168,19 +168,34 @@
             </p>
         {/if}
 
-        {if $model->discount}
-            <p>{Yii::t('cart/Order', 'DISCOUNT')}:
-                {if ('%' === substr($model->discount,-1,1))}
-                    <strong>{$model->discount}</strong>
+        {if $model.points}
+            <p>{Yii::t('user/default', 'BONUS_ACTIVE', $model.points)}</p>
+        {/if}
+        {if $model.discount}
+            <p>  {Yii::t('cart/Order', 'DISCOUNT')}:
+                {if ('%' === substr($model.discount, -1, 1))}
+                    <strong>{$model.discount}</strong>
                 {else}
-                    <strong>{Yii::$app->currency->number_format($model->discount)}</strong> {Yii::$app->currency->active['symbol']}
+                    <strong>{Yii::$app->currency->number_format($model.discount)} {$app->currency->active['symbol']}</strong>
                 {/if}</p>
         {/if}
 
+        {if $model.delivery_price}
+            {Yii::t('cart/default', 'DELIVERY_PRICE')}:
+            <h2 style="display:inline">{$app->currency->number_format($model->delivery_price)}
+                <sup>{$app->currency->active['symbol']}</sup>
+            </h2>
+        {/if}
 
+        {Yii::t('cart/default', 'ORDER_PRICE')}:
+        <h2 style="display:inline">{$app->currency->number_format($model->total_price)}
+            <small>{$app->currency->active['symbol']}</small>
+        </h2>
+        <br/>
         {Yii::t('cart/default', 'TOTAL_PAY')}:
-        <h3>{Yii::$app->currency->number_format($model->full_price)}
-            {Yii::$app->currency->active['symbol']}</h3>
+        <h1 style="display:inline">{$app->currency->number_format($model->full_price + $model->delivery_price)}
+            <small>{$app->currency->active['symbol']}</small>
+        </h1>
     </div>
 {/if}
 

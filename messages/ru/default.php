@@ -46,4 +46,6 @@ return [
     'MAIL_TTN_SUBJECT' => 'Ваш ТТН заказа №{0}',
     'NOTIFICATION_USER_TEXT' => 'Пользователь <b>{username}</b> оформил заказ.<br/> <b>{num, plural, =0{тусто} =1{Один товар} one{# товар} few{# товара} many{# товаров} other{# товар}}</b> на сумму <b>{total} {currency}</b>',
     'NOTIFICATION_GUEST_TEXT' => 'Посетитель <b>{username}</b> оформил заказ.<br/> <b>{num, plural, =0{тусто} =1{Один товар} one{# товар} few{# товара} many{# товаров} other{# товар}}</b> на сумму <b>{total} {currency}</b>',
+    'RECEIVE_BONUSES' => 'Вы получите бонусов',
+    'CANCEL_BONUSES' => 'Отменить бонусы'
 ];

@@ -274,11 +274,12 @@ class DefaultController extends WebController
             $this->view->params['gtm_ecomm'] = $dataLayer;
 
         }
-
+        $bonuses = Yii::$app->currency->number_format(floor($totalPrice * Yii::$app->settings->get('user')->bonus_ratio));
         return $this->render('index', [
             'items' => isset($items['items']) ? $items['items'] : [],
             'totalPrice' => $totalPrice,
             'counter' => $counter,
+            'bonuses' => $bonuses,
             'deliveryMethods' => $deliveryMethods,
             'paymentMethods' => $paymentMethods,
         ]);

@@ -87,7 +87,8 @@ $form = ActiveForm::begin();
             ->widget(TagInput::class, ['placeholder' => 'E-mail'])
             ->hint('Введите E-mail и нажмите Enter');
         ?>
-
+        <?php echo $form->field($model, 'bonus_withdrawal')->label('Снятие бонусов с пользователя')->dropdownList(\yii\helpers\ArrayHelper::map(\panix\mod\cart\models\OrderStatus::find()->all(),'id','name')); ?>
+        <?php echo $form->field($model, 'bonus_accrual')->label('начисление бонусов пользователю')->dropdownList(\yii\helpers\ArrayHelper::map(\panix\mod\cart\models\OrderStatus::find()->all(),'id','name')); ?>
         <?php echo $form->field($model, 'min_sum')->textInput()->hint('0 = No restrictions'); ?>
         <?php echo $form->field($model, 'quantity_convert')->checkbox(); ?>
         <?php echo $form->field($model, 'notify_changed_status')->checkbox(); ?>

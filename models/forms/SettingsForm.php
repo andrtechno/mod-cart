@@ -32,6 +32,9 @@ class SettingsForm extends \panix\engine\SettingsModel
     protected $_pdf_tpl_brand_path;
     protected $_pdf_tpl_supplier_path;
 
+    public $bonus_withdrawal;
+    public $bonus_accrual;
+
     public static function defaultSettings()
     {
         return [
@@ -55,6 +58,7 @@ class SettingsForm extends \panix\engine\SettingsModel
             [['order_emails'], '\panix\engine\validators\EmailListValidator'],
             [['mail_tpl_order', 'pdf_tpl_order', 'pdf_tpl_brand', 'pdf_tpl_supplier'], 'string'],
             [['delivery_id', 'min_sum'], 'integer'],
+            [['bonus_withdrawal', 'bonus_accrual'], 'integer'],
         ];
     }
 
