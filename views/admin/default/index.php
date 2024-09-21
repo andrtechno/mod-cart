@@ -10,7 +10,7 @@ use panix\mod\cart\models\Order;
  */
 \panix\mod\cart\HammerAsset::register($this);
 ?>
-<?= Html::beginForm('/admin/cart/default/pdf-orders', 'GET'); ?>
+<?= Html::beginForm('/admin/cart/default/pdf-orders', 'GET',['id'=>'filter-cart-form']); ?>
 <?php echo $this->render('_filter_pdf'); ?>
 <?= Html::endForm(); ?>
 <?php
@@ -76,15 +76,18 @@ echo GridView::widget([
     //'rowOptions' => function ($model, $index, $widget, $grid) {
     //    return ['style' => 'background-color:' . $model->status->color . ';'];
     //},
-    'rowOptions' => function ($model, $index, $widget, $grid){
-        return ['data-url'=>\yii\helpers\Url::to(['update','id'=>$model->id])];
+    'rowOptions' => function ($model, $index, $widget, $grid) {
+        if (\panix\engine\CMS::isMobile()) {
+            return ['data-url' => \yii\helpers\Url::to(['update', 'id' => $model->id])];
+        }
+        return [];
     },
     'layoutOptions' => [
         'title' => $this->context->pageName,
         'beforeContent' => $this->render('_grid_filter', ['model' => $searchModel]),
         'buttons' => [
             [
-                'label' => Html::icon('filter') . (($filterCount)?'<span class="badge badge-danger" style="font-size:75%">' . $filterCount . '</span>':''),
+                'label' => Html::icon('filter') . (($filterCount) ? '<span class="badge badge-danger" style="font-size:75%">' . $filterCount . '</span>' : ''),
                 'url' => '#collapse-grid-filter',
                 'options' => [
                     'data-toggle' => "collapse",
@@ -172,3 +175,22 @@ echo GridView::widget([
 
 
 <?php Pjax::end(); ?>
+<?php
+$this->registerJs("
+$(document).on('submit','#filter-cart-form',function(){
+    var that = this;
+    
+    $('[name=\"selection[]\"]').each(function () {
+        if (this.checked) {
+            $('<input>', {
+                type: 'hidden',
+                id: 'input-id-'+$(this).val(),
+                name: 'ids[]',
+                value: $(this).val()
+            }).appendTo(that);
+        }
+    });
+    
+    return true;
+});
+");

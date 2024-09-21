@@ -385,9 +385,9 @@ class DefaultController extends AdminController
 
     public function actionPdfOrders($start, $end, $render = 'delivery', $type = 0)
     {
+        $ids = Yii::$app->request->get('ids');
 
-
-        $selection = Yii::$app->request->get('selection');
+       // $selection = Yii::$app->request->get('selection');
         $dateStart = strtotime($start);
 
         $dateEnd = strtotime($end) + 86400;
@@ -449,10 +449,13 @@ class DefaultController extends AdminController
 
         $statuses = Yii::$app->request->get('status_id');
         $query = Order::find()->where(['buyOneClick' => 0])->andWhere(['status_id' => $statuses]);
-        if ($selection) {
-            $query->andWhere([Order::tableName() . '.id' => $selection]);
+        if($ids){
+            $query->andWhere([Order::tableName() . '.id' => $ids]);
         }
-        if (!$selection && $dateStart && $dateEnd) {
+//        if ($selection) {
+//            $query->andWhere([Order::tableName() . '.id' => $selection]);
+//        }
+        if (!$ids && $dateStart && $dateEnd) {
             $query->between($dateStart, $dateEnd);
         }
         // $model->where(['status_id' => 1]);
